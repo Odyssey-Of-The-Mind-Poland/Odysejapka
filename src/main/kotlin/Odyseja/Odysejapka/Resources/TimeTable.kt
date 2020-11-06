@@ -11,13 +11,13 @@ class TimeTable(
         private val timeTableRepostiry: PerformanceRepository
 ) {
 
-    @GetMapping("/GetAll")
+    @GetMapping()
     fun getAll() : MutableIterable<Performance?> {
         return timeTableRepostiry.findAll()
     }
 
     @Secured("ROLE_ADMIN")
-    @PostMapping("/Add")
+    @PostMapping()
     @ResponseBody
     fun addPerformace(@RequestBody performances: List<Performance>) : List<Performance>{
         timeTableRepostiry.saveAll(performances)
