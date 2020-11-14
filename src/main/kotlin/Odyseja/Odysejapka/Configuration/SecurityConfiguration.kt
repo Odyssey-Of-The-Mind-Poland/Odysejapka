@@ -4,17 +4,18 @@ import Odyseja.Odysejapka.Configuration.JsonAuthFilter.JsonObjectAuthenticationF
 import Odyseja.Odysejapka.Configuration.JsonAuthFilter.RestAuthenticationFailureHandler
 import Odyseja.Odysejapka.Configuration.JsonAuthFilter.RestAuthenticationSuccessHandler
 import Odyseja.Odysejapka.Service.UserDetailsService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.NoOpPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import javax.sql.DataSource
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.servlet.config.annotation.CorsRegistry
 
 
 @EnableWebSecurity
@@ -32,11 +33,24 @@ class SecurityConfiguration(
         http.csrf().disable().formLogin()
                 .and()
                 .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+                .cors()
     }
 
     @Bean
     fun getPasswordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
+    }
+
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = listOf("*")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
+        configuration.allowCredentials = true
+        configuration.applyPermitDefaultValues()
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
     }
 
     @Bean
