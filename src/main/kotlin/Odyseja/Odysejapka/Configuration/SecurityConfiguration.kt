@@ -34,6 +34,7 @@ class SecurityConfiguration(
                 .and()
                 .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
                 .cors()
+                .and()
     }
 
     @Bean

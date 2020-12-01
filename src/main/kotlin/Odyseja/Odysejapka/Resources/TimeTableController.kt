@@ -7,20 +7,12 @@ import org.springframework.web.bind.annotation.*
 
 @RestController()
 @RequestMapping("/timeTable")
-class TimeTable(
+class TimeTableController(
         private val timeTableRepostiry: PerformanceRepository
 ) {
 
     @GetMapping()
     fun getAll() : MutableIterable<Performance?> {
         return timeTableRepostiry.findAll()
-    }
-
-    @Secured("ROLE_ADMIN")
-    @PostMapping()
-    @ResponseBody
-    fun addPerformace(@RequestBody performances: List<Performance>) : List<Performance>{
-        timeTableRepostiry.saveAll(performances)
-        return performances
     }
 }

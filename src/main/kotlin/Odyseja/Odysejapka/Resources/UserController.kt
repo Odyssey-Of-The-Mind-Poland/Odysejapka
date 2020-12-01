@@ -10,10 +10,9 @@ import java.security.Principal
 @RequestMapping("/user")
 class UserController(){
 
-    @Secured("ROLE_USER")
     @GetMapping
-    fun CheckAuth(): Authenticated{
-        return Authenticated(true)
+    fun CheckAuth(principal: Principal?): Authenticated{
+        return Authenticated(principal != null)
     }
 }
 

@@ -8,19 +8,19 @@ class Performance(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         @Column()
-        val id: Int,
+        var id: Int,
         @Column
-        val city: String,
+        var city: String,
         @Column
-        val team: String,
+        var team: String,
+        @ManyToOne(fetch=FetchType.LAZY)
+        var problem: Problem,
+        @ManyToOne(fetch=FetchType.LAZY)
+        var age: Age,
+        @ManyToOne(fetch=FetchType.LAZY)
+        var stage: Stage,
         @Column
-        val problem: String,
+        var performance: String,
         @Column
-        val age: String,
-        @Column
-        val stage: String,
-        @Column
-        val performance: String,
-        @Column
-        val spontan: String
+        var spontan: String
 )
