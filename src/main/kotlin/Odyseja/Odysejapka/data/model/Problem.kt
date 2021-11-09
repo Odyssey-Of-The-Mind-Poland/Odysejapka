@@ -7,6 +7,6 @@ class Problem(
         @Id
         @Column()
         val id: Int,
-        @Column
-        val name: String
+        @Column()
+        var name: String
 )

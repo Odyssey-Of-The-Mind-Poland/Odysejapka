@@ -1,14 +1,17 @@
 package Odyseja.Odysejapka.data.model
 
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 class Stage (
         @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
         @Column()
         val id: Int,
         @Column
-        val name: String
+        val number: Int,
+        @Column
+        var name: String,
+        @ManyToOne(fetch=FetchType.LAZY)
+        var city: City
 )

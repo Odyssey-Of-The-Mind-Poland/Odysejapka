@@ -10,5 +10,5 @@ class Age (
         @Column()
         val id: Int,
         @Column
-        val name: String
+        var name: String
 )

@@ -1,4 +1,13 @@
 package Odyseja.Odysejapka.data.model
 
-class City {
-}
+import javax.persistence.*
+
+@Entity
+class City(
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        @Column()
+        val id: Int,
+        @Column()
+        val name: String
+)

@@ -9,8 +9,8 @@ class Performance(
         @GeneratedValue(strategy = GenerationType.AUTO)
         @Column()
         var id: Int,
-        @Column
-        var city: String,
+        @ManyToOne(fetch=FetchType.LAZY)
+        var city: City,
         @Column
         var team: String,
         @ManyToOne(fetch=FetchType.LAZY)

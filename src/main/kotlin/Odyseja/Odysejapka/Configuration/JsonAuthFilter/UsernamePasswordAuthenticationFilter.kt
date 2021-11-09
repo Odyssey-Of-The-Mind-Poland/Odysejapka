@@ -32,7 +32,7 @@ class JsonObjectAuthenticationFilter : UsernamePasswordAuthenticationFilter() {
             setDetails(request, token)
             authenticationManager.authenticate(token)
         } catch (e: IOException) {
-            response?.status = HttpStatus.BAD_REQUEST.value()
+            response.status = HttpStatus.BAD_REQUEST.value()
             return null
         }
     }
