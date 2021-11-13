@@ -9,8 +9,8 @@ plugins {
 	kotlin("plugin.jpa") version "1.3.72"
 }
 
-group = "Odyseja"
-version = "0.0.1"
+group = "odyseja"
+version = ""
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
