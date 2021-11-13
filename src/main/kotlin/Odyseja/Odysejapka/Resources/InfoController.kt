@@ -13,13 +13,13 @@ class InfoController(
         private val infoRepository: InfoRepository
 ) {
 
-    @GetMapping("/getByCity")
+    @GetMapping("/{city}")
     @ResponseBody
-    fun getInfo(@RequestParam city: String?): Iterable<Info?>? {
+    fun getInfo(@PathVariable city: String): Iterable<Info?>? {
         return infoRepository.findByCity(city)
     }
 
-    @GetMapping("/getAll")
+    @GetMapping()
     fun getAllInfo(): MutableIterable<Info?> {
      return infoRepository.findAll()
     }

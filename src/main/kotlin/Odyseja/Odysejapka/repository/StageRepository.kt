@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository
 import java.util.*
 
 
-interface StageRepository : CrudRepository<Stage?, Int?> {
+interface StageRepository : CrudRepository<Stage, Int> {
     fun findFirstById(id: Int?): Stage?
     fun findFirstByNumberAndCity(number: Int?, city: City?): Stage?
     fun findAllByCity(id: Optional<City?>): MutableIterable<Stage?>
