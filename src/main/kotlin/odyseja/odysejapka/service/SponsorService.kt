@@ -1,5 +1,6 @@
 package odyseja.odysejapka.service
 
+import odyseja.odysejapka.domain.Sponsor
 import odyseja.odysejapka.domain.SponsorEntity
 import odyseja.odysejapka.port.SponsorUseCase
 import org.springframework.http.MediaType
@@ -23,15 +24,15 @@ internal class SponsorService(private val sponsorRepository: SponsorRepository) 
     return sponsor.get().image
   }
 
-  override fun getImages(): List<Int> {
-    return sponsorRepository.findAll().map { it.id }
+  override fun getImages(): List<Sponsor> {
+    return sponsorRepository.findAll().map { Sponsor(it.id, it.name) }
   }
 
-  override fun uploadImage(file: MultipartFile) {
+  override fun uploadImage(file: MultipartFile, name: String) {
     val type = file.contentType
     if (!acceptedTypes.contains(type)) {
       throw RuntimeException("Provided invalid file type")
     }
-    sponsorRepository.save(SponsorEntity(0, file.name, file.bytes))
+    sponsorRepository.save(SponsorEntity(0, name, file.bytes))
   }
 }

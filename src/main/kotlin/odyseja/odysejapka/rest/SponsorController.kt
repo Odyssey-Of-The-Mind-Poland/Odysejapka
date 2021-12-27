@@ -1,5 +1,6 @@
 package odyseja.odysejapka.rest
 
+import odyseja.odysejapka.domain.Sponsor
 import odyseja.odysejapka.port.SponsorUseCase
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
@@ -25,16 +26,16 @@ class SponsorController(private val sponsorUseCase: SponsorUseCase) {
   @GetMapping
   @ResponseBody
   @Throws(IOException::class)
-  fun getImages(): List<Int> {
+  fun getImages(): List<Sponsor> {
     return sponsorUseCase.getImages()
   }
 
   @PostMapping
   @Secured("ROLE_ADMIN")
   fun uploadImage(
-    @RequestParam("image") file: MultipartFile
+    @RequestParam("image") file: MultipartFile, name: String
   ): String? {
-    sponsorUseCase.uploadImage(file)
+    sponsorUseCase.uploadImage(file, name)
     return "File uploaded successfully"
   }
 }
