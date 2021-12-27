@@ -1,6 +1,6 @@
 package odyseja.odysejapka.configuration.jsonAuthFilter
 
-import odyseja.odysejapka.data.dto.LoginCredentials
+import odyseja.odysejapka.domain.LoginCredentials
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
