@@ -31,9 +31,8 @@ class SponsorController(private val sponsorUseCase: SponsorUseCase) {
   }
 
   @PostMapping
-  @Secured("ROLE_ADMIN")
   fun uploadImage(
-    @RequestParam("image") file: MultipartFile, name: String
+    @RequestParam("image") file: MultipartFile, @RequestParam("name") name: String
   ): String? {
     sponsorUseCase.uploadImage(file, name)
     return "File uploaded successfully"

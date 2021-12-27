@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile
 internal class SponsorService(private val sponsorRepository: SponsorRepository) : SponsorUseCase {
 
   companion object {
-    val acceptedTypes = listOf(MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE)
+    val acceptedTypes = listOf("jpg", "jpeg", "png")
   }
 
   override fun getImage(id: Int): ByteArray {
@@ -29,7 +29,7 @@ internal class SponsorService(private val sponsorRepository: SponsorRepository) 
   }
 
   override fun uploadImage(file: MultipartFile, name: String) {
-    val type = file.contentType
+    val type = file.originalFilename?.split(".")?.last()
     if (!acceptedTypes.contains(type)) {
       throw RuntimeException("Provided invalid file type")
     }
