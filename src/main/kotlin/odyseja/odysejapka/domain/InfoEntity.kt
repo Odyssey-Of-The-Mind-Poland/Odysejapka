@@ -2,7 +2,7 @@ package odyseja.odysejapka.domain
 
 import javax.persistence.*
 
-@Entity
+@Entity(name = "info")
 class InfoEntity(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)

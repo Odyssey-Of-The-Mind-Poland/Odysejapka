@@ -6,8 +6,8 @@ import javax.persistence.*
 class CityEntity(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
-        @Column()
+        @Column
         val id: Int,
-        @Column()
+        @Column
         val name: String
 )

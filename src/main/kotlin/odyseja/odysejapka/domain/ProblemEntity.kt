@@ -2,7 +2,7 @@ package odyseja.odysejapka.domain
 
 import javax.persistence.*
 
-@Entity
+@Entity(name = "problem")
 class ProblemEntity(
         @Id
         @Column()
