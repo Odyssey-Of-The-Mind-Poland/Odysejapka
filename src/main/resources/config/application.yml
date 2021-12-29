@@ -1,0 +1,28 @@
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+  application:
+    name: odyseja
+  #-------------------------------------------------------------------------------------------------
+  # DATABASE
+  #-------------------------------------------------------------------------------------------------
+  datasource:
+    # Postgres database
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:24888/odyseja
+    username: odyseja
+    password: odyseja
+  # Database migrations
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: public
+    contexts: default
+    database-change-log-table: ta_databasechangelog
+    database-change-log-lock-table: ta_databasechangeloglock
+  sql:
+    init:
+      mode: never
+server:
+  port: 8081

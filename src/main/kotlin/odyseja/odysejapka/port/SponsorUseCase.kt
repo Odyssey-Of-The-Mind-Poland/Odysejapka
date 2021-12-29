@@ -10,4 +10,6 @@ interface SponsorUseCase {
   fun getImages(): List<Sponsor>
 
   fun uploadImage(file: MultipartFile, name: String)
+
+  fun deleteImage(imageId: Int)
 }

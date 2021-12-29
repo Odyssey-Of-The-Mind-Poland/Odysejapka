@@ -37,4 +37,9 @@ class SponsorController(private val sponsorUseCase: SponsorUseCase) {
     sponsorUseCase.uploadImage(file, name)
     return "File uploaded successfully"
   }
+
+  @DeleteMapping(value = ["/{imageId}"])
+  fun deleteImage(@PathVariable imageId: Int) {
+    sponsorUseCase.deleteImage(imageId)
+  }
 }

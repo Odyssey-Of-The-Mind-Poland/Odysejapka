@@ -35,4 +35,8 @@ internal class SponsorService(private val sponsorRepository: SponsorRepository) 
     }
     sponsorRepository.save(SponsorEntity(0, name, file.bytes))
   }
+
+  override fun deleteImage(imageId: Int) {
+    sponsorRepository.deleteById(imageId)
+  }
 }
