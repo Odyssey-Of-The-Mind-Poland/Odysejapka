@@ -37,12 +37,11 @@ internal class TimeTableService(
     val per: List<PerformanceEntity> = performances.map {
       PerformanceEntity(
         it.id,
-        cityRepository.findFirstByName(it.city) ?: cityRepository.save(CityEntity(0, it.city)),
+        getCity(it.city),
         it.team,
-        problemRepository.findFirstById(it.problem),
-        ageRepository.findFirstById(it.age),
-        stageRepository.findFirstByNumberAndCityEntity(it.stage, cityRepository.findFirstByName(it.city))
-          ?: stageRepository.save(StageEntity(0, it.stage, "Scena nr. " + it.stage, cityEntity)),
+        getProblem(it.problem),
+        getAge(it.age),
+        getStage(it.stage, it.city),
         it.performance,
         it.spontan
       )
@@ -53,20 +52,11 @@ internal class TimeTableService(
 
   override fun updatePerformance(performance: Performance) {
     val pToEdit = timeTableRepository.findById(performance.id).get()
-    pToEdit.cityEntity = cityRepository.findFirstByName(performance.city)
-      ?: cityRepository.save(CityEntity(0, performance.city))
+    pToEdit.cityEntity = getCity(performance.city)
     pToEdit.team = performance.team
-    pToEdit.problemEntity = problemRepository.findFirstById(performance.problem)
-    pToEdit.ageEntity = ageRepository.findFirstById(performance.age)
-    pToEdit.stageEntity = stageRepository.findFirstById(performance.stage)
-      ?: stageRepository.save(
-        StageEntity(
-          0,
-          performance.stage,
-          "Scena nr. " + performance.stage,
-          pToEdit.cityEntity
-        )
-      )
+    pToEdit.problemEntity = getProblem(performance.problem)
+    pToEdit.ageEntity = getAge(performance.age)
+    pToEdit.stageEntity = getStage(performance.stage, performance.city)
     pToEdit.performance = performance.performance
     pToEdit.spontan = performance.spontan
     timeTableRepository.save(pToEdit)
@@ -74,5 +64,35 @@ internal class TimeTableService(
 
   override fun delPerformance(id: Int) {
     timeTableRepository.deleteById(id)
+  }
+
+  fun getAge(age: Int): AgeEntity {
+    return ageRepository.findFirstById(age) ?: ageRepository.save(
+      AgeEntity(
+        age,
+        age.toString()
+      )
+    )
+  }
+
+  fun getStage(stage: Int, city: String): StageEntity {
+    return stageRepository.findFirstByNumberAndCityEntity(
+      stage,
+      getCity(city)
+    )
+      ?: stageRepository.save(StageEntity(0, stage, "Scena nr. $stage", getCity(city)))
+  }
+
+  fun getCity(city: String): CityEntity {
+    return cityRepository.findFirstByName(city) ?: cityRepository.save(CityEntity(0, city))
+  }
+
+  fun getProblem(problem: Int): ProblemEntity {
+    return problemRepository.findFirstById(problem) ?: problemRepository.save(
+      ProblemEntity(
+        problem,
+        problem.toString()
+      )
+    )
   }
 }
