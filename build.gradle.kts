@@ -27,7 +27,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("commons-io:commons-io:2.11.0")
   implementation("org.liquibase:liquibase-core:4.6.2")
-
+  implementation("org.springdoc:springdoc-openapi-ui:1.6.3")
 
   runtimeOnly("org.postgresql:postgresql:42.3.1")
   runtimeOnly("com.h2database:h2:1.4.200")

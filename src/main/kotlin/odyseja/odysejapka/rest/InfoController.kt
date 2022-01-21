@@ -24,7 +24,7 @@ class InfoController(
     }
 
     @Secured("ROLE_ADMIN")
-    @PostMapping("/add")
+    @PostMapping
     fun addInfo(@RequestBody infoEntity: List<InfoEntity>) : List<InfoEntity> {
         return infoUseCase.addInfo(infoEntity)
     }
