@@ -10,4 +10,8 @@ internal class CityService(private val cityRepository: CityRepository) : CityUse
   override fun getCities(): MutableIterable<CityEntity?> {
     return cityRepository.findAll()
   }
+
+  override fun addCity(city: CityEntity) {
+    cityRepository.save(city)
+  }
 }
