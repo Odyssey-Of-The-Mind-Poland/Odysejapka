@@ -1,5 +1,6 @@
 package odyseja.odysejapka.rest
 
+import odyseja.odysejapka.domain.Info
 import odyseja.odysejapka.domain.InfoEntity
 import odyseja.odysejapka.port.InfoUseCase
 import org.springframework.security.access.annotation.Secured
@@ -14,18 +15,24 @@ class InfoController(
 
     @GetMapping("/{city}")
     @ResponseBody
-    fun getInfo(@PathVariable city: String): Iterable<InfoEntity?>? {
+    fun getInfo(@PathVariable city: Int): Iterable<Info?>? {
         return infoUseCase.getInfo(city)
     }
 
     @GetMapping()
-    fun getAllInfo(): MutableIterable<InfoEntity?> {
+    fun getAllInfo(): List<Info> {
      return infoUseCase.getAllInfo()
     }
 
     @Secured("ROLE_ADMIN")
     @PostMapping
-    fun addInfo(@RequestBody infoEntity: List<InfoEntity>) : List<InfoEntity> {
-        return infoUseCase.addInfo(infoEntity)
+    fun addInfo(@RequestBody info: Info) : Info {
+        return infoUseCase.addInfo(info)
     }
+
+  @Secured("ROLE_ADMIN")
+  @PutMapping
+  fun updateInfo(@RequestBody info: Info) : Info {
+    return infoUseCase.updateInfo(info)
+  }
 }

@@ -18,4 +18,8 @@ internal class ProblemService(private val problemRepository: ProblemRepository) 
       problemRepository.save(toEdit)
     }
   }
+
+  override fun deleteProblem(problemId: Int) {
+    problemRepository.deleteById(problemId)
+  }
 }

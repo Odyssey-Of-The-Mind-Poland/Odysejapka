@@ -8,4 +8,6 @@ interface ProblemUseCase {
   fun getProblems(): MutableIterable<ProblemEntity?>
 
   fun updateProblem(@RequestBody problemEntities: List<ProblemEntity>)
+
+  fun deleteProblem(problemId: Int)
 }

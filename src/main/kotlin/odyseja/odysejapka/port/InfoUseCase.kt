@@ -1,14 +1,17 @@
 package odyseja.odysejapka.port
 
+import odyseja.odysejapka.domain.Info
 import odyseja.odysejapka.domain.InfoEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 
 interface InfoUseCase {
 
-  fun getInfo(@PathVariable city: String): Iterable<InfoEntity?>?
+  fun getInfo(@PathVariable city: Int): Iterable<Info?>?
 
-  fun getAllInfo(): MutableIterable<InfoEntity?>
+  fun getAllInfo(): List<Info>
 
-  fun addInfo(@RequestBody infoEntity: List<InfoEntity>) : List<InfoEntity>
+  fun addInfo(@RequestBody info: Info) : Info
+
+  fun updateInfo(@RequestBody info: Info) : Info
 }

@@ -1,11 +1,11 @@
 package odyseja.odysejapka.service
 
 import odyseja.odysejapka.domain.AgeEntity
-import odyseja.odysejapka.port.UserUseCase
+import odyseja.odysejapka.port.AgeUseCase
 import org.springframework.stereotype.Service
 
 @Service
-internal class AgeService(private val ageRepository: AgeRepository) : UserUseCase {
+internal class AgeService(private val ageRepository: AgeRepository) : AgeUseCase {
 
   override fun getAge(): MutableIterable<AgeEntity?> {
     return ageRepository.findAll()
@@ -17,5 +17,9 @@ internal class AgeService(private val ageRepository: AgeRepository) : UserUseCas
       toEdit.name = age.name
       ageRepository.save(toEdit)
     }
+  }
+
+  override fun deleteAge(ageId: Int) {
+    ageRepository.deleteById(ageId)
   }
 }

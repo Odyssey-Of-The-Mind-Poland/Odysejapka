@@ -21,4 +21,10 @@ class ProblemController(
     fun updateProblem(@RequestBody problemEntities: List<ProblemEntity>) {
         return problemUseCase.updateProblem(problemEntities)
     }
+
+  @Secured("ROLE_ADMIN")
+  @DeleteMapping("{problemId}")
+  fun deleteProblem(@PathVariable problemId: Int) {
+    return problemUseCase.deleteProblem(problemId)
+  }
 }

@@ -11,7 +11,11 @@ class InfoEntity(
         @Column()
         val infoName: String,
         @Column()
-        val infoText: String,
-        @Column()
-        val city: String
-)
+        var infoText: String,
+        @ManyToOne(fetch = FetchType.LAZY)
+        val city: CityEntity
+) {
+  fun toInfo() : Info {
+    return Info(id, infoName, infoText, city.id)
+  }
+}
