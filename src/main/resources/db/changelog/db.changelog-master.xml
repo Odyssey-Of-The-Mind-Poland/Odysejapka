@@ -73,4 +73,8 @@
       <column name="name" value="Podziękowania"/>
     </insert>
   </changeSet>
+
+  <changeSet id="1.0.5" author="grzybek">
+    <modifyDataType tableName="info" columnName="info_text" newDataType="text"/>
+  </changeSet>
 </databaseChangeLog>
