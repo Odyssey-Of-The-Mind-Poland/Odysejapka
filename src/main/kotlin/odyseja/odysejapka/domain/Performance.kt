@@ -8,5 +8,6 @@ data class Performance (
   val age: Int,
   val stage: Int,
   val performance: String,
-  val spontan: String
+  val spontan: String,
+  val part: Int
 )

@@ -22,5 +22,7 @@ class PerformanceEntity(
   @Column
   var performance: String,
   @Column
-  var spontan: String
+  var spontan: String,
+  @Column(columnDefinition = "integer default 0")
+  var part: Int
 )

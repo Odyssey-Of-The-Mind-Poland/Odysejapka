@@ -23,7 +23,8 @@ internal class TimeTableService(
         it.ageEntity.id,
         it.stageEntity.number,
         it.performance,
-        it.spontan
+        it.spontan,
+        it.part
       )
     }
   }
@@ -43,7 +44,8 @@ internal class TimeTableService(
         getAge(it.age),
         getStage(it.stage, it.city),
         it.performance,
-        it.spontan
+        it.spontan,
+        it.part
       )
     }
     timeTableRepository.saveAll(per)
