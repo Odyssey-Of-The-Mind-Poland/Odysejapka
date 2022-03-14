@@ -4,5 +4,6 @@ data class Info(
   val id: Int,
   val infoName: String,
   val infoText: String,
-  val city: Int
+  val city: Int,
+  val category: Int
 )

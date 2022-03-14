@@ -43,40 +43,34 @@
   </changeSet>
 
   <changeSet id="1.0.3" author="grzybek">
+    <createTable tableName="info_category">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+
+      <column name="name" type="VARCHAR(100)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="1.0.4" author="grzybek">
     <insert schemaName="public"
-            tableName="city">
+            tableName="info_category">
       <column name="id" value="0"/>
-      <column name="name" value="Warszawa"/>
+      <column name="name" value="Dla wszystkich"/>
     </insert>
 
     <insert schemaName="public"
-            tableName="city">
+            tableName="info_category">
       <column name="id" value="1"/>
-      <column name="name" value="Poznań"/>
+      <column name="name" value="Dla drużyn"/>
     </insert>
 
     <insert schemaName="public"
-            tableName="city">
+            tableName="info_category">
       <column name="id" value="2"/>
-      <column name="name" value="Katowice"/>
-    </insert>
-
-    <insert schemaName="public"
-            tableName="city">
-      <column name="id" value="3"/>
-      <column name="name" value="Łódź"/>
-    </insert>
-
-    <insert schemaName="public"
-            tableName="city">
-      <column name="id" value="4"/>
-      <column name="name" value="Gdańsk"/>
-    </insert>
-
-    <insert schemaName="public"
-            tableName="city">
-      <column name="id" value="5"/>
-      <column name="name" value="Wrocław"/>
+      <column name="name" value="Podziękowania"/>
     </insert>
   </changeSet>
 </databaseChangeLog>

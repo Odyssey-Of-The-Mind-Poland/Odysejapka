@@ -1,6 +1,7 @@
 package odyseja.odysejapka.service
 
 import odyseja.odysejapka.domain.Info
+import odyseja.odysejapka.domain.InfoCategoryEntity
 import odyseja.odysejapka.domain.InfoEntity
 import odyseja.odysejapka.port.InfoUseCase
 import org.springframework.stereotype.Service
@@ -8,7 +9,8 @@ import org.springframework.stereotype.Service
 @Service
 internal class InfoService(
   private val infoRepository: InfoRepository,
-  private val cityRepository: CityRepository
+  private val cityRepository: CityRepository,
+  private val infoCategoryRepository: InfoCategoryRepository
 ) : InfoUseCase {
 
   override fun getInfo(city: Int): Iterable<Info?>? {
@@ -19,13 +21,19 @@ internal class InfoService(
     return infoRepository.findAll().map { it!!.toInfo() }
   }
 
+  override fun getInfoCategory(): MutableIterable<InfoCategoryEntity> {
+    return infoCategoryRepository.findAll()
+  }
+
+
   override fun addInfo(info: Info): Info {
     infoRepository.save(
       InfoEntity(
         info.id,
         info.infoName,
         info.infoText,
-        cityRepository.findFirstById(info.city)
+        cityRepository.findFirstById(info.city),
+        infoCategoryRepository.findFirstById(info.category)
       )
     )
     return info

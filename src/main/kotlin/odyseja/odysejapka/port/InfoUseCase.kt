@@ -1,7 +1,7 @@
 package odyseja.odysejapka.port
 
 import odyseja.odysejapka.domain.Info
-import odyseja.odysejapka.domain.InfoEntity
+import odyseja.odysejapka.domain.InfoCategoryEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 
@@ -11,7 +11,9 @@ interface InfoUseCase {
 
   fun getAllInfo(): List<Info>
 
-  fun addInfo(@RequestBody info: Info) : Info
+  fun getInfoCategory(): MutableIterable<InfoCategoryEntity>
 
-  fun updateInfo(@RequestBody info: Info) : Info
+  fun addInfo(@RequestBody info: Info): Info
+
+  fun updateInfo(@RequestBody info: Info): Info
 }
