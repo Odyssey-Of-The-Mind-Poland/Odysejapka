@@ -77,4 +77,24 @@
   <changeSet id="1.0.5" author="grzybek">
     <modifyDataType tableName="info" columnName="info_text" newDataType="text"/>
   </changeSet>
+
+  <changeSet id="1.0.6" author="grzybek">
+    <createTable tableName="change">
+      <column name="changed_at" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="1.0.7" author="grzybek">
+    <sqlFile path="sql/create_change_trigger.sql"
+             relativeToChangelogFile="true"
+             splitStatements="false"/>
+  </changeSet>
+
+  <changeSet id="1.0.8" author="grzybek">
+    <sqlFile path="sql/add_change_trigger_to_tables.sql"
+             relativeToChangelogFile="true"
+             splitStatements="false"/>
+  </changeSet>
 </databaseChangeLog>
