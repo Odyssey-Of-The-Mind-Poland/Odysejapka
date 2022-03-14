@@ -41,4 +41,10 @@ class InfoController(
   fun updateInfo(@RequestBody info: Info): Info {
     return infoUseCase.updateInfo(info)
   }
+
+  @DeleteMapping("/{id}")
+  @ResponseBody
+  fun deleteInfo(@PathVariable id: Int) {
+    infoUseCase.deleteInfo(id)
+  }
 }

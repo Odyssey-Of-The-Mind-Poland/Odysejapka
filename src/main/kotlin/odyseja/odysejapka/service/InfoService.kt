@@ -45,4 +45,8 @@ internal class InfoService(
     infoRepository.save(infoEntity)
     return info
   }
+
+  override fun deleteInfo(id: Int) {
+    infoRepository.deleteById(id)
+  }
 }
