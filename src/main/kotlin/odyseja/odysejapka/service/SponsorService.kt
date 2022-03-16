@@ -2,13 +2,16 @@ package odyseja.odysejapka.service
 
 import odyseja.odysejapka.domain.Sponsor
 import odyseja.odysejapka.domain.SponsorEntity
+import odyseja.odysejapka.port.ChangeUseCase
 import odyseja.odysejapka.port.SponsorUseCase
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-internal class SponsorService(private val sponsorRepository: SponsorRepository) : SponsorUseCase {
+internal class SponsorService(
+  private val sponsorRepository: SponsorRepository,
+  private val changeUseCase: ChangeUseCase
+) : SponsorUseCase {
 
   companion object {
     val acceptedTypes = listOf("jpg", "jpeg", "png")
@@ -34,9 +37,13 @@ internal class SponsorService(private val sponsorRepository: SponsorRepository) 
       throw RuntimeException("Provided invalid file type")
     }
     sponsorRepository.save(SponsorEntity(0, name, file.bytes))
+
+    changeUseCase.updateVersion()
   }
 
   override fun deleteImage(imageId: Int) {
     sponsorRepository.deleteById(imageId)
+
+    changeUseCase.updateVersion()
   }
 }

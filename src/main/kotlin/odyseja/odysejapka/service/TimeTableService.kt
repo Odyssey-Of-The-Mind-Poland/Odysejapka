@@ -1,6 +1,7 @@
 package odyseja.odysejapka.service
 
 import odyseja.odysejapka.domain.*
+import odyseja.odysejapka.port.ChangeUseCase
 import odyseja.odysejapka.port.TimeTableUseCase
 import org.springframework.stereotype.Service
 
@@ -10,7 +11,8 @@ internal class TimeTableService(
   private val problemRepository: ProblemRepository,
   private val stageRepository: StageRepository,
   private val ageRepository: AgeRepository,
-  private val cityRepository: CityRepository
+  private val cityRepository: CityRepository,
+  private val changeUseCase: ChangeUseCase
 ) : TimeTableUseCase {
 
   override fun getAll(): List<Performance> {
@@ -49,6 +51,8 @@ internal class TimeTableService(
       )
     }
     timeTableRepository.saveAll(per)
+
+    changeUseCase.updateVersion()
     return per
   }
 
@@ -66,6 +70,8 @@ internal class TimeTableService(
 
   override fun delPerformance(id: Int) {
     timeTableRepository.deleteById(id)
+
+    changeUseCase.updateVersion()
   }
 
   fun getAge(age: Int): AgeEntity {

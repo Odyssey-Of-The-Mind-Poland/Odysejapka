@@ -2,13 +2,15 @@ package odyseja.odysejapka.service
 
 import odyseja.odysejapka.domain.Stage
 import odyseja.odysejapka.domain.StageEntity
+import odyseja.odysejapka.port.ChangeUseCase
 import odyseja.odysejapka.port.StageUseCase
 import org.springframework.stereotype.Service
 
 @Service
 internal class StageService(
   private val stageRepository: StageRepository,
-  private val cityRepository: CityRepository
+  private val cityRepository: CityRepository,
+  private val changeUseCase: ChangeUseCase
 ) : StageUseCase {
 
   override fun getStages(city: Int): List<Stage> {
@@ -40,5 +42,7 @@ internal class StageService(
       toEdit.name = stage.name
       stageRepository.save(toEdit)
     }
+
+    changeUseCase.updateVersion()
   }
 }

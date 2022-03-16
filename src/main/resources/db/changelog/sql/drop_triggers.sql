@@ -1,0 +1,9 @@
+DROP TRIGGER IF EXISTS t on age;
+DROP TRIGGER IF EXISTS t on city;
+DROP TRIGGER IF EXISTS t on performance;
+DROP TRIGGER IF EXISTS t on info;
+DROP TRIGGER IF EXISTS t on problem;
+DROP TRIGGER IF EXISTS t on sponsor;
+DROP TRIGGER IF EXISTS t on stage;
+
+DROP FUNCTION IF EXISTS change_trigger;

@@ -80,10 +80,16 @@
 
   <changeSet id="1.0.6" author="grzybek">
     <createTable tableName="change">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+
       <column name="changed_at" type="TIMESTAMP">
-        <constraints nullable="false" />
+        <constraints nullable="false"/>
       </column>
     </createTable>
+
+    <addAutoIncrement tableName="change" columnName="id"/>
   </changeSet>
 
   <changeSet id="1.0.7" author="grzybek">
@@ -94,6 +100,12 @@
 
   <changeSet id="1.0.8" author="grzybek">
     <sqlFile path="sql/add_change_trigger_to_tables.sql"
+             relativeToChangelogFile="true"
+             splitStatements="false"/>
+  </changeSet>
+
+  <changeSet id="1.0.9" author="grzybek">
+    <sqlFile path="sql/drop_triggers.sql"
              relativeToChangelogFile="true"
              splitStatements="false"/>
   </changeSet>
