@@ -26,7 +26,9 @@ internal class TimeTableService(
         it.stageEntity.number,
         it.performance,
         it.spontan,
-        it.part
+        it.part,
+        it.performanceDay,
+        it.spontanDay
       )
     }
   }
@@ -47,7 +49,9 @@ internal class TimeTableService(
         getStage(it.stage, it.city),
         it.performance,
         it.spontan,
-        it.part
+        it.part,
+        it.performanceDay,
+        it.spontanDay
       )
     }
     timeTableRepository.saveAll(per)

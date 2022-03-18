@@ -1,5 +1,7 @@
 package odyseja.odysejapka.domain
 
+import javax.persistence.Column
+
 data class Performance (
   val id: Int,
   val city: String,
@@ -9,5 +11,7 @@ data class Performance (
   val stage: Int,
   val performance: String,
   val spontan: String,
-  val part: Int
+  val part: Int,
+  var performanceDay: String,
+  var spontanDay: String
 )
