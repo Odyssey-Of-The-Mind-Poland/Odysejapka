@@ -20,7 +20,7 @@ internal class InfoService(
   }
 
   override fun getAllInfo(): List<Info> {
-    return infoRepository.findAll().map { it!!.toInfo() }
+    return infoRepository.findAllByOrderById().map { it.toInfo() }
   }
 
   override fun getInfoCategory(): MutableIterable<InfoCategoryEntity> {

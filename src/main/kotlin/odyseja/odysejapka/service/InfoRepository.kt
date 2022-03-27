@@ -8,4 +8,6 @@ import org.springframework.data.repository.query.Param
 
 interface InfoRepository : CrudRepository<InfoEntity?, Int?> {
     fun findByCity(city: CityEntity): Iterable<InfoEntity>
+
+    fun findAllByOrderById() : Iterable<InfoEntity>
 }
