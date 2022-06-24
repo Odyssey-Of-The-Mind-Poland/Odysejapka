@@ -1,9 +1,13 @@
 # Odysejapka
 
-Server app for Odyssey of the mind in Poland contest
+Server app for Odyssey of the mind in Poland contest nad is used by hundreds of users.
 
-## API Docs
-``http://grzybek.snet.ovh:8081/swagger-ui/index.html#/``
+App allows participants to browse through timetable and navigate on the contest.
+
+## API Docs'
+
+API docs are generated autmaticlly withs wagger. You can find them under
+``/swagger-ui/index.html#/``
 
 ## How to run
 
