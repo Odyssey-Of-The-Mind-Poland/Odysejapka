@@ -48,6 +48,7 @@ class InfoController(
     return infoUseCase.updateInfo(info)
   }
 
+  @Secured("ROLE_ADMIN")
   @DeleteMapping("/{id}")
   @ResponseBody
   fun deleteInfo(@PathVariable id: Int) {
