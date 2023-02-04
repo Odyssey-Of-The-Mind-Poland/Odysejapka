@@ -20,7 +20,7 @@ internal class InfoService(
   }
 
   override fun getAllInfo(): List<Info> {
-    return infoRepository.findAllByOrderById().map { it.toInfo() }
+    return infoRepository.findAllByOrderBySortNumber().map { it.toInfo() }
   }
 
   override fun getInfoCategory(): MutableIterable<InfoCategoryEntity> {
@@ -35,7 +35,8 @@ internal class InfoService(
         info.infoName,
         info.infoText,
         cityRepository.findFirstById(info.city),
-        infoCategoryRepository.findFirstById(info.category)
+        infoCategoryRepository.findFirstById(info.category),
+        info.sortNumber
       )
     )
 
@@ -59,5 +60,9 @@ internal class InfoService(
     changeUseCase.updateVersion()
 
     infoRepository.deleteById(id)
+  }
+
+  override fun getInfoById(info: Int): Info {
+    return infoRepository.findById(info).get().toInfo()
   }
 }

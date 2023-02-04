@@ -18,4 +18,5 @@ interface InfoUseCase {
   fun updateInfo(@RequestBody info: Info): Info
 
   fun deleteInfo(@RequestBody id: Int)
+  fun getInfoById(info: Int): Info
 }

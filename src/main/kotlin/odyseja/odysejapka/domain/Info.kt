@@ -5,5 +5,7 @@ data class Info(
   val infoName: String,
   val infoText: String,
   val city: Int,
-  val category: Int
+  val category: Int,
+  val sortNumber: Int,
+  val categoryName: String
 )

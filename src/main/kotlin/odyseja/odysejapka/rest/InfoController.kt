@@ -19,6 +19,12 @@ class InfoController(
     return infoUseCase.getInfo(city)
   }
 
+  @GetMapping("/id/{info}")
+  @ResponseBody
+  fun getInfoById(@PathVariable info: Int): Info {
+    return infoUseCase.getInfoById(info)
+  }
+
   @GetMapping("/category")
   @ResponseBody
   fun getInfoCategory(): Iterable<InfoCategoryEntity> {

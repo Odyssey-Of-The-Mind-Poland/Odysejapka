@@ -109,4 +109,11 @@
              relativeToChangelogFile="true"
              splitStatements="false"/>
   </changeSet>
+
+  <changeSet id="1.0.10" author="grzybek">
+    <addColumn tableName="info">
+      <column name="sort_number" type="BIGINT">
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>
