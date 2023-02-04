@@ -16,7 +16,7 @@ internal class TimeTableService(
 ) : TimeTableUseCase {
 
   override fun getAll(): List<Performance> {
-    return timeTableRepository.findAll().map {
+    return timeTableRepository.findAll().sortedBy { it?.spontan ?: "0" }.map {
       Performance(
         it!!.id,
         it.cityEntity.name,
