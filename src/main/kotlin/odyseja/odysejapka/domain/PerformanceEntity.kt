@@ -28,5 +28,7 @@ class PerformanceEntity(
   @Column
   var performanceDay: String,
   @Column
-  var spontanDay: String
+  var spontanDay: String,
+  @Column
+  var league: String
 )

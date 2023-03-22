@@ -28,7 +28,8 @@ internal class TimeTableService(
         it.spontan,
         it.part,
         it.performanceDay,
-        it.spontanDay
+        it.spontanDay,
+        it.league
       )
     }
   }
@@ -51,7 +52,8 @@ internal class TimeTableService(
         it.spontan,
         it.part,
         it.performanceDay,
-        it.spontanDay
+        it.spontanDay,
+        it.league
       )
     }
     timeTableRepository.saveAll(per)
