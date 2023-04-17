@@ -2,18 +2,16 @@ package odyseja.odysejapka.service
 
 import odyseja.odysejapka.domain.Stage
 import odyseja.odysejapka.domain.StageEntity
-import odyseja.odysejapka.port.ChangeUseCase
-import odyseja.odysejapka.port.StageUseCase
 import org.springframework.stereotype.Service
 
 @Service
-internal class StageService(
+class StageService(
   private val stageRepository: StageRepository,
   private val cityRepository: CityRepository,
-  private val changeUseCase: ChangeUseCase
-) : StageUseCase {
+  private val changeService: ChangeService
+) {
 
-  override fun getStages(city: Int): List<Stage> {
+  fun getStages(city: Int): List<Stage> {
     return stageRepository.findAllByCityEntity(cityRepository.findById(city)).map {
       Stage(
         it!!.id,
@@ -24,7 +22,7 @@ internal class StageService(
     }
   }
 
-  override fun getStages(): List<Stage> {
+  fun getStages(): List<Stage> {
     return stageRepository.findAll().map {
       Stage(
         it!!.id,
@@ -35,7 +33,7 @@ internal class StageService(
     }
   }
 
-  override fun updateStage(stages: List<Stage>) {
+  fun updateStage(stages: List<Stage>) {
     for (stage in stages) {
       val toEdit: StageEntity = stageRepository.findFirstByNumberAndCityEntity(stage.number, cityRepository.findFirstById(stage.city))
         ?: stageRepository.save(StageEntity(0, stage.number, stage.name, cityRepository.findFirstById(stage.city)))
@@ -43,6 +41,6 @@ internal class StageService(
       stageRepository.save(toEdit)
     }
 
-    changeUseCase.updateVersion()
+    changeService.updateVersion()
   }
 }

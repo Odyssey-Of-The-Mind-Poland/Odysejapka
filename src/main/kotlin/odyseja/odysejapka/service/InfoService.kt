@@ -3,32 +3,30 @@ package odyseja.odysejapka.service
 import odyseja.odysejapka.domain.Info
 import odyseja.odysejapka.domain.InfoCategoryEntity
 import odyseja.odysejapka.domain.InfoEntity
-import odyseja.odysejapka.port.ChangeUseCase
-import odyseja.odysejapka.port.InfoUseCase
 import org.springframework.stereotype.Service
 
 @Service
-internal class InfoService(
+class InfoService(
   private val infoRepository: InfoRepository,
   private val cityRepository: CityRepository,
   private val infoCategoryRepository: InfoCategoryRepository,
-  private val changeUseCase: ChangeUseCase
-) : InfoUseCase {
+  private val changeService: ChangeService
+) {
 
-  override fun getInfo(city: Int): Iterable<Info?>? {
+  fun getInfo(city: Int): Iterable<Info?>? {
     return infoRepository.findByCity(cityRepository.findFirstById(city)).map { it.toInfo() }
   }
 
-  override fun getAllInfo(): List<Info> {
+  fun getAllInfo(): List<Info> {
     return infoRepository.findAllByOrderBySortNumber().map { it.toInfo() }
   }
 
-  override fun getInfoCategory(): MutableIterable<InfoCategoryEntity> {
+  fun getInfoCategory(): MutableIterable<InfoCategoryEntity> {
     return infoCategoryRepository.findAll()
   }
 
 
-  override fun addInfo(info: Info): Info {
+  fun addInfo(info: Info): Info {
     infoRepository.save(
       InfoEntity(
         info.id,
@@ -40,29 +38,30 @@ internal class InfoService(
       )
     )
 
-    changeUseCase.updateVersion()
+    changeService.updateVersion()
 
     return info
   }
 
-  override fun updateInfo(info: Info): Info {
+  fun updateInfo(info: Info): Info {
     val infoEntity = infoRepository.findById(info.id).get()
     infoEntity.infoText = info.infoText
+    infoEntity.sortNumber = info.sortNumber
     infoRepository.save(infoEntity)
 
-    changeUseCase.updateVersion()
+    changeService.updateVersion()
 
     return info
   }
 
-  override fun deleteInfo(id: Int) {
+  fun deleteInfo(id: Int) {
 
-    changeUseCase.updateVersion()
+    changeService.updateVersion()
 
     infoRepository.deleteById(id)
   }
 
-  override fun getInfoById(info: Int): Info {
+  fun getInfoById(info: Int): Info {
     return infoRepository.findById(info).get().toInfo()
   }
 }

@@ -1,30 +1,28 @@
 package odyseja.odysejapka.rest
 
 import odyseja.odysejapka.domain.ProblemEntity
-import odyseja.odysejapka.port.ProblemUseCase
+import odyseja.odysejapka.service.ProblemService
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/problem")
-class ProblemController(
-        private val problemUseCase: ProblemUseCase
-) {
+class ProblemController(private val problemService: ProblemService) {
 
     @GetMapping
     fun getProblems(): MutableIterable<ProblemEntity?> {
-        return problemUseCase.getProblems()
+        return problemService.getProblems()
     }
 
     @Secured("ROLE_ADMIN")
     @PutMapping
     fun updateProblem(@RequestBody problemEntities: List<ProblemEntity>) {
-        return problemUseCase.updateProblem(problemEntities)
+        return problemService.updateProblem(problemEntities)
     }
 
-  @Secured("ROLE_ADMIN")
-  @DeleteMapping("{problemId}")
-  fun deleteProblem(@PathVariable problemId: Int) {
-    return problemUseCase.deleteProblem(problemId)
-  }
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("{problemId}")
+    fun deleteProblem(@PathVariable problemId: Int) {
+        return problemService.deleteProblem(problemId)
+    }
 }

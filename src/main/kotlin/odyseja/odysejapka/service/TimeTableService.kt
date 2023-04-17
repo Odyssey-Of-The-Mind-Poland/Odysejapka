@@ -1,22 +1,20 @@
 package odyseja.odysejapka.service
 
 import odyseja.odysejapka.domain.*
-import odyseja.odysejapka.port.ChangeUseCase
-import odyseja.odysejapka.port.TimeTableUseCase
 import org.springframework.stereotype.Service
 
 @Service
-internal class TimeTableService(
+class TimeTableService(
   private val timeTableRepository: PerformanceRepository,
   private val problemRepository: ProblemRepository,
   private val stageRepository: StageRepository,
   private val ageRepository: AgeRepository,
   private val cityRepository: CityRepository,
-  private val changeUseCase: ChangeUseCase
-) : TimeTableUseCase {
+  private val changeService: ChangeService
+) {
 
-  override fun getAll(): List<Performance> {
-    return timeTableRepository.findAll().sortedBy { it?.spontan ?: "0" }.map {
+  fun getAll(): List<Performance> {
+    return timeTableRepository.findAll().sortedBy { it?.performance ?: "0" }.map {
       Performance(
         it!!.id,
         it.cityEntity.name,
@@ -34,7 +32,7 @@ internal class TimeTableService(
     }
   }
 
-  override fun addPerformance(performances: List<Performance>): List<PerformanceEntity> {
+  fun addPerformance(performances: List<Performance>): List<PerformanceEntity> {
     val cityEntity: CityEntity =
       cityRepository.findFirstByName(performances[0].city) ?: cityRepository.save(
         CityEntity(0, performances[0].city)
@@ -58,11 +56,11 @@ internal class TimeTableService(
     }
     timeTableRepository.saveAll(per)
 
-    changeUseCase.updateVersion()
+    changeService.updateVersion()
     return per
   }
 
-  override fun updatePerformance(performance: Performance) {
+  fun updatePerformance(performance: Performance) {
     val pToEdit = timeTableRepository.findById(performance.id).get()
     pToEdit.cityEntity = getCity(performance.city)
     pToEdit.team = performance.team
@@ -74,10 +72,10 @@ internal class TimeTableService(
     timeTableRepository.save(pToEdit)
   }
 
-  override fun delPerformance(id: Int) {
+  fun delPerformance(id: Int) {
     timeTableRepository.deleteById(id)
 
-    changeUseCase.updateVersion()
+    changeService.updateVersion()
   }
 
   fun getAge(age: Int): AgeEntity {

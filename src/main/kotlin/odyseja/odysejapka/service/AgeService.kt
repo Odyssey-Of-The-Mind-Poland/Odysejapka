@@ -1,33 +1,31 @@
 package odyseja.odysejapka.service
 
 import odyseja.odysejapka.domain.AgeEntity
-import odyseja.odysejapka.port.AgeUseCase
-import odyseja.odysejapka.port.ChangeUseCase
 import org.springframework.stereotype.Service
 
 @Service
-internal class AgeService(
+class AgeService(
   private val ageRepository: AgeRepository,
-  private val changeUseCase: ChangeUseCase
-) : AgeUseCase {
+  private val changeService: ChangeService
+) {
 
-  override fun getAge(): MutableIterable<AgeEntity?> {
+  fun getAge(): MutableIterable<AgeEntity?> {
     return ageRepository.findAll()
   }
 
-  override fun updateAge(ageEntities: List<AgeEntity>) {
+  fun updateAge(ageEntities: List<AgeEntity>) {
     for (age in ageEntities) {
       val toEdit: AgeEntity = ageRepository.findById(age.id).get()
       toEdit.name = age.name
       ageRepository.save(toEdit)
     }
 
-    changeUseCase.updateVersion()
+    changeService.updateVersion()
   }
 
-  override fun deleteAge(ageId: Int) {
+  fun deleteAge(ageId: Int) {
     ageRepository.deleteById(ageId)
 
-    changeUseCase.updateVersion()
+    changeService.updateVersion()
   }
 }

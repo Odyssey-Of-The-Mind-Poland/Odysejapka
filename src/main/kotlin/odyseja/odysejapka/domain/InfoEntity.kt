@@ -17,7 +17,7 @@ class InfoEntity(
   @ManyToOne(fetch = FetchType.LAZY)
   val category: InfoCategoryEntity,
   @Column()
-  val sortNumber: Int
+  var sortNumber: Int
 ) {
   fun toInfo(): Info {
     return Info(id, infoName, infoText, city.id, category.id, sortNumber, category.name)
