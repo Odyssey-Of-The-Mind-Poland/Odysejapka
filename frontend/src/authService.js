@@ -1,6 +1,6 @@
 import auth0 from 'auth0-js';
 
-const client = new auth0.WebAuth({
+export const client = new auth0.WebAuth({
     clientID: '8TI8RllRK5wf5l1Rv85msCTOF0e88lZg',
     domain: 'odyseja.eu.auth0.com',
     responseType: 'token id_token',
