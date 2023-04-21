@@ -3,14 +3,16 @@ package odyseja.odysejapka.rest
 import odyseja.odysejapka.domain.AgeEntity
 import odyseja.odysejapka.service.AgeService
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
-@RestController()
+@RestController
 @RequestMapping("/age")
 class AgeController(private val ageService: AgeService) {
 
   @GetMapping
-  fun getAge(): MutableIterable<AgeEntity?> {
+  fun getAge(principal: Principal): MutableIterable<AgeEntity?> {
     return ageService.getAge()
   }
 

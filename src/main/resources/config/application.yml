@@ -1,5 +1,12 @@
+auth0:
+  audience: https://app.odyseja.org
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://odyseja.eu.auth0.com/
   jpa:
     hibernate:
       ddl-auto: ${DDL_AUTO:update}
