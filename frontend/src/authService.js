@@ -1,4 +1,5 @@
 import auth0 from 'auth0-js';
+import {goto} from "$app/navigation";
 
 export const client = new auth0.WebAuth({
     clientID: '8TI8RllRK5wf5l1Rv85msCTOF0e88lZg',
@@ -17,8 +18,9 @@ export async function login() {
     }
 }
 
-export function logout() {
+export async function logout() {
     client.logout();
+    await goto("/");
 }
 
 export function handleAuthentication(callback) {
