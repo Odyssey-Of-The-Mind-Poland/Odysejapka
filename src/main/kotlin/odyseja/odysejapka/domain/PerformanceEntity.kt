@@ -31,4 +31,33 @@ class PerformanceEntity(
   var spontanDay: String,
   @Column
   var league: String
-)
+) {
+
+  fun toPerformance(): Performance {
+    return Performance(
+      id = id,
+      city = cityEntity.name,
+      team = team,
+      problem = problemEntity.id,
+      age = ageEntity.id,
+      stage = stageEntity.number,
+      performance = performance,
+      spontan = spontan,
+      part = part,
+      performanceDay = performanceDay,
+      spontanDay = spontanDay,
+      league = league
+    )
+  }
+
+  fun toGroup(): PerformanceGroup.Group {
+    return PerformanceGroup.Group(
+      city = cityEntity.name,
+      problem = problemEntity.id,
+      age = ageEntity.id,
+      stage = stageEntity.number,
+      part = part,
+      league = league
+    )
+  }
+}
