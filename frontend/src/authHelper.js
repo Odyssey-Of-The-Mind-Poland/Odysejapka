@@ -3,9 +3,10 @@ import { client } from './authService.js';
 const publicRoutes = ['/'];
 
 export async function checkAuth(location) {
-    console.log('Checking auth for location:', location);
+    const currentLocation = location.route.id;
+    console.log('Checking auth for location:', currentLocation);
 
-    if (publicRoutes.includes(location.pathname)) {
+    if (publicRoutes.includes(currentLocation)) {
         return { authenticated: true };
     }
 
