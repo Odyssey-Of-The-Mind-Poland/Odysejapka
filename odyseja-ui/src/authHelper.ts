@@ -1,17 +1,19 @@
-import { client } from './authService.js';
+import type { Page } from '@sveltejs/kit';
+import { client } from './authService';
 
 const publicRoutes = ['/'];
 
-export async function checkAuth(location) {
+export async function checkAuth(location: Page) {
     const currentLocation = location.route.id;
     console.log('Checking auth for location:', currentLocation);
 
-    if (publicRoutes.includes(currentLocation)) {
+    if (publicRoutes.includes(<string> currentLocation)) {
         return { authenticated: true };
     }
 
     return new Promise((resolve) => {
-        client.checkSession({}, (error, authResult) => {
+        // @ts-ignore
+      client.checkSession({}, (error, authResult) => {
             if (authResult && authResult.accessToken) {
                 resolve({ authenticated: true, accessToken: authResult.accessToken });
             } else {
