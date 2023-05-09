@@ -1,22 +1,8 @@
-FROM node:18.14 as builder
+FROM node:18.14
 
 WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm ci
 
 COPY . .
-
-RUN npm run build
-
-FROM node:18.14-slim
-
-WORKDIR /app
-
-COPY --from=builder /app/package.json .
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/build ./build
 
 EXPOSE 3000
 
