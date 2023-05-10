@@ -16,7 +16,10 @@
       </svelte:fragment>
     </AppBar>
   </svelte:fragment>
-  <slot />
+
+  <div class="p-6">
+    <slot />
+  </div>
   <svelte:fragment slot="sidebarLeft">
     <div class="flex h-full flex-col">
       <nav class="list-nav flex-auto">
