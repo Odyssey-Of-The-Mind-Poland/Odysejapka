@@ -21,7 +21,7 @@ export async function login() {
 
 export async function logout() {
   client.logout();
-  setCookie('id_token', '')
+  setCookie('access_token', '')
   await goto('/');
 }
 
@@ -35,7 +35,7 @@ export function handleAuthentication() {
         console.log('ID Token:', authResult.idToken);
 
         // Save the ID token as a cookie
-        setCookie('id_token', authResult.idToken);
+        setCookie('access_token', authResult.accessToken);
 
         resolve(authResult);
       } else if (error) {
