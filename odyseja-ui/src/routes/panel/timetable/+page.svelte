@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Table, tableMapperValues } from '@skeletonlabs/skeleton';
   import type { TableSource } from '@skeletonlabs/skeleton';
-  import type { Group, Timetable } from 'types';
+  import type { Group, Timetable } from '../types';
 
   export let data: Timetable;
   console.log('data', data)

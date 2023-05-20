@@ -5,6 +5,7 @@
 
   const menuItems = [
     { label: 'Harmonogram', route: '/panel/timetable' },
+    { label: 'Problemy', route: '/panel/problem' },
   ];
 </script>
 

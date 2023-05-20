@@ -30,3 +30,12 @@ export type PerformanceGroup = {
 export type Timetable = {
   timetable: PerformanceGroup[];
 }
+
+export type Problems = {
+  problems: Problem[]
+}
+
+export type Problem = {
+  id: number,
+  name: string
+}
