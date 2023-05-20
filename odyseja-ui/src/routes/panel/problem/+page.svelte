@@ -1,8 +1,17 @@
 <script lang="ts">
+  import { saveProblems } from '../apiService';
   import type { Problems } from '../types';
 
   export let data: Problems;
-  console.log('data', data);
+
+  let initialData = JSON.parse(JSON.stringify(data))
+
+  $: isChanged = JSON.stringify(data) !== JSON.stringify(initialData);
+
+  function save() {
+    saveProblems(data);
+    initialData = {...data};
+  }
 </script>
 
 <div class="card card-hover cursor-pointer mb-6">
@@ -15,4 +24,12 @@
       </label>
     {/each}
   </section>
+  <footer class="card-footer">
+    <button
+            type="button"
+            class="btn btn-md variant-filled-primary"
+            on:click={save}
+            disabled='{!isChanged}'>Zapisz
+    </button>
+  </footer>
 </div>

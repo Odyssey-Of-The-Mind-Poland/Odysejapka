@@ -1,13 +1,15 @@
 <!-- src/components/Sidebar.svelte -->
 <script>
   import {logout} from "../../authService";
-  import {AppBar, AppShell} from "@skeletonlabs/skeleton";
+  import {AppBar, AppShell, Toast} from "@skeletonlabs/skeleton";
 
   const menuItems = [
     { label: 'Harmonogram', route: '/panel/timetable' },
     { label: 'Problemy', route: '/panel/problem' },
   ];
 </script>
+
+<Toast />
 
 <AppShell slotSidebarLeft="bg-surface-500/5 w-56 p-4">
   <svelte:fragment slot="header">

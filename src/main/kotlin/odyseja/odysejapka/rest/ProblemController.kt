@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 class ProblemController(private val problemService: ProblemService) {
 
     @GetMapping
-    fun getProblems(): MutableIterable<ProblemEntity?> {
+    fun getProblems(): List<ProblemEntity?> {
         return problemService.getProblems()
     }
 

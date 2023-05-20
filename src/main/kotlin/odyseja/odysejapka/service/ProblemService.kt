@@ -9,8 +9,8 @@ class ProblemService(
   private val changeService: ChangeService
 ) {
 
-  fun getProblems(): MutableIterable<ProblemEntity?> {
-    return problemRepository.findAll()
+  fun getProblems(): List<ProblemEntity?> {
+    return problemRepository.findAll().sortedBy { it.id }
   }
 
   fun updateProblem(problemEntities: List<ProblemEntity>) {
