@@ -21,13 +21,6 @@ spring:
     url: jdbc:postgresql://localhost:24888/odyseja
     username: odyseja
     password: odyseja
-  # Database migrations
-  liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
-    default-schema: public
-    contexts: default
-    database-change-log-table: ta_databasechangelog
-    database-change-log-lock-table: ta_databasechangeloglock
   sql:
     init:
       mode: never
