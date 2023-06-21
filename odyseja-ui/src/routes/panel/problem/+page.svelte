@@ -10,7 +10,7 @@
 
   function save() {
     saveProblems(data);
-    initialData = {...data};
+    initialData = JSON.parse(JSON.stringify(data));
   }
 </script>
 
