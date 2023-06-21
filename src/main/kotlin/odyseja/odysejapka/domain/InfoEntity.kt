@@ -10,7 +10,7 @@ class InfoEntity(
   val id: Int,
   @Column()
   val infoName: String,
-  @Column()
+  @Column(columnDefinition = "TEXT")
   var infoText: String,
   @ManyToOne(fetch = FetchType.LAZY)
   val city: CityEntity,
