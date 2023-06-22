@@ -9,7 +9,7 @@ export const client = new auth0.WebAuth({
   domain: 'odyseja.eu.auth0.com',
   responseType: 'token id_token',
   audience: 'https://app.odyseja.org',
-  redirectUri: 'http://localhost:5173/callback',
+  redirectUri: CALLBACK_URL,
   scope: 'openid profile'
 });
 
