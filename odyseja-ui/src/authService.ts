@@ -2,6 +2,8 @@
 import auth0 from 'auth0-js';
 import { goto } from '$app/navigation';
 
+export const CALLBACK_URL = import.meta.env.VITE_CALLBACK_URL || "http://localhost:5173/callback";
+
 export const client = new auth0.WebAuth({
   clientID: '8TI8RllRK5wf5l1Rv85msCTOF0e88lZg',
   domain: 'odyseja.eu.auth0.com',
