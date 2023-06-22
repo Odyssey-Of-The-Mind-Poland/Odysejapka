@@ -2,7 +2,7 @@ import { toastStore } from '@skeletonlabs/skeleton';
 import type { ToastSettings } from '@skeletonlabs/skeleton';
 import type { Problem, PerformanceGroup, Timetable, Problems } from './types';
 
-const BASE_URL = "http://localhost:8081"
+export const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:8081";
 
 export async function fetchTimeTable(): Promise<Timetable> {
   const response = await fetch(BASE_URL + '/api/v2/timeTable', {
