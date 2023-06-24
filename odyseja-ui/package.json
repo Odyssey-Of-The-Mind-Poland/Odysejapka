@@ -4,15 +4,17 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"build": "VITE_BASE_URL=http://backend:8081 VITE_CALLBACK_URL=http://localhost:3000/callback vite build",
+		"build": "vite build",
 		"preview": "vite preview",
 		"test": "playwright test",
+		"serve": "vite preview --host",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {
+		"@import-meta-env/unplugin": "^0.4.8",
 		"@playwright/test": "^1.28.1",
 		"@skeletonlabs/skeleton": "^1.2.5",
 		"@sveltejs/adapter-auto": "^2.0.0",
