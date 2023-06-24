@@ -16,7 +16,6 @@ services:
   backend:
     image: 1grzyb1/odyseja:latest
     container_name: backend
-    pull_policy: always
     ports:
       - "8082:8081"
     depends_on:
@@ -29,7 +28,6 @@ services:
   frontend:
     image: 1grzyb1/odyseja-frontend:latest
     container_name: frontend
-    pull_policy: always
     ports:
       - "3000:4173"
     depends_on:
