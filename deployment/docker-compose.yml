@@ -16,25 +16,27 @@ services:
   backend:
     image: 1grzyb1/odyseja:latest
     container_name: backend
+    pull_policy: always
     ports:
       - "8081:8081"
     depends_on:
       - postgres
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/odyseja
-      SPRING_DATASOURCE_PASSWORD: odyseja
+      SPRING_DATASOURCE_PASSWORD: "${POSTGRES_PASSWORD:-odyseja}"
       SPRING_DATASOURCE_USSERNAME: odyseja
 
   frontend:
     image: 1grzyb1/odyseja-frontend:latest
     container_name: frontend
+    pull_policy: always
     ports:
       - "3000:4173"
     depends_on:
       - backend
     environment:
-      - VITE_BASE_URL=http://localhost:8081
-      - VITE_CALLBACK_URL=http://172.24.0.4:4173/callback
+      VITE_BASE_URL: "${BACKEND_URL:-http://localhost:8081}"
+      VITE_CALLBACK_URL: "${CALLBACK_URL:-http://localhost:3000/callback}"
 
 volumes:
   postgres-data:

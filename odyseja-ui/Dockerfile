@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 4173
 
 CMD npm ci && npm run build && npm run serve
