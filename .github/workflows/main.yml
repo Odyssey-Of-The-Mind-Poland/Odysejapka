@@ -5,9 +5,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -16,23 +14,6 @@ jobs:
     
     - name: Build Spring app
       run: ./gradlew bootjar
-      
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
-        
-    - name: Cache Node.js modules
-      uses: actions/cache@v3
-      with:
-        path: odyseja-ui/node_modules
-        key: ${{ runner.OS }}-node-${{ hashFiles('odyseja-ui/package-lock.json') }}
-    
-    - name: Install and build frontend app
-      run: |
-        cd odyseja-ui
-        npm ci
-        npm run build
         
     - name: Login into docker registry
       uses: docker/login-action@v2.1.0
