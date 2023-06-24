@@ -17,14 +17,14 @@ services:
     image: 1grzyb1/odyseja:latest
     container_name: backend
     pull_policy: always
-    ports:
-      - "8082:8081"
+    network_mode: host
     depends_on:
       - postgres
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/odyseja
       SPRING_DATASOURCE_PASSWORD: "${POSTGRES_PASSWORD:-odyseja}"
       SPRING_DATASOURCE_USSERNAME: odyseja
+      SERVER_PORT: 8082
 
   frontend:
     image: 1grzyb1/odyseja-frontend:latest
