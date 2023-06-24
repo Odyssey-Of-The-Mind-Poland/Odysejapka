@@ -35,15 +35,11 @@ jobs:
         push: true
         tags: 1grzyb1/odyseja-frontend:latest
 
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: alex-ac/github-action-ssh-docker-compose@master
-        name: Deploy to dev environment
-        with:
-          ssh_host: 5.9.161.246
-          ssh_private_key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
-          ssh_user: ${{ secrets.DEPLOY_USERNAME }}
-          docker_compose_prefix: dev
-          docker_compose_filename: deployment/docker-compose.yml
+    - uses: alex-ac/github-action-ssh-docker-compose@master
+      name: Deploy to dev environment
+      with:
+        ssh_host: 5.9.161.246
+        ssh_private_key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+        ssh_user: ${{ secrets.DEPLOY_USERNAME }}
+        docker_compose_prefix: dev
+        docker_compose_filename: deployment/docker-compose.yml
