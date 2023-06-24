@@ -2,7 +2,7 @@ version: '3.8'
 services:
   postgres:
     image: docker.io/library/postgres:12
-    container_name: postgres
+    container_name: postgres-odyseja
     ports:
       - "5433:5432"
     environment:
