@@ -29,11 +29,12 @@ services:
     image: 1grzyb1/odyseja-frontend:latest
     container_name: frontend
     ports:
-      - "3000:3000"
+      - "3000:4173"
     depends_on:
       - backend
     environment:
-      - VITE_BASE_URL=http://backend:8081
+      - VITE_BASE_URL=http://localhost:8081
+      - VITE_CALLBACK_URL=http://172.24.0.4:4173/callback
 
 volumes:
   postgres-data:
