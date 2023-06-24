@@ -46,5 +46,4 @@ jobs:
           ssh_private_key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           ssh_user: ${{ secrets.DEPLOY_USERNAME }}
           docker_compose_prefix: dev
-          use_stack: 'true'
           docker_compose_filename: deployment/docker-compose.yml
