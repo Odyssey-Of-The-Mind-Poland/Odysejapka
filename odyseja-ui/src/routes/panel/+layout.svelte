@@ -1,7 +1,8 @@
 <!-- src/components/Sidebar.svelte -->
 <script>
   import {logout} from "../../authService";
-  import {AppBar, AppShell, Toast} from "@skeletonlabs/skeleton";
+  import {AppBar, AppShell, LightSwitch, Toast} from "@skeletonlabs/skeleton";
+  import Navigation from "$lib/Navigation/Navigation.svelte";
 
   const menuItems = [
     { label: 'Harmonogram', route: '/panel/timetable' },
@@ -15,8 +16,9 @@
   <svelte:fragment slot="header">
     <AppBar>
       <svelte:fragment slot="lead">
-        <strong class="text-xl uppercase">Odyseja Umysłu</strong>
+        <strong class="text-2xl">Odyseja Umysłu</strong>
       </svelte:fragment>
+        <LightSwitch class="float-right"/>
     </AppBar>
   </svelte:fragment>
 
@@ -25,14 +27,7 @@
   </div>
   <svelte:fragment slot="sidebarLeft">
     <div class="flex h-full flex-col">
-      <nav class="list-nav flex-auto">
-        <ul>
-          {#each menuItems as item}
-            <li><a href="{item.route}">{item.label}</a></li>
-          {/each}
-        </ul>
-      </nav>
-
+        <Navigation menuItems={menuItems} />
       <button type="button" class="btn btn-sm variant-filled-primary" on:click={logout}>
         Logout
       </button>
