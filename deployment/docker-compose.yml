@@ -18,7 +18,7 @@ services:
     container_name: backend
     pull_policy: always
     ports:
-      - "8081:8081"
+      - "8082:8081"
     depends_on:
       - postgres
     environment:
@@ -35,8 +35,8 @@ services:
     depends_on:
       - backend
     environment:
-      VITE_BASE_URL: "${BACKEND_URL:-http://localhost:8081}"
-      VITE_CALLBACK_URL: "${CALLBACK_URL:-http://localhost:3000/callback}"
+      PUBLIC_BASE_URL: "${BACKEND_URL:-http://localhost:8082}"
+      PUBLIC_CALLBACK_URL: "${CALLBACK_URL:-http://localhost:3000/callback}"
 
 volumes:
   postgres-data:
