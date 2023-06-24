@@ -45,4 +45,6 @@ jobs:
           ssh_host: 5.9.161.246
           ssh_user: ${{ secrets.DEPLOY_USERNAME }}
           ssh_private_key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
-          docker_compose_prefix: myapp
+          ssh_host_public_key: ${{ secrets.DEPLOY_PUBLIC_KEY }}
+          docker_compose_prefix: dev
+          docker_compose_filename: deployment/docker-compose.yml
