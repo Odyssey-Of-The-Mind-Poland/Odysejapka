@@ -33,11 +33,9 @@ export function handleAuthentication() {
     // @ts-ignore
     client.parseHash((error, authResult) => {
       if (authResult && authResult.accessToken && authResult.idToken) {
-        // The authentication was successful, and you have the access token and ID token
         console.log('Access Token:', authResult.accessToken);
         console.log('ID Token:', authResult.idToken);
 
-        // Save the ID token as a cookie
         setCookie('access_token', authResult.accessToken);
 
         resolve(authResult);
