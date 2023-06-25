@@ -1,6 +1,6 @@
 import { toastStore } from '@skeletonlabs/skeleton';
 import type { ToastSettings } from '@skeletonlabs/skeleton';
-import type { Problem, PerformanceGroup, Timetable, Problems } from './types';
+import type { Problem, PerformanceGroup, Timetable, Problems, Performance } from './types';
 import { env } from '$env/dynamic/public';
 
 export const BASE_URL = env.PUBLIC_BASE_URL || "http://localhost:8081";
@@ -19,6 +19,23 @@ export async function fetchTimeTable(): Promise<Timetable> {
 
   const timeTable: PerformanceGroup[] = await response.json();
   return {timetable: timeTable} as Timetable;
+}
+
+export async function savePerformance(performance: Performance) {
+  const response = await fetch(BASE_URL + '/timeTable', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: getBearer(),
+    },
+    body: JSON.stringify(performance)
+  })
+  if (!response.ok) {
+    showSadToast('Coś poszło nie tak :c')
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  showHappyToast('Występ zapisany pomyślnie')
 }
 
 export async function fetchProblems(): Promise<Problems> {
@@ -46,7 +63,7 @@ export async function saveProblems(problems: Problems) {
     body: JSON.stringify(problems.problems)
   })
   if (!response.ok) {
-    showHappyToast('Coś poszło nie tak :c')
+    showSadToast('Coś poszło nie tak :c')
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
