@@ -5,20 +5,6 @@ on:
     branches: [ "master" ]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      -  name: Deploy dev env
-         uses: appleboy/ssh-action@master
-         with:
-           host: 5.9.161.246
-           username: ${{ secrets.DEPLOY_USERNAME }}
-           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
-           script: |
-             cd odysejapka/Odysejapka
-             git pull
-             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} docker-compose -f deployment/docker-compose.yml up -d
-
   build:
     runs-on: ubuntu-latest
 
@@ -48,3 +34,14 @@ jobs:
           context: ./odyseja-ui
           push: true
           tags: 1grzyb1/odyseja-frontend:latest
+
+      - name: Deploy dev env
+        uses: appleboy/ssh-action@master
+        with:
+          host: 5.9.161.246
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          script: |
+            cd odysejapka/Odysejapka
+            git pull
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} docker-compose -f deployment/docker-compose.yml up -d
