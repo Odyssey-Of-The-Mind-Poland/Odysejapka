@@ -37,6 +37,8 @@ jobs:
 
     - uses: alex-ac/github-action-ssh-docker-compose@master
       name: Deploy to dev environment
+      env:
+        POSTGRES_PASSWORD: test
       with:
         ssh_host: 5.9.161.246
         ssh_private_key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
