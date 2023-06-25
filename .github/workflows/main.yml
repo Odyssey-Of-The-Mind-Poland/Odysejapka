@@ -17,7 +17,7 @@ jobs:
            script: |
              cd odysejapka/Odysejapka
              git pull
-             POSTGRES_PASSWORD=test docker-compose -f deployment/docker-compose.yml up -d
+             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} docker-compose -f deployment/docker-compose.yml up -d
 
   build:
     runs-on: ubuntu-latest
