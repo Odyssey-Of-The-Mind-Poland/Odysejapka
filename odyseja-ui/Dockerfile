@@ -4,10 +4,12 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN yarn install --pure-lockfile
 
 COPY . .
 
+RUN npm run build
+
 EXPOSE 4173
 
-CMD npm ci && npm run build && npm run serve
+CMD ["npm", "run", "serve"]
