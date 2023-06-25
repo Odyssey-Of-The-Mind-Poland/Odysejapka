@@ -14,7 +14,7 @@
   }
 </script>
 
-<div class="card card-hover cursor-pointer mb-6">
+<div class="card mb-6">
   <header class="card-header"><h2>Problemy</h2></header>
   <section class="p-4">
     {#each data.problems as problem}

@@ -16,7 +16,7 @@
 	"devDependencies": {
 		"@import-meta-env/unplugin": "^0.4.8",
 		"@playwright/test": "^1.28.1",
-		"@skeletonlabs/skeleton": "^1.2.5",
+		"@skeletonlabs/skeleton": "^1.8.0",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/adapter-node": "^1.2.4",
 		"@sveltejs/kit": "^1.5.0",
