@@ -44,4 +44,7 @@ jobs:
           script: |
             cd odysejapka/Odysejapka
             git pull
-            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} docker-compose -f deployment/docker-compose.yml up -d
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            export CALLBACK_URL='http://grzybek.snet.ovh:3000/callback'
+            export BASE_URL='http://grzybek.snet.ovh:8082'
+            docker-compose -f deployment/docker-compose.yml up -d
