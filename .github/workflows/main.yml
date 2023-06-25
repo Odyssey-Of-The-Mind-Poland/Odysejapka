@@ -35,13 +35,13 @@ jobs:
         push: true
         tags: 1grzyb1/odyseja-frontend:latest
 
-    - uses: alex-ac/github-action-ssh-docker-compose@master
-      name: Deploy to dev environment
-      env:
-        POSTGRES_PASSWORD: test
+    - name: Deploy dev env
+      uses: appleboy/ssh-action@master
       with:
-        ssh_host: 5.9.161.246
-        ssh_private_key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
-        ssh_user: ${{ secrets.DEPLOY_USERNAME }}
-        docker_compose_prefix: dev
-        docker_compose_filename: deployment/docker-compose.yml
+        host: 5.9.161.246
+        username: ${{ secrets.DEPLOY_USERNAME }}
+        key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+        script: |
+          cd /odysejapka/Odysejapka
+          git pull
+          POSTGRES_PASSWORD=test docker-compose -f deployment/docker-compose.yml up -d
