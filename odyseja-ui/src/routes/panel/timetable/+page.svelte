@@ -1,4 +1,3 @@
-
 <script lang="ts">
     import {Table, tableMapperValues} from '@skeletonlabs/skeleton';
     import type {TableSource} from '@skeletonlabs/skeleton';
@@ -35,8 +34,8 @@
 
     function mapPerformancesToTable(performances: PerformanceComponent[]): TableSource {
         return {
-            head: ['Id', 'City', 'Team', 'Performance', 'Spontan'],
-            body: tableMapperValues(performances, ['city', 'team', 'performance', 'spontan']),
+            head: ['Zespół', 'Dzień występu', 'Godzina występu', 'Dzień spontanu', 'Spontan'],
+            body: tableMapperValues(performances, ['team', 'performanceDay', 'performance', 'spontanDay', 'spontan']),
             meta: tableMapperValues(performances, ['id', 'city', 'team', 'performance', 'spontan']),
             foot: ['Total', '', `<code class="code">${performances.length}</code>`]
         };
