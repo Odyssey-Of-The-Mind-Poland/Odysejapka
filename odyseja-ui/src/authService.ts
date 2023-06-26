@@ -2,6 +2,7 @@
 import auth0 from 'auth0-js';
 import { goto } from '$app/navigation';
 import { env } from '$env/dynamic/public';
+import Token from "./token";
 
 export const CALLBACK_URL = env.PUBLIC_CALLBACK_URL || "http://localhost:5173/callback";
 
@@ -35,6 +36,12 @@ export function handleAuthentication() {
       if (authResult && authResult.accessToken && authResult.idToken) {
         console.log('Access Token:', authResult.accessToken);
         console.log('ID Token:', authResult.idToken);
+        let token = new Token(authResult.accessToken);
+
+        if (!token.getUserRoles().includes('ADMIN')) {
+          client.logout();
+          reject('User is not an admin');
+        }
 
         setCookie('access_token', authResult.accessToken);
 

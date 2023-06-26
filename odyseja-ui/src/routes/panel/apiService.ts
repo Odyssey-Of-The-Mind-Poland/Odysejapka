@@ -53,7 +53,12 @@ function showToast(message: string, background: string) {
 }
 
 function getBearer(): string {
-  return 'Bearer ' + getCookie("access_token");
+  try {
+    return 'Bearer ' + getCookie("access_token");
+  }
+  catch (e) {
+    return '';
+  }
 }
 
 function getCookie(name: string): string {
