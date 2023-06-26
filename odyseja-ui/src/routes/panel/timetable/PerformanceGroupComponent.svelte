@@ -1,27 +1,29 @@
 <script lang="ts">
-    import type {Performance} from '../types';
+    import type {PerformanceGroup} from '../types';
     import {savePerformance} from '../apiService';
 
-    export let performance: Performance;
+    export let performanceGroup: PerformanceGroup;
     export let onSave;
 
     async function save() {
-        await savePerformance(performance);
+        for (let performance of performanceGroup.performances) {
+            performance.city = performanceGroup.group.city;
+            performance.problem = performanceGroup.group.problem;
+            performance.age = performanceGroup.group.age;
+            performance.stage = performanceGroup.group.stage;
+            performance.part = performanceGroup.group.part;
+            performance.league = performanceGroup.group.league;
+            await savePerformance(performance);
+        }
         onSave();
     }
-
 </script>
 
 <form class="space-y-1.5">
-    <label class="label">
-        <span>Drużyna</span>
-        <input class="input" type="text" bind:value={performance.team}/>
-    </label>
-
     <div class="flex flex-wrap space-x-5">
         <label class="label flex-grow">
             <span>Problem</span>
-            <select class="select" bind:value={performance.problem}>
+            <select class="select" bind:value={performanceGroup.group.problem}>
                 <option value={0}>Juniorki</option>
                 <option value={1}>1</option>
                 <option value={2}>2</option>
@@ -33,7 +35,7 @@
 
         <label class="label flex-grow">
             <span>Grupa wiekowa</span>
-            <select class="select" type="number" bind:value={performance.age}>
+            <select class="select" type="number" bind:value={performanceGroup.group.age}>
                 <option value={0}>Juniorki</option>
                 <option value={1}>1</option>
                 <option value={2}>2</option>
@@ -45,7 +47,7 @@
 
         <label class="label flex-grow">
             <span>Scena</span>
-            <select class="select" type="number" bind:value={performance.stage}>
+            <select class="select" type="number" bind:value={performanceGroup.group.stage}>
                 <option value={1}>1</option>
                 <option value={2}>2</option>
                 <option value={3}>3</option>
@@ -60,49 +62,19 @@
     </div>
 
     <div class="flex flex-wrap space-x-5">
-        <label class="label flex-grow flex-1">
-            <span>Dzień występu</span>
-            <select class="select" bind:value={performance.performanceDay}>
-                <option value="Sobota">Sobota</option>
-                <option value="Niedziela">Niedziela</option>
-            </select>
-        </label>
-
-        <label class="label flex-grow flex-1">
-            <span>Godzina występu</span>
-            <input class="input" type="text" bind:value={performance.performance}/>
-        </label>
-    </div>
-
-    <div class="flex flex-wrap space-x-5">
-        <label class="label flex-grow flex-1">
-            <span>Dzień spontanu</span>
-            <select class="select" bind:value={performance.spontanDay}>
-                <option value="Sobota">Sobota</option>
-                <option value="Niedziela">Niedziela</option>
-            </select>
-        </label>
-
-
-        <label class="label flex-grow flex-1">
-            <span>Godzina spontanu</span>
-            <input class="input" type="text" bind:value={performance.spontan}/>
-        </label>
-    </div>
-
-    <div class="flex flex-wrap space-x-5">
-        <label class="label flex-grow flex-1">
+        <label class="label flex-grow">
             <span>Część</span>
-            <select class="select" bind:value={performance.part}>
+            <select class="select" type="number" bind:value={performanceGroup.group.part}>
                 <option value={0}>0</option>
                 <option value={1}>1</option>
                 <option value={2}>2</option>
             </select>
         </label>
 
-        <label class="label flex-grow flex-1">
+        <label class="label flex-grow">
             <span>Liga</span>
-            <select class="select" bind:value={performance.league}>
+            <select class="select" type="text" bind:value={performanceGroup.group.league}>
+                <option value=""></option>
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="C">C</option>

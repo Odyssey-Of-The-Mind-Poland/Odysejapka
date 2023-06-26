@@ -1,8 +1,9 @@
 <script lang="ts">
     import {Table, tableMapperValues} from '@skeletonlabs/skeleton';
     import type {TableSource} from '@skeletonlabs/skeleton';
-    import type {Group, Timetable, Performance} from '../types';
+    import type {Group, Timetable, Performance, PerformanceGroup} from '../types';
     import PerformanceComponent from "./Performance.svelte";
+    import PerformanceGroupComponent from "./PerformanceGroupComponent.svelte";
     import cloneDeep from 'lodash/cloneDeep';
     import {fetchTimeTable} from "../apiService";
     import {compareGroups, comparePerformances} from "../types";
@@ -12,6 +13,9 @@
     let performanceDialog: HTMLDialogElement;
     let performance: Performance | undefined = {} as Performance;
 
+    let performanceGroupDialog: HTMLDialogElement;
+    let selectedPerformanceGroup: PerformanceGroup | undefined = data.timetable[0] as PerformanceGroup;
+
     function sortTimeTable(timeTable: Timetable): Timetable {
         timeTable.timetable.sort((a, b) => compareGroups(a.group, b.group));
         timeTable.timetable.forEach(performanceGroup => {
@@ -20,16 +24,23 @@
         return cloneDeep(timeTable) as Timetable;
     }
 
-    function onSelected(meta: any): void {
-        console.log('on:selected', meta);
+    function onPerformanceSelected(meta: any): void {
         performance = data.timetable.flatMap(group => group.performances).find(performance => performance.id === meta.detail[0]);
         performanceDialog.showModal();
     }
+
+
+    function onPerformanceGroupSelected(performanceGroup: PerformanceGroup): void {
+        selectedPerformanceGroup = performanceGroup;
+        performanceGroupDialog.showModal();
+    }
+
 
     async function onPerformanceSaved() {
         let timetable = await fetchTimeTable();
         data = sortTimeTable(timetable);
         performanceDialog.close();
+        performanceGroupDialog.close();
     }
 
     function mapPerformancesToTable(performances: PerformanceComponent[]): TableSource {
@@ -55,10 +66,11 @@
 </script>
 
 {#each data.timetable as performanceGroup (performanceGroup.group)}
-    <div class="card card-hover cursor-pointer mb-6" on:click={() => onSelected(performanceGroup.group)}>
+    <div class="card card-hover cursor-pointer mb-6"
+         on:click={() => onPerformanceGroupSelected(performanceGroup)}>
         <header class="card-header">{getGroupTitle(performanceGroup.group)}</header>
         <section class="p-4">
-            <Table source={mapPerformancesToTable(performanceGroup.performances)} on:selected={onSelected}
+            <Table source={mapPerformancesToTable(performanceGroup.performances)} on:selected={onPerformanceSelected}
                    interactive="true"/>
         </section>
     </div>
@@ -76,4 +88,14 @@
     <PerformanceComponent performance={cloneDeep(performance)} onSave={onPerformanceSaved}/>
 </dialog>
 
+
+<dialog bind:this={performanceGroupDialog} class="card p-10 w-1/2">
+    <button class="absolute top-0 right-0 m-2" type="button" on:click={() => performanceGroupDialog.close()}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+    </button>
+
+    <PerformanceGroupComponent performanceGroup={cloneDeep(selectedPerformanceGroup)} onSave={onPerformanceSaved}/>
+</dialog>
 
