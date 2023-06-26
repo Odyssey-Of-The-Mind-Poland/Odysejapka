@@ -86,22 +86,22 @@
     </div>
 
     <div class="flex flex-wrap space-x-5">
-        <label class="label flex-grow">
+        <label class="label flex-grow flex-1">
             <span>Dzień występu</span>
-            <input class="input" type="text" bind:value={performance.performanceDay}/>
-        </label>
-
-        <label class="label flex-grow">
-            <span>Godzina występu</span>
             <select class="select" bind:value={selectedPerformanceDay}>
                 <option value="Sobota">Sobota</option>
                 <option value="Niedziela">Niedziela</option>
             </select>
         </label>
+
+        <label class="label flex-grow flex-1">
+            <span>Godzina występu</span>
+            <input class="input" type="text" bind:value={performance.performance}/>
+        </label>
     </div>
 
     <div class="flex flex-wrap space-x-5">
-        <label class="label flex-grow">
+        <label class="label flex-grow flex-1">
             <span>Dzień spontanu</span>
             <select class="select" bind:value={selectedSpontanDay}>
                 <option value="Sobota">Sobota</option>
@@ -110,14 +110,14 @@
         </label>
 
 
-        <label class="label flex-grow">
+        <label class="label flex-grow flex-1">
             <span>Godzina spontanu</span>
             <input class="input" type="text" bind:value={performance.spontan}/>
         </label>
     </div>
 
     <div class="flex flex-wrap space-x-5">
-        <label class="label flex-grow">
+        <label class="label flex-grow flex-1">
             <span>Część</span>
             <select class="select" bind:value={selectedPart}>
                 <option value={0}>0</option>
@@ -126,7 +126,7 @@
             </select>
         </label>
 
-        <label class="label flex-grow">
+        <label class="label flex-grow flex-1">
             <span>Liga</span>
             <select class="select" bind:value={selectedLeague}>
                 <option value={0}>0</option>
