@@ -11,6 +11,7 @@
 
 
     export let data: Timetable;
+    let initialData = cloneDeep(data);
 
     let performanceDialog: HTMLDialogElement;
     let performance: Performance | undefined = {} as Performance;
@@ -29,7 +30,7 @@
 
     $: {
         if (data) {
-            let filtered = data.timetable.filter((item) => {
+            let filtered = initialData.timetable.filter((item) => {
                 return selectedStages.includes(item.group.stage) &&
                     selectedAges.includes(item.group.age) &&
                     selectedProblems.includes(item.group.problem);
