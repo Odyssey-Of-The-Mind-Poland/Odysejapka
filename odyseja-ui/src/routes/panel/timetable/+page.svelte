@@ -8,6 +8,7 @@
     import {fetchTimeTable} from "../apiService";
     import {compareGroups, comparePerformances, getGroupTitle} from "../types";
     import Filter from "./Filter.svelte";
+    import Dialog from "$lib/Dialog.svelte";
 
 
     export let data: Timetable;
@@ -35,6 +36,8 @@
                     selectedAges.includes(item.group.age) &&
                     selectedProblems.includes(item.group.problem);
             });
+
+            console.log('filtered', filtered)
 
             data = sortTimeTable({timetable: filtered} as Timetable);
         }
@@ -64,6 +67,7 @@
     async function onPerformanceSaved() {
         let timetable = await fetchTimeTable();
         data = sortTimeTable(timetable);
+        initialData = data
         performanceDialog.close();
         performanceGroupDialog.close();
     }
@@ -95,24 +99,11 @@
 
 <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
 
-<dialog bind:this={performanceDialog} class="card p-10 w-1/2">
-    <button class="absolute top-0 right-0 m-2" type="button" on:click={() => performanceDialog.close()}>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-    </button>
-
+<Dialog bind:dialog={performanceDialog}>
     <PerformanceComponent performance={cloneDeep(performance)} onSave={onPerformanceSaved}/>
-</dialog>
+</Dialog>
 
 
-<dialog bind:this={performanceGroupDialog} class="card p-10 w-1/2">
-    <button class="absolute top-0 right-0 m-2" type="button" on:click={() => performanceGroupDialog.close()}>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-    </button>
-
+<Dialog bind:dialog={performanceGroupDialog}>
     <PerformanceGroupComponent performanceGroup={cloneDeep(selectedPerformanceGroup)} onSave={onPerformanceSaved}/>
-</dialog>
-
+</Dialog>
