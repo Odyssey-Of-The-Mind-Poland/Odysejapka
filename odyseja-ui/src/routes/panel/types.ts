@@ -8,6 +8,18 @@ export type Group = {
   league: string;
 }
 
+export function getGroupTitle(group: Group): string {
+  let name = `Scena: ${group.stage} • Problem ${group.problem} • Gr. wiekowa ${group.age}`;
+  if (group.part) {
+    name = `${name} • Część ${group.part}`;
+  }
+
+  if (group.league) {
+    name = `${name} • Liga ${group.league}`;
+  }
+  return name;
+}
+
 export function compareGroups(a: Group, b: Group): number {
   if (a.problem < b.problem) return -1;
   if (a.problem > b.problem) return 1;

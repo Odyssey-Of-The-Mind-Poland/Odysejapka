@@ -1,12 +1,14 @@
 <script lang="ts">
     import {Table, tableMapperValues} from '@skeletonlabs/skeleton';
     import type {TableSource} from '@skeletonlabs/skeleton';
-    import type {Group, Timetable, Performance, PerformanceGroup} from '../types';
+    import type {Timetable, Performance, PerformanceGroup} from '../types';
     import PerformanceComponent from "./Performance.svelte";
     import PerformanceGroupComponent from "./PerformanceGroupComponent.svelte";
     import cloneDeep from 'lodash/cloneDeep';
     import {fetchTimeTable} from "../apiService";
-    import {compareGroups, comparePerformances} from "../types";
+    import {compareGroups, comparePerformances, getGroupTitle} from "../types";
+    import Filter from "./Filter.svelte";
+
 
     export let data: Timetable;
 
@@ -15,6 +17,28 @@
 
     let performanceGroupDialog: HTMLDialogElement;
     let selectedPerformanceGroup: PerformanceGroup | undefined = data.timetable[0] as PerformanceGroup;
+
+    let stages = [1, 2, 3, 4, 5, 6, 7]
+    let selectedStages = [1, 2, 3, 4, 5, 6, 7]
+
+    let ages = [0, 1, 2, 3, 4, 5]
+    let selectedAges = [0, 1, 2, 3, 4, 5]
+
+    let problems = [0, 1, 2, 3, 4, 5]
+    let selectedProblems = [0, 1, 2, 3, 4, 5]
+
+    $: {
+        if (data) {
+            let filtered = data.timetable.filter((item) => {
+                return selectedStages.includes(item.group.stage) &&
+                    selectedAges.includes(item.group.age) &&
+                    selectedProblems.includes(item.group.problem);
+            });
+
+            data = sortTimeTable({timetable: filtered} as Timetable);
+        }
+    }
+
 
     function sortTimeTable(timeTable: Timetable): Timetable {
         timeTable.timetable.sort((a, b) => compareGroups(a.group, b.group));
@@ -51,19 +75,11 @@
             foot: ['Total', '', `<code class="code">${performances.length}</code>`]
         };
     }
-
-    function getGroupTitle(group: Group): string {
-        let name = `Scena: ${group.stage} • Problem ${group.problem} • Gr. wiekowa ${group.age}`;
-        if (group.part) {
-            name = `${name} • Część ${group.part}`;
-        }
-
-        if (group.league) {
-            name = `${name} • Liga ${group.league}`;
-        }
-        return name;
-    }
 </script>
+
+<Filter stages={stages} bind:selectedStages={selectedStages}
+        ages={ages} bind:selectedAges={selectedAges}
+        problems={problems} bind:selectedProblems={selectedProblems}/>
 
 {#each data.timetable as performanceGroup (performanceGroup.group)}
     <div class="card card-hover cursor-pointer mb-6"
