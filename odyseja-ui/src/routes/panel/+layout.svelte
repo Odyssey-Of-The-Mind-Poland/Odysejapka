@@ -12,7 +12,7 @@
 
 <Toast />
 
-<AppShell slotSidebarLeft="bg-surface-500/5 w-56 p-4">
+<AppShell slotSidebarLeft="bg-surface-500/5 w-64 p-4">
   <svelte:fragment slot="header">
     <AppBar>
       <svelte:fragment slot="lead">
