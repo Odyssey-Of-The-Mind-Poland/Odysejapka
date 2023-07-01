@@ -7,7 +7,6 @@
   import Icon from '@iconify/svelte'
 
   const menuItems = [
-    { label: 'Panel główny', route: '/panel', icon: 'ic:round-space-dashboard'},
     { label: 'Harmonogram', route: '/panel/timetable', icon: 'ic:round-calendar-view-month' },
     { label: 'Problemy', route: '/panel/problem', icon: 'ic:round-format-list-bulleted' },
   ];
@@ -15,8 +14,7 @@
 
 <Toast />
 
-<AppShell slotSidebarLeft="bg-surface-500/5 w-64 p-4 mx-4 my-4 outline rounded-lg">
-
+<AppShell slotSidebarLeft="bg-surface-500/5 w-64 p-4">
   <div class="p-6">
     <slot />
   </div>

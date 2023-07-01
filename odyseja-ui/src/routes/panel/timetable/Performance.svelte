@@ -115,4 +115,10 @@
             class="btn btn-md variant-filled-primary"
             on:click={save}>Zapisz
     </button>
+
+  <button
+          type="button"
+          class="btn btn-md variant-filled-primary"
+          on:click={save}>Delete
+  </button>
 </form>

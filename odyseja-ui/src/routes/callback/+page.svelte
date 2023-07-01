@@ -6,7 +6,7 @@
   onMount(async () => {
       try {
           await handleAuthentication();
-          await goto('/panel');
+          await goto('/panel/timetable');
       } catch (error) {
           console.log(error);
           await goto('/');
