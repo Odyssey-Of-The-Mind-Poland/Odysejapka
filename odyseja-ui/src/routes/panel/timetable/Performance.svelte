@@ -109,6 +109,7 @@
         <label class="label flex-grow flex-1">
             <span>Liga</span>
             <select class="select" bind:value={performance.league}>
+                <option value=""></option>
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="C">C</option>
@@ -116,15 +117,17 @@
         </label>
     </div>
 
-    <button
-            type="button"
-            class="btn btn-md variant-filled-primary"
-            on:click={save}>Zapisz
-    </button>
-
   <button
           type="button"
-          class="btn btn-md variant-filled-error ml-4"
-          on:click={deletePerf}>Usuń
+          class="btn btn-md variant-filled-primary"
+          on:click={save}>Zapisz
   </button>
+
+  {#if (performance.id != -1)}
+    <button
+            type="button"
+            class="btn btn-md variant-filled-error ml-4"
+            on:click={deletePerf}>Usuń
+    </button>
+  {/if}
 </form>

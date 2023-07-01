@@ -17,11 +17,18 @@ class TimeTableController(
     }
 
     @Secured("ROLE_ADMIN")
-    @PostMapping()
+    @PostMapping("/load")
     @ResponseBody
     fun addPerformance(@RequestBody performances: List<Performance>): List<PerformanceEntity> {
       return timeTableService.addPerformance(performances)
     }
+
+//  @Secured("ROLE_ADMIN")
+  @PostMapping()
+  @ResponseBody
+  fun addPerformance(@RequestBody performance: Performance): PerformanceEntity {
+    return timeTableService.addPerformance(performance)
+  }
 
     @Secured("ROLE_ADMIN")
     @PutMapping

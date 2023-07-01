@@ -80,11 +80,39 @@
             foot: ['Total', '', `<code class="code">${performances.length}</code>`]
         };
     }
+
+    async function addPerformance() {
+      performance = {
+        id: -1,
+        city: "",
+        team: "",
+        problem: 0,
+        age: 0,
+        stage: 0,
+        performance: "",
+        spontan: "",
+        part: 0,
+        performanceDay: "",
+        spontanDay: "",
+        league: "",
+      };
+      performanceDialog.showModal();
+    }
 </script>
 
-<Filter stages={stages} bind:selectedStages={selectedStages}
-        ages={ages} bind:selectedAges={selectedAges}
-        problems={problems} bind:selectedProblems={selectedProblems}/>
+<div class="flex flex-wrap space-x-5">
+  <div class="flex-grow flex-4 space-x-5">
+    <Filter stages={stages} bind:selectedStages={selectedStages}
+            ages={ages} bind:selectedAges={selectedAges}
+            problems={problems} bind:selectedProblems={selectedProblems}/>
+  </div>
+    <button
+            type="button"
+            class="btn btn-xl variant-filled-primary h-full"
+            on:click={addPerformance}>Dodaj występ
+    </button>
+</div>
+
 
 {#each data.timetable as performanceGroup (performanceGroup.group)}
     <div class="card card-hover cursor-pointer mb-6"

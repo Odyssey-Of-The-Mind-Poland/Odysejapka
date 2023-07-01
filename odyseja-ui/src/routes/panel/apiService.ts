@@ -23,7 +23,7 @@ export async function fetchTimeTable(): Promise<Timetable> {
 
 export async function savePerformance(performance: Performance) {
   const response = await fetch(BASE_URL + '/timeTable', {
-    method: 'PUT',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: getBearer(),

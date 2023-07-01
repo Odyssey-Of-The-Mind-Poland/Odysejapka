@@ -60,6 +60,27 @@ class TimeTableService(
     return per
   }
 
+  fun addPerformance(performance: Performance): PerformanceEntity {
+    val per = PerformanceEntity(
+      performance.id,
+      getCity(performance.city),
+      performance.team,
+      getProblem(performance.problem),
+      getAge(performance.age),
+      getStage(performance.stage, performance.city),
+      performance.performance,
+      performance.spontan,
+      performance.part,
+      performance.performanceDay,
+      performance.spontanDay,
+      performance.league
+    )
+    timeTableRepository.save(per)
+
+    changeService.updateVersion()
+    return per
+  }
+
   fun updatePerformance(performance: Performance) {
     val pToEdit = timeTableRepository.findById(performance.id).get()
     pToEdit.cityEntity = getCity(performance.city)
