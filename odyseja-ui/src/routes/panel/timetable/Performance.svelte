@@ -1,14 +1,20 @@
 <script lang="ts">
-    import type {Performance} from '../types';
-    import {savePerformance} from '../apiService';
+  import { deletePerformance, savePerformance } from '../apiService';
+  import type { Performance } from '../types';
 
-    export let performance: Performance;
-    export let onSave;
+  export let performance: Performance;
+  export let onSave;
 
-    async function save() {
-        await savePerformance(performance);
-        onSave();
-    }
+  async function save() {
+    await savePerformance(performance);
+    onSave();
+  }
+
+
+  async function deletePerf() {
+    await deletePerformance(performance.id);
+    onSave();
+  }
 
 </script>
 
@@ -118,7 +124,7 @@
 
   <button
           type="button"
-          class="btn btn-md variant-filled-primary"
-          on:click={save}>Delete
+          class="btn btn-md variant-filled-error ml-4"
+          on:click={deletePerf}> Usuń
   </button>
 </form>

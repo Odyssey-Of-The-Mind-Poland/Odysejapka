@@ -38,6 +38,22 @@ export async function savePerformance(performance: Performance) {
   showHappyToast('Występ zapisany pomyślnie')
 }
 
+export async function deletePerformance(performanceId: number) {
+  const response = await fetch(BASE_URL + '/timeTable/' + performanceId, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: getBearer(),
+    }
+  })
+  if (!response.ok) {
+    showSadToast('Coś poszło nie tak :c')
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  showHappyToast('Występ usunięty pomyślnie')
+}
+
 export async function fetchProblems(): Promise<Problems> {
   let response = await fetch(BASE_URL + "/problem", {
     method: 'GET',
