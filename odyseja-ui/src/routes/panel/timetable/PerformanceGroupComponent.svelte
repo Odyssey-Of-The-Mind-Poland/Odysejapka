@@ -1,6 +1,6 @@
 <script lang="ts">
     import type {PerformanceGroup} from '../types';
-    import {savePerformance} from '../apiService';
+    import { deletePerformance, savePerformance } from '../apiService';
 
     export let performanceGroup: PerformanceGroup;
     export let onSave;
@@ -16,6 +16,13 @@
             await savePerformance(performance);
         }
         onSave();
+    }
+
+    async function deletePerf() {
+      for (let performance of performanceGroup.performances) {
+        await deletePerformance(performance.id);
+      }
+      onSave();
     }
 </script>
 
@@ -87,4 +94,10 @@
             class="btn btn-md variant-filled-primary"
             on:click={save}>Zapisz
     </button>
+
+  <button
+          type="button"
+          class="btn btn-md variant-filled-error ml-4"
+          on:click={deletePerf}>Usuń
+  </button>
 </form>

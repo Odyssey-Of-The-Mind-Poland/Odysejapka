@@ -125,6 +125,6 @@
   <button
           type="button"
           class="btn btn-md variant-filled-error ml-4"
-          on:click={deletePerf}> Usuń
+          on:click={deletePerf}>Usuń
   </button>
 </form>
