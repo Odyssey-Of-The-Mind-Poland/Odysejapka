@@ -1,7 +1,7 @@
 <!-- src/components/Sidebar.svelte -->
 <script>
   import {logout} from "../../authService";
-  import {AppShell, Toast} from "@skeletonlabs/skeleton";
+  import {AppShell} from "@skeletonlabs/skeleton";
   import Navigation from "$lib/Navigation/Navigation.svelte";
   import logo from '$lib/assets/logo.png'
   import Icon from '@iconify/svelte'
@@ -12,13 +12,9 @@
   ];
 </script>
 
-<Toast />
+<div class="grid grid-cols-12">
 
-<AppShell slotSidebarLeft="bg-surface-500/5 w-64 p-4">
-  <div class="p-6">
-    <slot />
-  </div>
-  <svelte:fragment slot="sidebarLeft">
+  <div class="col-span-2">
     <div class="flex h-full flex-col">
       <div class="mt-4 mb-12 text-center">
         <a href="/panel">
@@ -39,5 +35,10 @@
         </div>
       </button>
     </div>
-  </svelte:fragment>
-</AppShell>
+  </div>
+
+  <div class="col-span-10 min-h-screen p-6">
+    <slot />
+  </div>
+
+</div>
