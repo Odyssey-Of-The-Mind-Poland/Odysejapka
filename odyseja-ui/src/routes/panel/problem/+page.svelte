@@ -14,8 +14,10 @@
   }
 </script>
 
-<div class="card mb-6">
-  <header class="card-header"><h2>Problemy</h2></header>
+  <header class="h-40 bg-neutral-100 flex items-center px-12">
+    <h2 class="text-4xl text-dark-500 font-medium">Problemy</h2>
+  </header>
+
   <section class="p-4">
     {#each data.problems as problem}
       <label class="label m-4">
@@ -24,12 +26,9 @@
       </label>
     {/each}
   </section>
-  <footer class="card-footer">
-    <button
-            type="button"
-            class="btn btn-md variant-filled-primary"
-            on:click={save}
-            disabled='{!isChanged}'>Zapisz
+
+  <footer class="">
+    <button type="button" on:click={save} disabled='{!isChanged}' class="btn btn-md variant-filled-primary">
+      Zapisz
     </button>
   </footer>
-</div>
