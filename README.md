@@ -16,7 +16,7 @@ Generated automatically with Swagger. You can find them under:
 
 1. Run `docker-compose up -d` for database
 2. Build and run **OdysejapkaApplication.kt**
-3. Move to **/oydyseja-ui** and run `npm run dev`
+3. Move to `/oydyseja-ui` and run `npm run dev`
 
 ## Tech Stack
 
