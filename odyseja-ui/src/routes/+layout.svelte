@@ -1,14 +1,16 @@
 <script lang='ts'>
-  import '../theme.postcss';
-  import '@skeletonlabs/skeleton/styles/all.css';
-  import '../app.postcss';
+  import '../app.css';
 
 </script>
 
-
-<slot/>
+<div class="h-screen w-full">
+    <slot/>
+</div>
 
 <style>
+
+    /* https://fonts.google.com/specimen/Archivo */
+    @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@100;300;400;500;600;700;800;900&display=swap');
 
     :global(dialog) {
         transition: all 2s;
