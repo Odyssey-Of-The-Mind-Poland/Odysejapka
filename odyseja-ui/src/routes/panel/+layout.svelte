@@ -37,7 +37,7 @@
     </div>
   </div>
 
-  <div class="col-span-10 min-h-screen p-6">
+  <div class="col-span-10 min-h-screen">
     <slot />
   </div>
 
