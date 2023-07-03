@@ -1,7 +1,6 @@
 <script lang="ts">
   import { saveProblems } from '../apiService';
   import type { Problems } from '../types';
-  import ProblemCard from "$lib/ProblemCard/ProblemCard.svelte";
   import BasicButton from "$lib/BasicButton/BasicButton.svelte";
 
   export let data: Problems;
