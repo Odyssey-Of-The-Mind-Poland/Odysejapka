@@ -25,7 +25,7 @@
       <Navigation menuItems={menuItems} />
 
       <hr class="h-px mx-6">
-      <button on:click={logout} class="group/button my-6 mx-6 py-4 rounded-lg hover:bg-orange-400/20">
+      <button on:click={logout} class="group/button my-6 mx-6 py-4 rounded-lg hover:bg-orange-400/20 hover:outline outline-1 outline-orange-500">
         <span class="flex ml-2 items-center">
           <span class="bg-orange-500 h-9 w-9 rounded-full mr-3 flex justify-center items-center">
             <Icon icon="ic:round-log-out" class="text-white text-2xl inline-flex"/>
