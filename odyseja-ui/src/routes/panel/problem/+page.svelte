@@ -2,13 +2,17 @@
   import { saveProblems } from '../apiService';
   import type { Problems } from '../types';
   import BasicButton from "$lib/BasicButton/BasicButton.svelte";
+  import Modal from "$lib/Modal/Modal.svelte";
 
-  let isEditable = false
+  let isEditable = false, showModal = false;
+
+  function addProblem() {
+    showModal = true;
+    showModal = showModal;
+  }
 
   function toggleEdit() {
     isEditable = !isEditable;
-    isEditable = isEditable;
-    console.log('edit toggled!')
   }
 
   function saveClicked() {
@@ -37,7 +41,7 @@
   <header class="h-40 bg-neutral-100 flex items-center justify-between px-12 w-full">
     <h2 class="text-4xl text-dark-500 font-medium">Problemy</h2>
     <div class="flex gap-4">
-      <BasicButton text="Dodaj" icon="add"/>
+      <BasicButton text="Dodaj" icon="add" on:click={addProblem}/>
       <BasicButton text="Edytuj" icon="edit" on:click={toggleEdit} disabled="{isEditable}"/>
     </div>
   </header>
@@ -71,3 +75,7 @@
     {/if}
   {/if}
 
+<Modal bind:showModal>
+  <h2 slot="header">Dodaj problem</h2>
+  <input placeholder="Wpisz nazwę">
+</Modal>
