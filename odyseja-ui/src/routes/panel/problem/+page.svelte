@@ -3,12 +3,22 @@
   import type { Problems } from '../types';
   import BasicButton from "$lib/BasicButton/BasicButton.svelte";
 
-  let isEditable = true
+  let isEditable = false
 
   function toggleEdit() {
     isEditable = !isEditable;
     isEditable = isEditable;
     console.log('edit toggled!')
+  }
+
+  function saveClicked() {
+    toggleEdit();
+    save();
+  }
+
+  function cancelClicked() {
+    toggleEdit();
+    data = JSON.parse(JSON.stringify(initialData));
   }
 
   export let data: Problems;
@@ -27,11 +37,8 @@
   <header class="h-40 bg-neutral-100 flex items-center justify-between px-12 w-full">
     <h2 class="text-4xl text-dark-500 font-medium">Problemy</h2>
     <div class="flex gap-4">
-      {#if isEditable}
-        edit mode ON
-      {/if}
       <BasicButton text="Dodaj" icon="add"/>
-      <BasicButton text="Edytuj" icon="edit" on:click={toggleEdit} />
+      <BasicButton text="Edytuj" icon="edit" on:click={toggleEdit} disabled="{isEditable}"/>
     </div>
   </header>
 
@@ -39,7 +46,7 @@
     {#each data.problems as problem}
       <div class="first:mt-0 mt-4">
         <span class="text-sm font-normal text-dark-200 ml-2">Numer {problem.id}</span>
-          <div class="w-full h-full flex items-center rounded outline outline-1 outline-neutral-200">
+          <div class="w-full h-full flex items-center rounded outline outline-1 outline-neutral-200 focus:outline-blue-500">
             {#if isEditable}
               <span class="material-symbols-rounded text-dark-200 px-2">drag_indicator</span>
               <input type="text" bind:value={problem.name} class="border-0 focus:ring-0 h-full w-full
@@ -52,8 +59,15 @@
     {/each}
   </section>
 
-<!--  <footer class="">-->
-<!--    <button type="button" on:click={save} disabled='{!isChanged}' class="btn btn-md variant-filled-primary">-->
-<!--      Zapisz-->
-<!--    </button>-->
-<!--  </footer>-->
+  {#if isEditable}
+    <footer class="w-full py-4 px-12 flex justify-center gap-4">
+      <BasicButton text="Zapisz" icon="check" on:click={saveClicked} disabled='{!isChanged}'/>
+      <BasicButton text="Anuluj" icon="close" on:click={cancelClicked}/>
+    </footer>
+    {#if isChanged}
+      <span class="text-blue-500">Są zmiany do zapisania</span>
+    {:else}
+      <span class="text-dark-100">Brak zmian</span>
+    {/if}
+  {/if}
+
