@@ -40,7 +40,7 @@
   <header class="h-40 bg-neutral-100 flex items-center justify-between px-12 w-full">
     <h2 class="text-4xl text-dark-500 font-medium">Problemy</h2>
     <div class="flex gap-4">
-      <BasicButton text="Dodaj" icon="add" on:click={addProblem}/>
+<!--      <BasicButton text="Dodaj" icon="add" on:click={addProblem}/>-->
       <BasicButton text="Edytuj" icon="edit" on:click={toggleEdit} disabled="{isEditable}"/>
     </div>
   </header>
