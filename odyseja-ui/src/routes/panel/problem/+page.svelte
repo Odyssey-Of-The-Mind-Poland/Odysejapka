@@ -7,8 +7,7 @@
   let isEditable = false, showModal = false;
 
   function addProblem() {
-    showModal = true;
-    showModal = showModal;
+    showModal = !showModal;
   }
 
   function toggleEdit() {
@@ -74,8 +73,3 @@
       <span class="text-dark-100">Brak zmian</span>
     {/if}
   {/if}
-
-<Modal bind:showModal>
-  <h2 slot="header">Dodaj problem</h2>
-  <input placeholder="Wpisz nazwę">
-</Modal>
