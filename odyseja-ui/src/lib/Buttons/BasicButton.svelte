@@ -1,8 +1,6 @@
 <script lang="ts">
-
     export let text, icon;
     export let disabled = false;
-
 </script>
 
 <button on:click {disabled} class="hover:bg-white outline outline-1 outline-dark-500 hover:outline-dark-200 px-3 py-1 rounded

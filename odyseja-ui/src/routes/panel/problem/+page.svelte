@@ -1,8 +1,7 @@
 <script lang="ts">
   import { saveProblems } from '../apiService';
   import type { Problems } from '../types';
-  import BasicButton from "$lib/BasicButton/BasicButton.svelte";
-  import Modal from "$lib/Modal/Modal.svelte";
+  import BasicButton from "$lib/Buttons/BasicButton.svelte";
 
   let isEditable = false, showModal = false;
 
