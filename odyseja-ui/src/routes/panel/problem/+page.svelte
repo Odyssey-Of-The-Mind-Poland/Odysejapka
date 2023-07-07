@@ -23,7 +23,7 @@
     {/each}
   </section>
 
-  <footer class="">
+  <footer class="pl-8">
     <button type="button" on:click={save} disabled='{!isChanged}' class="btn btn-md variant-filled-primary">
       Zapisz
     </button>
