@@ -17,10 +17,7 @@
 
   <header class="h-40 bg-neutral-100 flex items-center justify-between px-12 w-full">
     <h2 class="text-4xl text-dark-500 font-medium">Problemy</h2>
-    <div class="flex gap-4">
-      <BasicButton text="Dodaj" icon="add"/>
-      <BasicButton text="Edytuj" icon="edit" />
-    </div>
+    <BasicButton text="Edytuj" icon="edit" />
   </header>
 
   <section class="-mt-8 relative w-11/12 mx-auto outline outline-1 outline-neutral-200 rounded bg-white px-6 py-6">
