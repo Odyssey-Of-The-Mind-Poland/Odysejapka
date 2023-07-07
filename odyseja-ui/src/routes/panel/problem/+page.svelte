@@ -14,10 +14,6 @@
   }
 </script>
 
-  <header class="h-40 bg-neutral-100 flex items-center px-12">
-    <h2 class="text-4xl text-dark-500 font-medium">Problemy</h2>
-  </header>
-
   <section class="p-4">
     {#each data.problems as problem}
       <label class="label m-4">
