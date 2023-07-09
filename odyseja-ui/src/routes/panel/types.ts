@@ -79,3 +79,23 @@ export type Problem = {
   id: number,
   name: string
 }
+
+export type Infos = {
+    infos: Info[],
+    categories: InfoCategory[]
+}
+
+export type Info = {
+  id: number,
+  infoName: string,
+  infoText: string,
+  city: number,
+  category: number,
+  sortNumber: number,
+  categoryName: string
+}
+
+export type InfoCategory = {
+  id: number,
+  name: string,
+}

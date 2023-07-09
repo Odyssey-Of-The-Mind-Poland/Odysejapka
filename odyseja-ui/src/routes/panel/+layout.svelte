@@ -8,6 +8,7 @@
   const menuItems = [
     { label: 'Harmonogram', route: '/panel/timetable', icon: 'ic:round-calendar-view-month' },
     { label: 'Problemy', route: '/panel/problem', icon: 'ic:round-format-list-bulleted' },
+    { label: 'Informacje', route: '/panel/info', icon: 'ic:round-format-list-bulleted' },
   ];
 </script>
 
