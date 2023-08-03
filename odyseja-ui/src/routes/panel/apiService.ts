@@ -144,3 +144,35 @@ function getCookie(name: string): string {
         return parts.pop().split(';').shift();
     }
 }
+
+export async function fetchStages(): Promise<Stages> {
+    const response = await fetch(BASE_URL + "/stage", {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    const stages = data as Stage[]
+    return {stages: stages};
+}
+
+export async function saveStages(stages: Stages) {
+    const response = await fetch(BASE_URL + "/stage", {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: getBearer(),
+        },
+        body: JSON.stringify(stages.stages)
+    })
+    if (!response.ok) {
+        showSadToast('Coś poszło nie tak :c')
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    showHappyToast('Sceny zapisano pomyślnie')
+}
