@@ -1,6 +1,6 @@
 import type {ToastSettings} from '@skeletonlabs/skeleton';
 import {toastStore} from '@skeletonlabs/skeleton';
-import type {Info, InfoCategory, Infos, Performance, PerformanceGroup, Problem, Problems, Timetable} from './types';
+import type {Info, InfoCategory, Infos, Performance, PerformanceGroup, Problem, Problems, Timetable, Stage, Stages} from './types';
 import {env} from '$env/dynamic/public';
 
 export const BASE_URL = env.PUBLIC_BASE_URL || "http://localhost:8081";

@@ -99,3 +99,14 @@ export type InfoCategory = {
   id: number,
   name: string,
 }
+
+export type Stages = {
+  stages: Stage[]
+}
+
+export type Stage = {
+  id: number,
+  number: number,
+  city: number,
+  name: string
+}
