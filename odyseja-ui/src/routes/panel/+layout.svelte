@@ -24,7 +24,6 @@
     <div class="flex h-full flex-col">
       <div class="mt-4 mb-12 text-center">
         <a href="/panel">
-          <img src="{logo}" alt="Logo Odysei Umysłu" class="h-2/5 m-auto"/>
           <span class="text-2xl font-semibold text-primary-600">Odyseja Umysłu</span>
         </a>
       </div>
