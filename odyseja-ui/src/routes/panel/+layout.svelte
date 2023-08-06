@@ -4,6 +4,7 @@
   import {AppBar, AppShell, LightSwitch, Toast} from "@skeletonlabs/skeleton";
   import Navigation from "$lib/Navigation/Navigation.svelte";
   import logo from '$lib/assets/logo.png'
+  import Icon from "@iconify/svelte";
 
   const menuItems = [
     { label: 'Harmonogram', route: '/panel/timetable', icon: 'ic:round-calendar-view-month' },
@@ -28,10 +29,12 @@
         </a>
       </div>
       <Navigation menuItems={menuItems} />
-      <button type="button" class="btn btn-sm variant-filled-primary" on:click={logout}>
-        Logout
-      </button>
-      <LightSwitch class=""/>
+      <div class="flex flex-row justify-between items-center">
+        <button type="button" class="btn btn-sm variant-filled-primary w-32 font-semibold" on:click={logout}>
+          Wyloguj
+        </button>
+        <LightSwitch class=""/>
+      </div>
     </div>
   </svelte:fragment>
 </AppShell>
