@@ -55,7 +55,7 @@ export async function deletePerformance(performanceId: number) {
 }
 
 export async function fetchProblems(): Promise<Problems> {
-    let response = await fetch(BASE_URL + "/problem", {
+    const response = await fetch(BASE_URL + "/problem", {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -65,12 +65,12 @@ export async function fetchProblems(): Promise<Problems> {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    let problems = data as Problem[]
+    const problems = data as Problem[]
     return {problems: problems};
 }
 
 export async function fetchInfo(): Promise<Infos> {
-    let response = await fetch(BASE_URL + "/info", {
+    const response = await fetch(BASE_URL + "/info", {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export async function fetchInfo(): Promise<Infos> {
 }
 
 export async function fetchInfoCategory(): Promise<InfoCategory[]> {
-    let response = await fetch(BASE_URL + "/info/category", {
+    const response = await fetch(BASE_URL + "/info/category", {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export async function fetchInfoCategory(): Promise<InfoCategory[]> {
 }
 
 export async function saveProblems(problems: Problems) {
-    let response = await fetch(BASE_URL + "/problem", {
+    const response = await fetch(BASE_URL + "/problem", {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
