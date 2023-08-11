@@ -36,7 +36,7 @@
     </div>
     {#each data.problems as problem}
       <label class="label py-3 flex items-center max-w-2xl">
-        <span class="text-2xl font-semibold pr-4">{problem.id}</span>
+        <span class="text-2xl font-semibold pr-4">{problem.id + 1}</span>
         <input class="input text-xl" type="text" placeholder="Input" bind:value={problem.name} disabled="{!editToggled}"/>
       </label>
     {/each}
