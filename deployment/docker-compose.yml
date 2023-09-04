@@ -3,6 +3,7 @@ services:
   postgres:
     image: docker.io/library/postgres:12
     container_name: postgres-odyseja-dev
+    restart: always
     ports:
       - "5433:5432"
     environment:
@@ -16,6 +17,7 @@ services:
   backend:
     image: 1grzyb1/odyseja:latest
     container_name: backend-dev
+    restart: always
     pull_policy: always
     network_mode: host
     depends_on:
@@ -29,6 +31,7 @@ services:
   frontend:
     image: 1grzyb1/odyseja-frontend:latest
     container_name: frontend-dev
+    restart: always
     pull_policy: always
     ports:
       - "3000:4173"
