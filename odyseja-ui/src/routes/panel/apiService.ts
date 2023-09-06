@@ -1,6 +1,17 @@
 import type {ToastSettings} from '@skeletonlabs/skeleton';
 import {toastStore} from '@skeletonlabs/skeleton';
-import type {Info, InfoCategory, Infos, Performance, PerformanceGroup, Problem, Problems, Timetable, Stage, Stages} from './types';
+import type {
+    Info,
+    InfoCategory,
+    Infos,
+    Performance,
+    PerformanceGroup,
+    Problem,
+    Problems,
+    Stage,
+    Stages,
+    Timetable
+} from './types';
 import {env} from '$env/dynamic/public';
 
 export const BASE_URL = env.PUBLIC_BASE_URL || "http://localhost:8081";
@@ -82,6 +93,35 @@ export async function fetchInfo(): Promise<Infos> {
     const data = await response.json();
     const categories = await fetchInfoCategory();
     return {infos: data as Info[], categories: categories} as Infos;
+}
+
+export async function fetchSingleInfo(id: number): Promise<Info> {
+    const response = await fetch(BASE_URL + "/info/id/" + id, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json() as Info;
+}
+
+export async function saveInfo(info: Info) {
+    const response = await fetch(BASE_URL + "/info", {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: getBearer(),
+        },
+        body: JSON.stringify(info)
+    })
+    if (!response.ok) {
+        showSadToast('Wystąpił błąd podczas zapisywania informacji :c')
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    showHappyToast('Info zapisano pomyślnie')
 }
 
 export async function fetchInfoCategory(): Promise<InfoCategory[]> {
