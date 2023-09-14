@@ -1,8 +1,9 @@
 <!-- src/components/Sidebar.svelte -->
-<script>
+<script lang="ts">
     import {logout} from "../../authService";
-    import { AppShell, LightSwitch, Toast} from "@skeletonlabs/skeleton";
+    import {AppShell, LightSwitch, Toast} from "@skeletonlabs/skeleton";
     import Navigation from "$lib/Navigation/Navigation.svelte";
+    import type {Cities} from "$lib/types.js";
 
     const menuItems = [
         {label: 'Harmonogram', route: '/panel/timetable', icon: 'ic:round-calendar-view-month'},
@@ -10,6 +11,8 @@
         {label: 'Informacje', route: '/panel/info', icon: 'ic:outline-info'},
         {label: 'Sceny', route: '/panel/stage', icon: 'ic:outline-curtains'}
     ];
+
+    export let data: Cities
 </script>
 
 <Toast/>
@@ -27,6 +30,12 @@
                         <span class="text-2xl font-semibold text-primary-600">Odyseja Umysłu</span>
                     </a>
                 </div>
+                <select class="select mb-10">
+                    {#each data.cities as city}
+                        <option value={city.id}>{city.name}</option>
+                    {/each}
+                </select>
+
                 <Navigation menuItems={menuItems}/>
             </nav>
             <div class="flex flex-row justify-between items-center">

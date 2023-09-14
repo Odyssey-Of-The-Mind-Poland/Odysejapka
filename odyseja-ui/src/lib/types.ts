@@ -80,6 +80,15 @@ export type Problem = {
   name: string
 }
 
+export type Cities = {
+    cities: City[]
+}
+
+export type City = {
+  id: number,
+  name: string
+}
+
 export type Infos = {
     infos: Info[],
     categories: InfoCategory[]

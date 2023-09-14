@@ -1,6 +1,7 @@
 import type {ToastSettings} from '@skeletonlabs/skeleton';
 import {toastStore} from '@skeletonlabs/skeleton';
 import type {
+    Cities, City,
     Info,
     InfoCategory,
     Infos,
@@ -79,6 +80,22 @@ export async function fetchProblems(): Promise<Problems> {
     const problems = data as Problem[]
     return {problems: problems};
 }
+
+export async function fetchCities(): Promise<Cities> {
+    const response = await fetch(BASE_URL + "/city", {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    const cites = data as City[]
+    return {cities: cites} as Cities;
+}
+
 
 export async function fetchInfo(): Promise<Infos> {
     const response = await fetch(BASE_URL + "/info", {
