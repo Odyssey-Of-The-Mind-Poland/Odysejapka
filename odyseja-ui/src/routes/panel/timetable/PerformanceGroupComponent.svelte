@@ -1,6 +1,6 @@
 <script lang="ts">
     import type {PerformanceGroup} from '$lib/types';
-    import { deletePerformance, savePerformance } from '$lib/apiService';
+    import {deletePerformance, savePerformance} from "./performanceService";
 
     export let performanceGroup: PerformanceGroup;
     export let onSave;

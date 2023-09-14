@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { saveProblems } from '$lib/apiService';
+  import {put} from '$lib/apiService';
   import type { Problems } from '$lib/types';
-  import {init} from "svelte/internal";
 
   export let data: Problems;
 
@@ -14,6 +13,11 @@
     initialData = JSON.parse(JSON.stringify(data));
     toggleEdit();
   }
+
+  async function saveProblems(problems: Problems) {
+    await put(problems, "/problem", 'Problemy zapisano pomyślnie')
+  }
+
 
   let editToggled = false
   function toggleEdit() {

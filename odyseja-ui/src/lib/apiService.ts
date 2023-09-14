@@ -1,24 +1,12 @@
 import type {ToastSettings} from '@skeletonlabs/skeleton';
 import {toastStore} from '@skeletonlabs/skeleton';
-import type {
-    Cities, City,
-    Info,
-    InfoCategory,
-    Infos,
-    Performance,
-    PerformanceGroup,
-    Problem,
-    Problems,
-    Stage,
-    Stages,
-    Timetable
-} from './types';
 import {env} from '$env/dynamic/public';
 
 export const BASE_URL = env.PUBLIC_BASE_URL || "http://localhost:8081";
 
-export async function fetchTimeTable(): Promise<Timetable> {
-    const response = await fetch(BASE_URL + '/api/v2/timeTable', {
+
+export async function get(path: string): Promise<any> {
+    const response = await fetch(BASE_URL + path, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -29,147 +17,58 @@ export async function fetchTimeTable(): Promise<Timetable> {
         throw new Error(`Network response was not ok: ${response.status}`);
     }
 
-    const timeTable: PerformanceGroup[] = await response.json();
-    return {timetable: timeTable} as Timetable;
+    return  await response.json();
 }
 
-export async function savePerformance(performance: Performance) {
-    const response = await fetch(BASE_URL + '/timeTable', {
+export async function post(request: any, path: string, succesText: string): Promise<any> {
+    const response = await fetch(BASE_URL + path, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             Authorization: getBearer(),
         },
-        body: JSON.stringify(performance)
+        body: JSON.stringify(request)
     })
     if (!response.ok) {
         showSadToast('Coś poszło nie tak :c')
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    showHappyToast('Występ zapisany pomyślnie')
+    showHappyToast(succesText === undefined ? 'Akcaj wykonana pomyślnie' : succesText)
 }
 
-export async function deletePerformance(performanceId: number) {
-    const response = await fetch(BASE_URL + '/timeTable/' + performanceId, {
+export async function put(request: any, path: string, succesText: string): Promise<any> {
+    const response = await fetch(BASE_URL + path, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: getBearer(),
+        },
+        body: JSON.stringify(request)
+    })
+    if (!response.ok) {
+        showSadToast('Coś poszło nie tak :c')
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    showHappyToast(succesText === undefined ? 'Akcaj wykonana pomyślnie' : succesText)
+}
+
+
+export async function del(path: string, succesText: string): Promise<any> {
+    const response = await fetch(BASE_URL + path, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
             Authorization: getBearer(),
-        }
+        },
     })
     if (!response.ok) {
         showSadToast('Coś poszło nie tak :c')
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    showHappyToast('Występ usunięty pomyślnie')
-}
-
-export async function fetchProblems(): Promise<Problems> {
-    const response = await fetch(BASE_URL + "/problem", {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    const problems = data as Problem[]
-    return {problems: problems};
-}
-
-export async function fetchCities(): Promise<Cities> {
-    const response = await fetch(BASE_URL + "/city", {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    const cites = data as City[]
-    return {cities: cites} as Cities;
-}
-
-
-export async function fetchInfo(): Promise<Infos> {
-    const response = await fetch(BASE_URL + "/info", {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    const categories = await fetchInfoCategory();
-    return {infos: data as Info[], categories: categories} as Infos;
-}
-
-export async function fetchSingleInfo(id: number): Promise<Info> {
-    const response = await fetch(BASE_URL + "/info/id/" + id, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return await response.json() as Info;
-}
-
-export async function saveInfo(info: Info) {
-    const response = await fetch(BASE_URL + "/info", {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: getBearer(),
-        },
-        body: JSON.stringify(info)
-    })
-    if (!response.ok) {
-        showSadToast('Wystąpił błąd podczas zapisywania informacji :c')
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    showHappyToast('Info zapisano pomyślnie')
-}
-
-export async function fetchInfoCategory(): Promise<InfoCategory[]> {
-    const response = await fetch(BASE_URL + "/info/category", {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data as InfoCategory[];
-}
-
-export async function saveProblems(problems: Problems) {
-    const response = await fetch(BASE_URL + "/problem", {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: getBearer(),
-        },
-        body: JSON.stringify(problems.problems)
-    })
-    if (!response.ok) {
-        showSadToast('Coś poszło nie tak :c')
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    showHappyToast('Problemy zapisano pomyślnie')
+    showHappyToast(succesText === undefined ? 'Usunięto pomyślnie' : succesText)
 }
 
 function showHappyToast(message: string) {
@@ -200,36 +99,4 @@ function getCookie(name: string): string {
     if (parts.length === 2) { // @ts-ignore
         return parts.pop().split(';').shift();
     }
-}
-
-export async function fetchStages(): Promise<Stages> {
-    const response = await fetch(BASE_URL + "/stage", {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    const stages = data as Stage[]
-    return {stages: stages};
-}
-
-export async function saveStages(stages: Stages) {
-    const response = await fetch(BASE_URL + "/stage", {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: getBearer(),
-        },
-        body: JSON.stringify(stages.stages)
-    })
-    if (!response.ok) {
-        showSadToast('Coś poszło nie tak :c')
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    showHappyToast('Sceny zapisano pomyślnie')
 }

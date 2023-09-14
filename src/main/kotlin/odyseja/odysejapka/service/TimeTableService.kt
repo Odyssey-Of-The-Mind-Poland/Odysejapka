@@ -128,4 +128,8 @@ class TimeTableService(
       )
     )
   }
+
+  fun getByCity(cityId: Int): List<Performance> {
+    return timeTableRepository.findAllByCityEntity_Id(cityId).map { it.toPerformance() }
+  }
 }

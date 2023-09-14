@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { deletePerformance, savePerformance } from '$lib/apiService';
   import type { Performance } from '$lib/types';
+  import {deletePerformance, savePerformance} from "./performanceService";
 
   export let performance: Performance;
   export let onSave;
@@ -123,7 +123,7 @@
           on:click={save}>Zapisz
   </button>
 
-  {#if (performance.id != -1)}
+  {#if (performance.id !== -1)}
     <button
             type="button"
             class="btn btn-md variant-filled-error ml-4"

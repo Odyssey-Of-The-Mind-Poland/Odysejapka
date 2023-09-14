@@ -1,4 +1,5 @@
-import {fetchCities} from "$lib/apiService";
+import {get} from "$lib/apiService";
+import type {Cities, City} from "$lib/types";
 
 
 export async function load() {
@@ -7,3 +8,8 @@ export async function load() {
     return cities
 }
 
+async function fetchCities(): Promise<Cities> {
+    const data = await get('/city');
+    const cites = data as City[]
+    return {cities: cites} as Cities;
+}

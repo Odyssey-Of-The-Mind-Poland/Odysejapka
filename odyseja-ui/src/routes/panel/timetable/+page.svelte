@@ -5,10 +5,10 @@
     import PerformanceComponent from "./Performance.svelte";
     import PerformanceGroupComponent from "./PerformanceGroupComponent.svelte";
     import cloneDeep from 'lodash/cloneDeep';
-    import {fetchTimeTable} from "$lib/apiService";
     import {compareGroups, comparePerformances, getGroupTitle} from "$lib/types";
     import Filter from "./Filter.svelte";
     import Dialog from "$lib/Dialog.svelte";
+    import {fetchTimeTable} from "./performanceService";
 
 
     export let data: Timetable;

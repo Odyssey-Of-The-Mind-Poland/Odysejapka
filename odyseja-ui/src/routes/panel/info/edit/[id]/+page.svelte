@@ -1,7 +1,7 @@
 <script lang="ts">
     import Editor from '@tinymce/tinymce-svelte';
     import type {Info} from "$lib/types";
-    import {saveInfo} from "$lib/apiService";
+    import {post} from "$lib/apiService";
     import {goto} from "$app/navigation";
 
     export let data: Info
@@ -9,6 +9,10 @@
     function save() {
         saveInfo(data)
         goto('/panel/info')
+    }
+
+    async function saveInfo(info: Info) {
+        await post(info,'/info', 'Info zapisano pomyślnie')
     }
 
 </script>
