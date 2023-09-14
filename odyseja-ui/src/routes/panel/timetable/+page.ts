@@ -1,7 +1,7 @@
-import { fetchTimeTable } from '../apiService';
+import { fetchTimeTable } from '$lib/apiService';
 import type { PageLoad } from './$types';
-import {compareGroups, comparePerformances} from "../types";
-import type {Timetable} from "../types";
+import {compareGroups, comparePerformances} from "$lib/types";
+import type {Timetable} from "$lib/types";
 
 export const load = (async ({params}) => {
   return initialSort(await fetchTimeTable());

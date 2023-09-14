@@ -1,4 +1,4 @@
-import {fetchSingleInfo} from "../../../apiService";
+import {fetchSingleInfo} from "$lib/apiService";
 import type {PageLoad} from "../../../../../../.svelte-kit/types/src/routes/panel/info/$types";
 
 

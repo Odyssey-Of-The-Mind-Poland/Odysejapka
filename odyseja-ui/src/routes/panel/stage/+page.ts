@@ -1,4 +1,4 @@
-import { fetchStages } from '../apiService';
+import { fetchStages } from '$lib/apiService';
 import type { PageLoad } from './$types';
 
 export const load = (({params}) => {

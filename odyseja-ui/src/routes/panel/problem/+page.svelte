@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { saveProblems } from '../apiService';
-  import type { Problems } from '../types';
+  import { saveProblems } from '$lib/apiService';
+  import type { Problems } from '$lib/types';
   import {init} from "svelte/internal";
 
   export let data: Problems;

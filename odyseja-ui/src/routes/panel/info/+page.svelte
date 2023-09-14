@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type {Info, InfoCategory, Infos} from '../types';
+    import type {Info, InfoCategory, Infos} from '$lib/types';
     import {Table, tableMapperValues} from "@skeletonlabs/skeleton";
     import type {TableSource} from '@skeletonlabs/skeleton';
     import {goto} from "$app/navigation";

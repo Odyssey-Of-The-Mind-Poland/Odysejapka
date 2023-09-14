@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { saveStages } from "../apiService";
-    import type { Stages } from "../types"
+    import { saveStages } from "$lib/apiService";
+    import type { Stages } from "$lib/types"
 
 export let data: Stages;
 

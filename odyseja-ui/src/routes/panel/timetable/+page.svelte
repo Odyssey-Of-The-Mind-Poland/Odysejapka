@@ -1,12 +1,12 @@
 <script lang="ts">
     import {Table, tableMapperValues} from '@skeletonlabs/skeleton';
     import type {TableSource} from '@skeletonlabs/skeleton';
-    import type {Timetable, Performance, PerformanceGroup} from '../types';
+    import type {Timetable, Performance, PerformanceGroup} from '$lib/types';
     import PerformanceComponent from "./Performance.svelte";
     import PerformanceGroupComponent from "./PerformanceGroupComponent.svelte";
     import cloneDeep from 'lodash/cloneDeep';
-    import {fetchTimeTable} from "../apiService";
-    import {compareGroups, comparePerformances, getGroupTitle} from "../types";
+    import {fetchTimeTable} from "$lib/apiService";
+    import {compareGroups, comparePerformances, getGroupTitle} from "$lib/types";
     import Filter from "./Filter.svelte";
     import Dialog from "$lib/Dialog.svelte";
 

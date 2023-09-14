@@ -1,7 +1,7 @@
 <script lang="ts">
     import Editor from '@tinymce/tinymce-svelte';
-    import type {Info} from "../../../types";
-    import {saveInfo} from "../../../apiService";
+    import type {Info} from "$lib/types";
+    import {saveInfo} from "$lib/apiService";
     import {goto} from "$app/navigation";
 
     export let data: Info
