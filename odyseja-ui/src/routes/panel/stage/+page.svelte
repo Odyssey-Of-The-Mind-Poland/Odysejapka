@@ -1,12 +1,19 @@
 <script lang="ts">
     import {put} from "$lib/apiService";
     import type {Stages} from "$lib/types"
+    import {city} from "$lib/cityStore";
+    import {fetchStages} from "./stageService";
 
     export let data;
 
     let initialData = JSON.parse(JSON.stringify(data))
 
     $: isChanged = JSON.stringify(data) !== JSON.stringify(initialData);
+
+    city.subscribe(async currentCity => {
+        data = await fetchStages();
+        initialData = JSON.parse(JSON.stringify(data))
+    });
 
     function save() {
         saveStages(data.stages);

@@ -11,14 +11,9 @@ class StageController(
   private val stageService: StageService
 ) {
 
-  @GetMapping("{cityId}")
-  fun getStages(@PathVariable cityId: Int): List<Stage> {
-    return stageService.getStages(cityId)
-  }
-
-  @GetMapping
-  fun getStages(): List<Stage> {
-    return stageService.getStages()
+  @GetMapping()
+  fun getStages(@RequestParam(required = false) cityId: Int?): List<Stage> {
+    return cityId?.let { stageService.getStages(cityId) } ?: stageService.getStages()
   }
 
   @Secured("ROLE_ADMIN")
