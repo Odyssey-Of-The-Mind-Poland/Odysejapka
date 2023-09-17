@@ -9,6 +9,7 @@
     import Filter from "./Filter.svelte";
     import Dialog from "$lib/Dialog.svelte";
     import {fetchTimeTable} from "./performanceService";
+    import {city} from "$lib/cityStore";
 
 
     export let data: Timetable;
@@ -64,13 +65,19 @@
     }
 
 
-    async function onPerformanceSaved() {
+    async function reloadTimetable() {
         let timetable = await fetchTimeTable();
         data = sortTimeTable(timetable);
         initialData = data
         performanceDialog.close();
         performanceGroupDialog.close();
     }
+
+    city.subscribe(async currentCity => {
+        let timetable = await fetchTimeTable();
+        data = sortTimeTable(timetable);
+        initialData = data
+    });
 
     function mapPerformancesToTable(performances: PerformanceComponent[]): TableSource {
         return {
@@ -128,10 +135,10 @@
 <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
 
 <Dialog bind:dialog={performanceDialog}>
-    <PerformanceComponent performance={cloneDeep(performance)} onSave={onPerformanceSaved}/>
+    <PerformanceComponent performance={cloneDeep(performance)} onSave={reloadTimetable}/>
 </Dialog>
 
 
 <Dialog bind:dialog={performanceGroupDialog}>
-    <PerformanceGroupComponent performanceGroup={cloneDeep(selectedPerformanceGroup)} onSave={onPerformanceSaved}/>
+    <PerformanceGroupComponent performanceGroup={cloneDeep(selectedPerformanceGroup)} onSave={reloadTimetable}/>
 </Dialog>

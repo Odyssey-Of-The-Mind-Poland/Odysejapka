@@ -1,12 +1,19 @@
 import type {ToastSettings} from '@skeletonlabs/skeleton';
 import {toastStore} from '@skeletonlabs/skeleton';
 import {env} from '$env/dynamic/public';
+import {city} from "$lib/cityStore.js";
+import type {City} from "$lib/types";
 
 export const BASE_URL = env.PUBLIC_BASE_URL || "http://localhost:8081";
 
+let currentCity: City
+city.subscribe(async curr => {
+    currentCity = curr
+});
+
 
 export async function get(path: string): Promise<any> {
-    const response = await fetch(BASE_URL + path, {
+    const response = await fetch(BASE_URL + path + '?cityId=' + currentCity.id, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

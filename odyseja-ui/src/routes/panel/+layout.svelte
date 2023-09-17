@@ -1,9 +1,10 @@
-<!-- src/components/Sidebar.svelte -->
+
 <script lang="ts">
     import {logout} from "../../authService";
     import {AppShell, LightSwitch, Toast} from "@skeletonlabs/skeleton";
     import Navigation from "$lib/Navigation/Navigation.svelte";
     import type {Cities} from "$lib/types.js";
+    import {city} from "$lib/cityStore.js";
 
     const menuItems = [
         {label: 'Harmonogram', route: '/panel/timetable', icon: 'ic:round-calendar-view-month'},
@@ -13,6 +14,16 @@
     ];
 
     export let data: Cities
+
+    city.set(data.cities[0])
+
+    let selectedCityId: number;
+
+    function handleCityChange(event) {
+        console.log(event.target.value)
+        const selectedCity = data.cities.find(city => city.id === selectedCityId);
+        city.set(selectedCity!);
+    }
 </script>
 
 <Toast/>
@@ -30,7 +41,7 @@
                         <span class="text-2xl font-semibold text-primary-600">Odyseja Umysłu</span>
                     </a>
                 </div>
-                <select class="select mb-10">
+                <select bind:value={selectedCityId} on:change={handleCityChange} class="select mb-10">
                     {#each data.cities as city}
                         <option value={city.id}>{city.name}</option>
                     {/each}

@@ -4,6 +4,7 @@ import odyseja.odysejapka.domain.PerformanceGroup
 import odyseja.odysejapka.service.PerformanceGroupService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController()
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 class PerformanceGroupController(private val performanceGroupService: PerformanceGroupService) {
 
   @GetMapping
-  fun getPerformanceGroups(): List<PerformanceGroup> {
-    return performanceGroupService.getPerformanceGroups()
+  fun getPerformanceGroups(@RequestParam(required = false) cityId: Int?): List<PerformanceGroup> {
+    return performanceGroupService.getPerformanceGroups(cityId)
   }
 }

@@ -5,13 +5,15 @@ import org.springframework.stereotype.Service
 
 @Service
 class PerformanceGroupService(private val performanceRepository: PerformanceRepository) {
-  fun getPerformanceGroups(): List<PerformanceGroup> {
-    return performanceRepository.findAll().groupBy { it?.toGroup() }.map { (group, performances) ->
-      PerformanceGroup(
-        group = group!!,
-        performances = performances.map { it?.toPerformance()!! }
-      )
+    fun getPerformanceGroups(cityId: Int?): List<PerformanceGroup> {
+        val performances =
+            cityId?.let { performanceRepository.findAllByCityEntity_Id(cityId) } ?: performanceRepository.findAll()
+        return performances.groupBy { it?.toGroup() }.map { (group, performances) ->
+            PerformanceGroup(
+                group = group!!,
+                performances = performances.map { it?.toPerformance()!! }
+            )
+        }
     }
-  }
 
 }
