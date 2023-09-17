@@ -1,8 +1,10 @@
 <script lang="ts">
     import type {Info, InfoCategory, Infos} from '$lib/types';
-    import {Table, tableMapperValues} from "@skeletonlabs/skeleton";
     import type {TableSource} from '@skeletonlabs/skeleton';
+    import {Table, tableMapperValues} from "@skeletonlabs/skeleton";
     import {goto} from "$app/navigation";
+    import {city} from "$lib/cityStore";
+    import {fetchInfo} from "./infoService.js";
 
     export let data: Infos;
 
@@ -10,6 +12,10 @@
 
     let infoDialog: HTMLDialogElement;
     let selectedInfo = data.infos[0] as Info;
+
+    city.subscribe(async currentCity => {
+        data = await fetchInfo();
+    });
 
     function mapInfosToTable(category): TableSource {
         let infos = data.infos.filter(info => info.categoryName === category.name);

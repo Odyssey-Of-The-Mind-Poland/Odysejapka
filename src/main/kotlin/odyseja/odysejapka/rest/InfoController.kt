@@ -13,10 +13,10 @@ class InfoController(
   private val infoService: InfoService
 ) {
 
-  @GetMapping("/{city}")
+  @GetMapping()
   @ResponseBody
-  fun getInfo(@PathVariable city: Int): Iterable<Info?>? {
-    return infoService.getInfo(city)
+  fun getInfo(@RequestParam(required = false) cityId: Int?): Iterable<Info?>? {
+    return cityId?.let { infoService.getInfo(cityId) } ?: infoService.getAllInfo()
   }
 
   @GetMapping("/id/{info}")
@@ -29,11 +29,6 @@ class InfoController(
   @ResponseBody
   fun getInfoCategory(): Iterable<InfoCategoryEntity> {
     return infoService.getInfoCategory()
-  }
-
-  @GetMapping()
-  fun getAllInfo(): List<Info> {
-    return infoService.getAllInfo()
   }
 
   @Secured("ROLE_ADMIN")
