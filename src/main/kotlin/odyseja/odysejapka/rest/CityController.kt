@@ -18,7 +18,7 @@ class CityController(
 
   @Secured("ROLE_ADMIN")
   @PostMapping
-  fun saveCity(cityEntity: CityEntity) {
+  fun saveCity(@RequestBody cityEntity: CityEntity) {
     cityService.addCity(cityEntity)
   }
 

@@ -10,7 +10,8 @@
         {label: 'Harmonogram', route: '/panel/timetable', icon: 'ic:round-calendar-view-month'},
         {label: 'Problemy', route: '/panel/problem', icon: 'ic:round-format-list-bulleted'},
         {label: 'Informacje', route: '/panel/info', icon: 'ic:outline-info'},
-        {label: 'Sceny', route: '/panel/stage', icon: 'ic:outline-curtains'}
+        {label: 'Sceny', route: '/panel/stage', icon: 'ic:outline-curtains'},
+        {label: 'Miasta', route: '/panel/city', icon: 'ic:outline-curtains'}
     ];
 
     export let data: Cities

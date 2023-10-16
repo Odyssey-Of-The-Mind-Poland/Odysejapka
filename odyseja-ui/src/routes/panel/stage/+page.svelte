@@ -39,7 +39,7 @@
 </script>
 
 <div class="mt-4 mx-4 flex justify-between items-center">
-    <h2 class="mb-6">Problemy</h2>
+    <h2 class="mb-6">Sceny</h2>
     <button type="button" on:click={toggleEdit} class="btn btn-md variant-filled-primary"
             disabled='{editToggled}'>Edytuj
     </button>
