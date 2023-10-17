@@ -78,11 +78,11 @@ export async function del(path: string, succesText: string): Promise<any> {
     showHappyToast(succesText === undefined ? 'Usunięto pomyślnie' : succesText)
 }
 
-function showHappyToast(message: string) {
+export function showHappyToast(message: string) {
     showToast(message, 'variant-filled-tertiary')
 }
 
-function showSadToast(message: string) {
+export function showSadToast(message: string) {
     showToast(message, 'variant-filled-tertiary')
 }
 

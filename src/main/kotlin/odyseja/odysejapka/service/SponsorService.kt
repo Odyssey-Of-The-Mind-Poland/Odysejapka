@@ -1,7 +1,7 @@
 package odyseja.odysejapka.service
 
 import odyseja.odysejapka.domain.Sponsor
-import odyseja.odysejapka.domain.SponsorEntity
+import odyseja.odysejapka.rest.SponsorController
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
@@ -25,18 +25,27 @@ class SponsorService(
     return sponsor.get().image
   }
 
-  fun getImages(): List<Sponsor> {
-    return sponsorRepository.findAll().map { Sponsor(it.id, it.name) }
+  fun getImages(): List<List<Sponsor>> {
+    val groupedByRow = sponsorRepository.findAll()
+      .groupBy { it.rowIndex }
+      .toSortedMap()
+
+    return groupedByRow.map { entry ->
+      entry.value.sortedBy { it.columnIndex }
+        .map { it.toSponsor() }
+    }
   }
 
-  fun uploadImage(file: MultipartFile, name: String) {
+  fun uploadImage(file: MultipartFile, uploadSponsorRequest: SponsorController.UploadSponsorRequest): Sponsor {
     val type = file.originalFilename?.split(".")?.last()
     if (!acceptedTypes.contains(type)) {
       throw RuntimeException("Provided invalid file type")
     }
-    sponsorRepository.save(SponsorEntity(0, name, file.bytes))
+
+    val sponsor = sponsorRepository.save(uploadSponsorRequest.toSponsorEntity(file.bytes))
 
     changeService.updateVersion()
+    return sponsor.toSponsor()
   }
 
   fun deleteImage(imageId: Int) {
