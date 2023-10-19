@@ -12,13 +12,15 @@ class SponsorEntity(
   @Column(length = 10000)
   val image: ByteArray,
   @Column
-  val rowIndex: Int,
+  val rowOrder: Int,
   @Column
   @GeneratedValue(strategy = GenerationType.AUTO)
-  val columnIndex: Int
+  val columnOrder: Int,
+  @ManyToOne(fetch = FetchType.LAZY)
+  val city: CityEntity
 ) {
 
   fun toSponsor(): Sponsor {
-    return Sponsor(id, rowIndex, columnIndex)
+    return Sponsor(id, rowOrder, columnOrder)
   }
 }

@@ -3,12 +3,14 @@ package odyseja.odysejapka.service
 import odyseja.odysejapka.domain.Sponsor
 import odyseja.odysejapka.rest.SponsorController
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 @Service
 class SponsorService(
   private val sponsorRepository: SponsorRepository,
-  private val changeService: ChangeService
+  private val changeService: ChangeService,
+  private val cityRepository: CityRepository
 ) {
 
   companion object {
@@ -25,24 +27,31 @@ class SponsorService(
     return sponsor.get().image
   }
 
-  fun getImages(): List<List<Sponsor>> {
-    val groupedByRow = sponsorRepository.findAll()
-      .groupBy { it.rowIndex }
+  @Transactional
+  fun getImages(cityId: Int): List<List<Sponsor>> {
+    val groupedByRow = sponsorRepository.findAllByCity_Id(cityId)
+      .groupBy { it.rowOrder }
       .toSortedMap()
 
     return groupedByRow.map { entry ->
-      entry.value.sortedBy { it.columnIndex }
+      entry.value.sortedBy { it.columnOrder }
         .map { it.toSponsor() }
     }
   }
 
-  fun uploadImage(file: MultipartFile, uploadSponsorRequest: SponsorController.UploadSponsorRequest): Sponsor {
+  @Transactional
+  fun uploadImage(
+    file: MultipartFile,
+    cityId: Int,
+    uploadSponsorRequest: SponsorController.UploadSponsorRequest
+  ): Sponsor {
     val type = file.originalFilename?.split(".")?.last()
     if (!acceptedTypes.contains(type)) {
       throw RuntimeException("Provided invalid file type")
     }
 
-    val sponsor = sponsorRepository.save(uploadSponsorRequest.toSponsorEntity(file.bytes))
+    val city = cityRepository.findFirstById(cityId)
+    val sponsor = sponsorRepository.save(uploadSponsorRequest.toSponsorEntity(file.bytes, city))
 
     changeService.updateVersion()
     return sponsor.toSponsor()

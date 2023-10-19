@@ -1,9 +1,17 @@
 <script lang="ts">
     import {BASE_URL, del, showSadToast} from "$lib/apiService";
-    import type {Sponsors} from "$lib/types";
+    import type {City, Sponsors} from "$lib/types";
     import {fetchSponsors} from "./sponsorService";
+    import {city} from "$lib/cityStore";
 
     export let data: Sponsors;
+
+    let currentCity: City
+    city.subscribe(async curr => {
+        currentCity = curr
+        data = await fetchSponsors();
+    });
+
 
     async function handleImageUpload(event: Event, index: number) {
         const file = (event.target as HTMLInputElement).files[0];
@@ -23,6 +31,7 @@
         formData.append('image', file);
         formData.append('row', row.toString());
         formData.append('column', column.toString());
+        formData.append('cityId', currentCity.id.toString());
 
         const response = await fetch(BASE_URL + '/sponsor', {
             method: 'POST',

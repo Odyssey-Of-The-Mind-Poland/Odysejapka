@@ -1,5 +1,6 @@
 package odyseja.odysejapka.rest
 
+import odyseja.odysejapka.domain.CityEntity
 import odyseja.odysejapka.domain.Sponsor
 import odyseja.odysejapka.domain.SponsorEntity
 import odyseja.odysejapka.service.SponsorService
@@ -26,17 +27,18 @@ class SponsorController(private val sponsorService: SponsorService) {
     @GetMapping
     @ResponseBody
     @Throws(IOException::class)
-    fun getImages(): List<List<Sponsor>> {
-        return sponsorService.getImages()
+    fun getImages(@RequestParam("cityId") cityId: Int): List<List<Sponsor>> {
+        return sponsorService.getImages(cityId)
     }
 
     @PostMapping
     fun uploadImage(
         @RequestParam("image") file: MultipartFile,
-        @RequestParam("row") row: Int
+        @RequestParam("row") row: Int,
+        @RequestParam("cityId") cityId: Int
     ): Sponsor {
         val uploadSponsorRequest = UploadSponsorRequest(row)
-        return sponsorService.uploadImage(file, uploadSponsorRequest)
+        return sponsorService.uploadImage(file, cityId, uploadSponsorRequest)
     }
 
     @DeleteMapping(value = ["/{imageId}"])
@@ -47,8 +49,8 @@ class SponsorController(private val sponsorService: SponsorService) {
     data class UploadSponsorRequest(
         val row: Int
     ) {
-        fun toSponsorEntity(image: ByteArray): SponsorEntity {
-            return SponsorEntity(0, image, row, 0)
+        fun toSponsorEntity(image: ByteArray, cityEntity: CityEntity): SponsorEntity {
+            return SponsorEntity(0, image, row, 0, cityEntity)
         }
     }
 }
