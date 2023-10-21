@@ -1,0 +1,7 @@
+### plan
+POST http://localhost:8081/plan
+Accept: application/json
+
+### excel
+GET http://localhost:8081/api/v2/timeTable/generate-excel
+Accept: application/json

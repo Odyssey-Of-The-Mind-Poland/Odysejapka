@@ -10,4 +10,5 @@ interface StageRepository : CrudRepository<StageEntity, Int> {
     fun findFirstById(id: Int?): StageEntity?
     fun findFirstByNumberAndCityEntity(number: Int?, cityEntity: CityEntity?): StageEntity?
     fun findAllByCityEntity(id: Optional<CityEntity?>): MutableIterable<StageEntity?>
+    fun findAllByCityEntity_Id(cityId: Int): List<StageEntity>
 }

@@ -25,9 +25,13 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-  implementation("commons-io:commons-io:2.11.0")
   implementation("org.springdoc:springdoc-openapi-ui:1.6.3")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+  implementation("org.optaplanner:optaplanner-core:9.44.0.Final")
+  implementation("org.apache.poi:poi:5.2.4")
+  implementation("org.apache.poi:poi-ooxml:5.2.4")
+  implementation("commons-io:commons-io:2.14.0")
+
 
 
   runtimeOnly("org.postgresql:postgresql:42.3.8")
