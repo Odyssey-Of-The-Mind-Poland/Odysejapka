@@ -1,5 +1,7 @@
 package odyseja.odysejapka.domain
 
+import odyseja.odysejapka.rest.v2.PerformanceGroupController
+
 data class Performance (
   val id: Int,
   val city: String,
@@ -13,4 +15,8 @@ data class Performance (
   var performanceDay: String,
   var spontanDay: String,
   var league: String
-)
+) {
+  fun toStageGroup(): PerformanceGroupController.StageGroup {
+    return PerformanceGroupController.StageGroup(problem, age)
+  }
+}
