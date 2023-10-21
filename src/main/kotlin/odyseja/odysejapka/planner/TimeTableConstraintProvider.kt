@@ -10,7 +10,8 @@ class TimeTableConstraintProvider : ConstraintProvider {
     override fun defineConstraints(constraintFactory: ConstraintFactory?): Array<Constraint> {
         return arrayOf(
             stageConflict(constraintFactory!!),
-            teamConflict(constraintFactory)
+            teamConflict(constraintFactory),
+            agePenalty(constraintFactory)
         )
     }
 
@@ -34,5 +35,13 @@ class TimeTableConstraintProvider : ConstraintProvider {
             )
             .penalize(HardSoftScore.ONE_HARD)
             .asConstraint("Team conflict")
+    }
+
+    fun agePenalty(constraintFactory: ConstraintFactory): Constraint {
+        return constraintFactory
+            .from(Performance::class.java)
+            .penalize("Age penalty", HardSoftScore.ONE_SOFT) { performance ->
+                performance.age
+            }
     }
 }

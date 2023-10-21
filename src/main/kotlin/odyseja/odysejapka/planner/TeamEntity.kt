@@ -9,12 +9,17 @@ class TeamEntity(
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int,
     @Column
-    var name: String
+    var name: String,
+    @Column
+    var age: Int,
+    @Column
+    var problem: Int
 ) {
     fun toPerformance(): Performance {
         return Performance(
             id = id.toLong(),
-            teamName = name
+            teamName = name,
+            age = age
         )
     }
 }
