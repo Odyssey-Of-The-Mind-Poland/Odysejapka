@@ -128,3 +128,7 @@ export type Sponsor = {
     rowIndex: number,
     columnIndex: number,
 }
+
+export type BreakingChange = {
+    version: string
+}
