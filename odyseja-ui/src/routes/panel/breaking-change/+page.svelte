@@ -12,6 +12,8 @@
     }
 </script>
 
+<h2 class="mb-6">Breaking Change</h2>
+
 <div class="flex">
     <label class="label p-2">
         <input bind:value={data.version} class="input" placeholder="Input" type="text"/>
