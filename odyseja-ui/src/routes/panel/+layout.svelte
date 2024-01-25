@@ -11,9 +11,9 @@
         {label: 'Problemy', route: '/panel/problem', icon: 'ic:round-format-list-bulleted'},
         {label: 'Informacje', route: '/panel/info', icon: 'ic:outline-info'},
         {label: 'Sceny', route: '/panel/stage', icon: 'ic:outline-curtains'},
-        {label: 'Miasta', route: '/panel/city', icon: 'ic:outline-curtains'},
-        {label: 'Sponsorzy', route: '/panel/sponsor', icon: 'ic:outline-curtains'},
-        {label: 'Breaking Change', route: '/panel/breaking-change', icon: 'ic:outline-curtains'}
+        {label: 'Miasta', route: '/panel/city', icon: 'ic:round-location-city'},
+        {label: 'Sponsorzy', route: '/panel/sponsor', icon: 'ic:round-handshake'},
+        {label: 'Breaking Change', route: '/panel/breaking-change', icon: 'ic:round-warning-amber'}
     ];
 
     export let data: Cities
