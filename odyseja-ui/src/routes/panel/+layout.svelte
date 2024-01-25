@@ -22,8 +22,8 @@
 
     let selectedCityId: number;
 
-    function handleCityChange(event) {
-        console.log(event.target.value)
+    function handleCityChange(event: Event) {
+        console.log((event.target as HTMLSelectElement).value);
         const selectedCity = data.cities.find(city => city.id === selectedCityId);
         city.set(selectedCity!);
     }
