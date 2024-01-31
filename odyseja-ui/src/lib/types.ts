@@ -132,3 +132,16 @@ export type Sponsor = {
 export type BreakingChange = {
     version: string
 }
+
+export type GadRequest = {
+    templatesFolderId: string,
+    destinationFolderId: string,
+    zspId: string,
+    problemPunctuationCells: Map<number, PunctationCells>
+}
+
+export type PunctationCells = {
+    dt: string,
+    style: string,
+    penalty: string,
+}

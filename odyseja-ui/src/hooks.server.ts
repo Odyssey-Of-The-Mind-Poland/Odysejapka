@@ -9,7 +9,7 @@ const routes = [
 ];
 
 export const handle: Handle = async ({event, resolve}) => {
-    let token = new Token(event.cookies.get('access_token'));
+    const token = new Token(event.cookies.get('access_token'));
 
     const route = routes.find(route => matchPath(event.url.pathname, route.path));
     console.log('route', route);

@@ -28,7 +28,10 @@ dependencies {
   implementation("commons-io:commons-io:2.11.0")
   implementation("org.springdoc:springdoc-openapi-ui:1.6.3")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-
+  implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
+  implementation("com.google.apis:google-api-services-drive:v3-rev20220815-2.0.0")
+  implementation("com.google.apis:google-api-services-sheets:v4-rev20220927-2.0.0")
+  implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
 
   runtimeOnly("org.postgresql:postgresql:42.3.8")
   runtimeOnly("com.h2database:h2:1.4.200")

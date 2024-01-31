@@ -13,7 +13,8 @@
         {label: 'Sceny', route: '/panel/stage', icon: 'ic:outline-curtains'},
         {label: 'Miasta', route: '/panel/city', icon: 'ic:round-location-city'},
         {label: 'Sponsorzy', route: '/panel/sponsor', icon: 'ic:round-handshake'},
-        {label: 'Breaking Change', route: '/panel/breaking-change', icon: 'ic:round-warning-amber'}
+        {label: 'Breaking Change', route: '/panel/breaking-change', icon: 'ic:round-warning-amber'},
+        {label: 'GAD', route: '/panel/gad ', icon: 'ic:outline-curtains'}
     ];
 
     export let data: Cities
