@@ -10,7 +10,6 @@
         data.problemPunctuationCells[index] = cell;
     }
 
-
     function startGad() {
         runGad(data);
     }
