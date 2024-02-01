@@ -14,13 +14,7 @@ class GadService(
 
     fun runGad(generateGadCommand: GenerateGadCommand) {
         gadCommandService.saveCommand(generateGadCommand)
-        gad = GadConfiguration(
-            generateGadCommand.templatesFolderId,
-            generateGadCommand.destinationFolderId,
-            generateGadCommand.zspId,
-            generateGadCommand.problemPunctuationCells
-        ).gadRunner()
-        start()
+        start(generateGadCommand)
     }
 
     fun stop() {
@@ -28,21 +22,28 @@ class GadService(
         gad = null
     }
 
-    private fun start() {
-        if (job != null || job?.isAlive == true) {
+    private fun start(generateGadCommand: GenerateGadCommand) {
+        if (gad != null || job?.isAlive == true) {
             throw RuntimeException("Gad is already running")
         }
+        gad = GadConfiguration(
+            generateGadCommand.templatesFolderId,
+            generateGadCommand.destinationFolderId,
+            generateGadCommand.zspId,
+            generateGadCommand.problemPunctuationCells
+        ).gadRunner()
         job = Thread {
             gad?.createForms()
         }
         job?.start()
     }
 
-    fun getStatus(): GadStatus {
-        return if (gad?.getProgress() ?: 100 != 100) {
-            GadStatus.RUNNING
+    fun getProgress(): GadProgress {
+        val progress = gad?.getProgress() ?: 100
+        return if (progress != 100) {
+            GadProgress(progress, GadStatus.RUNNING)
         } else {
-            GadStatus.STOPPED
+            GadProgress(100, GadStatus.STOPPED)
         }
     }
 }

@@ -146,6 +146,11 @@ export type PunctationCells = {
     penalty: string,
 }
 
+export type GadProgress = {
+    status: GadStatus,
+    progress: number,
+}
+
 export enum GadStatus {
     STOPPED = "STOPPED",
     RUNNING = "RUNNING",
