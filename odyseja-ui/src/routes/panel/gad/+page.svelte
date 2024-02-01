@@ -1,9 +1,25 @@
 <script lang="ts">
-    import {runGad, stopGadRun} from "./gadService";
-    import type {GadRequest, PunctationCells} from "$lib/types.js";
+    import {getGadStatus, runGad, stopGadRun} from "./gadService";
+    import {type GadRequest, GadStatus, type PunctationCells} from "$lib/types.js";
+    import {onDestroy, onMount} from "svelte";
 
     export let data: GadRequest;
-    let isGadRunning = false;
+    let gadStatus: GadStatus = GadStatus.STOPPED;
+    let intervalId: any = null;
+
+    onMount(() => {
+        intervalId = setInterval(() => {
+            getGadStatus().then((status) => {
+                gadStatus = status;
+            });
+        }, 5000);
+    });
+
+    onDestroy(() => {
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
+    });
 
     function updateProblemPunctuationCells(index, field, value) {
         let cell = data.problemPunctuationCells[index] || {dt: '', style: '', penalty: ''} as PunctationCells;
@@ -13,11 +29,11 @@
 
     function startGad() {
         runGad(data);
-        isGadRunning = true;
+        gadStatus = GadStatus.RUNNING;
     }
 
     function stopGad() {
-        isGadRunning = false;
+        gadStatus = GadStatus.STOPPED;
         stopGadRun();
     }
 </script>
@@ -51,7 +67,9 @@
     </div>
 {/each}
 
-<button class="btn btn-md variant-filled-secondary h-10 m-5" on:click={startGad}>Generuj arkusze</button>
-{#if isGadRunning}
+
+{#if gadStatus === GadStatus.STOPPED}
+    <button class="btn btn-md variant-filled-secondary h-10 m-5" on:click={startGad}>Generuj arkusze</button>
+{:else}
     <button class="btn btn-md variant-filled-error h-10 m-5" on:click={stopGad}>Zatrzymaj generowanie</button>
 {/if}

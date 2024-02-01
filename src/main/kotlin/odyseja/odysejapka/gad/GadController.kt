@@ -19,6 +19,11 @@ class GadController(private val gadCommandService: GadCommandService, private va
         gadService.stop()
     }
 
+    @GetMapping("/status")
+    fun getGadStatus(): GadStatus {
+        return gadService.getStatus()
+    }
+
     @GetMapping
     fun getGad(): GenerateGadCommand {
         return gadCommandService.getCommand()

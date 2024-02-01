@@ -1,5 +1,6 @@
 import com.google.api.services.drive.model.File
 import com.google.api.services.sheets.v4.model.Sheet
+import java.util.concurrent.atomic.AtomicInteger
 
 internal class GadRunner(
     private val driveAdapter: DriveAdapter,
@@ -8,12 +9,20 @@ internal class GadRunner(
 ) {
 
     private val templates = getTemplates()
+    private var totalSheetCount = 0
+    private var processedSheetCount = AtomicInteger(0)
 
     fun createForms() {
         val sheets = sheetsAdapter.getSheets()
+        totalSheetCount = sheets?.size ?: 1
         for (sheet in sheets!!) {
             processSheet(sheet)
+            processedSheetCount.incrementAndGet()
         }
+    }
+
+    fun getProgress(): Int {
+        return (processedSheetCount.get() * 100) / totalSheetCount
     }
 
     private fun processSheet(sheet: Sheet) {

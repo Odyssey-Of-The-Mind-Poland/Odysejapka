@@ -25,12 +25,24 @@ class GadService(
 
     fun stop() {
         job?.stop()
+        gad = null
     }
 
     private fun start() {
+        if (job != null || job?.isAlive == true) {
+            throw RuntimeException("Gad is already running")
+        }
         job = Thread {
             gad?.createForms()
         }
         job?.start()
+    }
+
+    fun getStatus(): GadStatus {
+        return if (gad?.getProgress() ?: 100 != 100) {
+            GadStatus.RUNNING
+        } else {
+            GadStatus.STOPPED
+        }
     }
 }
