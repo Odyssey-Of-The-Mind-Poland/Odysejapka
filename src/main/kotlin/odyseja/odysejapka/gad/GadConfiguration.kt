@@ -7,11 +7,11 @@ internal class GadConfiguration(
     val problemPunctuationCells: Map<String, PunctationCells>
 ) {
 
-    fun gadService(): GadService {
+    fun gadRunner(): GadRunner {
         val credentials = CredentialsProvider().getCredentials()
         val jsonFactory = GsonFactory.getDefaultInstance()
         val driveAdapter = DriveAdapter(credentials, jsonFactory, templatesFolderId, destinationFolderId)
         val sheetsAdapter = SpreadSheetsAdapter(credentials, jsonFactory, zspId)
-        return GadService(driveAdapter, sheetsAdapter, problemPunctuationCells)
+        return GadRunner(driveAdapter, sheetsAdapter, problemPunctuationCells)
     }
 }

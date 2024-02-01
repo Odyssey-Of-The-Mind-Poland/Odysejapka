@@ -1,8 +1,9 @@
 <script lang="ts">
-    import {runGad} from "./gadService";
+    import {runGad, stopGadRun} from "./gadService";
     import type {GadRequest, PunctationCells} from "$lib/types.js";
 
     export let data: GadRequest;
+    let isGadRunning = false;
 
     function updateProblemPunctuationCells(index, field, value) {
         let cell = data.problemPunctuationCells[index] || {dt: '', style: '', penalty: ''} as PunctationCells;
@@ -12,6 +13,12 @@
 
     function startGad() {
         runGad(data);
+        isGadRunning = true;
+    }
+
+    function stopGad() {
+        isGadRunning = false;
+        stopGadRun();
     }
 </script>
 
@@ -45,3 +52,6 @@
 {/each}
 
 <button class="btn btn-md variant-filled-secondary h-10 m-5" on:click={startGad}>Generuj arkusze</button>
+{#if isGadRunning}
+    <button class="btn btn-md variant-filled-error h-10 m-5" on:click={stopGad}>Zatrzymaj generowanie</button>
+{/if}
