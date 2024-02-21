@@ -9,14 +9,19 @@ import org.springframework.web.bind.annotation.*
 class BreakingChangeController(private val breakingChangeService: BreakingChangeService) {
 
     @GetMapping
-    @Secured("ROLE_ADMIN")
     fun getLastBrakingChange(): BreakingChange {
         return breakingChangeService.getLastBreakingChange()
     }
 
     @PutMapping
+    @Secured("ROLE_ADMIN")
     fun setBreakingChange(@RequestBody breakingChange: BreakingChange) {
         breakingChangeService.setBreakingChange(breakingChange)
+    }
+
+    @GetMapping("/shouldUpdate")
+    fun shouldUpdate(breakingChange: BreakingChange): Boolean {
+        return breakingChangeService.shouldUpdate(breakingChange)
     }
 
     data class BreakingChange(
