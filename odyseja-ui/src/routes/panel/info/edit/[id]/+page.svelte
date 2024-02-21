@@ -3,6 +3,7 @@
     import type {Info} from "$lib/types";
     import {post} from "$lib/apiService";
     import {goto} from "$app/navigation";
+    import {deleteInfo} from "../../infoService";
 
     export let data: Info
 
@@ -13,6 +14,11 @@
 
     async function saveInfo(info: Info) {
         await post(info,'/info', 'Info zapisano pomyślnie')
+    }
+
+    async function removeInfo(id: number) {
+        await deleteInfo(id)
+        goto('/panel/info')
     }
 
 </script>
@@ -28,4 +34,10 @@
         type="button"
         class="btn btn-md variant-filled-primary"
         on:click={save}>Zapisz
+</button>
+
+<button
+        type="button"
+        class="btn btn-md variant-filled-error"
+        on:click={removeInfo(data.id)}>Usuń
 </button>
