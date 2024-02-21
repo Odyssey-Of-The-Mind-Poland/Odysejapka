@@ -20,8 +20,8 @@ class BreakingChangeController(private val breakingChangeService: BreakingChange
     }
 
     @GetMapping("/shouldUpdate")
-    fun shouldUpdate(breakingChange: BreakingChange): Boolean {
-        return breakingChangeService.shouldUpdate(breakingChange)
+    fun shouldUpdate(@RequestParam version: String): Boolean {
+        return breakingChangeService.shouldUpdate(version)
     }
 
     data class BreakingChange(

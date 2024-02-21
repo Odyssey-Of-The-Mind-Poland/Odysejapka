@@ -27,9 +27,9 @@ class BreakingChangeService(private val breakingChangeRepository: BreakingChange
         breakingChangeRepository.save(breakingChangeEntity)
     }
 
-    fun shouldUpdate(breakingChange: BreakingChangeController.BreakingChange): Boolean {
+    fun shouldUpdate(currentVersion: String): Boolean {
         val breakingChangeVersionParts = getLastBreakingChange().version.split(".").map { it.toInt() }
-        val currentVersionParts = breakingChange.version.split(".").map { it.toInt() }
+        val currentVersionParts = currentVersion.split(".").map { it.toInt() }
 
         val maxLength = maxOf(breakingChangeVersionParts.size, currentVersionParts.size)
 
