@@ -1,7 +1,7 @@
 package odyseja.odysejapka.rest.v2
 
 import odyseja.odysejapka.domain.PerformanceGroup
-import odyseja.odysejapka.service.PerformanceGroupService
+import odyseja.odysejapka.timetable.PerformanceGroupService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam

@@ -1,14 +1,14 @@
 <script lang="ts">
     import {Table, tableMapperValues} from '@skeletonlabs/skeleton';
     import type {TableSource} from '@skeletonlabs/skeleton';
-    import type {Timetable, Performance, PerformanceGroup} from '$lib/types';
+    import type {Timetable, Performance, PerformanceGroup, City} from '$lib/types';
     import PerformanceComponent from "./Performance.svelte";
     import PerformanceGroupComponent from "./PerformanceGroupComponent.svelte";
     import cloneDeep from 'lodash/cloneDeep';
     import {compareGroups, comparePerformances, getGroupTitle} from "$lib/types";
     import Filter from "./Filter.svelte";
     import Dialog from "$lib/Dialog.svelte";
-    import {fetchTimeTable} from "./performanceService";
+    import {fetchTimeTable, importZsp} from "./performanceService";
     import {city} from "$lib/cityStore";
 
 
@@ -29,6 +29,9 @@
 
     let problems = [0, 1, 2, 3, 4, 5]
     let selectedProblems = [0, 1, 2, 3, 4, 5]
+
+    let zspId = ""
+    let currentCity: City
 
     $: {
         if (data) {
@@ -73,7 +76,8 @@
         performanceGroupDialog.close();
     }
 
-    city.subscribe(async currentCity => {
+    city.subscribe(async curr => {
+        currentCity = curr
         let timetable = await fetchTimeTable();
         data = sortTimeTable(timetable);
         initialData = data
@@ -86,6 +90,10 @@
             meta: tableMapperValues(performances, ['id', 'city', 'team', 'performance', 'spontan']),
             foot: ['Total', '', `<code class="code">${performances.length}</code>`]
         };
+    }
+
+    async function importHarmonogram() {
+        await importZsp(zspId, currentCity.id)
     }
 
     async function addPerformance() {
@@ -120,25 +128,41 @@
     </button>
 </div>
 
-
-{#each data.timetable as performanceGroup (performanceGroup.group)}
-    <div class="card card-hover cursor-pointer mb-6"
-         on:click={() => onPerformanceGroupSelected(performanceGroup)}>
-        <header class="card-header">{getGroupTitle(performanceGroup.group)}</header>
-        <section class="p-4">
-            <Table source={mapPerformancesToTable(performanceGroup.performances)} on:selected={onPerformanceSelected}
-                   interactive="true"/>
-        </section>
+<div class="flex flex-wrap space-x-5 mb-5">
+    <div class="flex-grow flex-4 space-x-5">
+        <input bind:value={zspId} class="input" placeholder="link do ZSP" type="text"/>
     </div>
-{/each}
+    <button
+            type="button"
+            class="btn variant-filled-primary h-full"
+            on:click={importHarmonogram}>Importuj harmonogram
+    </button>
+</div>
 
-<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
 
-<Dialog bind:dialog={performanceDialog}>
-    <PerformanceComponent performance={cloneDeep(performance)} onSave={reloadTimetable}/>
-</Dialog>
+{#if (data.timetable.length === 0)}
+    <div class="text-center text-2xl">Brak występów</div>
+{:else}
+    {#each data.timetable as performanceGroup (performanceGroup.group)}
+        <div class="card card-hover cursor-pointer mb-6"
+             on:click={() => onPerformanceGroupSelected(performanceGroup)}>
+            <header class="card-header">{getGroupTitle(performanceGroup.group)}</header>
+            <section class="p-4">
+                <Table source={mapPerformancesToTable(performanceGroup.performances)} on:selected={onPerformanceSelected}
+                       interactive="true"/>
+            </section>
+        </div>
+    {/each}
+
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
+
+    <Dialog bind:dialog={performanceDialog}>
+        <PerformanceComponent performance={cloneDeep(performance)} onSave={reloadTimetable}/>
+    </Dialog>
 
 
-<Dialog bind:dialog={performanceGroupDialog}>
-    <PerformanceGroupComponent performanceGroup={cloneDeep(selectedPerformanceGroup)} onSave={reloadTimetable}/>
-</Dialog>
+    <Dialog bind:dialog={performanceGroupDialog}>
+        <PerformanceGroupComponent performanceGroup={cloneDeep(selectedPerformanceGroup)} onSave={reloadTimetable}/>
+    </Dialog>
+
+{/if}

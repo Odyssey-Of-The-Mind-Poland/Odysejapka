@@ -1,4 +1,7 @@
 import com.google.api.client.json.gson.GsonFactory
+import odyseja.odysejapka.drive.CredentialsProvider
+import odyseja.odysejapka.drive.DriveAdapter
+import odyseja.odysejapka.drive.SpreadSheetsAdapter
 
 internal class GadConfiguration(
     val templatesFolderId: String,

@@ -1,7 +1,6 @@
-package odyseja.odysejapka.service
+package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.domain.CityEntity
-import odyseja.odysejapka.domain.PerformanceEntity
 import org.springframework.data.repository.CrudRepository
 import org.springframework.transaction.annotation.Transactional
 

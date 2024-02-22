@@ -6,7 +6,7 @@ import javax.persistence.*
 class StageEntity (
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
-        @Column()
+        @Column
         val id: Int,
         @Column
         val number: Int,

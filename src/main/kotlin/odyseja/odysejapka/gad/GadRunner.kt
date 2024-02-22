@@ -1,5 +1,7 @@
 import com.google.api.services.drive.model.File
 import com.google.api.services.sheets.v4.model.Sheet
+import odyseja.odysejapka.drive.DriveAdapter
+import odyseja.odysejapka.drive.SpreadSheetsAdapter
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class GadRunner(
@@ -29,7 +31,7 @@ internal class GadRunner(
         val title = sheet.properties.title
         println("Processing: $title")
 
-        val teams = sheetsAdapter.geTeams(title)
+        val teams = sheetsAdapter.getTeams(title)
 
         processTeams(teams, title)
     }
@@ -49,7 +51,7 @@ internal class GadRunner(
                 getZspValue(file.id, cells.style),
                 getZspValue(file.id, cells.penalty)
             )
-            sheetsAdapter.writeZsp("F${team.zspIndex}:H${team.zspIndex}", values, sheetTite)
+            sheetsAdapter.writeZsp("F${team.zspRow}:H${team.zspRow}", values, sheetTite)
             println("Created: ${file.name}")
         }
     }

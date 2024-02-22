@@ -1,14 +1,14 @@
-package odyseja.odysejapka.rest
+package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.domain.*
-import odyseja.odysejapka.service.TimeTableService
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
 @RestController()
 @RequestMapping("/timeTable")
 class TimeTableController(
-    private val timeTableService: TimeTableService
+    private val timeTableService: TimeTableService,
+    private val importTimetableService: ImportTimetableService
 ) {
 
     @GetMapping
@@ -41,4 +41,14 @@ class TimeTableController(
     fun delPerformance(@PathVariable performanceId: Int) {
         timeTableService.delPerformance(performanceId)
     }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping("/import")
+    fun import(@RequestBody importTimeTable: ImportTimeTable, @RequestParam cityId: Int) {
+        return importTimetableService.import(importTimeTable.zspId, cityId)
+    }
+
+    data class ImportTimeTable(
+     val zspId: String,
+    )
 }

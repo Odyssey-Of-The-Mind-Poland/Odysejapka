@@ -1,5 +1,6 @@
-package odyseja.odysejapka.domain
+package odyseja.odysejapka.timetable
 
+import odyseja.odysejapka.domain.*
 import javax.persistence.*
 
 

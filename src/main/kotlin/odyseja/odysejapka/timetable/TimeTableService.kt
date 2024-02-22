@@ -1,7 +1,10 @@
-package odyseja.odysejapka.service
+package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.domain.*
+import odyseja.odysejapka.service.*
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TimeTableService(
@@ -60,6 +63,7 @@ class TimeTableService(
     return per
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   fun addPerformance(performance: Performance): PerformanceEntity {
     val per = PerformanceEntity(
       performance.id,
@@ -108,12 +112,13 @@ class TimeTableService(
     )
   }
 
-  fun getStage(stage: Int, city: String): StageEntity {
-    return stageRepository.findFirstByNumberAndCityEntity(
-      stage,
-      getCity(city)
-    )
-      ?: stageRepository.save(StageEntity(0, stage, "Scena nr. $stage", getCity(city)))
+  fun getStage(stageNumber: Int, cityName: String): StageEntity {
+    val city = getCity(cityName)
+    val stage = stageRepository.findFirstByNumberAndCityEntity(
+      stageNumber,
+      city)
+
+    return stage ?: stageRepository.save(StageEntity(0, stageNumber, "Scena nr. $stage", city))
   }
 
   fun getCity(city: String): CityEntity {
@@ -131,5 +136,9 @@ class TimeTableService(
 
   fun getByCity(cityId: Int): List<Performance> {
     return timeTableRepository.findAllByCityEntity_Id(cityId).map { it.toPerformance() }
+  }
+
+  fun deleteCity(cityId: Int) {
+    timeTableRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
   }
 }

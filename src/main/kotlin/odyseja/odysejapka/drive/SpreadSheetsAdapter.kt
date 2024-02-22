@@ -1,3 +1,7 @@
+package odyseja.odysejapka.drive
+
+import Team
+import Teams
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -6,7 +10,7 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.ValueRange
 
-internal class SpreadSheetsAdapter(
+class SpreadSheetsAdapter(
     credentials: Credential,
     jsonFactory: JsonFactory,
     private val zspId: String
@@ -45,10 +49,12 @@ internal class SpreadSheetsAdapter(
         return service.spreadsheets().get(zspId).execute().sheets
     }
 
-    fun geTeams(sheetName: String): Teams {
-        val values = service.spreadsheets().values().get(zspId, "$sheetName!A1:C").execute().getValues()
+    fun getTeams(sheetName: String): Teams {
+        val values = service.spreadsheets().values().get(zspId, "$sheetName!A1:F").execute().getValues()
         val teams = mutableListOf<Team>()
         var judges = ""
+        var day = ""
+        var stage = 1
         for ((i, row) in values.withIndex()) {
 
             if (row.size > 0 && isJudge(row[0].toString())) {
@@ -56,11 +62,31 @@ internal class SpreadSheetsAdapter(
                 break
             }
 
-            if (row.size == 0 || !isDate(row[0].toString())) {
+            if (row.size > 0 && isDay(row[0].toString())) {
+                day = row[0].toString()
+            }
+
+            if (row.size > 0 && isStage(row[0].toString())) {
+                stage = row[0].toString().split(" ")[1].toInt()
+            }
+
+            if (row.size == 0 || !isTime(row[0].toString())) {
                 continue
             }
 
-            teams.add(Team(row[0].toString(), row[1].toString(), row[2].toString(), i + 1))
+            teams.add(
+                Team(
+                    row[0].toString(),
+                    row[1].toString(),
+                    row[2].toString(),
+                    row[3].toString(),
+                    row[4].toString(),
+                    row[5].toString(),
+                    i + 1,
+                    day,
+                    stage
+                )
+            )
         }
         return Teams(judges, teams)
     }
@@ -69,8 +95,16 @@ internal class SpreadSheetsAdapter(
         return judge.contains("SĘDZIOWIE")
     }
 
-    private fun isDate(cell: String): Boolean {
+    private fun isTime(cell: String): Boolean {
         val regex = "^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]\$".toRegex()
         return regex.matches(cell)
+    }
+
+    private fun isDay(cell: String): Boolean {
+        return cell.lowercase().contains("sobota") || cell.lowercase().contains("niedziela");
+    }
+
+    private fun isStage(cell: String): Boolean {
+        return cell.lowercase().contains("scena")
     }
 }

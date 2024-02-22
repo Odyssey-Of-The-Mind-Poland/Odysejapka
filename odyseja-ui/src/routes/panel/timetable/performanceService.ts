@@ -10,6 +10,10 @@ export async function savePerformance(performance: Performance) {
     await post(performance, '/timeTable', 'Dodano przedstawienie');
 }
 
+export async function importZsp(zspId: string, cityId: number) {
+    await post({zspId: zspId}, `/timeTable/import?cityId=${cityId}`, 'Rozpoczęto import');
+}
+
 export async function deletePerformance(performanceId: number) {
     del('/timeTable/' + performanceId, 'Występ usunięty pomyślnie');
 }
