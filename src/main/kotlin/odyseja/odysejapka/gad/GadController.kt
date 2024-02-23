@@ -1,5 +1,6 @@
 package odyseja.odysejapka.gad
 
+import odyseja.odysejapka.domain.Progress
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
@@ -20,7 +21,7 @@ class GadController(private val gadCommandService: GadCommandService, private va
     }
 
     @GetMapping("/status")
-    fun getGadStatus(): GadProgress {
+    fun getGadStatus(): Progress {
         return gadService.getProgress()
     }
 

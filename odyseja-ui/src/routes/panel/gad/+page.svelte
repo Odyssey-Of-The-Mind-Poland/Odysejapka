@@ -1,11 +1,11 @@
 <script lang="ts">
     import {getGadStatus, runGad, stopGadRun} from "./gadService";
-    import {type GadProgress, type GadRequest, GadStatus, type PunctationCells} from "$lib/types.js";
+    import {type Progress, type GadRequest, Status, type PunctationCells} from "$lib/types.js";
     import {onDestroy, onMount} from "svelte";
     import {ProgressBar} from "@skeletonlabs/skeleton";
 
     export let data: GadRequest;
-    let gadProgress: GadProgress = {status: GadStatus.STOPPED, progress: 100};
+    let gadProgress: Progress = {status: Status.STOPPED, progress: 100};
     let intervalId: any = null;
 
     onMount(() => {
@@ -30,11 +30,11 @@
 
     function startGad() {
         runGad(data);
-        gadProgress = GadStatus.RUNNING;
+        gadProgress = {status: Status.RUNNING, progress : 0};
     }
 
     function stopGad() {
-        gadProgress = GadStatus.STOPPED;
+        gadProgress = {status: Status.STOPPED, progress : 0};
         stopGadRun();
     }
 </script>
@@ -70,7 +70,7 @@
 
 
 <div class="m-5">
-    {#if gadProgress.status === GadStatus.STOPPED}
+    {#if gadProgress.status === Status.STOPPED}
         <button class="btn btn-md variant-filled-secondary h-10" on:click={startGad}>Generuj arkusze</button>
     {:else}
         <button class="btn btn-md variant-filled-error h-10 mb-5" on:click={stopGad}>Zatrzymaj generowanie</button>

@@ -2,6 +2,8 @@ package odyseja.odysejapka.gad
 
 import GadConfiguration
 import GadRunner
+import odyseja.odysejapka.domain.Progress
+import odyseja.odysejapka.domain.Status
 import org.springframework.stereotype.Service
 
 @Service
@@ -38,12 +40,12 @@ class GadService(
         job?.start()
     }
 
-    fun getProgress(): GadProgress {
+    fun getProgress(): Progress {
         val progress = gad?.getProgress() ?: 100
         return if (progress != 100) {
-            GadProgress(progress, GadStatus.RUNNING)
+            Progress(progress, Status.RUNNING)
         } else {
-            GadProgress(100, GadStatus.STOPPED)
+            Progress(100, Status.STOPPED)
         }
     }
 }

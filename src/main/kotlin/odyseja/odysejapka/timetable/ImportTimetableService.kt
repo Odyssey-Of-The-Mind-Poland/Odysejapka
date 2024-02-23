@@ -4,6 +4,8 @@ import TimeTableImporter
 import com.google.api.client.json.gson.GsonFactory
 import odyseja.odysejapka.drive.CredentialsProvider
 import odyseja.odysejapka.drive.SpreadSheetsAdapter
+import odyseja.odysejapka.domain.Progress
+import odyseja.odysejapka.domain.Status
 import odyseja.odysejapka.service.CityRepository
 import org.springframework.stereotype.Service
 
@@ -13,17 +15,43 @@ class ImportTimetableService(
     private val cityRepository: CityRepository
 ) {
 
+    private var importer: TimeTableImporter? = null
+    private var job: Thread? = null
+
     fun import(zspId: String, cityId: Int) {
+
+        if (importer != null || job?.isAlive == true) {
+            throw RuntimeException("Gad is already running")
+        }
+
         clearTimeTable(cityId)
         val credentials = CredentialsProvider().getCredentials()
         val jsonFactory = GsonFactory.getDefaultInstance()
         val sheetsAdapter = SpreadSheetsAdapter(credentials, jsonFactory, zspId)
         val cityName = cityRepository.findFirstById(cityId).name
-        val timeTableImporter = TimeTableImporter(performanceService, sheetsAdapter, cityName)
-        timeTableImporter.startImporting()
+        importer = TimeTableImporter(performanceService, sheetsAdapter, cityName)
+
+        job = Thread {
+            importer?.startImporting()
+        }
+        job?.start()
     }
 
     fun clearTimeTable(cityId: Int) {
         performanceService.deleteCity(cityId)
+    }
+
+    fun stop() {
+        job?.stop()
+        importer = null
+    }
+
+    fun getProgress(): Progress {
+        val progress = importer?.getProgress() ?: 100
+        return if (progress != 100) {
+            Progress(progress, Status.RUNNING)
+        } else {
+            Progress(100, Status.STOPPED)
+        }
     }
 }

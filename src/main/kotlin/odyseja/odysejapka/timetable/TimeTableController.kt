@@ -1,6 +1,7 @@
 package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.domain.*
+import odyseja.odysejapka.domain.Progress
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
@@ -46,6 +47,17 @@ class TimeTableController(
     @PostMapping("/import")
     fun import(@RequestBody importTimeTable: ImportTimeTable, @RequestParam cityId: Int) {
         return importTimetableService.import(importTimeTable.zspId, cityId)
+    }
+
+    @PostMapping("/import/stop")
+    @Secured("ROLE_ADMIN")
+    fun stopImport() {
+        importTimetableService.stop()
+    }
+
+    @GetMapping("/import/status")
+    fun getGadStatus(): Progress {
+        return importTimetableService.getProgress()
     }
 
     data class ImportTimeTable(

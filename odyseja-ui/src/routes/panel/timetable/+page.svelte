@@ -10,6 +10,7 @@
     import Dialog from "$lib/Dialog.svelte";
     import {fetchTimeTable, importZsp} from "./performanceService";
     import {city} from "$lib/cityStore";
+    import TimeTableImporter from "./TimeTableImporter.svelte";
 
 
     export let data: Timetable;
@@ -29,9 +30,6 @@
 
     let problems = [0, 1, 2, 3, 4, 5]
     let selectedProblems = [0, 1, 2, 3, 4, 5]
-
-    let zspId = ""
-    let currentCity: City
 
     $: {
         if (data) {
@@ -77,7 +75,6 @@
     }
 
     city.subscribe(async curr => {
-        currentCity = curr
         let timetable = await fetchTimeTable();
         data = sortTimeTable(timetable);
         initialData = data
@@ -90,10 +87,6 @@
             meta: tableMapperValues(performances, ['id', 'city', 'team', 'performance', 'spontan']),
             foot: ['Total', '', `<code class="code">${performances.length}</code>`]
         };
-    }
-
-    async function importHarmonogram() {
-        await importZsp(zspId, currentCity.id)
     }
 
     async function addPerformance() {
@@ -128,17 +121,7 @@
     </button>
 </div>
 
-<div class="flex flex-wrap space-x-5 mb-5">
-    <div class="flex-grow flex-4 space-x-5">
-        <input bind:value={zspId} class="input" placeholder="link do ZSP" type="text"/>
-    </div>
-    <button
-            type="button"
-            class="btn variant-filled-primary h-full"
-            on:click={importHarmonogram}>Importuj harmonogram
-    </button>
-</div>
-
+<TimeTableImporter/>
 
 {#if (data.timetable.length === 0)}
     <div class="text-center text-2xl">Brak występów</div>
