@@ -12,5 +12,7 @@ data class Performance (
   val part: Int,
   var performanceDay: String,
   var spontanDay: String,
-  var league: String
+  var league: String,
+  var zspRow: Int?,
+  var zspSheet: String?
 )

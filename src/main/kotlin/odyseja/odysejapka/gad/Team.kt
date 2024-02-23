@@ -1,4 +1,5 @@
 import odyseja.odysejapka.domain.Performance
+import javax.persistence.Column
 
 data class Team(
     val performanceHour: String,
@@ -9,7 +10,8 @@ data class Team(
     val teamName: String,
     val zspRow: Int,
     val day: String,
-    val stage: Int
+    val stage: Int,
+    var zspSheet: String?
 ) {
     fun getFileName(): String {
         return "$`code`_$teamName"
@@ -43,7 +45,9 @@ data class Team(
             part.toInt(),
             day,
             getSpontanDay(),
-            league
+            league,
+            zspRow = zspRow,
+            zspSheet = zspSheet
         )
     }
 }

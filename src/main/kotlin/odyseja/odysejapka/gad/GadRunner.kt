@@ -36,7 +36,7 @@ internal class GadRunner(
         processTeams(teams, title)
     }
 
-    private fun processTeams(teams: Teams, sheetTite: String) {
+    private fun processTeams(teams: Teams, sheetTitle: String) {
         for (team in teams.teams) {
             val template = getTemplate(team.getProblem()[0])
 
@@ -51,7 +51,7 @@ internal class GadRunner(
                 getZspValue(file.id, cells.style),
                 getZspValue(file.id, cells.penalty)
             )
-            sheetsAdapter.writeZsp("F${team.zspRow}:H${team.zspRow}", values, sheetTite)
+            sheetsAdapter.writeZsp("I${team.zspRow}:K${team.zspRow}", values, sheetTitle)
             println("Created: ${file.name}")
         }
     }
