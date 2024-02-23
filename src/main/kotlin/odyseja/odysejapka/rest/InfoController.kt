@@ -16,6 +16,7 @@ class InfoController(
   @GetMapping()
   @ResponseBody
   fun getInfo(@RequestParam(required = false) cityId: Int?): Iterable<Info?>? {
+    
     return cityId?.let { infoService.getInfo(cityId) } ?: infoService.getAllInfo()
   }
 
