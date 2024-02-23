@@ -42,6 +42,8 @@ export async function post(request: any, path: string, succesText: string): Prom
     }
 
     showHappyToast(succesText === undefined ? 'Akcaj wykonana pomyślnie' : succesText)
+
+    return await response.json();
 }
 
 export async function put(request: any, path: string, succesText: string): Promise<any> {

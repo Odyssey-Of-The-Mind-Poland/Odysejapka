@@ -33,6 +33,7 @@ class InfoController(
 
   @Secured("ROLE_ADMIN")
   @PostMapping
+  @ResponseBody
   fun addInfo(@RequestBody info: Info): Info {
     return infoService.addInfo(info)
   }
