@@ -22,22 +22,21 @@
     }
 
 </script>
+<div class="space-y-5">
+    <input bind:value={data.infoName} class="input" placeholder="Nazwa info" type="text"/>
+    <input bind:value={data.sortNumber} class="input" placeholder="Kolejność sortowania" type="number"/>
+    <Editor apiKey="bzbpgl0oh7lp9vuq7avj5zatxnu5daoi8z6gcnum32zkeq4l"
+            bind:value="{data.infoText}"/>
 
-<h1>{data.infoName}</h1>
-<br>
-<Editor apiKey="bzbpgl0oh7lp9vuq7avj5zatxnu5daoi8z6gcnum32zkeq4l"
-        bind:value="{data.infoText}"/>
+    <button
+            type="button"
+            class="btn btn-md variant-filled-primary"
+            on:click={save}>Zapisz
+    </button>
 
-<br>
-
-<button
-        type="button"
-        class="btn btn-md variant-filled-primary"
-        on:click={save}>Zapisz
-</button>
-
-<button
-        type="button"
-        class="btn btn-md variant-filled-error"
-        on:click={removeInfo(data.id)}>Usuń
-</button>
+    <button
+            type="button"
+            class="btn btn-md variant-filled-error"
+            on:click={removeInfo(data.id)}>Usuń
+    </button>
+</div>

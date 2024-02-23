@@ -14,11 +14,11 @@ class InfoService(
 ) {
 
   fun getInfo(city: Int): Iterable<Info?>? {
-    return infoRepository.findByCity(cityRepository.findFirstById(city)).map { it.toInfo() }
+    return infoRepository.findByCity(cityRepository.findFirstById(city)).map { it.toInfo() }.sortedBy { it.sortNumber }
   }
 
   fun getAllInfo(): List<Info> {
-    return infoRepository.findAllByOrderBySortNumber().map { it.toInfo() }
+    return infoRepository.findAllByOrderBySortNumber().map { it.toInfo() }.sortedBy { it.sortNumber }
   }
 
   fun getInfoCategory(): MutableIterable<InfoCategoryEntity> {
@@ -27,7 +27,7 @@ class InfoService(
 
 
   fun addInfo(info: Info): Info {
-    infoRepository.save(
+    val savedInfo = infoRepository.save(
       InfoEntity(
         info.id,
         info.infoName,
@@ -40,7 +40,7 @@ class InfoService(
 
     changeService.updateVersion()
 
-    return info
+    return savedInfo.toInfo()
   }
 
   fun updateInfo(info: Info): Info {
