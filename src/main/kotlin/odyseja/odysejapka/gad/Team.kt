@@ -11,7 +11,11 @@ data class Team(
     val zspRow: Int,
     val day: String,
     val stage: Int,
-    var zspSheet: String?
+    var zspSheet: String?,
+    var longTermScore: String?,
+    var styleScore: String?,
+    var penaltyScore: String?,
+    var spontaneousScore: String?
 ) {
     fun getFileName(): String {
         return "$`code`_$teamName"
@@ -49,5 +53,12 @@ data class Team(
             zspRow = zspRow,
             zspSheet = zspSheet
         )
+    }
+    fun getCityFromTeamName(teamName: String):String{
+        val teamAndCity = teamName.split("-")
+        return if(teamAndCity.size > 1){
+            teamAndCity[teamAndCity.size-1]
+        }
+        else "-"
     }
 }

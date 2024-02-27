@@ -50,7 +50,7 @@ class SpreadSheetsAdapter(
     }
 
     fun getTeams(sheetName: String): Teams {
-        val values = service.spreadsheets().values().get(zspId, "$sheetName!A1:F").execute().getValues()
+        val values = service.spreadsheets().values().get(zspId, "$sheetName!A1:M").execute().getValues()
         val teams = mutableListOf<Team>()
         var judges = ""
         var day = ""
@@ -85,7 +85,11 @@ class SpreadSheetsAdapter(
                     i + 1,
                     day,
                     stage,
-                    sheetName
+                    sheetName,
+                    row[8].toString(),
+                    row[9].toString(),
+                    row[10].toString(),
+                    row[11].toString(),
                 )
             )
         }
