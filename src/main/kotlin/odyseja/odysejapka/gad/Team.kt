@@ -5,6 +5,7 @@ data class Team(
     val performanceHour: String,
     val spontanHour: String,
     val code: String,
+    val membershipNumber: String,
     val league: String,
     val part: String,
     val teamName: String,
@@ -54,7 +55,7 @@ data class Team(
             zspSheet = zspSheet
         )
     }
-    fun getCityFromTeamName(teamName: String):String{
+    fun getCity(teamName: String):String{
         val teamAndCity = teamName.split("-")
         return if(teamAndCity.size > 1){
             teamAndCity[teamAndCity.size-1]

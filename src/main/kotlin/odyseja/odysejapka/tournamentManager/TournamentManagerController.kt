@@ -3,7 +3,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 data class ZspIdRequest(
@@ -13,9 +12,8 @@ data class ZspIdRequest(
 @RequestMapping("/api/v1/tm")
 class TournamentManagerController(private val tournamentManagerService: TournamentManagerService) {
     @PostMapping("/generate")
-    fun getCsv(@RequestParam zspId: String): ResponseEntity<ByteArray> {
-
-        val csvData = tournamentManagerService.generateCsv(zspId)
+    fun generateCsv(@RequestBody request: ZspIdRequest): ResponseEntity<ByteArray> {
+        val csvData = tournamentManagerService.generateCsv(request.zspId)
 
         return ResponseEntity
                 .ok()

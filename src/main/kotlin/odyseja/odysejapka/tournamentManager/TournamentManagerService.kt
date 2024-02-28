@@ -11,7 +11,6 @@ import java.nio.charset.Charset
 
 
 @Service
-
 class TournamentManagerService {
 
     fun OutputStream.writeCsv(movies: List<Team>) {
@@ -19,7 +18,7 @@ class TournamentManagerService {
         writer.write("""Problem, Division, Number, Name, City, Region, Raw_longt1, Raw_longt2, Raw_style, Raw_spont, Penalty""")
         writer.newLine()
         movies.forEach {
-            writer.write("${it.code.substring(1,2)}, ${it.code.substring(3,4)},-,${it.teamName},${it.getCityFromTeamName(it.teamName)} ,-, ${it.longTermScore}, -, ${it.styleScore}, ${it.spontaneousScore}, ${it.penaltyScore}")
+            writer.write("${it.code.substring(1,2)}, ${it.code.substring(3,4)},${it.membershipNumber},${it.teamName},${it.getCity(it.teamName)} ,-, ${it.longTermScore}, -, ${it.styleScore}, ${it.spontaneousScore}, ${it.penaltyScore}")
             writer.newLine()
         }
         writer.flush()
@@ -28,7 +27,7 @@ class TournamentManagerService {
     fun generateCsv(zspId: String): ByteArray {
         val credentials = CredentialsProvider().getCredentials()
         val jsonFactory = GsonFactory.getDefaultInstance()
-        val sheetsAdapter = SpreadSheetsAdapter(credentials, jsonFactory, "1pDDCGbIqFoEjH7wm5pZrnw1YVJc44tfIwJeLC1qWUGM")
+        val sheetsAdapter = SpreadSheetsAdapter(credentials, jsonFactory, zspId)
         val sheets = sheetsAdapter.getSheets()
         val byteArrayOutputStream = ByteArrayOutputStream()
 
