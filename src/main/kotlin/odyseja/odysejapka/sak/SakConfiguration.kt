@@ -7,7 +7,8 @@ import odyseja.odysejapka.timetable.TimeTableService
 
 internal class SakConfiguration(
     private val templatesFolderId: String,
-    private val timetableService: TimeTableService
+    private val timetableService: TimeTableService,
+    private val zspId: String
 ) {
 
     fun sakRunner(): SakRunner {
@@ -15,6 +16,6 @@ internal class SakConfiguration(
         val jsonFactory = GsonFactory.getDefaultInstance()
         val driveAdapter = DriveAdapter(credentials, jsonFactory, templatesFolderId)
         val sheetsAdapter = SheetAdapter(credentials, jsonFactory)
-        return SakRunner(driveAdapter, sheetsAdapter, timetableService)
+        return SakRunner(driveAdapter, sheetsAdapter, timetableService, zspId)
     }
 }

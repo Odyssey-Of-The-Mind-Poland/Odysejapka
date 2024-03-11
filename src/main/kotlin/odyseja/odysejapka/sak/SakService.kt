@@ -27,7 +27,11 @@ class SakService(
         if (sak != null || job?.isAlive == true) {
             throw RuntimeException("Gad is already running")
         }
-        sak = SakConfiguration(generateSakCommand.templatesFolderId, timetableService).sakRunner()
+        sak = SakConfiguration(
+            generateSakCommand.templatesFolderId,
+            timetableService,
+            generateSakCommand.zspId
+        ).sakRunner()
         job = Thread {
             sak?.startSak()
         }

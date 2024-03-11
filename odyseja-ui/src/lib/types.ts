@@ -148,6 +148,7 @@ export type PunctationCells = {
 
 export type SakRequest = {
     templatesFolderId: string,
+    zspId: string,
 }
 
 export type Progress = {

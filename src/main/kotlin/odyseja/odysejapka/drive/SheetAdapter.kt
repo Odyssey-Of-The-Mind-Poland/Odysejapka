@@ -21,8 +21,20 @@ class SheetAdapter(
         return service.spreadsheets().get(sheetsId).execute().sheets
     }
 
-    fun getValue(sheetId: String, sheetName: String, range: String): String {
-        val values = service.spreadsheets().values().get(sheetId, "${sheetName}!${range}").execute().getValues()
-        return values[0][0].toString()
+    fun getValue(sheetId: String, sheetName: String, range: String): MutableList<MutableList<String>> {
+        val values = service.spreadsheets().values().get(sheetId, "$sheetName!$range").execute().getValues()
+            ?: return mutableListOf()
+
+        val stringValues = mutableListOf<MutableList<String>>()
+        values.forEach({ row -> stringValues.add(row.map { it.toString() }.toMutableList()) }
+        )
+        return stringValues
     }
+
+    fun writeValue(sheetId: String, sheetName: String, range: String, value: String) {
+        val values = listOf(listOf(value))
+        val body = com.google.api.services.sheets.v4.model.ValueRange().setValues(values)
+        service.spreadsheets().values().update(sheetId, "$sheetName!$range", body).setValueInputOption("RAW").execute()
+    }
+
 }

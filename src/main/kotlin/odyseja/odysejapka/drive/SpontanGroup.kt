@@ -5,7 +5,7 @@ import odyseja.odysejapka.domain.Performance
 data class SpontanGroups(val group: Group, val performances: List<Performance>) {
 
     fun groupCode(): String {
-        return "P${group.problem}A${group.age}"
+        return "P${group.problem}G${group.age}"
     }
 
     data class Group(val problem: Int, val age: Int) {

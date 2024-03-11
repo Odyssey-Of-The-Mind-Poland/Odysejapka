@@ -5,6 +5,7 @@
     import {getSakStatus, runSak, stopSakRun} from "./sakService";
 
     let folderId = "";
+    let zspId = "";
     let sakProgress: Progress = {status: Status.STOPPED, progress: 100};
     let intervalId: any = null;
 
@@ -23,7 +24,7 @@
     });
 
     function startGad() {
-        runSak({templatesFolderId: folderId} as SakRequest);
+        runSak({templatesFolderId: folderId, zspId: zspId} as SakRequest);
         sakProgress = {status: Status.RUNNING, progress: 0};
     }
 
@@ -37,6 +38,8 @@
 
 <div>
     <input bind:value={folderId} class="input m-5" placeholder="Folder z arkuszami"
+           type="text"/>
+    <input bind:value={zspId} class="input m-5" placeholder="ZSP ID"
            type="text"/>
 </div>
 
