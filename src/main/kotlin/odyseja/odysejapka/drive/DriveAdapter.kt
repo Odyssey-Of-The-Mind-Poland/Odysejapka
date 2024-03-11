@@ -11,7 +11,6 @@ class DriveAdapter(
     credentials: Credential,
     jsonFactory: JsonFactory,
     val fromFolderId: String,
-    val toFolderId: String
 ) {
 
     private val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
@@ -26,10 +25,10 @@ class DriveAdapter(
             .files
     }
 
-    fun copyFile(fileId: String, newName: String): File {
+    fun copyFile(fileId: String, newName: String, destination: String): File {
         val file = File()
         file.name = newName
-        file.parents = listOf(toFolderId)
+        file.parents = listOf(destination)
         return service.Files().copy(fileId, file).execute()
     }
 }

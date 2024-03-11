@@ -1,11 +1,11 @@
 import com.google.api.services.sheets.v4.model.Sheet
-import odyseja.odysejapka.drive.SpreadSheetsAdapter
+import odyseja.odysejapka.drive.ZspSheetsAdapter
 import odyseja.odysejapka.timetable.TimeTableService
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class TimeTableImporter(
     private val timeTableService: TimeTableService,
-    private val sheetsAdapter: SpreadSheetsAdapter,
+    private val sheetsAdapter: ZspSheetsAdapter,
     private val city: String
 ) {
 

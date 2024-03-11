@@ -146,6 +146,10 @@ export type PunctationCells = {
     penalty: string,
 }
 
+export type SakRequest = {
+    templatesFolderId: string,
+}
+
 export type Progress = {
     status: Status,
     progress: number,

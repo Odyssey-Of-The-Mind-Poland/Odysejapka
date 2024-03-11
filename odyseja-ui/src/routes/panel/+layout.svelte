@@ -14,7 +14,8 @@
         {label: 'Miasta', route: '/panel/city', icon: 'ic:round-location-city'},
         {label: 'Sponsorzy', route: '/panel/sponsor', icon: 'ic:round-handshake'},
         {label: 'Breaking Change', route: '/panel/breaking-change', icon: 'ic:round-warning-amber'},
-        {label: 'GAD', route: '/panel/gad ', icon: 'ic:outline-curtains'}
+        {label: 'GAD', route: '/panel/gad ', icon: 'ic:outline-curtains'},
+        {label: 'SAK', route: '/panel/sak ', icon: 'ic:outline-curtains'}
     ];
 
     export let data: Cities
