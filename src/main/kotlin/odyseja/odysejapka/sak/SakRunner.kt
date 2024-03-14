@@ -33,6 +33,7 @@ internal class SakRunner(
     private fun processGroup(group: SpontanGroups) {
         val sheetFiles = templates.filter { it.name.startsWith(group.groupCode()) }
         if (sheetFiles.isEmpty()) {
+            processedTeamsCount.addAndGet(group.performances.size)
             return
         }
         val sheetFile = sheetFiles[0]
@@ -56,6 +57,12 @@ internal class SakRunner(
         pointsCell: Pair<String, Int>
     ) {
         sheetsAdapter.writeValue(sheetId, sheetName, "${teamStartCell.first}${teamStartCell.second}", team.team)
+        sheetsAdapter.writeValue(
+            zspId,
+            team.zspSheet!!,
+            "M${team.zspRow}",
+            getZspValue(sheetId, sheetName, "${pointsCell.first}${pointsCell.second}")
+        )
         processedTeamsCount.incrementAndGet()
     }
 
@@ -82,6 +89,10 @@ internal class SakRunner(
             }
         }
         throw IllegalArgumentException("Cell not found")
+    }
+
+    private fun getZspValue(sheetId: String, sheetName: String, cell: String): String {
+        return "=importrange(\"https://docs.google.com/spreadsheets/d/$sheetId\";\"${sheetName}!$cell\")"
     }
 
     private fun columnIndexToExcelLetter(index: Int): String {

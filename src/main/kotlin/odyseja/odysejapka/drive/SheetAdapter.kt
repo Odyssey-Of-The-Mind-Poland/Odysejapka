@@ -34,7 +34,7 @@ class SheetAdapter(
     fun writeValue(sheetId: String, sheetName: String, range: String, value: String) {
         val values = listOf(listOf(value))
         val body = com.google.api.services.sheets.v4.model.ValueRange().setValues(values)
-        service.spreadsheets().values().update(sheetId, "$sheetName!$range", body).setValueInputOption("RAW").execute()
+        service.spreadsheets().values().update(sheetId, "$sheetName!$range", body).setValueInputOption("USER_ENTERED")
+            .execute()
     }
-
 }
