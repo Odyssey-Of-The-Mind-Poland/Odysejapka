@@ -160,3 +160,7 @@ export enum Status {
     STOPPED = "STOPPED",
     RUNNING = "RUNNING",
 }
+
+export type ZspIdRequest = {
+    zspId: String
+}
