@@ -1,13 +1,14 @@
 import com.google.api.services.drive.model.File
 import com.google.api.services.sheets.v4.model.Sheet
 import odyseja.odysejapka.drive.DriveAdapter
-import odyseja.odysejapka.drive.SpreadSheetsAdapter
+import odyseja.odysejapka.drive.ZspSheetsAdapter
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class GadRunner(
     private val driveAdapter: DriveAdapter,
-    private val sheetsAdapter: SpreadSheetsAdapter,
-    private val problemPunctuationCells: Map<String, PunctationCells>
+    private val sheetsAdapter: ZspSheetsAdapter,
+    private val problemPunctuationCells: Map<String, PunctationCells>,
+    private val destinationFolderId: String
 ) {
 
     private val templates = getTemplates()
@@ -40,7 +41,7 @@ internal class GadRunner(
         for (team in teams.teams) {
             val template = getTemplate(team.getProblem()[0])
 
-            val file = driveAdapter.copyFile(template.id, team.getFileName())
+            val file = driveAdapter.copyFile(template.id, team.getFileName(), destinationFolderId)
             templateCell(file.id, "A1", team.getAge())
             templateCell(file.id, "A2", team.teamName)
             templateCell(file.id, "A3", teams.judges)

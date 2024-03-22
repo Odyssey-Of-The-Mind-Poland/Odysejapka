@@ -38,7 +38,7 @@ jobs:
       - name: Deploy dev env
         uses: appleboy/ssh-action@master
         with:
-          host: 5.9.161.246
+          host: 37.27.71.201
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           script: |
@@ -48,3 +48,4 @@ jobs:
             export CALLBACK_URL='http://grzybek.snet.ovh:3000/callback'
             export BACKEND_URL='http://grzybek.snet.ovh:8082'
             docker-compose -p odyseja -f deployment/docker-compose.yml up -d
+            docker image prune --filter "dangling=true"

@@ -2,10 +2,10 @@ package odyseja.odysejapka.timetable
 
 import TimeTableImporter
 import com.google.api.client.json.gson.GsonFactory
-import odyseja.odysejapka.drive.CredentialsProvider
-import odyseja.odysejapka.drive.SpreadSheetsAdapter
 import odyseja.odysejapka.domain.Progress
 import odyseja.odysejapka.domain.Status
+import odyseja.odysejapka.drive.CredentialsProvider
+import odyseja.odysejapka.drive.ZspSheetsAdapter
 import odyseja.odysejapka.service.CityRepository
 import org.springframework.stereotype.Service
 
@@ -27,7 +27,7 @@ class ImportTimetableService(
         clearTimeTable(cityId)
         val credentials = CredentialsProvider().getCredentials()
         val jsonFactory = GsonFactory.getDefaultInstance()
-        val sheetsAdapter = SpreadSheetsAdapter(credentials, jsonFactory, zspId)
+        val sheetsAdapter = ZspSheetsAdapter(credentials, jsonFactory, zspId)
         val cityName = cityRepository.findFirstById(cityId).name
         importer = TimeTableImporter(performanceService, sheetsAdapter, cityName)
 

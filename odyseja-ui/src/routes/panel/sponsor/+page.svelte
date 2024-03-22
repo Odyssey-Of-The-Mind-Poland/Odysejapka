@@ -57,7 +57,7 @@
 
 <h2 class="mb-6">Sponsorzy</h2>
 <label class="bg-green-500 text-white px-4 py-2 rounded cursor-pointer w-32 text-center">
-    Add Image
+    Add row
     <input type="file" class="hidden" accept="image/*"
             on:change={(e) => handleImageUpload(e, rowIndex)}/>
 </label>
@@ -76,6 +76,13 @@
                         </button>
                     </td>
                 {/each}
+                <td class="border p-2">
+                    <label class="bg-green-500 text-white px-4 py-2 rounded cursor-pointer">
+                        Add Image
+                        <input type="file" class="hidden" accept="image/*"
+                               on:change={(e) => handleImageUpload(e, rowIndex)}/>
+                    </label>
+                </td>
             </tr>
         {/each}
     </table>

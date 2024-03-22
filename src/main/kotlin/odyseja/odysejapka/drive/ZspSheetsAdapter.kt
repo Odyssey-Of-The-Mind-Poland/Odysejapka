@@ -10,7 +10,7 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.ValueRange
 
-class SpreadSheetsAdapter(
+class ZspSheetsAdapter(
     credentials: Credential,
     jsonFactory: JsonFactory,
     private val zspId: String
@@ -107,7 +107,7 @@ class SpreadSheetsAdapter(
     }
 
     private fun isDay(cell: String): Boolean {
-        return cell.lowercase().contains("sobota") || cell.lowercase().contains("niedziela");
+        return cell.lowercase().contains("sobota") || cell.lowercase().contains("niedziela")
     }
 
     private fun isStage(cell: String): Boolean {
