@@ -29,6 +29,6 @@ internal class MobileAppRedirectController {
             return "iOS"
         }
 
-        return "Other"
+        return userAgent
     }
 }
