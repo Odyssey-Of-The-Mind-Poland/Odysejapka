@@ -3,5 +3,5 @@ import type {ZspIdRequest} from "$lib/types";
 
 
 export async function generateCsv(zspIdRequest: ZspIdRequest) {
-    await post(zspIdRequest, '/api/v1/tm/generate', '');
+    await post(zspIdRequest, '/api/v1/tm/generate', 'Csv generated');
 }

@@ -1,4 +1,5 @@
 import odyseja.odysejapka.domain.Performance
+import org.checkerframework.checker.lock.qual.LockHeld
 import javax.persistence.Column
 
 data class Team(
@@ -9,6 +10,8 @@ data class Team(
     val league: String,
     val part: String,
     val teamName: String,
+    val shortTeamName: String,
+    val city: String,
     val zspRow: Int,
     val day: String,
     val stage: Int,
@@ -16,6 +19,7 @@ data class Team(
     var longTermScore: String?,
     var styleScore: String?,
     var penaltyScore: String?,
+    var weightHeld: String?,
     var spontaneousScore: String?
 ) {
     fun getFileName(): String {
