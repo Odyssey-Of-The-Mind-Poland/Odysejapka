@@ -23,18 +23,18 @@
         }
     });
 
-    function startGad() {
+    function startSak() {
         runSak({templatesFolderId: folderId, zspId: zspId} as SakRequest);
         sakProgress = {status: Status.RUNNING, progress: 0};
     }
 
-    function stopGad() {
+    function stopSak() {
         sakProgress = {status: Status.STOPPED, progress: 0};
         stopSakRun();
     }
 </script>
 
-<h1 class="m-5">GAD</h1>
+<h1 class="m-5">SAK</h1>
 
 <div>
     <input bind:value={folderId} class="input m-5" placeholder="Folder z arkuszami"
@@ -45,9 +45,9 @@
 
 <div class="m-5">
     {#if sakProgress.status === Status.STOPPED}
-        <button class="btn btn-md variant-filled-secondary h-10" on:click={startGad}>Generuj arkusze</button>
+        <button class="btn btn-md variant-filled-secondary h-10" on:click={startSak}>Generuj arkusze</button>
     {:else}
-        <button class="btn btn-md variant-filled-error h-10 mb-5" on:click={stopGad}>Zatrzymaj generowanie</button>
+        <button class="btn btn-md variant-filled-error h-10 mb-5" on:click={stopSak}>Zatrzymaj generowanie</button>
         <ProgressBar label="Progress Bar" value={sakProgress.progress} max={100}/>
     {/if}
 </div>

@@ -50,7 +50,7 @@ class ZspSheetsAdapter(
     }
 
     fun getTeams(sheetName: String): Teams {
-        val values = service.spreadsheets().values().get(zspId, "$sheetName!A1:N").execute().getValues()
+        val values = service.spreadsheets().values().get(zspId, "$sheetName!A1:P").execute().getValues()
         val teams = mutableListOf<Team>()
         var judges = ""
         var day = ""
@@ -73,7 +73,7 @@ class ZspSheetsAdapter(
             if (row.size == 0 || !isTime(row[0].toString())) {
                 continue
             }
-
+            if (isJuniorTeam(code=row[2].toString())) continue
             teams.add(
                 Team(
                     performanceHour = row[0].toString(),
@@ -83,14 +83,17 @@ class ZspSheetsAdapter(
                     league = row[4].toString(),
                     part = row[5].toString(),
                     teamName = row[6].toString(),
+                        shortTeamName = row[7].toString(),
+                        city = row[8].toString(),
                     zspRow = i + 1,
                     day=day,
                     stage=stage,
                     zspSheet =sheetName,
-                    longTermScore = row[9].toString(),
-                    styleScore = row[10].toString(),
-                    penaltyScore = row[11].toString(),
-                    spontaneousScore = row[12].toString(),
+                    longTermScore = if (row.size > 9) row[10].toString() else "",
+                    styleScore = if (row.size > 9) row[11].toString() else "",
+                    penaltyScore = if (row.size > 9) row[12].toString() else "",
+                        weightHeld = if (row.size > 9) row[13].toString() else "",
+                    spontaneousScore = if (row.size > 9) row[14].toString() else "",
                 )
             )
         }
@@ -99,6 +102,10 @@ class ZspSheetsAdapter(
 
     private fun isJudge(judge: String): Boolean {
         return judge.contains("SĘDZIOWIE")
+    }
+
+    private fun isJuniorTeam(code: String): Boolean{
+        return code.substring(1,2) == "0" && code.substring(3,4) == "0"
     }
 
     private fun isTime(cell: String): Boolean {

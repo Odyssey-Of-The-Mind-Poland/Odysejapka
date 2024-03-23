@@ -13,12 +13,16 @@ import java.nio.charset.Charset
 @Service
 class TournamentManagerService {
 
-    fun OutputStream.writeCsv(movies: List<Team>) {
+    fun OutputStream.writeCsv(teams: List<Team>) {
         val writer = bufferedWriter()
-        writer.write("""Problem, Division, Number, Name, City, Region, Raw_longt1, Raw_longt2, Raw_style, Raw_spont, Penalty""")
+        writer.write("""Problem,Division,Number,Name,City,Raw_longt1,Raw_longt2,Raw_style,Raw_spont,Penalty""")
         writer.newLine()
-        movies.forEach {
-            writer.write("${it.code.substring(1,2)}, ${it.code.substring(3,4)},${it.membershipNumber},${it.teamName},${it.getCity(it.teamName)} ,-, ${it.longTermScore}, -, ${it.styleScore}, ${it.spontaneousScore}, ${it.penaltyScore}")
+        teams.forEach {
+            if (it.code.substring(1,2) == "4")
+                writer.write("${it.code.substring(1,2)},${it.code.substring(3,4)},${it.membershipNumber},${it.shortTeamName},${it.city},${it.weightHeld},${it.longTermScore},${it.styleScore},${it.spontaneousScore},${it.penaltyScore}")
+            else
+                writer.write("${it.code.substring(1,2)},${it.code.substring(3,4)},${it.membershipNumber},${it.shortTeamName},${it.city},${it.longTermScore},,${it.styleScore},${it.spontaneousScore},${it.penaltyScore}")
+
             writer.newLine()
         }
         writer.flush()
