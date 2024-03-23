@@ -2,6 +2,8 @@ auth0:
   audience: https://app.odyseja.org
 
 spring:
+  mvc:
+    static-path-pattern: /static/**
   security:
     oauth2:
       resourceserver:
