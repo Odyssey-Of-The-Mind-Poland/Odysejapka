@@ -97,7 +97,7 @@ function showToast(message: string, background: string) {
     toastStore.trigger(t);
 }
 
-function getBearer(): string {
+export function getBearer(): string {
     return 'Bearer ' + getCookie("access_token")
 }
 
