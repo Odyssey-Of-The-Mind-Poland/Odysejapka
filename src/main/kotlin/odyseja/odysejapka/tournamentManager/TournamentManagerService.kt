@@ -13,17 +13,26 @@ import java.nio.charset.Charset
 @Service
 class TournamentManagerService {
 
+    private fun isJuniorTeam(code: String): Boolean{
+        return code.substring(1,2) == "J" && code.substring(3,4) == "J"
+    }
+
     fun OutputStream.writeCsv(teams: List<Team>) {
         val writer = bufferedWriter()
         writer.write("""Problem,Division,Number,Name,City,Raw_longt1,Raw_longt2,Raw_style,Raw_spont,Penalty""")
         writer.newLine()
         teams.forEach {
-            if (it.code.substring(1,2) == "4")
-                writer.write("${it.code.substring(1,2)},${it.code.substring(3,4)},${it.membershipNumber},${it.shortTeamName},${it.city},${it.weightHeld},${it.longTermScore},${it.styleScore},${it.spontaneousScore},${it.penaltyScore}")
-            else
-                writer.write("${it.code.substring(1,2)},${it.code.substring(3,4)},${it.membershipNumber},${it.shortTeamName},${it.city},${it.longTermScore},,${it.styleScore},${it.spontaneousScore},${it.penaltyScore}")
+            // Junior teams and guest teams from other countries should not be imported
+            if (!isJuniorTeam(code=it.code) && it.membershipNumber != ""){
+                if (it.code.substring(1,2) == "4")
+                    writer.write("${it.code.substring(1,2)},${it.code.substring(3,4)},${it.membershipNumber},${it.shortTeamName},${it.city},${it.weightHeld},${it.longTermScore},${it.styleScore},${it.spontaneousScore},${it.penaltyScore}")
+                else
+                    writer.write("${it.code.substring(1,2)},${it.code.substring(3,4)},${it.membershipNumber},${it.shortTeamName},${it.city},${it.longTermScore},,${it.styleScore},${it.spontaneousScore},${it.penaltyScore}")
 
-            writer.newLine()
+                writer.newLine()
+
+            }
+
         }
         writer.flush()
     }
