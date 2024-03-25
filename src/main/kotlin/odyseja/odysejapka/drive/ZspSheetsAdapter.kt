@@ -73,7 +73,6 @@ class ZspSheetsAdapter(
             if (row.size == 0 || !isTime(row[0].toString())) {
                 continue
             }
-            if (isJuniorTeam(code=row[2].toString())) continue
             teams.add(
                 Team(
                     performanceHour = row[0].toString(),
@@ -102,10 +101,6 @@ class ZspSheetsAdapter(
 
     private fun isJudge(judge: String): Boolean {
         return judge.contains("SĘDZIOWIE")
-    }
-
-    private fun isJuniorTeam(code: String): Boolean{
-        return code.substring(1,2) == "0" && code.substring(3,4) == "0"
     }
 
     private fun isTime(cell: String): Boolean {
