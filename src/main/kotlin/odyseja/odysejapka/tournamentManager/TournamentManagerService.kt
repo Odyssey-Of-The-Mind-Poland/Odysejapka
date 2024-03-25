@@ -27,6 +27,7 @@ class TournamentManagerService {
                 var problemLeague = ""
                 if (it.league != "0") problemLeague = "${it.code.substring(3,4)}${it.league}"
                 else problemLeague = it.code.substring(3,4)
+                
                 if (it.code.substring(1,2) == "4")
                     writer.write("${it.code.substring(1,2)},${problemLeague},${it.membershipNumber},${it.shortTeamName},${it.city},${it.weightHeld},${it.longTermScore},${it.styleScore},${it.spontaneousScore},${it.penaltyScore}")
                 else
