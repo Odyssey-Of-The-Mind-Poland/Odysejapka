@@ -1,6 +1,6 @@
 <script lang="ts">
   import {put} from '$lib/apiService';
-  import type { Problems } from '$lib/types';
+  import type {Problems} from '$lib/types';
 
   export let data: Problems;
 
@@ -9,7 +9,7 @@
   $: isChanged = JSON.stringify(data) !== JSON.stringify(initialData);
 
   function save() {
-    saveProblems(data);
+    saveProblems(data.problems);
     initialData = JSON.parse(JSON.stringify(data));
     toggleEdit();
   }
@@ -40,7 +40,7 @@
     </div>
     {#each data.problems as problem}
       <label class="label py-3 flex items-center max-w-2xl">
-        <span class="text-2xl font-semibold pr-4">{problem.id + 1}</span>
+        <span class="text-2xl font-semibold pr-4">{problem.id}</span>
         <input class="input text-xl" type="text" placeholder="Input" bind:value={problem.name} disabled="{!editToggled}"/>
       </label>
     {/each}
