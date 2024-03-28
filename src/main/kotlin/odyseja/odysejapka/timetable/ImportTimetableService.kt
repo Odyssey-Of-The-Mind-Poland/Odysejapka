@@ -29,6 +29,7 @@ class ImportTimetableService(
         val jsonFactory = GsonFactory.getDefaultInstance()
         val sheetsAdapter = ZspSheetsAdapter(credentials, jsonFactory, zspId)
         val cityName = cityRepository.findFirstById(cityId).name
+        performanceService.deleteCity(cityId)
         importer = TimeTableImporter(performanceService, sheetsAdapter, cityName)
 
         job = Thread {
