@@ -50,15 +50,23 @@ internal class GadRunner(
             val values = listOf(
                 getZspValue(file.id, cells.dt),
                 getZspValue(file.id, cells.style),
-                getZspValue(file.id, cells.penalty)
+                getZspValue(file.id, cells.penalty),
+                getBalsaValue(file.id, cells.balsa)
             )
-            sheetsAdapter.writeZsp("I${team.zspRow}:K${team.zspRow}", values, sheetTitle)
+            sheetsAdapter.writeZsp("K${team.zspRow}:N${team.zspRow}", values, sheetTitle)
             println("Created: ${file.name}")
         }
     }
 
     private fun getZspValue(sheetId: String, cell: String): String {
         return "=importrange(\"https://docs.google.com/spreadsheets/d/$sheetId\";\"Arkusz Ocen Surowych!$cell\")"
+    }
+
+    private fun getBalsaValue(sheetId: String, cell: String?): String {
+        if (cell.isNullOrBlank()) {
+            return ""
+        }
+        return "=importrange(\"https://docs.google.com/spreadsheets/d/$sheetId\";\"Arkusz Ocen Cząstkowych!$cell\")"
     }
 
     private fun templateCell(sheetId: String, cell: String, value: String) {

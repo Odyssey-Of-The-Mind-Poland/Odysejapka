@@ -1,6 +1,6 @@
 <script lang="ts">
     import {getGadStatus, runGad, stopGadRun} from "./gadService";
-    import {type Progress, type GadRequest, Status, type PunctationCells} from "$lib/types.js";
+    import {type GadRequest, type Progress, type PunctationCells, Status} from "$lib/types.js";
     import {onDestroy, onMount} from "svelte";
     import {ProgressBar} from "@skeletonlabs/skeleton";
 
@@ -23,7 +23,12 @@
     });
 
     function updateProblemPunctuationCells(index, field, value) {
-        let cell = data.problemPunctuationCells[index] || {dt: '', style: '', penalty: ''} as PunctationCells;
+        let cell = data.problemPunctuationCells[index] || {
+            dt: '',
+            style: '',
+            penalty: '',
+            balsa: ''
+        } as PunctationCells;
         cell[field] = value;
         data.problemPunctuationCells[index] = cell;
     }
@@ -65,6 +70,12 @@
                value="{data.problemPunctuationCells[i]?.penalty ?? ''}"
                on:input={(e) => updateProblemPunctuationCells(i, 'penalty', e.target.value)}
                placeholder="Komórka Punktów karnych"/>
+        {#if i === 4}
+            <input class="input flex-grow flex-1" type="text"
+                   value="{data.problemPunctuationCells[i]?.balsa ?? ''}"
+                   on:input={(e) => updateProblemPunctuationCells(i, 'balsa', e.target.value)}
+                   placeholder="Balsa"/>
+        {/if}
     </div>
 {/each}
 
