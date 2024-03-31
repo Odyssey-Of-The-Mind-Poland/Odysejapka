@@ -1,4 +1,4 @@
-package odyseja.odysejapka.tournamentManager
+package odyseja.odysejapka.tournament.manager
 
 import Team
 import com.google.api.client.json.gson.GsonFactory
