@@ -1,6 +1,6 @@
 package odyseja.odysejapka.sak
 
-import odyseja.odysejapka.domain.Progress
+import odyseja.odysejapka.Progress
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 

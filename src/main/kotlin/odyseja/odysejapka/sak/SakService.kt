@@ -1,8 +1,8 @@
 package odyseja.odysejapka.sak
 
 import SakConfiguration
-import odyseja.odysejapka.domain.Progress
-import odyseja.odysejapka.domain.Status
+import odyseja.odysejapka.Progress
+import odyseja.odysejapka.Status
 import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 

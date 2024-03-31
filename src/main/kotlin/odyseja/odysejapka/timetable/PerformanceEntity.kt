@@ -1,6 +1,9 @@
 package odyseja.odysejapka.timetable
 
-import odyseja.odysejapka.domain.*
+import odyseja.odysejapka.age.AgeEntity
+import odyseja.odysejapka.city.CityEntity
+import odyseja.odysejapka.problem.ProblemEntity
+import odyseja.odysejapka.stage.StageEntity
 import javax.persistence.*
 
 

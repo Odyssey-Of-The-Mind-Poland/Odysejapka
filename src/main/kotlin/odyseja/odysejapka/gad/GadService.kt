@@ -2,8 +2,8 @@ package odyseja.odysejapka.gad
 
 import GadConfiguration
 import GadRunner
-import odyseja.odysejapka.domain.Progress
-import odyseja.odysejapka.domain.Status
+import odyseja.odysejapka.Progress
+import odyseja.odysejapka.Status
 import org.springframework.stereotype.Service
 
 @Service

@@ -1,10 +1,10 @@
 package odyseja.odysejapka.sak
 
 import com.google.api.services.drive.model.File
-import odyseja.odysejapka.domain.Performance
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
 import odyseja.odysejapka.drive.SpontanGroups
+import odyseja.odysejapka.timetable.Performance
 import odyseja.odysejapka.timetable.TimeTableService
 import java.util.concurrent.atomic.AtomicInteger
 

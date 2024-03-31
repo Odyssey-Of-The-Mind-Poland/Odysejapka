@@ -1,4 +1,4 @@
-import odyseja.odysejapka.domain.Performance
+import odyseja.odysejapka.timetable.Performance
 
 data class Team(
     val performanceHour: String,

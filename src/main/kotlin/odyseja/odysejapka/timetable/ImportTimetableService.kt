@@ -2,11 +2,11 @@ package odyseja.odysejapka.timetable
 
 import TimeTableImporter
 import com.google.api.client.json.gson.GsonFactory
-import odyseja.odysejapka.domain.Progress
-import odyseja.odysejapka.domain.Status
+import odyseja.odysejapka.Progress
+import odyseja.odysejapka.Status
+import odyseja.odysejapka.city.CityRepository
 import odyseja.odysejapka.drive.CredentialsProvider
 import odyseja.odysejapka.drive.ZspSheetsAdapter
-import odyseja.odysejapka.service.CityRepository
 import org.springframework.stereotype.Service
 
 @Service

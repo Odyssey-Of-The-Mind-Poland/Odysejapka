@@ -1,7 +1,14 @@
 package odyseja.odysejapka.timetable
 
-import odyseja.odysejapka.domain.*
-import odyseja.odysejapka.service.*
+import odyseja.odysejapka.age.AgeEntity
+import odyseja.odysejapka.age.AgeRepository
+import odyseja.odysejapka.change.ChangeService
+import odyseja.odysejapka.city.CityEntity
+import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.problem.ProblemEntity
+import odyseja.odysejapka.problem.ProblemRepository
+import odyseja.odysejapka.stage.StageEntity
+import odyseja.odysejapka.stage.StageRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
