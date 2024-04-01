@@ -13,11 +13,12 @@ class InfoService(
 ) {
 
   fun getInfo(city: Int): Iterable<Info?>? {
-    return infoRepository.findByCity(cityRepository.findFirstById(city)).map { it.toInfo() }.sortedBy { it.sortNumber }
+    return infoRepository.findByCity(cityRepository.findFirstById(city)).map { it.toInfo() }
+      .sortedByDescending { it.sortNumber }
   }
 
   fun getAllInfo(): List<Info> {
-    return infoRepository.findAllByOrderBySortNumber().map { it.toInfo() }.sortedBy { it.sortNumber }
+    return infoRepository.findAllByOrderBySortNumber().map { it.toInfo() }.sortedByDescending { it.sortNumber }
   }
 
   fun getInfoCategory(): MutableIterable<InfoCategoryEntity> {
