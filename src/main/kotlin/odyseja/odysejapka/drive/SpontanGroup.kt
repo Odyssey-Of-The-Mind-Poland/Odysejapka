@@ -5,14 +5,15 @@ import odyseja.odysejapka.timetable.Performance
 data class SpontanGroups(val group: Group, val performances: List<Performance>) {
 
     fun groupCode(): String {
-        return "P${group.problem}G${group.age}"
+        val league = if (group.league.isNotEmpty()) group.league else " "
+        return "P${group.problem}G${group.age}${league}"
     }
 
-    data class Group(val problem: Int, val age: Int) {
+    data class Group(val problem: Int, val age: Int, val league: String) {
 
         companion object {
             fun fromPerformance(performance: Performance): Group {
-                return Group(performance.problem, performance.age)
+                return Group(performance.problem, performance.age, performance.league)
             }
         }
     }
