@@ -60,7 +60,7 @@ data class Team(
             part.toInt(),
             day.lowercase(),
             getSpontanDay(),
-            league,
+            if (league != "0") league else "",
             zspRow = zspRow,
             zspSheet = zspSheet
         )
