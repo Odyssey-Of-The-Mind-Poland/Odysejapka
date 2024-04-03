@@ -88,7 +88,6 @@ class ZspSheetsAdapter(
             if (row.size == 0 || !isTime(row[0].toString())) {
                 continue
             }
-
             teams.add(
                 Team(
                     performanceHour = row[0].toString(),

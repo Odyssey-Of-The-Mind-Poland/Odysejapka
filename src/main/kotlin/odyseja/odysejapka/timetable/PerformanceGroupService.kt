@@ -1,6 +1,5 @@
 package odyseja.odysejapka.timetable
 
-import odyseja.odysejapka.domain.PerformanceGroup
 import org.springframework.stereotype.Service
 
 @Service

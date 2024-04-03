@@ -1,6 +1,6 @@
 package odyseja.odysejapka.timetable
 
-import odyseja.odysejapka.domain.CityEntity
+import odyseja.odysejapka.city.CityEntity
 import org.springframework.data.repository.CrudRepository
 import org.springframework.transaction.annotation.Transactional
 

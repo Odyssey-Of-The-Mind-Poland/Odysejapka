@@ -1,10 +1,10 @@
 package odyseja.odysejapka.sak
 
 import com.google.api.services.drive.model.File
-import odyseja.odysejapka.domain.Performance
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
 import odyseja.odysejapka.drive.SpontanGroups
+import odyseja.odysejapka.timetable.Performance
 import odyseja.odysejapka.timetable.TimeTableService
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -26,7 +26,13 @@ internal class SakRunner(
             SpontanGroups(group, performances)
         }
         for (group in groups) {
+
+            if (group.group.age == 0 || group.group.problem == 0) {
+                continue
+            }
+
             processGroup(group)
+            Thread.sleep(2000)
         }
     }
 
@@ -42,10 +48,12 @@ internal class SakRunner(
 
         var teamStartCell = findCell(values, "Drużyna")
         var pointsCell = findCell(values, "punktów")
-        for (team in group.performances) {
+        var teams = group.performances.sortedBy { it.spontan }
+        for (team in teams) {
             teamStartCell = Pair(teamStartCell.first, teamStartCell.second + 1)
             pointsCell = Pair(pointsCell.first, pointsCell.second + 1)
             processTeam(team, sheetName, sheetFile.id, teamStartCell, pointsCell)
+            Thread.sleep(5000)
         }
     }
 
@@ -60,7 +68,7 @@ internal class SakRunner(
         sheetsAdapter.writeValue(
             zspId,
             team.zspSheet!!,
-            "M${team.zspRow}",
+            "O${team.zspRow}",
             getZspValue(sheetId, sheetName, "${pointsCell.first}${pointsCell.second}")
         )
         processedTeamsCount.incrementAndGet()

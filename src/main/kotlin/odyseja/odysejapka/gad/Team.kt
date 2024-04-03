@@ -1,6 +1,4 @@
-import odyseja.odysejapka.domain.Performance
-import org.checkerframework.checker.lock.qual.LockHeld
-import javax.persistence.Column
+import odyseja.odysejapka.timetable.Performance
 
 data class Team(
     val performanceHour: String,
@@ -27,18 +25,26 @@ data class Team(
     }
 
     fun getAge(): String {
-        return code[3].toString()
+        val code = code[3].toString()
+        if (code == "J") {
+            return "0"
+        }
+        return code
     }
 
     fun getProblem(): String {
-        return code[1].toString()
+        val code = code[1].toString()
+        if (code == "J") {
+            return "0"
+        }
+        return code
     }
 
     fun getSpontanDay(): String {
         if (day.lowercase().contains("sobota")) {
-            return "sobota"
+            return "niedziela"
         }
-        return "niedziela"
+        return "sobota"
     }
 
     fun toPerformance(city: String): Performance {
@@ -52,9 +58,9 @@ data class Team(
             performanceHour,
             spontanHour,
             part.toInt(),
-            day,
+            day.lowercase(),
             getSpontanDay(),
-            league,
+            if (league != "0") league else "",
             zspRow = zspRow,
             zspSheet = zspSheet
         )
@@ -65,5 +71,9 @@ data class Team(
             teamAndCity[teamAndCity.size-1]
         }
         else "-"
+    }
+
+    fun isJunior(): Boolean {
+        return code[1] == 'J'
     }
 }

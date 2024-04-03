@@ -37,7 +37,7 @@
     }
 
     function mapInfosToTable(category: InfoCategory): TableSource {
-        let infos = data.infos.filter(info => info.categoryName === category.name);
+        let infos = data.infos.filter(info => info.categoryName === category.name).sort((a, b) => a.sortNumber - b.sortNumber);
         return {
             head: ['Nazwa'],
             body: tableMapperValues(infos, ['infoName']),
