@@ -32,6 +32,7 @@ internal class SakRunner(
             }
 
             processGroup(group)
+            Thread.sleep(2000)
         }
     }
 
