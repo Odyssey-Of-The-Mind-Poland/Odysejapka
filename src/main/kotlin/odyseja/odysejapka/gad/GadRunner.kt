@@ -39,6 +39,11 @@ internal class GadRunner(
 
     private fun processTeams(teams: Teams, sheetTitle: String) {
         for (team in teams.teams) {
+
+            if (team.isJunior()) {
+                continue
+            }
+
             val template = getTemplate(team.getProblem()[0])
 
             val file = driveAdapter.copyFile(template.id, team.getFileName(), destinationFolderId)

@@ -26,6 +26,11 @@ internal class SakRunner(
             SpontanGroups(group, performances)
         }
         for (group in groups) {
+
+            if (group.group.age == 0 || group.group.problem == 0) {
+                continue
+            }
+
             processGroup(group)
         }
     }

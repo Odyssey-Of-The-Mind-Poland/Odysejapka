@@ -72,4 +72,8 @@ data class Team(
         }
         else "-"
     }
+
+    fun isJunior(): Boolean {
+        return code[1] == 'J'
+    }
 }
