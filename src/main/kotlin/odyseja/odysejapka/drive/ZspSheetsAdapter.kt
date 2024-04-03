@@ -49,6 +49,21 @@ class ZspSheetsAdapter(
         return service.spreadsheets().get(zspId).execute().sheets
     }
 
+    fun getNumericalValue(row: List<Any>, size: Int): Float{
+        try {
+            if (row.size-1 > size-1){
+                val value = row[size].toString().toFloat()
+                return value
+            }
+
+        }
+        catch (e: Exception) {
+//            e.printStackTrace()
+        }
+        return 0f
+
+    }
+
     fun getTeams(sheetName: String): Teams {
         val values = service.spreadsheets().values().get(zspId, "$sheetName!A1:P").execute().getValues()
         val teams = mutableListOf<Team>()
@@ -73,6 +88,7 @@ class ZspSheetsAdapter(
             if (row.size == 0 || !isTime(row[0].toString())) {
                 continue
             }
+
             teams.add(
                 Team(
                     performanceHour = row[0].toString(),
@@ -88,11 +104,11 @@ class ZspSheetsAdapter(
                     day=day,
                     stage=stage,
                     zspSheet =sheetName,
-                    longTermScore = if (row.size > 9) row[10].toString() else "",
-                    styleScore = if (row.size > 9) row[11].toString() else "",
-                    penaltyScore = if (row.size > 9) row[12].toString() else "",
-                        weightHeld = if (row.size > 9) row[13].toString() else "",
-                    spontaneousScore = if (row.size > 9) row[14].toString() else "",
+                    longTermScore = getNumericalValue(row, 10),
+                    styleScore = getNumericalValue(row, 11),
+                    penaltyScore = getNumericalValue(row, 12),
+                        weightHeld = getNumericalValue(row, 13),
+                    spontaneousScore = getNumericalValue(row, 14),
                 )
             )
         }
