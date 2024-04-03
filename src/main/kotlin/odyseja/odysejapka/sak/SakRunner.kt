@@ -52,6 +52,7 @@ internal class SakRunner(
             teamStartCell = Pair(teamStartCell.first, teamStartCell.second + 1)
             pointsCell = Pair(pointsCell.first, pointsCell.second + 1)
             processTeam(team, sheetName, sheetFile.id, teamStartCell, pointsCell)
+            Thread.sleep(500)
         }
     }
 
