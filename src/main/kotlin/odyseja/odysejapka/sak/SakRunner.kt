@@ -48,11 +48,12 @@ internal class SakRunner(
 
         var teamStartCell = findCell(values, "Drużyna")
         var pointsCell = findCell(values, "punktów")
-        for (team in group.performances) {
+        var teams = group.performances.sortedBy { it.spontan }
+        for (team in teams) {
             teamStartCell = Pair(teamStartCell.first, teamStartCell.second + 1)
             pointsCell = Pair(pointsCell.first, pointsCell.second + 1)
             processTeam(team, sheetName, sheetFile.id, teamStartCell, pointsCell)
-            Thread.sleep(500)
+            Thread.sleep(5000)
         }
     }
 
