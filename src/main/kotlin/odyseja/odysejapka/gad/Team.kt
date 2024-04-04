@@ -14,11 +14,11 @@ data class Team(
     val day: String,
     val stage: Int,
     var zspSheet: String?,
-    var longTermScore: String?,
-    var styleScore: String?,
-    var penaltyScore: String?,
-    var weightHeld: String?,
-    var spontaneousScore: String?
+    var longTermScore: Float?,
+    var styleScore: Float?,
+    var penaltyScore: Float?,
+    var weightHeld: Float?,
+    var spontaneousScore: Float?
 ) {
     fun getFileName(): String {
         return "$`code`_$teamName"
