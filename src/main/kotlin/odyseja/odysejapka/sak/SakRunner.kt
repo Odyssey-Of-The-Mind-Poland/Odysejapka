@@ -47,8 +47,8 @@ internal class SakRunner(
         val values = sheetsAdapter.getValue(sheetFile.id, sheetName, "A1:X20")
 
         var teamStartCell = findCell(values, "Drużyna")
-        var pointsCell = findCell(values, "punktów")
-        var teams = group.performances.sortedBy { it.spontanSort() }
+        var pointsCell = findCell(values, "suma punktów")
+        val teams = group.performances.sortedBy { it.spontanSort() }
         for (team in teams) {
 
             if (team.isForeigner()) {
