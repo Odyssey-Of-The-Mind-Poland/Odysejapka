@@ -23,6 +23,11 @@ data class Performance (
   }
 
   fun isForeigner(): Boolean {
-    return city.lowercase() in listOf("spain", "china")
+    for (foreigner in listOf("spain", "china")) {
+      if (city.lowercase().contains(foreigner) || team.lowercase().contains(foreigner)) {
+        return true
+      }
+    }
+    return false
   }
 }
