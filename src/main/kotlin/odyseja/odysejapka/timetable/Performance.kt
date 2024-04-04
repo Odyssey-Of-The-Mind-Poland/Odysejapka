@@ -15,4 +15,14 @@ data class Performance (
   var league: String,
   var zspRow: Int?,
   var zspSheet: String?
-)
+) {
+
+  fun spontanSort(): String {
+    val day = if (spontanDay.lowercase().contains("sobota")) "0" else "1"
+    return "$day$spontan"
+  }
+
+  fun isForeigner(): Boolean {
+    return city.lowercase() in listOf("spain", "china")
+  }
+}

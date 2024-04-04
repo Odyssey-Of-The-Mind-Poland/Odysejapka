@@ -48,8 +48,13 @@ internal class SakRunner(
 
         var teamStartCell = findCell(values, "Drużyna")
         var pointsCell = findCell(values, "punktów")
-        var teams = group.performances.sortedBy { it.spontan }
+        var teams = group.performances.sortedBy { it.spontanSort() }
         for (team in teams) {
+
+            if (team.isForeigner()) {
+                continue
+            }
+
             teamStartCell = Pair(teamStartCell.first, teamStartCell.second + 1)
             pointsCell = Pair(pointsCell.first, pointsCell.second + 1)
             processTeam(team, sheetName, sheetFile.id, teamStartCell, pointsCell)
