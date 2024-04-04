@@ -22,11 +22,11 @@ class TournamentManagerService {
         writer.write("""Problem,Division,Number,Name,City,Raw_longt1,Raw_longt2,Raw_style,Raw_spont,Penalty""")
         writer.newLine()
         println("${teams.size} teams in total")
-        println("${teams.filter {isJuniorTeam(code=it.code)}.size} junior teams")
+        println("${teams.filter {it.isJunior()}.size} junior teams")
         println("${teams.filter {it.membershipNumber == ""}.size} foreign teams")
         teams.forEach {
             // Junior teams and guest teams from other countries should not be imported
-            if (!isJuniorTeam(code=it.code) && it.membershipNumber != ""){
+            if (!it.isJunior() && it.membershipNumber != ""){
                 var problemLeague = ""
                 if (it.league != "0") problemLeague = "${it.code.substring(3,4)}${it.league}"
                 else problemLeague = it.code.substring(3,4)

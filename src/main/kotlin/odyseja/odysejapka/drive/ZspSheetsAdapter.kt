@@ -52,13 +52,13 @@ class ZspSheetsAdapter(
     fun getNumericalValue(row: List<Any>, size: Int): Float{
         try {
             if (row.size-1 > size-1){
-                val value = row[size].toString().toFloat()
+                val value = row[size].toString().replace(',', '.').toFloat()
                 return value
             }
 
         }
         catch (e: Exception) {
-//            e.printStackTrace()
+            println("Could not convert ${row[size]}")
         }
         return 0f
 
