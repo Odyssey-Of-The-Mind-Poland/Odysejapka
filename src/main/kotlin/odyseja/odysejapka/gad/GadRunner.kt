@@ -1,5 +1,6 @@
 import com.google.api.services.drive.model.File
 import com.google.api.services.sheets.v4.model.Sheet
+import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import java.util.concurrent.atomic.AtomicInteger
@@ -9,22 +10,23 @@ internal class GadRunner(
     private val sheetsAdapter: ZspSheetsAdapter,
     private val problemPunctuationCells: Map<String, PunctationCells>,
     private val destinationFolderId: String
-) {
+) : Runner {
 
     private val templates = getTemplates()
-    private var totalSheetCount = 0
+    private var totalSheetCount = 1
     private var processedSheetCount = AtomicInteger(0)
 
-    fun createForms() {
+    override fun run() {
         val sheets = sheetsAdapter.getSheets()
         totalSheetCount = sheets?.size ?: 1
         for (sheet in sheets!!) {
             processSheet(sheet)
             processedSheetCount.incrementAndGet()
         }
+        processedSheetCount.set(totalSheetCount)
     }
 
-    fun getProgress(): Int {
+    override fun getProgress(): Int {
         return (processedSheetCount.get() * 100) / totalSheetCount
     }
 

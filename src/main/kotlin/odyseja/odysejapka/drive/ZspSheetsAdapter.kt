@@ -49,15 +49,14 @@ class ZspSheetsAdapter(
         return service.spreadsheets().get(zspId).execute().sheets
     }
 
-    fun getNumericalValue(row: List<Any>, size: Int): Float{
+    fun getNumericalValue(row: List<Any>, size: Int): Float {
         try {
-            if (row.size-1 > size-1){
+            if (row.size - 1 > size - 1) {
                 val value = row[size].toString().replace(',', '.').toFloat()
                 return value
             }
 
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             println("Could not convert ${row[size]}")
         }
         return 0f
@@ -97,16 +96,16 @@ class ZspSheetsAdapter(
                     league = row[4].toString(),
                     part = row[5].toString(),
                     teamName = row[6].toString(),
-                        shortTeamName = row[7].toString(),
-                        city = row[8].toString(),
+                    shortTeamName = row[7].toString(),
+                    city = row[8].toString(),
                     zspRow = i + 1,
-                    day=day,
-                    stage=stage,
-                    zspSheet =sheetName,
+                    day = day,
+                    stage = stage,
+                    zspSheet = sheetName,
                     longTermScore = getNumericalValue(row, 10),
                     styleScore = getNumericalValue(row, 11),
                     penaltyScore = getNumericalValue(row, 12),
-                        weightHeld = getNumericalValue(row, 13),
+                    weightHeld = getNumericalValue(row, 13),
                     spontaneousScore = getNumericalValue(row, 14),
                 )
             )

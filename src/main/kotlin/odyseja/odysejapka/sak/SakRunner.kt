@@ -1,6 +1,7 @@
 package odyseja.odysejapka.sak
 
 import com.google.api.services.drive.model.File
+import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
 import odyseja.odysejapka.drive.SpontanGroups
@@ -13,13 +14,14 @@ internal class SakRunner(
     private val sheetsAdapter: SheetAdapter,
     private val timetableService: TimeTableService,
     private val zspId: String
-) {
+) : Runner {
 
     private val templates = getTemplates()
     private var totalTeamsCount = 0
     private var processedTeamsCount = AtomicInteger(0)
 
-    fun startSak() {
+
+    override fun run() {
         val teams = timetableService.getAll()
         totalTeamsCount = teams.size
         val groups = teams.groupBy { SpontanGroups.Group.fromPerformance(it) }.map { (group, performances) ->
@@ -79,7 +81,7 @@ internal class SakRunner(
         processedTeamsCount.incrementAndGet()
     }
 
-    fun getProgress(): Int {
+    override fun getProgress(): Int {
         if (totalTeamsCount != 0) {
             return (processedTeamsCount.get() * 100) / totalTeamsCount
         }

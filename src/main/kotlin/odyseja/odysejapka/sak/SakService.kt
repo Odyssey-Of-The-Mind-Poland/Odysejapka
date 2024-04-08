@@ -3,6 +3,7 @@ package odyseja.odysejapka.sak
 import SakConfiguration
 import odyseja.odysejapka.Progress
 import odyseja.odysejapka.Status
+import odyseja.odysejapka.async.ProcessRunner
 import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 
@@ -11,39 +12,24 @@ class SakService(
     private val timetableService: TimeTableService
 ) {
 
-    private var sak: SakRunner? = null
-    private var job: Thread? = null
+    private var runner: ProcessRunner? = null
 
     fun runGad(generateSakCommand: GenerateSakCommand) {
-        start(generateSakCommand)
+        runner = ProcessRunner(
+            SakConfiguration(
+                generateSakCommand.templatesFolderId,
+                timetableService,
+                generateSakCommand.zspId
+            ).sakRunner()
+        )
+        runner?.start()
     }
 
     fun stop() {
-        job?.stop()
-        sak = null
-    }
-
-    private fun start(generateSakCommand: GenerateSakCommand) {
-        if (sak != null || job?.isAlive == true) {
-            throw RuntimeException("Gad is already running")
-        }
-        sak = SakConfiguration(
-            generateSakCommand.templatesFolderId,
-            timetableService,
-            generateSakCommand.zspId
-        ).sakRunner()
-        job = Thread {
-            sak?.startSak()
-        }
-        job?.start()
+        runner?.stop()
     }
 
     fun getProgress(): Progress {
-        val progress = sak?.getProgress() ?: 100
-        return if (progress != 100) {
-            Progress(progress, Status.RUNNING)
-        } else {
-            Progress(100, Status.STOPPED)
-        }
+        return runner?.getProgress() ?: Progress(0, Status.STOPPED)
     }
 }
