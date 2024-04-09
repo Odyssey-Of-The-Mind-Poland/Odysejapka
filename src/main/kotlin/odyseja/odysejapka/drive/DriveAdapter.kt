@@ -4,23 +4,31 @@ import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.JsonFactory
+import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.model.File
 
 class DriveAdapter(
     credentials: Credential,
-    jsonFactory: JsonFactory,
-    val fromFolderId: String,
+    jsonFactory: JsonFactory
 ) {
+
+    companion object {
+        fun getDriveAdapter(): DriveAdapter {
+            val credentials = CredentialsProvider().getCredentials()
+            val jsonFactory = GsonFactory.getDefaultInstance()
+            return DriveAdapter(credentials, jsonFactory)
+        }
+    }
 
     private val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
     private val service: Drive = Drive.Builder(httpTransport, jsonFactory, credentials)
         .setApplicationName("gad")
         .build()
 
-    fun listFiles(): List<File> {
+    fun listFiles(folderId: String): List<File> {
         return service.files().list()
-            .setQ("parents in '$fromFolderId'")
+            .setQ("parents in '$folderId'")
             .execute()
             .files
     }

@@ -2,51 +2,36 @@ package odyseja.odysejapka.drive
 
 import Team
 import Teams
-import com.google.api.client.auth.oauth2.Credential
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
-import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.JsonFactory
-import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.Sheet
-import com.google.api.services.sheets.v4.model.ValueRange
 
 class ZspSheetsAdapter(
-    credentials: Credential,
-    jsonFactory: JsonFactory,
+    private val sheetAdapter: SheetAdapter,
     private val zspId: String
 ) {
 
-    private val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
-    private val service: Sheets = Sheets.Builder(httpTransport, jsonFactory, credentials)
-        .setApplicationName("gad")
-        .build()
-
-    fun writeZsp(row: String, value: List<String>, sheetName: String) {
-        val range = "$sheetName!$row"
-        val valueRange = listOf(value)
-        service.spreadsheets().values().update(zspId, range, ValueRange().setValues(valueRange))
-            .setValueInputOption("USER_ENTERED")
-            .execute()
+    companion object {
+        fun getZspSheetsAdapter(zspId: String): ZspSheetsAdapter {
+            return ZspSheetsAdapter(SheetAdapter.getSheetAdapter(), zspId)
+        }
     }
 
-    fun writeCell(row: String, value: String, sheetId: String) {
-        val range = "Arkusz Ocen Cząstkowych!$row"
-        val valueRange = listOf(listOf(value))
-        service.spreadsheets().values().update(sheetId, range, ValueRange().setValues(valueRange))
-            .setValueInputOption("RAW")
-            .execute()
+    fun writeZsp(cell: String, value: List<String>, sheetName: String) {
+        sheetAdapter.writeValues(zspId, sheetName, cell, value)
     }
 
-    fun getCellValue(row: String, sheetId: String): String {
-        val values =
-            service.spreadsheets().values().get(sheetId, "Arkusz Ocen Cząstkowych!$row").execute()
-                .getValues()
-        return values[0][0].toString()
+    fun writeCell(cell: String, value: String, sheetId: String) {
+        listOf(listOf(value))
+        sheetAdapter.writeValue(sheetId, "Arkusz Ocen Cząstkowych", cell, value, "RAW")
+    }
+
+    fun getCellValue(cell: String, sheetId: String): String {
+        val values = sheetAdapter.getValue(sheetId, "Arkusz Ocen Cząstkowych", cell)
+        return values[0][0]
     }
 
 
     fun getSheets(): MutableList<Sheet>? {
-        return service.spreadsheets().get(zspId).execute().sheets
+        return sheetAdapter.getSheet(zspId)
     }
 
     fun getNumericalValue(row: List<Any>, size: Int): Float {
@@ -64,40 +49,40 @@ class ZspSheetsAdapter(
     }
 
     fun getTeams(sheetName: String): Teams {
-        val values = service.spreadsheets().values().get(zspId, "$sheetName!A1:P").execute().getValues()
+        val values = sheetAdapter.getValue(zspId, sheetName, "A1:P")
         val teams = mutableListOf<Team>()
         var judges = ""
         var day = ""
         var stage = 1
         for ((i, row) in values.withIndex()) {
 
-            if (row.size > 0 && isJudge(row[0].toString())) {
-                judges = row[1].toString()
+            if (row.size > 0 && isJudge(row[0])) {
+                judges = row[1]
                 break
             }
 
-            if (row.size > 0 && isDay(row[0].toString())) {
-                day = row[0].toString()
+            if (row.size > 0 && isDay(row[0])) {
+                day = row[0]
             }
 
-            if (row.size > 0 && isStage(row[0].toString())) {
-                stage = row[0].toString().split(" ")[1].toInt()
+            if (row.size > 0 && isStage(row[0])) {
+                stage = row[0].split(" ")[1].toInt()
             }
 
-            if (row.size == 0 || !isTime(row[0].toString())) {
+            if (row.size == 0 || !isTime(row[0])) {
                 continue
             }
             teams.add(
                 Team(
-                    performanceHour = row[0].toString(),
-                    spontanHour = row[1].toString(),
-                    code = row[2].toString(),
-                    membershipNumber = row[3].toString(),
-                    league = row[4].toString(),
-                    part = row[5].toString(),
-                    teamName = row[6].toString(),
-                    shortTeamName = row[7].toString(),
-                    city = row[8].toString(),
+                    performanceHour = row[0],
+                    spontanHour = row[1],
+                    code = row[2],
+                    membershipNumber = row[3],
+                    league = row[4],
+                    part = row[5],
+                    teamName = row[6],
+                    shortTeamName = row[7],
+                    city = row[8],
                     zspRow = i + 1,
                     day = day,
                     stage = stage,

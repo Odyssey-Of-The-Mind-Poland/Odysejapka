@@ -13,7 +13,8 @@ internal class SakRunner(
     private val driveAdapter: DriveAdapter,
     private val sheetsAdapter: SheetAdapter,
     private val timetableService: TimeTableService,
-    private val zspId: String
+    private val zspId: String,
+    private val templatesFolderId: String
 ) : Runner {
 
     private val templates = getTemplates()
@@ -91,7 +92,7 @@ internal class SakRunner(
 
     private fun getTemplates(): List<File> {
         return driveAdapter
-            .listFiles()
+            .listFiles(templatesFolderId)
             .filter { it.name.startsWith("P") }
     }
 

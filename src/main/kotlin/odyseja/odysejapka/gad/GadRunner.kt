@@ -9,7 +9,8 @@ internal class GadRunner(
     private val driveAdapter: DriveAdapter,
     private val sheetsAdapter: ZspSheetsAdapter,
     private val problemPunctuationCells: Map<String, PunctationCells>,
-    private val destinationFolderId: String
+    private val destinationFolderId: String,
+    private val templatesFolderId: String
 ) : Runner {
 
     private val templates = getTemplates()
@@ -87,7 +88,7 @@ internal class GadRunner(
 
     private fun getTemplates(): Map<Char, File> {
         return driveAdapter
-            .listFiles()
+            .listFiles(templatesFolderId)
             .filter { it.name.endsWith("_KOD_NAZWA") }
             .associateBy { it.name[1] }
     }

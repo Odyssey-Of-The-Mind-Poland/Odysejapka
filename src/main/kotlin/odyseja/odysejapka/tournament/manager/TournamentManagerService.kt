@@ -1,8 +1,6 @@
 package odyseja.odysejapka.tournament.manager
 
 import Team
-import com.google.api.client.json.gson.GsonFactory
-import odyseja.odysejapka.drive.CredentialsProvider
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.stereotype.Service
 import java.io.ByteArrayOutputStream
@@ -45,9 +43,7 @@ class TournamentManagerService {
     }
 
     fun generateCsv(zspId: String): ByteArray {
-        val credentials = CredentialsProvider().getCredentials()
-        val jsonFactory = GsonFactory.getDefaultInstance()
-        val sheetsAdapter = ZspSheetsAdapter(credentials, jsonFactory, zspId)
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val sheets = sheetsAdapter.getSheets()
         val byteArrayOutputStream = ByteArrayOutputStream()
 

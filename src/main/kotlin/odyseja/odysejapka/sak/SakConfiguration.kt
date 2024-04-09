@@ -1,5 +1,3 @@
-import com.google.api.client.json.gson.GsonFactory
-import odyseja.odysejapka.drive.CredentialsProvider
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
 import odyseja.odysejapka.sak.SakRunner
@@ -12,10 +10,8 @@ internal class SakConfiguration(
 ) {
 
     fun sakRunner(): SakRunner {
-        val credentials = CredentialsProvider().getCredentials()
-        val jsonFactory = GsonFactory.getDefaultInstance()
-        val driveAdapter = DriveAdapter(credentials, jsonFactory, templatesFolderId)
-        val sheetsAdapter = SheetAdapter(credentials, jsonFactory)
-        return SakRunner(driveAdapter, sheetsAdapter, timetableService, zspId)
+        val driveAdapter = DriveAdapter.getDriveAdapter()
+        val sheetsAdapter = SheetAdapter.getSheetAdapter()
+        return SakRunner(driveAdapter, sheetsAdapter, timetableService, zspId, templatesFolderId)
     }
 }
