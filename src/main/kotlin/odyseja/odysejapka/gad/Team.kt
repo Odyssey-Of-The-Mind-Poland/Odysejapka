@@ -1,3 +1,4 @@
+import odyseja.odysejapka.gad.GadGroup
 import odyseja.odysejapka.timetable.Performance
 
 data class Team(
@@ -60,7 +61,7 @@ data class Team(
             part.toInt(),
             day.lowercase(),
             getSpontanDay(),
-            if (league != "0") league else "",
+            getFormattedLeague(),
             zspRow = zspRow,
             zspSheet = zspSheet
         )
@@ -75,5 +76,13 @@ data class Team(
 
     fun isJunior(): Boolean {
         return code[1] == 'J'
+    }
+
+    fun getGroup(): GadGroup {
+        return GadGroup(getProblem().toInt(), getAge().toInt(), getFormattedLeague())
+    }
+
+    private fun getFormattedLeague(): String {
+        return if (league == "0") "" else league
     }
 }

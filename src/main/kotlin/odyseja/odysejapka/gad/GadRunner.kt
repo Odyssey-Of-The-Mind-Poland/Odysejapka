@@ -3,6 +3,7 @@ import com.google.api.services.sheets.v4.model.Sheet
 import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.ZspSheetsAdapter
+import odyseja.odysejapka.gad.GadGroup
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class GadRunner(
@@ -16,6 +17,7 @@ internal class GadRunner(
     private val templates = getTemplates()
     private var totalSheetCount = 1
     private var processedSheetCount = AtomicInteger(0)
+    private val groupFolders = mutableMapOf<GadGroup, String>()
 
     override fun run() {
         val sheets = sheetsAdapter.getSheets()
@@ -47,9 +49,13 @@ internal class GadRunner(
                 continue
             }
 
+            val groupFolderId = groupFolders.computeIfAbsent(team.getGroup()) {
+                driveAdapter.createFolder(it.getDirName(), destinationFolderId)
+            }
+
             val template = getTemplate(team.getProblem()[0])
 
-            val file = driveAdapter.copyFile(template.id, team.getFileName(), destinationFolderId)
+            val file = driveAdapter.copyFile(template.id, team.getFileName(), groupFolderId)
             templateCell(file.id, "A1", team.getAge())
             templateCell(file.id, "A2", team.teamName)
             templateCell(file.id, "A3", teams.judges)

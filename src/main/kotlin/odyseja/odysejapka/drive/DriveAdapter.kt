@@ -39,4 +39,12 @@ class DriveAdapter(
         file.parents = listOf(destination)
         return service.Files().copy(fileId, file).execute()
     }
+
+    fun createFolder(folderName: String, parentDir: String): String {
+        val fileMetadata = File()
+        fileMetadata.name = folderName
+        fileMetadata.mimeType = "application/vnd.google-apps.folder"
+        fileMetadata.parents = listOf(parentDir)
+        return service.files().create(fileMetadata).execute().id
+    }
 }

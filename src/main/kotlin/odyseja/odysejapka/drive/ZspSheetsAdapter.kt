@@ -111,7 +111,7 @@ class ZspSheetsAdapter(
         return cell.lowercase().contains("sobota") || cell.lowercase().contains("niedziela")
     }
 
-    private fun isStage(cell: String): Boolean {
+    fun isStage(cell: String): Boolean {
         return cell.lowercase().contains("scena")
     }
 }
