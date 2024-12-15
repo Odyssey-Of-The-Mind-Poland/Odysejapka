@@ -1,5 +1,7 @@
 package odyseja.odysejapka.timetable
 
+import java.time.LocalDate
+
 data class Performance (
   val id: Int,
   val city: String,
@@ -14,7 +16,8 @@ data class Performance (
   var spontanDay: String,
   var league: String,
   var zspRow: Int?,
-  var zspSheet: String?
+  var zspSheet: String?,
+  var performanceDate: LocalDate = LocalDate.of(2025, 4, 1)
 ) {
 
   fun spontanSort(): String {
