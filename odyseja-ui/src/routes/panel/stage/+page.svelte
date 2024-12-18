@@ -47,7 +47,7 @@
 <section class="p-4 flex flex-wrap">
     {#each data.stages as stage}
         <label class="label p-2 w-1/3">
-            <span>Scena nr. {stage.id}</span>
+            <span>Scena nr. {stage.number}</span>
             <input class="input" type="text" placeholder="Input" bind:value={stage.name}/>
         </label>
     {/each}
