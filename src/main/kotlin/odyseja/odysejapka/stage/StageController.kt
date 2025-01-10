@@ -11,7 +11,7 @@ class StageController(
 
   @GetMapping()
   fun getStages(@RequestParam(required = false) cityId: Int?): List<Stage> {
-    return cityId?.let { stageService.getStages(cityId) } ?: stageService.getStages()
+    return cityId?.let { stageService.getStages(cityId) } ?: stageService.getStages(0)
   }
 
   @Secured("ROLE_ADMIN")
