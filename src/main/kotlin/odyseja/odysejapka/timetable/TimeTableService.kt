@@ -23,25 +23,8 @@ class TimeTableService(
     private val changeService: ChangeService
 ) {
 
-    fun getAll(): List<Performance> {
-        return timeTableRepository.findAll().sortedBy { it?.performance ?: "0" }.map {
-            Performance(
-                it!!.id,
-                it.cityEntity.name,
-                it.team,
-                it.problemEntity.id,
-                it.ageEntity.id,
-                it.stageEntity.number,
-                it.performance,
-                it.spontan,
-                it.part,
-                it.performanceDay,
-                it.spontanDay,
-                it.league,
-                it.zspRow,
-                it.zspSheet
-            )
-        }
+    fun getFinals(): List<Performance> {
+        return timeTableRepository.findAllByCityEntity_Id(0).map { it.toPerformance() }
     }
 
     fun addPerformance(performances: List<Performance>): List<PerformanceEntity> {

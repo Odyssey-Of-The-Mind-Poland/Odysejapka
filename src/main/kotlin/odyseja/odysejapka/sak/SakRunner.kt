@@ -23,7 +23,7 @@ internal class SakRunner(
 
 
     override fun run() {
-        val teams = timetableService.getAll()
+        val teams = timetableService.getFinals()
         totalTeamsCount = teams.size
         val groups = teams.groupBy { SpontanGroups.Group.fromPerformance(it) }.map { (group, performances) ->
             SpontanGroups(group, performances)

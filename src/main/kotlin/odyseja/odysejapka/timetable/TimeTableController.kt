@@ -12,8 +12,8 @@ class TimeTableController(
 ) {
 
     @GetMapping
-    fun getCities(@RequestParam(required = false) cityId: Int?): List<Performance> {
-        return cityId?.let { timeTableService.getByCity(cityId) } ?: timeTableService.getAll()
+    fun getPerformances(@RequestParam(required = false) cityId: Int?): List<Performance> {
+        return cityId?.let { timeTableService.getByCity(cityId) } ?: timeTableService.getFinals()
     }
 
     @Secured("ROLE_ADMIN")
