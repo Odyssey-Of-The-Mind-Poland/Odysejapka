@@ -1,17 +1,18 @@
 // @ts-ignore
 import auth0 from 'auth0-js';
-import { goto } from '$app/navigation';
-import { env } from '$env/dynamic/public';
+import {goto} from '$app/navigation';
+import {env} from '$env/dynamic/public';
 import Token from "./token";
 
-export const CALLBACK_URL = env.PUBLIC_CALLBACK_URL || "http://localhost:5173/callback";
+export const FRONTEND_URL = env.PUBLIC_FRONTEND_URL || "http://localhost:5173";
+const CLIENT_ID = '8TI8RllRK5wf5l1Rv85msCTOF0e88lZg';
 
 export const client = new auth0.WebAuth({
-  clientID: '8TI8RllRK5wf5l1Rv85msCTOF0e88lZg',
+  clientID: CLIENT_ID,
   domain: 'odyseja.eu.auth0.com',
   responseType: 'token id_token',
   audience: 'https://app.odyseja.org',
-  redirectUri: CALLBACK_URL,
+  redirectUri: FRONTEND_URL + '/callback',
   scope: 'openid profile'
 });
 
@@ -24,8 +25,11 @@ export async function login() {
 }
 
 export async function logout() {
-  client.logout();
-  setCookie('access_token', '')
+  client.logout({
+    returnTo: FRONTEND_URL,
+    clientID: '8TI8RllRK5wf5l1Rv85msCTOF0e88lZg'
+  });
+  setCookie('access_token', '');
   await goto('/');
 }
 

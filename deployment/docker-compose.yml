@@ -42,7 +42,7 @@ services:
       - backend
     environment:
       PUBLIC_BASE_URL: "${BACKEND_URL:-http://localhost:8082}"
-      PUBLIC_CALLBACK_URL: "${CALLBACK_URL:-http://localhost:3000/callback}"
+      PUBLIC_FRONTEND_URL: "${FRONTEND_URL:-http://localhost:3000}"
 
 volumes:
   postgres-data:
