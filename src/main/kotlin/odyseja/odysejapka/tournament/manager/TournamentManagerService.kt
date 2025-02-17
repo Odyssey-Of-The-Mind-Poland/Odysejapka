@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.Charset
+import kotlin.math.abs
 
 
 @Service
@@ -23,6 +24,9 @@ class TournamentManagerService {
         println("${teams.filter {it.isJunior()}.size} junior teams")
         println("${teams.filter {it.membershipNumber == ""}.size} foreign teams")
         teams.forEach {
+            if (it.penaltyScore != null) {
+                it.penaltyScore = abs(it.penaltyScore!!) // [*] pamiętamy
+            }
             // Junior teams and guest teams from other countries should not be imported
             if (!it.isJunior() && it.membershipNumber != ""){
                 var problemLeague = ""
