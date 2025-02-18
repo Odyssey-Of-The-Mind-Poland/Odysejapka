@@ -1,5 +1,6 @@
 import odyseja.odysejapka.gad.GadGroup
 import odyseja.odysejapka.timetable.Performance
+import kotlin.math.abs
 
 data class Team(
     val performanceHour: String,
@@ -66,12 +67,12 @@ data class Team(
             zspSheet = zspSheet
         )
     }
-    fun getCity(teamName: String):String{
+
+    fun getCity(teamName: String): String {
         val teamAndCity = teamName.split("-")
-        return if(teamAndCity.size > 1){
-            teamAndCity[teamAndCity.size-1]
-        }
-        else "-"
+        return if (teamAndCity.size > 1) {
+            teamAndCity[teamAndCity.size - 1]
+        } else "-"
     }
 
     fun isJunior(): Boolean {
@@ -84,5 +85,39 @@ data class Team(
 
     private fun getFormattedLeague(): String {
         return if (league == "0") "" else league
+    }
+
+    fun getAbsPenaltyScore(): Float {
+        if (penaltyScore != null) {
+            return abs(penaltyScore!!) // [*] pamiętamy
+        }
+
+        return 0F
+    }
+
+    fun isBalsa(): Boolean {
+        return code.substring(1, 2) == "4"
+    }
+
+    fun getProblemLeague(): String {
+        if (league == "0") return code.substring(3, 4)
+        return "${code.substring(3, 4)}${league}"
+    }
+
+    fun isForeign(): Boolean {
+        return membershipNumber == ""
+    }
+
+    fun getTmRow(): String {
+        return "${
+            getProblem()
+        },${getProblemLeague()},${membershipNumber},${shortTeamName},${city},${getBalsaScore()},${longTermScore},${styleScore},${spontaneousScore},${getAbsPenaltyScore()}"
+    }
+
+    private fun getBalsaScore(): String {
+        if (!isBalsa()) {
+            return ""
+        }
+        return weightHeld.toString()
     }
 }
