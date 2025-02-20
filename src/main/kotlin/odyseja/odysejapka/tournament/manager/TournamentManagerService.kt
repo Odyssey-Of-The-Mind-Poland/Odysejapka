@@ -15,7 +15,7 @@ class TournamentManagerService {
 
     fun OutputStream.writeCsv(teams: List<Team>) {
         val writer = bufferedWriter()
-        writer.write("""Problem,Division,Number,Name,City,Raw_longt1,Raw_longt2,Raw_style,Raw_spont,Penalty""")
+        writer.write("""Problem,Division,Number,Name,City,Raw_longt1,Raw_longt2,Raw_style,Raw_spont,Penalty,memberNbr""")
         writer.newLine()
         println("${teams.size} teams in total")
         println("${teams.filter { it.isJunior() }.size} junior teams")

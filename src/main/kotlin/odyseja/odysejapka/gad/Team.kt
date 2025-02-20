@@ -111,7 +111,7 @@ data class Team(
     fun getTmRow(): String {
         return "${
             getProblem()
-        },${getProblemLeague()},${membershipNumber},${shortTeamName},${city},${getBalsaScore()},${longTermScore},${styleScore},${spontaneousScore},${getAbsPenaltyScore()}"
+        },${getProblemLeague()},${membershipNumber},${shortTeamName},${city},${getBalsaScore()},${longTermScore},${styleScore},${spontaneousScore},${getAbsPenaltyScore()},${membershipNumber}"
     }
 
     private fun getBalsaScore(): String {
