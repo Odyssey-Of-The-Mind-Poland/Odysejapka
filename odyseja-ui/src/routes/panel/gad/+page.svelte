@@ -27,7 +27,8 @@
             dt: '',
             style: '',
             penalty: '',
-            balsa: ''
+            balsa: '',
+            anomaly: '',
         } as PunctationCells;
         cell[field] = value;
         data.problemPunctuationCells[index] = cell;
@@ -76,6 +77,10 @@
                    on:input={(e) => updateProblemPunctuationCells(i, 'balsa', e.target.value)}
                    placeholder="Balsa"/>
         {/if}
+        <input class="input flex-grow flex-1" type="text"
+               value="{data.problemPunctuationCells[i]?.anomaly ?? ''}"
+               on:input={(e) => updateProblemPunctuationCells(i, 'anomaly', e.target.value)}
+               placeholder="Komórka Anomalii"/>
     </div>
 {/each}
 

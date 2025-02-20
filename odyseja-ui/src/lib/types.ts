@@ -145,6 +145,7 @@ export type PunctationCells = {
     style: string,
     penalty: string,
     balsa: string;
+    anomaly: string;
 }
 
 export type SakRequest = {

@@ -65,7 +65,8 @@ internal class GadRunner(
                 getZspValue(file.id, cells.dt),
                 getZspValue(file.id, cells.style),
                 getZspValue(file.id, cells.penalty),
-                getBalsaValue(file.id, cells.balsa)
+                getBalsaValue(file.id, cells.balsa),
+                getZspValue(file.id, cells.anomaly),
             )
             sheetsAdapter.writeZsp("K${team.zspRow}:N${team.zspRow}", values, sheetTitle)
             println("Created: ${file.name}")
