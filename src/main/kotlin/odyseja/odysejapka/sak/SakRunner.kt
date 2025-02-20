@@ -35,7 +35,7 @@ internal class SakRunner(
             }
 
             processGroup(group)
-            Thread.sleep(2000)
+            Thread.sleep(2000) // google API needs this
         }
     }
 

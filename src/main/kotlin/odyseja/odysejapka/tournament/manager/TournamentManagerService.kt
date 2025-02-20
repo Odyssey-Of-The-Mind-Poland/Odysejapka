@@ -37,18 +37,9 @@ class TournamentManagerService {
 
     fun generateCsv(zspId: String): ByteArray {
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
-        val sheets = sheetsAdapter.getSheets()
         val byteArrayOutputStream = ByteArrayOutputStream()
 
-        val allTeams: MutableList<Team> = mutableListOf()
-        for (sheet in sheets!!) {
-            val title = sheet.properties.title
-            println("Processing sheet: $title")
-            val teams = sheetsAdapter.getTeams(title)
-            val teamsFromSheet = teams.teams
-            allTeams.addAll(teamsFromSheet)
-        }
-        byteArrayOutputStream.use { it.writeCsv(allTeams) }
+        byteArrayOutputStream.use { it.writeCsv(sheetsAdapter.getAllTeams()) }
         return byteArrayOutputStream.toString(Charset.forName("UTF-8")).toByteArray()
 
     }

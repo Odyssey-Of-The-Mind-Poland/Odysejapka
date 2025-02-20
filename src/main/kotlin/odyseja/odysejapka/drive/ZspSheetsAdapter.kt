@@ -48,6 +48,20 @@ class ZspSheetsAdapter(
 
     }
 
+    fun getAllTeams(): List<Team> {
+        val sheetsAdapter = getZspSheetsAdapter(zspId)
+        val sheets = sheetsAdapter.getSheets()
+        val allTeams: MutableList<Team> = mutableListOf()
+        for (sheet in sheets!!) {
+            val title = sheet.properties.title
+            println("Processing sheet: $title")
+            val teams = getTeams(title)
+            val teamsFromSheet = teams.teams
+            allTeams.addAll(teamsFromSheet)
+        }
+        return allTeams
+    }
+
     fun getTeams(sheetName: String): Teams {
         val values = sheetAdapter.getValue(zspId, sheetName, "A1:P")
         val teams = mutableListOf<Team>()
