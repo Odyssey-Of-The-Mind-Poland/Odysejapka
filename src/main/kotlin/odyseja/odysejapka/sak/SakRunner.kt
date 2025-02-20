@@ -1,10 +1,12 @@
 package odyseja.odysejapka.sak
 
+import Team
 import com.google.api.services.drive.model.File
 import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
 import odyseja.odysejapka.drive.SpontanGroups
+import odyseja.odysejapka.drive.ZspSheetsAdapter
 import odyseja.odysejapka.timetable.Performance
 import odyseja.odysejapka.timetable.TimeTableService
 import java.util.concurrent.atomic.AtomicInteger
@@ -12,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger
 internal class SakRunner(
     private val driveAdapter: DriveAdapter,
     private val sheetsAdapter: SheetAdapter,
-    private val timetableService: TimeTableService,
     private val zspId: String,
     private val templatesFolderId: String
 ) : Runner {
@@ -23,14 +24,14 @@ internal class SakRunner(
 
 
     override fun run() {
-        val teams = timetableService.getFinals()
+        val teams = ZspSheetsAdapter.getZspSheetsAdapter(zspId).getAllTeams()
         totalTeamsCount = teams.size
-        val groups = teams.groupBy { SpontanGroups.Group.fromPerformance(it) }.map { (group, performances) ->
+        val groups = teams.groupBy { SpontanGroups.Group.fromTeam(it) }.map { (group, performances) ->
             SpontanGroups(group, performances)
         }
         for (group in groups) {
 
-            if (group.group.age == 0 || group.group.problem == 0) {
+            if (group.group.age == "0" || group.group.problem == "0") {
                 continue
             }
 
@@ -66,13 +67,13 @@ internal class SakRunner(
     }
 
     private fun processTeam(
-        team: Performance,
+        team: Team,
         sheetName: String,
         sheetId: String,
         teamStartCell: Pair<String, Int>,
         pointsCell: Pair<String, Int>
     ) {
-        sheetsAdapter.writeValue(sheetId, sheetName, "${teamStartCell.first}${teamStartCell.second}", team.team)
+        sheetsAdapter.writeValue(sheetId, sheetName, "${teamStartCell.first}${teamStartCell.second}", team.teamName)
         sheetsAdapter.writeValue(
             zspId,
             team.zspSheet!!,

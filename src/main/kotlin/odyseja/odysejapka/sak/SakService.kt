@@ -8,9 +8,7 @@ import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 
 @Service
-class SakService(
-    private val timetableService: TimeTableService
-) {
+class SakService {
 
     private var runner: ProcessRunner? = null
 
@@ -18,7 +16,6 @@ class SakService(
         runner = ProcessRunner(
             SakConfiguration(
                 generateSakCommand.templatesFolderId,
-                timetableService,
                 generateSakCommand.zspId
             ).sakRunner()
         )

@@ -120,4 +120,18 @@ data class Team(
         }
         return weightHeld.toString()
     }
+
+    fun spontanSort(): String {
+        val day = if (getSpontanDay().lowercase().contains("sobota")) "0" else "1"
+        return "$day$spontanHour"
+    }
+
+    fun isForeigner(): Boolean {
+        for (foreigner in listOf("spain", "china")) {
+            if (city.lowercase().contains(foreigner) || teamName.lowercase().contains(foreigner)) {
+                return true
+            }
+        }
+        return false
+    }
 }
