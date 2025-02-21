@@ -38,6 +38,7 @@ internal class GadRunner(
         println("Processing: $title")
 
         val teams = sheetsAdapter.getTeams(title)
+        println(teams)
 
         processTeams(teams, title)
     }
@@ -53,6 +54,10 @@ internal class GadRunner(
                 driveAdapter.createFolder(it.getDirName(), destinationFolderId)
             }
 
+            println(team)
+            println("problem")
+            println(team.getProblem())
+
             val template = getTemplate(team.getProblem()[0])
 
             val file = driveAdapter.copyFile(template.id, team.getFileName(), groupFolderId)
@@ -66,7 +71,8 @@ internal class GadRunner(
                 getZspValue(file.id, cells.style),
                 getZspValue(file.id, cells.penalty),
                 getBalsaValue(file.id, cells.balsa),
-                getZspValue(file.id, cells.anomaly),
+                getZspValueFromAOC(file.id, cells.anomaly),
+
             )
             sheetsAdapter.writeZsp("K${team.zspRow}:N${team.zspRow}", values, sheetTitle)
             println("Created: ${file.name}")
@@ -75,6 +81,13 @@ internal class GadRunner(
 
     private fun getZspValue(sheetId: String, cell: String): String {
         return "=importrange(\"https://docs.google.com/spreadsheets/d/$sheetId\";\"Arkusz Ocen Surowych!$cell\")"
+    }
+
+    private fun getZspValueFromAOC(sheetId: String, cell: String): String {
+        if (cell.isBlank()) {
+            return ""
+        }
+        return "=importrange(\"https://docs.google.com/spreadsheets/d/$sheetId\";\"Arkusz Ocen Cząstkowych!$cell\")"
     }
 
     private fun getBalsaValue(sheetId: String, cell: String?): String {
@@ -90,13 +103,55 @@ internal class GadRunner(
     }
 
     private fun getTemplate(problem: Char): File {
+        println("templates")
+        println(templates)
+
         return templates[problem]!!
     }
 
+    private fun validateTemplateResultMap(resultMap: Map<Char, File> ): Boolean{
+        println("validation")
+        return resultMap.size == 5 && resultMap.keys == setOf('1', '2', '3', '4', '5')
+    }
+
     private fun getTemplates(): Map<Char, File> {
-        return driveAdapter
-            .listFiles(templatesFolderId)
+        println("templates allala")
+        // File name format: FR_2025_P1GX_KOD_NAZWA
+        var resultMap: Map<Char, File> = driveAdapter
+                .listFiles(templatesFolderId)
+                .filter { it.name.endsWith("_KOD_NAZWA") }
+                .associateBy { file ->
+                    val regex = Regex("""_P(\d+)""")
+                    val matchResult = regex.find(file.name)
+                    println("regex")
+                    println(matchResult)
+                    matchResult
+                            ?.groupValues
+                            ?.getOrNull(1)
+                            ?.firstOrNull()
+                            ?: '?'
+                }
+
+        println(resultMap)
+
+        if (validateTemplateResultMap(resultMap)){
+            return resultMap
+        }
+        else{
+            println("Pliki matki nie trzymają się formatu: FR_2025_P1GX_KOD_NAZWA lub brakuje problemów")
+        }
+        // File name format P1GX_KOD_NAZWA
+
+        resultMap = driveAdapter.listFiles(templatesFolderId)
             .filter { it.name.endsWith("_KOD_NAZWA") }
             .associateBy { it.name[1] }
+
+        if (validateTemplateResultMap(resultMap)){
+            return resultMap
+        }
+        else {
+            println("Pliki matki nie trzymają się formatu: P1GX_KOD_NAZWA")
+        }
+        return resultMap
     }
 }

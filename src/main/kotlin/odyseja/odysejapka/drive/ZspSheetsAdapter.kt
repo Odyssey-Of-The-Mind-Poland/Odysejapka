@@ -64,30 +64,50 @@ class ZspSheetsAdapter(
 
     fun getTeams(sheetName: String): Teams {
         val values = sheetAdapter.getValue(zspId, sheetName, "A1:P")
+        println("Get teams")
+        println(values)
         val teams = mutableListOf<Team>()
         var judges = ""
         var day = ""
         var stage = 1
         for ((i, row) in values.withIndex()) {
+            println("Rows with index")
+            println(i)
+            println(row.size)
+            println(row)
 
-            if (row.size > 0 && isJudge(row[0])) {
-                judges = row[1]
-                break
+            if (row.size > 0 && isJudge(row[0])){
+                println("yes")
+                if (row.size == 1){
+                    println("regio")
+                    judges = "" // For Regional Finals Judges names are not printed onto the scoring sheet => Judges section is empty = we don't print it
+                    break
+                }
+                else if (row.size > 1){
+                    judges = row[1] // For Country Finals Judges names will be used
+                    break
+                }
             }
+            println("aaaa")
 
             if (row.size > 0 && isDay(row[0])) {
+                println("day")
                 day = row[0]
             }
 
             if (row.size > 0 && isStage(row[0])) {
+                println("stage")
                 stage = row[0].split(" ")[1].toInt()
             }
 
             if (row.size == 0 || !isTime(row[0])) {
+                println("what")
                 continue
             }
-            teams.add(
-                Team(
+            println("size")
+            println(row.size)
+            println(row)
+            val team = Team(
                     performanceHour = row[0],
                     spontanHour = row[1],
                     code = row[2],
@@ -106,8 +126,13 @@ class ZspSheetsAdapter(
                     penaltyScore = getNumericalValue(row, 12),
                     weightHeld = getNumericalValue(row, 13),
                     spontaneousScore = getNumericalValue(row, 14),
-                )
             )
+            teams.add(
+                team
+            )
+            println(" team")
+            println(team)
+
         }
         return Teams(judges, teams)
     }
