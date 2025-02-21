@@ -74,7 +74,7 @@ internal class GadRunner(
                 getZspValueFromAOC(file.id, cells.anomaly),
 
             )
-            sheetsAdapter.writeZsp("K${team.zspRow}:N${team.zspRow}", values, sheetTitle)
+            sheetsAdapter.writeZsp("K${team.zspRow}:O${team.zspRow}", values, sheetTitle)
             println("Created: ${file.name}")
         }
     }
