@@ -38,7 +38,6 @@ internal class GadRunner(
         println("Processing: $title")
 
         val teams = sheetsAdapter.getTeams(title)
-        println(teams)
 
         processTeams(teams, title)
     }
@@ -53,10 +52,6 @@ internal class GadRunner(
             val groupFolderId = groupFolders.computeIfAbsent(team.getGroup()) {
                 driveAdapter.createFolder(it.getDirName(), destinationFolderId)
             }
-
-            println(team)
-            println("problem")
-            println(team.getProblem())
 
             val template = getTemplate(team.getProblem()[0])
 
@@ -103,19 +98,14 @@ internal class GadRunner(
     }
 
     private fun getTemplate(problem: Char): File {
-        println("templates")
-        println(templates)
-
         return templates[problem]!!
     }
 
     private fun validateTemplateResultMap(resultMap: Map<Char, File> ): Boolean{
-        println("validation")
         return resultMap.size == 5 && resultMap.keys == setOf('1', '2', '3', '4', '5')
     }
 
     private fun getTemplates(): Map<Char, File> {
-        println("templates allala")
         // File name format: FR_2025_P1GX_KOD_NAZWA
         var resultMap: Map<Char, File> = driveAdapter
                 .listFiles(templatesFolderId)
@@ -123,8 +113,6 @@ internal class GadRunner(
                 .associateBy { file ->
                     val regex = Regex("""_P(\d+)""")
                     val matchResult = regex.find(file.name)
-                    println("regex")
-                    println(matchResult)
                     matchResult
                             ?.groupValues
                             ?.getOrNull(1)
@@ -132,13 +120,12 @@ internal class GadRunner(
                             ?: '?'
                 }
 
-        println(resultMap)
 
         if (validateTemplateResultMap(resultMap)){
             return resultMap
         }
         else{
-            println("Pliki matki nie trzymają się formatu: FR_2025_P1GX_KOD_NAZWA lub brakuje problemów")
+            println("Pliki matki nie trzymają się formatu: FR_2025_P1GX_KOD_NAZWA lub brakuje plików matek dla")
         }
         // File name format P1GX_KOD_NAZWA
 
@@ -150,7 +137,7 @@ internal class GadRunner(
             return resultMap
         }
         else {
-            println("Pliki matki nie trzymają się formatu: P1GX_KOD_NAZWA")
+            println("Pliki matki nie trzymają się formatu: P1GX_KOD_NAZWA lub brakuje plików matek dla problemów")
         }
         return resultMap
     }
