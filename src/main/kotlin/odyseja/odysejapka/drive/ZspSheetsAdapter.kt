@@ -71,8 +71,15 @@ class ZspSheetsAdapter(
         for ((i, row) in values.withIndex()) {
 
             if (row.size > 0 && isJudge(row[0])) {
-                judges = row[1]
-                break
+                if (row.size == 1){
+                    println("regio")
+                    judges = "" // For Regional Finals Judges names are not printed onto the scoring sheet => Judges section is empty = we don't print it
+                    break
+                }
+                else if (row.size > 1){
+                    judges = row[1] // For Country Finals Judges names will be used
+                    break
+                }
             }
 
             if (row.size > 0 && isDay(row[0])) {
