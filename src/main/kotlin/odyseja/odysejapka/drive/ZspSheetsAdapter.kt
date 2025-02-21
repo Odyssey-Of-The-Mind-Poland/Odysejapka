@@ -105,7 +105,7 @@ class ZspSheetsAdapter(
                     styleScore = getNumericalValue(row, 11),
                     penaltyScore = getNumericalValue(row, 12),
                     weightHeld = getNumericalValue(row, 13),
-                    spontaneousScore = getNumericalValue(row, 14),
+                    spontaneousScore = getNumericalValue(row, 15),
                 )
             )
         }
