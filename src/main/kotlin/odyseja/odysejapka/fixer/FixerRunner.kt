@@ -15,6 +15,7 @@ class FixerRunner(
         driveAdapter.listFiles(folderId).forEach {
             driveAdapter.listFiles(it.id).forEach { file ->
                 if (matchFileName(file.name, pattern)) {
+                    println("fixSheet: ${file.name}")
                     fixSheet(file.id)
                 }
             }

@@ -111,14 +111,21 @@ data class Team(
     fun getTmRow(): String {
         return "${
             getProblem()
-        },${getProblemLeague()},${membershipNumber},${shortTeamName},${city},${getBalsaScore()},${longTermScore},${styleScore},${spontaneousScore},${getAbsPenaltyScore()},${membershipNumber}"
+        },${getProblemLeague()},${membershipNumber},${shortTeamName},${city},${getBalsaScore()},${getLongTermScore()},${styleScore},${spontaneousScore},${getAbsPenaltyScore()},${membershipNumber}"
     }
 
     private fun getBalsaScore(): String {
         if (!isBalsa()) {
-            return ""
+            return longTermScore.toString()
         }
         return weightHeld.toString()
+    }
+
+    private fun getLongTermScore(): String {
+        if (!isBalsa()) {
+            return ""
+        }
+        return longTermScore.toString()
     }
 
     fun spontanSort(): String {

@@ -7,7 +7,7 @@
     let cells: ReplacementCell[] = [{sheetName: '', cell: '', value: ''}];
 
     function addCell() {
-        cells.push({sheetName: '', cell: '', value: ''});
+        cells = [...cells, { sheetName: '', cell: '', value: '' }];
     }
 
     function removeCell(index: number) {
