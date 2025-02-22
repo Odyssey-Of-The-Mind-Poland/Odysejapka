@@ -69,10 +69,8 @@ class ZspSheetsAdapter(
         var day = ""
         var stage = 1
         for ((i, row) in values.withIndex()) {
-
-            if (row.size > 0 && isJudge(row[0])) {
+            if (row.size > 0 && isJudge(row[0])){
                 if (row.size == 1){
-                    println("regio")
                     judges = "" // For Regional Finals Judges names are not printed onto the scoring sheet => Judges section is empty = we don't print it
                     break
                 }
@@ -93,8 +91,8 @@ class ZspSheetsAdapter(
             if (row.size == 0 || !isTime(row[0])) {
                 continue
             }
-            teams.add(
-                Team(
+
+            val team = Team(
                     performanceHour = row[0],
                     spontanHour = row[1],
                     code = row[2],
@@ -114,7 +112,13 @@ class ZspSheetsAdapter(
                     weightHeld = getNumericalValue(row, 13),
                     spontaneousScore = getNumericalValue(row, 15),
                 )
+
             )
+            teams.add(
+                team
+            )
+
+
         }
         return Teams(judges, teams)
     }
