@@ -68,7 +68,7 @@ internal class GadRunner(
                 getBalsaValue(file.id, cells.balsa),
                 getZspValueFromAOC(file.id, cells.anomaly),
 
-            )
+                )
             sheetsAdapter.writeZsp("K${team.zspRow}:O${team.zspRow}", values, sheetTitle)
             println("Created: ${file.name}")
         }
@@ -101,30 +101,29 @@ internal class GadRunner(
         return templates[problem]!!
     }
 
-    private fun validateTemplateResultMap(resultMap: Map<Char, File> ): Boolean{
+    private fun validateTemplateResultMap(resultMap: Map<Char, File>): Boolean {
         return resultMap.size == 5 && resultMap.keys == setOf('1', '2', '3', '4', '5')
     }
 
     private fun getTemplates(): Map<Char, File> {
         // File name format: FR_2025_P1GX_KOD_NAZWA
         var resultMap: Map<Char, File> = driveAdapter
-                .listFiles(templatesFolderId)
-                .filter { it.name.endsWith("_KOD_NAZWA") }
-                .associateBy { file ->
-                    val regex = Regex("""_P(\d+)""")
-                    val matchResult = regex.find(file.name)
-                    matchResult
-                            ?.groupValues
-                            ?.getOrNull(1)
-                            ?.firstOrNull()
-                            ?: '?'
-                }
+            .listFiles(templatesFolderId)
+            .filter { it.name.endsWith("_KOD_NAZWA") }
+            .associateBy { file ->
+                val regex = Regex("""_P(\d+)""")
+                val matchResult = regex.find(file.name)
+                matchResult
+                    ?.groupValues
+                    ?.getOrNull(1)
+                    ?.firstOrNull()
+                    ?: '?'
+            }
 
 
-        if (validateTemplateResultMap(resultMap)){
+        if (validateTemplateResultMap(resultMap)) {
             return resultMap
-        }
-        else{
+        } else {
             println("Pliki matki nie trzymają się formatu: FR_2025_P1GX_KOD_NAZWA lub brakuje plików matek dla")
         }
         // File name format P1GX_KOD_NAZWA
@@ -133,10 +132,9 @@ internal class GadRunner(
             .filter { it.name.endsWith("_KOD_NAZWA") }
             .associateBy { it.name[1] }
 
-        if (validateTemplateResultMap(resultMap)){
+        if (validateTemplateResultMap(resultMap)) {
             return resultMap
-        }
-        else {
+        } else {
             println("Pliki matki nie trzymają się formatu: P1GX_KOD_NAZWA lub brakuje plików matek dla problemów")
         }
         return resultMap
