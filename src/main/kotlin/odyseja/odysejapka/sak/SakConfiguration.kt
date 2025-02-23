@@ -5,11 +5,11 @@ import odyseja.odysejapka.timetable.TimeTableService
 
 internal class SakConfiguration(
     private val templatesFolderId: String,
-    private val zspId: String
+    private val zspId: String,
+    private val driveAdapter: DriveAdapter
 ) {
 
     fun sakRunner(): SakRunner {
-        val driveAdapter = DriveAdapter.getDriveAdapter()
         val sheetsAdapter = SheetAdapter.getSheetAdapter()
         return SakRunner(driveAdapter, sheetsAdapter, zspId, templatesFolderId)
     }

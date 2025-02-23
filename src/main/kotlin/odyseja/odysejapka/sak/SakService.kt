@@ -4,11 +4,12 @@ import SakConfiguration
 import odyseja.odysejapka.Progress
 import odyseja.odysejapka.Status
 import odyseja.odysejapka.async.ProcessRunner
+import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 
 @Service
-class SakService {
+class SakService(val driveAdapter: DriveAdapter) {
 
     private var runner: ProcessRunner? = null
 
@@ -16,7 +17,8 @@ class SakService {
         runner = ProcessRunner(
             SakConfiguration(
                 generateSakCommand.templatesFolderId,
-                generateSakCommand.zspId
+                generateSakCommand.zspId,
+                driveAdapter
             ).sakRunner()
         )
         runner?.start()
