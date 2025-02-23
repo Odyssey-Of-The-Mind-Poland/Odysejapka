@@ -4,13 +4,15 @@ import TimeTableImporter
 import odyseja.odysejapka.Progress
 import odyseja.odysejapka.Status
 import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.drive.SheetAdapter
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.stereotype.Service
 
 @Service
 class ImportTimetableService(
     private val performanceService: TimeTableService,
-    private val cityRepository: CityRepository
+    private val cityRepository: CityRepository,
+    private val sheetsAdapter: SheetAdapter
 ) {
 
     private var importer: TimeTableImporter? = null
@@ -23,7 +25,7 @@ class ImportTimetableService(
         }
 
         clearTimeTable(cityId)
-        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
+        val sheetsAdapter = ZspSheetsAdapter(sheetsAdapter, zspId)
         val cityName = cityRepository.findFirstById(cityId).name
         performanceService.deleteCity(cityId)
         importer = TimeTableImporter(performanceService, sheetsAdapter, cityName)

@@ -3,19 +3,16 @@ package odyseja.odysejapka.sak
 import Team
 import com.google.api.services.drive.model.File
 import odyseja.odysejapka.async.Runner
-import odyseja.odysejapka.drive.DriveAdapter
-import odyseja.odysejapka.drive.SheetAdapter
-import odyseja.odysejapka.drive.SpontanGroups
-import odyseja.odysejapka.drive.ZspSheetsAdapter
-import odyseja.odysejapka.timetable.Performance
-import odyseja.odysejapka.timetable.TimeTableService
+import odyseja.odysejapka.drive.*
+import org.springframework.context.ApplicationContext
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class SakRunner(
     private val driveAdapter: DriveAdapter,
-    private val sheetsAdapter: SheetAdapter,
+    private val sheetAdapter: SheetAdapter,
     private val zspId: String,
-    private val templatesFolderId: String
+    private val templatesFolderId: String,
+    private val zspSheetsAdapter: ZspSheetsAdapter
 ) : Runner {
 
     private val templates = getTemplates()
@@ -24,7 +21,7 @@ internal class SakRunner(
 
 
     override fun run() {
-        val teams = ZspSheetsAdapter.getZspSheetsAdapter(zspId).getAllTeams()
+        val teams = zspSheetsAdapter.getAllTeams()
         totalTeamsCount = teams.size
         val groups = teams.groupBy { SpontanGroups.Group.fromTeam(it) }.map { (group, performances) ->
             SpontanGroups(group, performances)
@@ -47,8 +44,8 @@ internal class SakRunner(
             return
         }
         val sheetFile = sheetFiles[0]
-        val sheetName = sheetsAdapter.getSheet(sheetFile.id)!!.get(0).properties.title
-        val values = sheetsAdapter.getValue(sheetFile.id, sheetName, "A1:X20")
+        val sheetName = sheetAdapter.getSheet(sheetFile.id)!!.get(0).properties.title
+        val values = sheetAdapter.getValue(sheetFile.id, sheetName, "A1:X20")
 
         var teamStartCell = findCell(values, "Drużyna")
         var pointsCell = findCell(values, "suma punktów")
@@ -73,8 +70,8 @@ internal class SakRunner(
         teamStartCell: Pair<String, Int>,
         pointsCell: Pair<String, Int>
     ) {
-        sheetsAdapter.writeValue(sheetId, sheetName, "${teamStartCell.first}${teamStartCell.second}", team.teamName)
-        sheetsAdapter.writeValue(
+        sheetAdapter.writeValue(sheetId, sheetName, "${teamStartCell.first}${teamStartCell.second}", team.teamName)
+        sheetAdapter.writeValue(
             zspId,
             team.zspSheet!!,
             "P${team.zspRow}",
@@ -109,7 +106,7 @@ internal class SakRunner(
     }
 
     private fun getZspValue(sheetId: String, sheetName: String, cell: String): String {
-        return "=importrange(\"https://docs.google.com/spreadsheets/d/$sheetId\";\"${sheetName}!$cell\")"
+        return "=importrange(\"https://docs.google.com/spreadsheets/d/$sheetId\";\"$sheetName!$cell\")"
     }
 
     private fun columnIndexToExcelLetter(index: Int): String {

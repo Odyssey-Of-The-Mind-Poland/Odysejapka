@@ -6,7 +6,7 @@ import odyseja.odysejapka.drive.SheetAdapter
 
 class FixerRunner(
     private val driveAdapter: DriveAdapter,
-    private val sheetsAdapter: SheetAdapter,
+    private val sheetAdapter: SheetAdapter,
     private val folderId: String,
     private val pattern: String,
     private val cells: List<FixSheetsCommand.ReplacementCell>
@@ -24,7 +24,7 @@ class FixerRunner(
 
     private fun fixSheet(id: String) {
         for (cell in cells) {
-            sheetsAdapter.writeValue(id, cell.sheetName, cell.cell, cell.value, "RAW")
+            sheetAdapter.writeValue(id, cell.sheetName, cell.cell, cell.value, "RAW")
         }
     }
 

@@ -1,6 +1,7 @@
 package odyseja.odysejapka.tournament.manager
 
 import Team
+import odyseja.odysejapka.drive.SheetAdapter
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.stereotype.Service
 import java.io.BufferedWriter
@@ -11,7 +12,7 @@ import kotlin.math.abs
 
 
 @Service
-class TournamentManagerService {
+class TournamentManagerService(private val sheetAdapter: SheetAdapter) {
 
     fun OutputStream.writeCsv(teams: List<Team>) {
         val writer = bufferedWriter()
@@ -36,7 +37,7 @@ class TournamentManagerService {
     }
 
     fun generateCsv(zspId: String): ByteArray {
-        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
+        val sheetsAdapter = ZspSheetsAdapter(sheetAdapter, zspId)
         val byteArrayOutputStream = ByteArrayOutputStream()
 
         byteArrayOutputStream.use { it.writeCsv(sheetsAdapter.getAllTeams()) }

@@ -7,11 +7,11 @@ class FixerConfiguration(
     private val folderId: String,
     private val pattern: String,
     private val cells: List<FixSheetsCommand.ReplacementCell>,
-    private val driveAdapter: DriveAdapter
+    private val driveAdapter: DriveAdapter,
+    private val sheetAdapter: SheetAdapter
 ) {
 
     fun fixerRunner(): FixerRunner {
-        val sheetsAdapter = SheetAdapter.getSheetAdapter()
-        return FixerRunner(driveAdapter, sheetsAdapter, folderId, pattern, cells)
+        return FixerRunner(driveAdapter, sheetAdapter, folderId, pattern, cells)
     }
 }

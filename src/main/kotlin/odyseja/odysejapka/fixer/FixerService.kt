@@ -2,11 +2,13 @@ package odyseja.odysejapka.fixer
 
 import odyseja.odysejapka.async.ProcessRunner
 import odyseja.odysejapka.drive.DriveAdapter
+import odyseja.odysejapka.drive.SheetAdapter
 import org.springframework.stereotype.Service
 
 @Service
 class FixerService(
-    private val driveAdapter: DriveAdapter
+    private val driveAdapter: DriveAdapter,
+    private val sheetAdapter: SheetAdapter
 ) {
 
     private var runner: ProcessRunner? = null
@@ -17,7 +19,8 @@ class FixerService(
                 fixSheetsCommand.folderId,
                 fixSheetsCommand.pattern,
                 fixSheetsCommand.cells,
-                driveAdapter
+                driveAdapter,
+                sheetAdapter
             ).fixerRunner()
         )
         runner?.start()
@@ -28,6 +31,6 @@ class FixerService(
     }
 
     fun createFixerRunner(folderId: String, pattern: String, cells: List<FixSheetsCommand.ReplacementCell>): FixerRunner {
-        return FixerConfiguration(folderId, pattern, cells, driveAdapter).fixerRunner()
+        return FixerConfiguration(folderId, pattern, cells, driveAdapter, sheetAdapter).fixerRunner()
     }
 }
