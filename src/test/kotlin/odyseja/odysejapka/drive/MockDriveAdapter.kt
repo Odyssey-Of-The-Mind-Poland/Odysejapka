@@ -3,6 +3,9 @@ package odyseja.odysejapka.drive
 import com.google.api.services.drive.model.File
 import com.google.api.services.sheets.v4.model.Sheet
 import org.springframework.stereotype.Service
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicLong
 
 @Service
@@ -170,7 +173,6 @@ class InMemoryDriveAdapter : DriveAdapter, SheetAdapter {
 
         val totalRows = (endRow - startRow) + 1
         val totalCols = (endCol - startCol) + 1
-        val rangeSize = totalRows * totalCols
 
         val iterator = writeValues.iterator()
 
@@ -186,6 +188,39 @@ class InMemoryDriveAdapter : DriveAdapter, SheetAdapter {
             }
         }
     }
+
+    fun loadSpreadsheetFromResources(spreadsheetFolder: String, parentDir: String): String {
+        val resourceUrl = this::class.java.classLoader.getResource(spreadsheetFolder)
+            ?: throw IllegalArgumentException("Resource folder not found: $spreadsheetFolder")
+        val folderPath = Paths.get(resourceUrl.toURI())
+
+        val spreadsheetId = createSpreadsheet(spreadsheetFolder, parentDir)
+
+        Files.list(folderPath).use { csvPaths ->
+            csvPaths
+                .filter { Files.isRegularFile(it) && it.fileName.toString().endsWith(".csv") }
+                .forEach { csvFilePath ->
+                    val sheetName = csvFilePath.fileName.toString().removeSuffix(".csv")
+                    val rows = loadCsvFile(csvFilePath)
+
+                    spreadsheetStorage[spreadsheetId]?.put(sheetName, rows)
+                }
+        }
+
+        return spreadsheetId
+    }
+
+    private fun loadCsvFile(csvPath: Path): MutableList<MutableList<String>> {
+        val rows = mutableListOf<MutableList<String>>()
+        Files.newBufferedReader(csvPath).use { reader ->
+            reader.lineSequence().forEach { line ->
+                val cells = line.split(",").toMutableList()
+                rows.add(cells)
+            }
+        }
+        return rows
+    }
+
 
     private fun nextId(): String = idCounter.getAndIncrement().toString()
 

@@ -97,4 +97,13 @@ class FileAdaptersTest {
         val values = driveAdapter.getValue(copiedSheetFiles[0].id, "Sheet1", "A1")
         assertEquals("test-content", values[0][0])
     }
+
+    @Test
+    fun `load spreadsheet from resources`() {
+        val dirId = driveAdapter.createFolder("test-folder", "")
+        val sheetId = driveAdapter.loadSpreadsheetFromResources("test-spreadsheet", dirId)
+
+        val value = driveAdapter.getValue(sheetId, "SCENA4", "A1")
+        assertEquals("SCENA 4", value[0][0])
+    }
 } 
