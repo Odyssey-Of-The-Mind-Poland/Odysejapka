@@ -112,8 +112,6 @@ class ZspSheetsAdapter(
                     weightHeld = getNumericalValue(row, 13),
                     spontaneousScore = getNumericalValue(row, 15),
                 )
-
-            )
             teams.add(
                 team
             )
