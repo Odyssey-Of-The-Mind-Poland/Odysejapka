@@ -1,11 +1,6 @@
 # Odysejapka
 
-The app is a all-in-one hub for "Odyssey" event organizers, allowing them to plan events and solve issues.
-
-Main / example features:
-- event overview (via timetable),
-- event organizing (via adding and updating performances),
-- event communication (via adding contest task titles).
+Odyssey of the Mind Poland tournament application.
 
 ## API Docs
 
@@ -14,10 +9,21 @@ Generated automatically with Swagger. You can find them under:
 
 ## How to run
 
+### IntelliJ
+
+For IntelliJ there is run configuration called `Odysejapka` just run it and it will execute docker db, ui, backend for
+you.
+
+### Other
 1. Run `docker-compose up -d` for database
 2. Build and run **OdysejapkaApplication.kt**
 3. Move to `odyseja-ui` and run `npm run dev`
 
-## Tech Stack
+### Google API credentials
 
-[![My Skills](https://skillicons.dev/icons?i=svelte,javascript,typescript,docker,kotlin,tailwind,java,gradle,postgres&theme=dark)](https://skillicons.dev)
+To run services like SAK, GAD, TM, Fixer you need to provide `GOOGLE_APPLICATION_CREDENTIALS`.
+
+To do that set `GOOGLE_APPLICATION_CREDENTIALS` to your `credentials.json` location.
+
+To get `credentials.json` contact maintainer of this application.
+
