@@ -34,8 +34,9 @@ internal class SakRunner(
             if (group.group.age == "0" || group.group.problem == "0") {
                 continue
             }
-
+            println("Started processing problem ${group.group.problem} division ${group.group.age}")
             processGroup(group)
+            println("Finished processing problem ${group.group.problem} division ${group.group.age}")
             Thread.sleep(2000) // google API needs this
         }
     }

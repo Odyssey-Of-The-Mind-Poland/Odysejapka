@@ -113,7 +113,6 @@ class ZspSheetsAdapter(
                     spontaneousScore = getNumericalValue(row, 15),
                 )
 
-            )
             teams.add(
                 team
             )

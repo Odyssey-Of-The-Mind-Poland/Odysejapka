@@ -48,10 +48,30 @@
 <h1 class="m-5">GAD</h1>
 
 <div>
-    <input bind:value={data.templatesFolderId} class="input m-5" placeholder="Folder z bazowymi arkuszami" type="text"/>
-    <input bind:value={data.destinationFolderId} class="input m-5" placeholder="Folder dla wygenerowanych arkuszy"
-           type="text"/>
-    <input bind:value={data.zspId} class="input m-5" placeholder="link do ZSP" type="text"/>
+        <label class="ml-5">Folder z bazowymi arkuszami <input
+                bind:value={data.templatesFolderId}
+                class="input m-5"
+                placeholder="Folder z bazowymi arkuszami"
+                type="text"
+        /></label>
+
+
+        <label class="ml-5">Folder dla wygenerowanych arkuszy <input
+                bind:value={data.destinationFolderId}
+                class="input m-5"
+                placeholder="Folder dla wygenerowanych arkuszy"
+                type="text"
+        /></label>
+
+
+        <label class="ml-5">link do ZSP <input
+                bind:value={data.zspId}
+                class="input m-5"
+                placeholder="link do ZSP"
+                type="text"
+        /></label>
+
+
 </div>
 
 {#each [1, 2, 3, 4, 5] as i, _}
@@ -59,28 +79,50 @@
         Problem {i}
     </h3>
     <div class="flex flex-wrap space-x-5 m-5">
-        <input class="input flex-grow flex-1" type="text"
-               value="{data.problemPunctuationCells[i]?.dt ?? ''}"
-               on:input={(e) => updateProblemPunctuationCells(i, 'dt', e.target.value)}
-               placeholder="DT"/>
-        <input class="input flex-grow flex-1" type="text"
-               value="{data.problemPunctuationCells[i]?.style ?? ''}"
-               on:input={(e) => updateProblemPunctuationCells(i, 'style', e.target.value)}
-               placeholder="Komórka za styl"/>
-        <input class="input flex-grow flex-1" type="text"
-               value="{data.problemPunctuationCells[i]?.penalty ?? ''}"
-               on:input={(e) => updateProblemPunctuationCells(i, 'penalty', e.target.value)}
-               placeholder="Komórka Punktów karnych"/>
-        {#if i === 4}
+        <label class="ml-5">
+            DT:  <input class="input flex-grow flex-1" type="text"
+                        value="{data.problemPunctuationCells[i]?.dt ?? ''}"
+                        on:input={(e) => updateProblemPunctuationCells(i, 'dt', e.target.value)}
+                        placeholder="DT"/>
+        </label>
+        <label class="ml-5">Styl: <input class="input flex-grow flex-1" type="text"
+                            value="{data.problemPunctuationCells[i]?.style ?? ''}"
+                            on:input={(e) => updateProblemPunctuationCells(i, 'style', e.target.value)}
+                            placeholder="Komórka za styl"/></label>
+        <label class="ml-5">
+            Karne:
             <input class="input flex-grow flex-1" type="text"
-                   value="{data.problemPunctuationCells[i]?.balsa ?? ''}"
-                   on:input={(e) => updateProblemPunctuationCells(i, 'balsa', e.target.value)}
-                   placeholder="Balsa"/>
+                   value="{data.problemPunctuationCells[i]?.penalty ?? ''}"
+                   on:input={(e) => updateProblemPunctuationCells(i, 'penalty', e.target.value)}
+                   placeholder="Komórka Punktów karnych"/>
+        </label>
+
+
+
+        {#if i === 4}
+            <label class="ml-5">
+                Balsa waga:  <input class="input flex-grow flex-1" type="text"
+                                    value="{data.problemPunctuationCells[i]?.balsa ?? ''}"
+                                    on:input={(e) => updateProblemPunctuationCells(i, 'balsa', e.target.value)}
+                                    placeholder="Balsa"/>
+            </label>
+
         {/if}
-        <input class="input flex-grow flex-1" type="text"
-               value="{data.problemPunctuationCells[i]?.anomaly ?? ''}"
-               on:input={(e) => updateProblemPunctuationCells(i, 'anomaly', e.target.value)}
-               placeholder="Komórka Anomalii"/>
+        <label class="ml-5">
+            Anomalia:  <input class="input flex-grow flex-1" type="text"
+                              value="{data.problemPunctuationCells[i]?.anomaly ?? ''}"
+                              on:input={(e) => updateProblemPunctuationCells(i, 'anomaly', e.target.value)}
+                              placeholder="Komórka Anomalii"/>
+        </label>
+        <label class="ml-5">
+            Czas występu:
+            <input class="input flex-grow flex-1" type="text"
+                   value="{data.problemPunctuationCells[i]?.actualPerformanceStartTime ?? ''}"
+                   on:input={(e) => updateProblemPunctuationCells(i, 'actualPerformanceStartTime', e.target.value)}
+                   placeholder="Komórka faktycznego czasu występu drużyny"/>
+        </label>
+
+
     </div>
 {/each}
 
