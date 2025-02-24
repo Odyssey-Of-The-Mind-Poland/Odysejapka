@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="OdysejaApka" type="CompoundRunConfigurationType">
+    <toRun name="psql" type="docker-deploy" />
+    <toRun name="odyseja-ui" type="js.build_tools.npm" />
+    <toRun name="OdysejapkaApplication" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>
