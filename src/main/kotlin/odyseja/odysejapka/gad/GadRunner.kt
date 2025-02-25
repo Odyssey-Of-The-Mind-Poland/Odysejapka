@@ -67,9 +67,11 @@ internal class GadRunner(
                 getZspValue(file.id, cells.penalty),
                 getBalsaValue(file.id, cells.balsa),
                 getZspValueFromAOC(file.id, cells.anomaly),
+                getZspValueFromAOC(file.id, cells.actualPerformanceStartTime),
+                "https://docs.google.com/spreadsheets/d/${file.id}"
 
             )
-            sheetsAdapter.writeZsp("K${team.zspRow}:O${team.zspRow}", values, sheetTitle)
+            sheetsAdapter.writeZsp("K${team.zspRow}:Q${team.zspRow}", values, sheetTitle)
             println("Created: ${file.name}")
         }
     }
