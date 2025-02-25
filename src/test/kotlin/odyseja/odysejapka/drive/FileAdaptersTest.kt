@@ -23,10 +23,9 @@ class FileAdaptersTest {
         val folderId = driveAdapter.createFolder("test-folder", "")
         driveAdapter.createSpreadsheet("file", folderId)
 
-        val files = driveAdapter.listFiles("")
+        val files = driveAdapter.listFiles(folderId)
         assertEquals(1, files.size)
-        assertEquals("test-folder", files[0].name)
-        assertEquals("application/vnd.google-apps.folder", files[0].mimeType)
+        assertEquals("file", files[0].name)
     }
 
     @Test
