@@ -2,9 +2,9 @@ package odyseja.odysejapka.tournament.manager
 
 import Team
 
-class TMCalculator(private val teams: List<Team>) {
+class TMCalculator() {
 
-    fun calculateScores(): List<FinalScoreGroup> {
+    fun calculateScores(teams: List<Team>): List<FinalScoreGroup> {
         return listOf()
     }
 }
