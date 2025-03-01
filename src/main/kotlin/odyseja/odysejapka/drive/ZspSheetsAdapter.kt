@@ -63,7 +63,7 @@ class ZspSheetsAdapter(
     }
 
     fun getTeams(sheetName: String): Teams {
-        val values = sheetAdapter.getValue(zspId, sheetName, "A1:P")
+        val values = sheetAdapter.getValue(zspId, sheetName, "A1:S")
         val teams = mutableListOf<Team>()
         var judges = ""
         var day = ""
