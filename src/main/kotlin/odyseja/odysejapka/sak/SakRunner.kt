@@ -78,7 +78,7 @@ internal class SakRunner(
         sheetsAdapter.writeValue(
             zspId,
             team.zspSheet!!,
-            "P${team.zspRow}",
+            "R${team.zspRow}",
             getZspValue(sheetId, sheetName, "${pointsCell.first}${pointsCell.second}")
         )
         processedTeamsCount.incrementAndGet()
