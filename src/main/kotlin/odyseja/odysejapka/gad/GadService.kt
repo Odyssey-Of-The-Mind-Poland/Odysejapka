@@ -31,6 +31,6 @@ class GadService(
     }
 
     fun getProgress(): Progress {
-        return runner?.getProgress() ?: Progress(0, Status.STOPPED)
+        return runner?.getProgress() ?: Progress(0, Status.STOPPED, listOf())
     }
 }

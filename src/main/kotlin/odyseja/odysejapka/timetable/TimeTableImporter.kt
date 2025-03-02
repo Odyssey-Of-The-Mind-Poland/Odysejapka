@@ -39,8 +39,4 @@ internal class TimeTableImporter(
             timeTableService.addPerformance(team.toPerformance(city))
         }
     }
-
-    private fun getZspValue(sheetId: String, cell: String): String {
-        return "=importrange(\"https://docs.google.com/spreadsheets/d/$sheetId\";\"Arkusz Ocen Surowych!$cell\")"
-    }
 }

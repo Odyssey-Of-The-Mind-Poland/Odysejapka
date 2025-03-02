@@ -5,4 +5,6 @@ interface Runner {
     fun run()
 
     fun getProgress(): Int
+
+    fun getLogs(): List<Log>
 }

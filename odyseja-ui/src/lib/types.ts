@@ -156,6 +156,12 @@ export type SakRequest = {
 export type Progress = {
     status: Status,
     progress: number,
+    logs: Log[]
+}
+
+export type Log = {
+    logTime: string,
+    message: string
 }
 
 export enum Status {

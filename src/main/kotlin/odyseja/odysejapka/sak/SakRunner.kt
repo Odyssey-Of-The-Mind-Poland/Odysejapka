@@ -2,6 +2,8 @@ package odyseja.odysejapka.sak
 
 import Team
 import com.google.api.services.drive.model.File
+import odyseja.odysejapka.async.AsyncLogger
+import odyseja.odysejapka.async.Log
 import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
@@ -21,6 +23,7 @@ internal class SakRunner(
     private val templates = getTemplates()
     private var totalTeamsCount = 0
     private var processedTeamsCount = AtomicInteger(0)
+    private val logger = AsyncLogger()
 
 
     override fun run() {
@@ -34,9 +37,9 @@ internal class SakRunner(
             if (group.group.age == "0" || group.group.problem == "0") {
                 continue
             }
-            println("Started processing problem ${group.group.problem} division ${group.group.age}")
+            logger.log("Started processing problem ${group.group.problem} division ${group.group.age}")
             processGroup(group)
-            println("Finished processing problem ${group.group.problem} division ${group.group.age}")
+            logger.log("Finished processing problem ${group.group.problem} division ${group.group.age}")
             Thread.sleep(2000) // google API needs this
         }
     }
@@ -89,6 +92,10 @@ internal class SakRunner(
             return (processedTeamsCount.get() * 100) / totalTeamsCount
         }
         return 0
+    }
+
+    override fun getLogs(): List<Log> {
+        return logger.getLogs()
     }
 
 

@@ -46,9 +46,9 @@ class ImportTimetableService(
     fun getProgress(): Progress {
         val progress = importer?.getProgress() ?: 100
         return if (progress != 100) {
-            Progress(progress, Status.RUNNING)
+            Progress(progress, Status.RUNNING, listOf())
         } else {
-            Progress(100, Status.STOPPED)
+            Progress(100, Status.STOPPED, listOf())
         }
     }
 }

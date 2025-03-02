@@ -1,5 +1,6 @@
 package odyseja.odysejapka.fixer
 
+import odyseja.odysejapka.async.Log
 import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
@@ -34,6 +35,10 @@ class FixerRunner(
     }
 
     override fun getProgress(): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun getLogs(): List<Log> {
         TODO("Not yet implemented")
     }
 }

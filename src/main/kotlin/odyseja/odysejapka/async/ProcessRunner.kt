@@ -24,14 +24,18 @@ class ProcessRunner(private val runner: Runner) {
     fun getProgress(): Progress {
 
         if (job?.isAlive == false) {
-            return Progress(0, Status.STOPPED)
+            return Progress(0, Status.STOPPED, getLogs())
         }
 
         val progress = runner.getProgress()
         return if (progress != 100) {
-            Progress(progress, Status.RUNNING)
+            Progress(progress, Status.RUNNING, getLogs())
         } else {
-            Progress(100, Status.STOPPED)
+            Progress(100, Status.STOPPED, getLogs())
         }
+    }
+
+    fun getLogs(): List<Log> {
+        return runner.getLogs()
     }
 }

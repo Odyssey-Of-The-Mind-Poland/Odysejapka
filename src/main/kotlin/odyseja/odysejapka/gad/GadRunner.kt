@@ -1,5 +1,7 @@
 import com.google.api.services.drive.model.File
 import com.google.api.services.sheets.v4.model.Sheet
+import odyseja.odysejapka.async.AsyncLogger
+import odyseja.odysejapka.async.Log
 import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.ZspSheetsAdapter
@@ -18,6 +20,7 @@ internal class GadRunner(
     private var totalSheetCount = 1
     private var processedSheetCount = AtomicInteger(0)
     private val groupFolders = mutableMapOf<TeamsGroupKey, String>()
+    private val logger = AsyncLogger()
 
     override fun run() {
         val sheets = sheetsAdapter.getSheets()
@@ -33,19 +36,27 @@ internal class GadRunner(
         return (processedSheetCount.get() * 100) / totalSheetCount
     }
 
+    override fun getLogs(): List<Log> {
+        return logger.getLogs()
+    }
+
     private fun processSheet(sheet: Sheet) {
         val title = sheet.properties.title
-        println("Processing: $title")
+        logger.log("Processing: $title")
 
         val teams = sheetsAdapter.getTeams(title)
 
         processTeams(teams, title)
+
+        logger.log("Finished processing $title")
     }
 
     private fun processTeams(teams: Teams, sheetTitle: String) {
         for (team in teams.teams) {
 
+            logger.log("Processing team: ${team.teamName}")
             if (team.isJunior()) {
+                logger.log("${team.teamName} is junior team skipping")
                 continue
             }
 
@@ -71,7 +82,7 @@ internal class GadRunner(
                 "=JEŻELI(ORAZ(CZY.LICZBA(P${team.zspRow}); P5<>CZAS(0;0;0)); P${team.zspRow}-A${team.zspRow}; \"\")"
             )
             sheetsAdapter.writeZsp("K${team.zspRow}:Q${team.zspRow}", values, sheetTitle)
-            println("Created: ${file.name}")
+            logger.log("Created: ${file.name}")
         }
     }
 
@@ -126,7 +137,7 @@ internal class GadRunner(
             return resultMap
         }
         else{
-            println("Pliki matki nie trzymają się formatu: FR_2025_P1GX_KOD_NAZWA lub brakuje plików matek dla")
+            logger.log("Pliki matki nie trzymają się formatu: FR_2025_P1GX_KOD_NAZWA lub brakuje plików matek dla")
         }
         // File name format P1GX_KOD_NAZWA
 
@@ -138,7 +149,7 @@ internal class GadRunner(
             return resultMap
         }
         else {
-            println("Pliki matki nie trzymają się formatu: P1GX_KOD_NAZWA lub brakuje plików matek dla problemów")
+            logger.log("Pliki matki nie trzymają się formatu: P1GX_KOD_NAZWA lub brakuje plików matek dla problemów")
         }
         return resultMap
     }
