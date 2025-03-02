@@ -1,0 +1,26 @@
+problem,division,membershipNumber,teamName,city,weightHeld,longTermRaw,styleRaw,spontaneousRaw,penalty,expectedLongTerm,expectedStyle,expectedSpont,expectedBalsa,expectedTotal
+1,1,40408,"Szkola Podstawowa nr 1","Wasilkow",0.0,155.00,35.00,131.00,18.00,200.00,40.70,100.00,0.00,322.70
+1,1,46057,"Bialostockie Towarzystwo Oswiatowe [A]","Bialystok",0.0,146.00,43.00,112.33,15.00,188.39,50.00,85.75,0.00,309.14
+1,1,43554,"Spoleczna Szkola Podstawowa nr 2","Bialystok",0.0,113.50,31.00,112.33,15.00,146.45,36.05,85.75,0.00,253.25
+1,2,72430,"Szkola Podstawowa nr 4","Bialystok",0.0,149.00,37.00,120.33,15.00,200.00,50.00,100.00,0.00,335.00
+2,2,46057,"Bialostockie Towarzysto Oswiatowe [A]","Bialystok",0.0,144.00,35.00,69.00,20.00,200.00,50.00,100.00,0.00,330.00
+3,1,46057,"Bialostockie Towarzysto Oswiatowe [B]","Bialystok",0.0,155.00,41.00,37.67,0.00,200.00,50.00,100.00,0.00,350.00
+3,1,40408,"Szkola Podstawowa nr 1","Wasilkow",0.0,155.00,41.00,35.33,0.00,200.00,50.00,93.79,0.00,343.79
+3,2,46057,"Bialostockie Towarzysto Oswiatowe [B]","Bialystok",0.0,170.00,43.00,79.00,0.00,200.00,47.78,90.80,0.00,338.58
+3,2,46057,"Bialostockie Towarzysto Oswiatowe [A]","Bialystok",0.0,156.00,41.00,87.00,0.00,183.53,45.56,100.00,0.00,329.09
+3,2,40408,"Szkola Podstawowa nr 1","Wasilkow",0.0,170.00,45.00,59.00,1.00,200.00,50.00,67.82,0.00,316.82
+3,2,72430,"Szkola Podstawowa nr 4","Bialystok",0.0,131.00,39.00,62.00,6.00,154.12,43.33,71.26,0.00,262.71
+4,1,46057,"Bialostockie Towarzysto Oswiatowe [B]","Bialystok",92.50,78.00,41.00,131.00,0.00,197.50,50.00,100.00,100.00,347.50
+4,1,46057,"Bialostockie Towarzysto Oswiatowe [A]","Bialystok",32.50,80.00,35.00,128.33,0.00,135.14,42.68,97.96,35.14,275.78
+4,2,72405,"Augustowskie Stow Kultralno-Spoleczne","Augustow",195.00,92.00,45.00,68.67,0.00,200.00,50.00,95.38,100.00,345.38
+4,2,46057,"Bialostockie Towarzysto Oswiatowe [B]","Bialystok",172.50,67.00,41.00,72.00,0.00,161.29,45.56,100.00,88.46,306.85
+4,2,46057,"Bialostockie Towarzysto Oswiatowe [A]","Bialystok",127.50,88.00,43.00,70.33,0.00,161.03,47.78,97.68,65.38,306.49
+4,2,41913,"Zespol Szkol S.T.O.","Bialystok",177.50,71.00,37.00,64.00,5.00,168.20,41.11,88.89,91.03,293.20
+4,2,43554,"Spoleczna Szkola Podstawowa nr 2","Bialystok",112.50,60.00,31.00,64.00,0.00,122.91,34.44,88.89,57.69,246.24
+5,1,41913,"Zespol Szkol S.T.O.","Bialystok",0.0,180.00,45.00,45.60,0.00,200.00,50.00,100.00,0.00,350.00
+5,1,46057,"Bialostockie Towarzysto Oswiatowe [B]","Bialystok",0.0,165.50,41.00,42.40,0.00,183.89,45.56,92.98,0.00,322.43
+5,1,40408,"Szkola Podstawowa nr 1","Wasilkow",0.0,155.00,35.00,23.13,0.00,172.22,38.89,50.72,0.00,261.83
+5,1,43554,"Spoleczna Szkola Podstawowa nr 2","Bialystok",0.0,123.00,27.00,11.53,0.00,136.67,30.00,25.29,0.00,191.96
+5,2,43554,"Spoleczna Szkola Podstawowa nr 2","Bialystok",0.0,155.00,39.00,51.73,14.00,200.00,43.33,100.00,0.00,329.33
+5,2,42817,"Spoleczna Szkola Podstawowa nr 11","Bialystok",0.0,148.00,45.00,42.73,0.00,190.97,50.00,82.60,0.00,323.57
+5,3,72416,"ZS Budowlano-Geodezyjnych","Bialystok",0.0,161.00,39.00,48.00,0.00,200.00,50.00,100.00,0.00,350.00
