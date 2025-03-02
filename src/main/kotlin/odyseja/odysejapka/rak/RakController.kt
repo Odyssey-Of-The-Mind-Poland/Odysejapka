@@ -1,14 +1,17 @@
+
 package odyseja.odysejapka.rak
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import java.io.ByteArrayOutputStream
+
 
 data class ZspIdRequest(
     val zspId: String
@@ -30,7 +33,11 @@ class RakController(
     }
 
     @PostMapping("/download-html")
-    fun downloadHtmlResults(@RequestBody request: ZspIdRequest): ResponseEntity<String> {
+    fun downloadHtmlResults(        @RequestHeader(value = "X-API-Key", required = true) apiKeyHeader: String?,
+                                    @RequestBody request: ZspIdRequest): ResponseEntity<String> {
+        if (apiKeyHeader != "TEST_API_KEY") {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
         val renderedHtml = generateHtmlResults(request)
 
         return ResponseEntity.ok()
@@ -39,7 +46,10 @@ class RakController(
     }
 
     @PostMapping("/download-pdf")
-    fun downloadPdf(@RequestBody request: ZspIdRequest): ResponseEntity<ByteArray> {
+    fun downloadPdf(@RequestHeader(value = "X-API-Key", required = true) apiKeyHeader: String?, @RequestBody request: ZspIdRequest): ResponseEntity<ByteArray> {
+        if (apiKeyHeader != "TEST_API_KEY") {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
         val renderedHtml = generateHtmlResults(request)
         val pdfBytes = convertHtmlToPdf(renderedHtml)
         return ResponseEntity.ok()
@@ -69,5 +79,6 @@ class RakController(
 
         return outputStream.toByteArray()
     }
+
 
 }
