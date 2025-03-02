@@ -46,6 +46,46 @@ class TMCalculatorTest {
     }
 
     @Test
+    fun `score single balsa team`() {
+        val teams = listOf(
+            createTeam(
+                problem = 4,
+                weightHeld = 10.0f,
+                longTermScore = 100.0f,
+                spontaneousScore = 50.0f,
+                styleScore = 30.0f,
+                penalty = 0.0f,
+                teamName = "Solo"
+            )
+        )
+
+        val results = tmCalculator.calculateScores(teams)
+
+        val expected = listOf(
+            FinalScoreGroup(
+                problem = 4,
+                division = 1,
+                league = 0,
+                teamScores = listOf(
+                    FinalTeamScore(
+                        place = 1,
+                        teamName = "Solo",
+                        longTermScore = 200.0,
+                        spontaneousScore = 100.0,
+                        styleScore = 50.0,
+                        balsaScore = 100.0,
+                        penalty = 0.0,
+                        total = 350.0
+                    )
+                )
+            )
+        )
+
+        assertEquals(expected, results)
+    }
+
+
+    @Test
     fun `score two teams no tie`() {
         val teams = listOf(
             createTeam(
@@ -235,6 +275,56 @@ class TMCalculatorTest {
         assertTrue(scores[2].place == 3)
     }
 
+    @Test
+    fun `score two balsa teams from screenshot`() {
+        val teams = listOf(
+            createTeam(
+                problem = 4,
+                division = 1,
+                teamName = "Spoleczna Szkola Podstawowa nr 3 STO",
+                weightHeld = 42.50f,
+                longTermScore = 78.0f,
+                styleScore = 29.0f,
+                spontaneousScore = 68.33f,
+                penalty = 0.0f
+            ),
+
+            createTeam(
+                problem = 4,
+                division = 1,
+                teamName = "Szkola Podstawowa nr 68",
+                weightHeld = 12.50f,
+                longTermScore = 62.50f,
+                styleScore = 31.0f,
+                spontaneousScore = 66.67f,
+                penalty = 0.0f
+            )
+        )
+
+        val results = tmCalculator.calculateScores(teams)
+
+        assertEquals(1, results.size)
+        val group = results[0]
+        assertEquals(4, group.problem)
+        assertEquals(1, group.division)
+        assertEquals(2, group.teamScores.size)
+
+        val sortedByTotal = group.teamScores.sortedByDescending { it.total }
+
+        val team1 = sortedByTotal[0]
+        assertEquals("Spoleczna Szkola Podstawowa nr 3 STO", team1.teamName)
+        assertEquals(1, team1.place, "First team should be in 1st place.")
+
+        assertEquals(346.77, team1.total, 0.01)
+
+        val team2 = sortedByTotal[1]
+        assertEquals("Szkola Podstawowa nr 68", team2.teamName)
+        assertEquals(2, team2.place, "Second team should be in 2nd place.")
+
+        assertEquals(257.11, team2.total, 0.01)
+    }
+
+
     private fun createTeam(
         longTermScore: Float? = null,
         spontaneousScore: Float? = null,
@@ -243,7 +333,8 @@ class TMCalculatorTest {
         teamName: String? = null,
         problem: Int = 1,
         division: Int = 1,
-        league: Int = 0
+        league: Int = 0,
+        weightHeld: Float = 0.0f,
     ): Team {
         return Team(
             performanceHour = "1000",
@@ -263,7 +354,7 @@ class TMCalculatorTest {
             spontaneousScore = spontaneousScore ?: 0.0f,
             styleScore = styleScore ?: 0.0f,
             penaltyScore = penalty ?: 0.0f,
-            weightHeld = 0.0f
+            weightHeld = weightHeld
         )
     }
 }

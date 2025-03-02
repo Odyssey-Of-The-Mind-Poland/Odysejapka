@@ -20,13 +20,13 @@ class TMCalculator {
             val maxLT = groupTeams.maxOfOrNull { it.longTermScore ?: 0f } ?: 0f
             val maxSP = groupTeams.maxOfOrNull { it.spontaneousScore ?: 0f } ?: 0f
             val maxST = groupTeams.maxOfOrNull { it.styleScore ?: 0f } ?: 0f
+            val maxWeightHeld = groupTeams.maxOfOrNull { it.weightHeld ?: 0f } ?: 0f
 
             val computedScores = groupTeams.map { team ->
-                val scaledLT = scale(team.longTermScore ?: 0f, maxLT, 200.0)
                 val scaledSP = scale(team.spontaneousScore ?: 0f, maxSP, 100.0)
                 val scaledST = scale(team.styleScore ?: 0f, maxST, 50.0)
-
-                val balsa = 0.0
+                val scaledBalsa = scale(team.weightHeld ?: 0f, maxWeightHeld, 100.0)
+                val scaledLT = calculateLt(team, maxLT, scaledBalsa)
 
                 val total = scaledLT + scaledSP + scaledST - (team.penaltyScore ?: 0f)
 
@@ -35,7 +35,7 @@ class TMCalculator {
                     scaledLongTerm = scaledLT,
                     scaledSpontaneous = scaledSP,
                     scaledStyle = scaledST,
-                    scaledBalsa = balsa,
+                    scaledBalsa = scaledBalsa,
                     penalty = (team.penaltyScore ?: 0f).toDouble(),
                     total = total
                 )
@@ -86,6 +86,13 @@ class TMCalculator {
         }
 
         return results
+    }
+
+    private fun calculateLt(team: Team, maxLT: Float, scaledBalsa: Double): Double {
+        if (team.isBalsa()) {
+            return scale(team.longTermScore ?: 0f, maxLT, 100.0) + scaledBalsa
+        }
+        return scale(team.longTermScore ?: 0f, maxLT, 200.0)
     }
 
     private fun scale(raw: Float, maxRaw: Float, maxScaled: Double): Double {
