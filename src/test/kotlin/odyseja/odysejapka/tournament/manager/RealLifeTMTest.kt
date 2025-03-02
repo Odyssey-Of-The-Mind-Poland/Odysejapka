@@ -25,6 +25,7 @@ class RealLifeTMTest {
                 "/TM-test-cases/skawina2025.csv",
                 "/TM-test-cases/bialystok2025.csv",
                 "/TM-test-cases/warszawa2025.csv",
+                "/TM-test-cases/poznan2025.csv",
             )
         }
     }
