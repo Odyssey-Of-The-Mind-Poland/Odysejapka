@@ -34,6 +34,9 @@ dependencies {
   implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
   implementation("org.postgresql:postgresql:42.2.23")
   implementation("com.opencsv:opencsv:5.10")
+  implementation("org.thymeleaf:thymeleaf:3.1.3.RELEASE")
+  implementation("org.thymeleaf:thymeleaf-spring5:3.1.3.RELEASE")
+
 
   runtimeOnly("com.h2database:h2:1.4.200")
   testImplementation("org.springframework.boot:spring-boot-starter-test") {

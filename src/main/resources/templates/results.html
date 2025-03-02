@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Odyssey Results</title>
+</head>
+<body>
+<div th:each="group : ${groups}">
+    <h2>
+        Problem <span th:text="${group.problem}"></span>,
+        Division <span th:text="${group.division}"></span>,
+        League <span th:text="${group.league}"></span>
+    </h2>
+
+    <table border="1" cellspacing="0" cellpadding="5">
+        <tr>
+            <th>Place</th>
+            <th>Team Name</th>
+            <th>Long Term</th>
+            <th>Balsa</th>
+            <th>Style</th>
+            <th>Spontaneous</th>
+            <th>Penalty</th>
+            <th>Total</th>
+        </tr>
+        <tr th:each="score : ${group.teamScores}">
+            <td th:text="${score.place}"></td>
+            <td th:text="${score.teamName}"></td>
+            <td th:text="${score.longTermScore}"></td>
+            <td th:text="${score.balsaScore}"></td>
+            <td th:text="${score.styleScore}"></td>
+            <td th:text="${score.spontaneousScore}"></td>
+            <td th:text="${score.penalty}"></td>
+            <td th:text="${score.total}"></td>
+        </tr>
+    </table>
+    <br/>
+</div>
+</body>
+</html>

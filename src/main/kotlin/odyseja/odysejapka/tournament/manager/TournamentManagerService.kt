@@ -13,7 +13,16 @@ import kotlin.math.abs
 @Service
 class TournamentManagerService {
 
-    fun OutputStream.writeCsv(teams: List<Team>) {
+    fun generateCsv(zspId: String): ByteArray {
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
+        val byteArrayOutputStream = ByteArrayOutputStream()
+
+        byteArrayOutputStream.use { it.writeCsv(sheetsAdapter.getAllTeams()) }
+        return byteArrayOutputStream.toString(Charset.forName("UTF-8")).toByteArray()
+
+    }
+
+    private fun OutputStream.writeCsv(teams: List<Team>) {
         val writer = bufferedWriter()
         writer.write("""Problem,Division,Number,Name,City,Raw_longt1,Raw_longt2,Raw_style,Raw_spont,Penalty,memberNbr""")
         writer.newLine()
@@ -35,12 +44,4 @@ class TournamentManagerService {
         writer.flush()
     }
 
-    fun generateCsv(zspId: String): ByteArray {
-        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
-        val byteArrayOutputStream = ByteArrayOutputStream()
-
-        byteArrayOutputStream.use { it.writeCsv(sheetsAdapter.getAllTeams()) }
-        return byteArrayOutputStream.toString(Charset.forName("UTF-8")).toByteArray()
-
-    }
 }
