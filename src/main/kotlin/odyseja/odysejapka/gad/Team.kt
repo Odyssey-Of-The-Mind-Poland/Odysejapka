@@ -35,11 +35,11 @@ data class Team(
     }
 
     fun getProblem(): String {
-        val code = code[1].toString()
-        if (code == "J") {
+        val problem = code[1].toString()
+        if (problem == "J") {
             return "0"
         }
-        return code
+        return problem
     }
 
     fun getSpontanDay(): String {

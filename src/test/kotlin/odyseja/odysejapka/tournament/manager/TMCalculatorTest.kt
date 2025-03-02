@@ -35,7 +35,8 @@ class TMCalculatorTest {
                         spontaneousScore = 100.0,
                         styleScore = 50.0,
                         balsaScore = 0.0,
-                        penalty = 0.0
+                        penalty = 0.0,
+                        total = 350.0
                     )
                 )
             )
@@ -76,7 +77,8 @@ class TMCalculatorTest {
                         spontaneousScore = 100.0,
                         styleScore = 50.0,
                         balsaScore = 0.0,
-                        penalty = 0.0
+                        penalty = 0.0,
+                        total = 0.0
                     ),
                     FinalTeamScore(
                         place = 2,
@@ -85,7 +87,8 @@ class TMCalculatorTest {
                         spontaneousScore = 98.5,
                         styleScore = 42.8571428571,
                         balsaScore = 0.0,
-                        penalty = 0.0
+                        penalty = 0.0,
+                        total = 0.0
                     )
                 )
             )

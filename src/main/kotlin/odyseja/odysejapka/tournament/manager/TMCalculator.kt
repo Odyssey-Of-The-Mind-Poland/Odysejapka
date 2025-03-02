@@ -71,7 +71,8 @@ class TMCalculator {
                     styleScore = teamScore.scaledStyle,
                     balsaScore = teamScore.scaledBalsa,
                     penalty = teamScore.penalty,
-                    teamName = teamScore.team.teamName
+                    teamName = teamScore.team.teamName,
+                    total = teamScore.total
                 )
             }
 
@@ -124,5 +125,6 @@ data class FinalTeamScore(
     val spontaneousScore: Double,
     val styleScore: Double,
     val penalty: Double,
-    val teamName: String
+    val teamName: String,
+    val total: Double
 )
