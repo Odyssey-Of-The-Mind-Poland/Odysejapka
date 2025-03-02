@@ -42,6 +42,7 @@ data class FinalScoreGroup(
 )
 
 data class FinalTeamScore(
+    val team: Team,
     val place: Int,
     val longTermScore: Double,
     val balsaScore: Double,

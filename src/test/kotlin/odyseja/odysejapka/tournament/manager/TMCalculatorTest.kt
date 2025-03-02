@@ -36,7 +36,8 @@ class TMCalculatorTest {
                         styleScore = 50.0,
                         balsaScore = 0.0,
                         penalty = 0.0,
-                        total = 350.0
+                        total = 350.0,
+                        team = teams[0],
                     )
                 )
             )
@@ -75,7 +76,8 @@ class TMCalculatorTest {
                         styleScore = 50.0,
                         balsaScore = 100.0,
                         penalty = 0.0,
-                        total = 350.0
+                        total = 350.0,
+                        team = teams[0]
                     )
                 )
             )
@@ -118,7 +120,8 @@ class TMCalculatorTest {
                         styleScore = 50.0,
                         balsaScore = 0.0,
                         penalty = 0.0,
-                        total = 0.0
+                        total = 0.0,
+                        team = teams[0]
                     ),
                     FinalTeamScore(
                         place = 2,
@@ -128,7 +131,8 @@ class TMCalculatorTest {
                         styleScore = 42.8571428571,
                         balsaScore = 0.0,
                         penalty = 0.0,
-                        total = 0.0
+                        total = 0.0,
+                        team = teams[1]
                     )
                 )
             )

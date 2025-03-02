@@ -25,6 +25,7 @@ class RealLifeTMTest {
                 "/TM-test-cases/bialystok2025.csv",
                 "/TM-test-cases/warszawa2025.csv",
                 "/TM-test-cases/poznan2025.csv",
+                "/TM-test-cases/final2024.csv",
             )
         }
     }
@@ -50,7 +51,7 @@ class RealLifeTMTest {
                 spontanHour = "",
                 code = "P${row.problem}G${row.division}",
                 membershipNumber = row.membershipNumber,
-                league = "",
+                league = row.league,
                 part = "",
                 teamName = row.teamName,
                 shortTeamName = row.teamName,
@@ -72,13 +73,13 @@ class RealLifeTMTest {
         val finalScoresByKey = mutableMapOf<String, FinalTeamScore>()
         finalScoreGroups.forEach { group ->
             group.teamScores.forEach { score ->
-                val key = "${group.problem}-${group.division}-${group.league}-${score.teamName}"
+                val key = "${group.problem}-${group.division}-${group.league}-${score.team.city}-${score.teamName}"
                 finalScoresByKey[key] = score
             }
         }
 
         for (row in csvRows) {
-            val key = "${row.problem}-${row.division}-${row.league}-${row.teamName}"
+            val key = "${row.problem}-${row.division}-${row.league}-${row.city}-${row.teamName}"
             val finalScore = finalScoresByKey[key]
                 ?: fail("No computed score found for team '$key'")
 
