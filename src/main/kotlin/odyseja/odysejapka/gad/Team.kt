@@ -1,4 +1,4 @@
-import odyseja.odysejapka.gad.GadGroup
+import odyseja.odysejapka.gad.TeamsGroupKey
 import odyseja.odysejapka.timetable.Performance
 import kotlin.math.abs
 
@@ -79,8 +79,8 @@ data class Team(
         return code[1] == 'J'
     }
 
-    fun getGroup(): GadGroup {
-        return GadGroup(getProblem().toInt(), getAge().toInt(), getFormattedLeague())
+    fun getGroup(): TeamsGroupKey {
+        return TeamsGroupKey(getProblem().toInt(), getAge().toInt(), getFormattedLeague())
     }
 
     private fun getFormattedLeague(): String {

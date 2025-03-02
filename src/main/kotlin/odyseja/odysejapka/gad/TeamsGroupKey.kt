@@ -1,11 +1,11 @@
 package odyseja.odysejapka.gad
 
-data class GadGroup(val problem: Int, val age: Int, val part: String) {
+data class TeamsGroupKey(val problem: Int, val age: Int, val league: String) {
     fun getDirName(): String {
-        val suffix = if (part == "") {
+        val suffix = if (league == "") {
             ""
         } else {
-            "_$part"
+            "_$league"
         }
         return "P${problem}G${age}$suffix"
     }

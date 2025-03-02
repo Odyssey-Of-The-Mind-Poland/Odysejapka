@@ -3,7 +3,7 @@ import com.google.api.services.sheets.v4.model.Sheet
 import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.ZspSheetsAdapter
-import odyseja.odysejapka.gad.GadGroup
+import odyseja.odysejapka.gad.TeamsGroupKey
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class GadRunner(
@@ -17,7 +17,7 @@ internal class GadRunner(
     private val templates = getTemplates()
     private var totalSheetCount = 1
     private var processedSheetCount = AtomicInteger(0)
-    private val groupFolders = mutableMapOf<GadGroup, String>()
+    private val groupFolders = mutableMapOf<TeamsGroupKey, String>()
 
     override fun run() {
         val sheets = sheetsAdapter.getSheets()

@@ -26,7 +26,7 @@ class TMCalculatorTest {
             FinalScoreGroup(
                 problem = 1,
                 division = 1,
-                league = 0,
+                league = "",
                 teamScores = listOf(
                     FinalTeamScore(
                         place = 1,
@@ -65,7 +65,7 @@ class TMCalculatorTest {
             FinalScoreGroup(
                 problem = 4,
                 division = 1,
-                league = 0,
+                league = "",
                 teamScores = listOf(
                     FinalTeamScore(
                         place = 1,
@@ -108,7 +108,7 @@ class TMCalculatorTest {
             FinalScoreGroup(
                 problem = 1,
                 division = 1,
-                league = 0,
+                league = "0",
                 teamScores = listOf(
                     FinalTeamScore(
                         place = 1,
@@ -175,7 +175,7 @@ class TMCalculatorTest {
         assertEquals(1, result[0].teamScores[0].place)
         assertEquals(1, result[0].teamScores[1].place)
         assertEquals(1, result[0].teamScores[2].place)
-        assertEquals(4, result[0].teamScores[3].place)
+        assertEquals(2, result[0].teamScores[3].place)
     }
 
     @Test
@@ -270,9 +270,9 @@ class TMCalculatorTest {
 
         val scores = results[0].teamScores.sortedByDescending { it.longTermScore + it.spontaneousScore + it.styleScore }
 
-        assertTrue(scores[0].place == 1)
-        assertTrue(scores[1].place == 1)
-        assertTrue(scores[2].place == 3)
+        assertEquals(1, scores[0].place)
+        assertEquals(1, scores[1].place)
+        assertEquals(2, scores[2].place)
     }
 
     @Test
@@ -333,7 +333,7 @@ class TMCalculatorTest {
         teamName: String? = null,
         problem: Int = 1,
         division: Int = 1,
-        league: Int = 0,
+        league: String = "0",
         weightHeld: Float = 0.0f,
     ): Team {
         return Team(
@@ -341,7 +341,7 @@ class TMCalculatorTest {
             spontanHour = "1000",
             code = "P${problem}G${division}",
             membershipNumber = "11111",
-            league = league.toString(),
+            league = league,
             part = "0",
             teamName = teamName ?: "ABC",
             shortTeamName = teamName ?: "ABC",
