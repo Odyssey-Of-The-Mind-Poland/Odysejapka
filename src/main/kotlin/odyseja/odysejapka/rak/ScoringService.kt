@@ -1,4 +1,4 @@
-package odyseja.odysejapka.tournament.manager
+package odyseja.odysejapka.rak
 
 import org.springframework.stereotype.Service
 

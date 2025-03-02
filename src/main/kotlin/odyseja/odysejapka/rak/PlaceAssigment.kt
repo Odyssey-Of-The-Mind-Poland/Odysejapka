@@ -1,4 +1,4 @@
-package odyseja.odysejapka.tournament.manager
+package odyseja.odysejapka.rak
 
 internal class PlaceAssigment(private val computedScores: List<ComputedTeamScores>) {
 

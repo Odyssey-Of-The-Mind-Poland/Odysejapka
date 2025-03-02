@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {generateCsv, generateHtmlResults, generatePdfResults} from './tm';
+    import {generateCsv, generateHtmlResults, generatePdfResults} from './rak';
     import {ProgressRadial} from '@skeletonlabs/skeleton';
 
     let zspId = "";
@@ -35,24 +35,25 @@
     const downloadPdfResults = () => downloadFile(generatePdfResults, 'application/pdf', 'pdf');
 </script>
 
-<h1 class="m-5">TM</h1>
+<div class="flex flex-col gap-5">
+    <h1>Rankingowy Analizator Końcowy</h1>
 
-<div class="flex flex-col gap-3">
-    <input bind:value={zspId} class="input" placeholder="ZSP ID"
-           type="text"/>
-    <div class="flex gap-3 items-center">
-        <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadCsv} disabled={isLoading}>
-            Generuj csv
-        </button>
-        <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadHtmlResults} disabled={isLoading}>
-            Generuj html results
-        </button>
-        <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadPdfResults} disabled={isLoading}>
-            Generuj pdf results
-        </button>
-        {#if isLoading}
-            <ProgressRadial width="w-6" />
-        {/if}
+    <div class="flex flex-col gap-3">
+        <input bind:value={zspId} class="input" placeholder="ZSP ID"
+               type="text"/>
+        <div class="flex gap-3 items-center">
+            <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadCsv} disabled={isLoading}>
+                Generuj csv
+            </button>
+            <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadHtmlResults} disabled={isLoading}>
+                Generuj html results
+            </button>
+            <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadPdfResults} disabled={isLoading}>
+                Generuj pdf results
+            </button>
+            {#if isLoading}
+                <ProgressRadial width="w-6" />
+            {/if}
+        </div>
     </div>
 </div>
-

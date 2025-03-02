@@ -1,4 +1,4 @@
-package odyseja.odysejapka.tournament.manager
+package odyseja.odysejapka.rak
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import odyseja.odysejapka.drive.ZspSheetsAdapter
@@ -15,14 +15,14 @@ data class ZspIdRequest(
 )
 
 @RestController
-@RequestMapping("/api/v1/tm")
-class TournamentManagerController(
-    private val tournamentManagerService: TournamentManagerService,
+@RequestMapping("/api/v1/rak")
+class RakController(
+    private val rakService: RakService,
     private val templateEngine: TemplateEngine
 ) {
     @PostMapping("/generate")
     fun generateCsv(@RequestBody request: ZspIdRequest): ResponseEntity<ByteArray> {
-        val csvData = tournamentManagerService.generateCsv(request.zspId)
+        val csvData = rakService.generateCsv(request.zspId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=your_file.csv")
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -50,7 +50,7 @@ class TournamentManagerController(
 
     private fun generateHtmlResults(request: ZspIdRequest): String {
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
-        val groups: List<FinalScoreGroup> = TMCalculator().calculateScores(sheetsAdapter.getAllTeams())
+        val groups: List<FinalScoreGroup> = RakCalculator().calculateScores(sheetsAdapter.getAllTeams())
 
         val context = Context().apply {
             setVariable("groups", groups)

@@ -16,7 +16,7 @@
         {label: 'Breaking Change', route: '/panel/breaking-change', icon: 'ic:round-warning-amber'},
         {label: 'GAD', route: '/panel/gad ', icon: 'ic:outline-curtains'},
         {label: 'SAK', route: '/panel/sak ', icon: 'ic:outline-curtains'},
-        {label: 'TM', route: '/panel/tm ', icon: 'ic:outline-curtains'},
+        {label: 'RAK', route: '/panel/rak ', icon: 'ic:outline-curtains'},
         {label: 'Fixer', route: '/panel/fixer ', icon: 'fluent-mdl2:repair'}
     ];
 

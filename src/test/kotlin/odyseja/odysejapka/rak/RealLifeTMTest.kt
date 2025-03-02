@@ -1,4 +1,4 @@
-package odyseja.odysejapka.tournament.manager
+package odyseja.odysejapka.rak
 
 import Team
 import com.opencsv.bean.CsvToBeanBuilder
@@ -15,7 +15,7 @@ import kotlin.math.abs
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RealLifeTMTest {
 
-    private val tmCalculator = TMCalculator()
+    private val rakCalculator = RakCalculator()
 
     companion object {
         @JvmStatic
@@ -68,7 +68,7 @@ class RealLifeTMTest {
             )
         }
 
-        val finalScoreGroups = tmCalculator.calculateScores(teams)
+        val finalScoreGroups = rakCalculator.calculateScores(teams)
 
         val finalScoresByKey = mutableMapOf<String, FinalTeamScore>()
         finalScoreGroups.forEach { group ->

@@ -1,12 +1,12 @@
-package odyseja.odysejapka.tournament.manager
+package odyseja.odysejapka.rak
 
 import Team
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-class TMCalculatorTest {
+class RakCalculatorTest {
 
-    private var tmCalculator: TMCalculator = TMCalculator()
+    private var rakCalculator: RakCalculator = RakCalculator()
 
     @Test
     fun `score single team`() {
@@ -20,7 +20,7 @@ class TMCalculatorTest {
             )
         )
 
-        val results = tmCalculator.calculateScores(teams)
+        val results = rakCalculator.calculateScores(teams)
 
         val expected = listOf(
             FinalScoreGroup(
@@ -60,7 +60,7 @@ class TMCalculatorTest {
             )
         )
 
-        val results = tmCalculator.calculateScores(teams)
+        val results = rakCalculator.calculateScores(teams)
 
         val expected = listOf(
             FinalScoreGroup(
@@ -104,7 +104,7 @@ class TMCalculatorTest {
             )
         )
 
-        val result = tmCalculator.calculateScores(teams)
+        val result = rakCalculator.calculateScores(teams)
 
         val expected = listOf(
             FinalScoreGroup(
@@ -158,7 +158,7 @@ class TMCalculatorTest {
             )
         )
 
-        val result = tmCalculator.calculateScores(teams)
+        val result = rakCalculator.calculateScores(teams)
 
         assertEquals(1, result[0].teamScores[0].place)
         assertEquals(1, result[0].teamScores[1].place)
@@ -173,7 +173,7 @@ class TMCalculatorTest {
             createTeam(longTermScore = 140f, spontaneousScore = 69f, styleScore = 34f, teamName = "Team 4")
         )
 
-        val result = tmCalculator.calculateScores(teams)
+        val result = rakCalculator.calculateScores(teams)
 
         assertTrue(result.isNotEmpty())
         assertEquals(1, result[0].teamScores[0].place)
@@ -189,7 +189,7 @@ class TMCalculatorTest {
             createTeam(longTermScore = 140f, spontaneousScore = 65f, styleScore = 30f, penalty = 0f, teamName = "Clean")
         )
 
-        val result = tmCalculator.calculateScores(teams)
+        val result = rakCalculator.calculateScores(teams)
 
         val penalizedScore = result[0].teamScores.first { it.teamName == "Penalized" }
         val cleanScore     = result[0].teamScores.first { it.teamName == "Clean" }
@@ -214,7 +214,7 @@ class TMCalculatorTest {
             createTeam(problem = 2, division = 1, longTermScore = 90f, spontaneousScore = 45f, styleScore = 20f, teamName = "P2D1-B"), // identical
         )
 
-        val result = tmCalculator.calculateScores(teams)
+        val result = rakCalculator.calculateScores(teams)
 
         assertEquals(3, result.size)
 
@@ -234,7 +234,7 @@ class TMCalculatorTest {
             createTeam(longTermScore = 0f, spontaneousScore = 0f, styleScore = 0f, teamName = "Zero B")
         )
 
-        val result = tmCalculator.calculateScores(teams)
+        val result = rakCalculator.calculateScores(teams)
 
         assertEquals(1, result.size)
         assertEquals(2, result[0].teamScores.size)
@@ -251,7 +251,7 @@ class TMCalculatorTest {
             createTeam(longTermScore = 100f, spontaneousScore = 40f, styleScore = 25f, teamName = "Same C")
         )
 
-        val result = tmCalculator.calculateScores(teams)
+        val result = rakCalculator.calculateScores(teams)
 
         assertTrue(result.isNotEmpty())
         val group = result[0]
@@ -270,7 +270,7 @@ class TMCalculatorTest {
             createTeam(longTermScore = 144f, spontaneousScore = 68f, styleScore = 35f, teamName = "Third 318.25"),
         )
 
-        val results = tmCalculator.calculateScores(teams)
+        val results = rakCalculator.calculateScores(teams)
 
         val scores = results[0].teamScores.sortedByDescending { it.longTermScore + it.spontaneousScore + it.styleScore }
 
@@ -305,7 +305,7 @@ class TMCalculatorTest {
             )
         )
 
-        val results = tmCalculator.calculateScores(teams)
+        val results = rakCalculator.calculateScores(teams)
 
         assertEquals(1, results.size)
         val group = results[0]

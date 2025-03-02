@@ -1,10 +1,10 @@
-package odyseja.odysejapka.tournament.manager
+package odyseja.odysejapka.rak
 
 import Team
 import odyseja.odysejapka.gad.TeamsGroup
 import odyseja.odysejapka.gad.TeamsGroups
 
-class TMCalculator {
+class RakCalculator {
 
     fun calculateScores(teams: List<Team>): List<FinalScoreGroup> {
         if (teams.isEmpty()) return emptyList()

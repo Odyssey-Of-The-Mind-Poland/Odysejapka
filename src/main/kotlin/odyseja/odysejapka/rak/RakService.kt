@@ -1,17 +1,15 @@
-package odyseja.odysejapka.tournament.manager
+package odyseja.odysejapka.rak
 
 import Team
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.stereotype.Service
-import java.io.BufferedWriter
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.Charset
-import kotlin.math.abs
 
 
 @Service
-class TournamentManagerService {
+class RakService {
 
     fun generateCsv(zspId: String): ByteArray {
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)

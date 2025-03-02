@@ -2,7 +2,7 @@ import {BASE_URL, getBearer, showHappyToast, showSadToast} from "$lib/apiService
 
 
 export async function generateCsv(zspIdRequest: string) {
-    const response = await fetch(BASE_URL + '/api/v1/tm/generate', {
+    const response = await fetch(BASE_URL + '/api/v1/rak/generate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export async function generateCsv(zspIdRequest: string) {
 }
 
 export async function generateHtmlResults(zspIdRequest: string) {
-    const response = await fetch(BASE_URL + '/api/v1/tm/download-html', {
+    const response = await fetch(BASE_URL + '/api/v1/rak/download-html', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export async function generateHtmlResults(zspIdRequest: string) {
 }
 
 export async function generatePdfResults(zspIdRequest: string) {
-    const response = await fetch(BASE_URL + '/api/v1/tm/download-pdf', {
+    const response = await fetch(BASE_URL + '/api/v1/rak/download-pdf', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
