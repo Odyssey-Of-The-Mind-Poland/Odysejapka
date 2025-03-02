@@ -36,6 +36,8 @@ dependencies {
   implementation("com.opencsv:opencsv:5.10")
   implementation("org.thymeleaf:thymeleaf:3.1.3.RELEASE")
   implementation("org.thymeleaf:thymeleaf-spring5:3.1.3.RELEASE")
+  implementation("com.openhtmltopdf:openhtmltopdf-core:1.0.10")
+  implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
 
 
   runtimeOnly("com.h2database:h2:1.4.200")
