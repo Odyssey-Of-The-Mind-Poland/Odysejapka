@@ -3,8 +3,7 @@ package odyseja.odysejapka.tournament.manager
 import Team
 import com.opencsv.bean.CsvToBeanBuilder
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.io.BufferedReader
@@ -73,13 +72,13 @@ class RealLifeTMTest {
         val finalScoresByKey = mutableMapOf<String, FinalTeamScore>()
         finalScoreGroups.forEach { group ->
             group.teamScores.forEach { score ->
-                val key = "${group.problem}-${group.division}-${score.teamName}"
+                val key = "${group.problem}-${group.division}-${group.league}-${score.teamName}"
                 finalScoresByKey[key] = score
             }
         }
 
         for (row in csvRows) {
-            val key = "${row.problem}-${row.division}-${row.teamName}"
+            val key = "${row.problem}-${row.division}-${row.league}-${row.teamName}"
             val finalScore = finalScoresByKey[key]
                 ?: fail("No computed score found for team '$key'")
 
@@ -109,6 +108,7 @@ class RealLifeTMTest {
                 diffTot < 0.5,
                 "Team $key Total => expected ${row.expectedTotal}, got ${finalScore.total} (diff=$diffTot)"
             )
+            assertEquals(row.expectedPlace, finalScore.place, "Team $key has unexpected place")
         }
     }
 }

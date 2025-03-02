@@ -9,6 +9,9 @@ data class TeamCsvRow(
     @CsvBindByName(column = "division")
     val division: Int = 0,
 
+    @CsvBindByName(column = "league")
+    val league: String = "",
+
     @CsvBindByName(column = "membershipNumber")
     val membershipNumber: String = "",
 
@@ -46,5 +49,8 @@ data class TeamCsvRow(
     val expectedBalsa: Double = 0.0,
 
     @CsvBindByName(column = "expectedTotal")
-    val expectedTotal: Double = 0.0
+    val expectedTotal: Double = 0.0,
+
+    @CsvBindByName(column = "expectedPlace")
+    val expectedPlace: Int = 1
 )
