@@ -79,7 +79,9 @@ internal class GadRunner(
                 getBalsaValue(file.id, cells.balsa),
                 getZspValueFromAOC(file.id, cells.anomaly),
                 getZspValueFromAOC(file.id, cells.actualPerformanceStartTime),
-                "=JEŻELI(ORAZ(CZY.LICZBA(P${team.zspRow}); P5<>CZAS(0;0;0)); P${team.zspRow}-A${team.zspRow}; \"\")"
+                "=JEŻELI(ORAZ(CZY.LICZBA(P${team.zspRow}); P5<>CZAS(0;0;0)); P${team.zspRow}-A${team.zspRow}; \"\")",
+                    "", // spontaneous
+                    "https://docs.google.com/spreadsheets/d/${file.id}"
             )
             sheetsAdapter.writeZsp("K${team.zspRow}:Q${team.zspRow}", values, sheetTitle)
             logger.log("Created: ${file.name}")
