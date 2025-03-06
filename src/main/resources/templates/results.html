@@ -1,40 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Odyssey Results</title>
+    <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            position: relative;
+            width: 100%;
+            height: 900px;
+            padding: 50px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            color: gray;
+            font-size: 12px;
+            padding: 10px 0;
+            border-top: 1px solid lightgray;
+        }
+
+        .footer-left {
+            position: absolute;
+            left: 0;
+        }
+
+        .footer-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .footer-right {
+            position: absolute;
+            right: 0;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-<div th:each="group : ${groups}">
-    <h2>
-        Problem <span th:text="${group.problem}"></span>,
-        Division <span th:text="${group.division}"></span>,
-        League <span th:text="${group.league}"></span>
-    </h2>
 
-    <table border="1" cellspacing="0" cellpadding="5">
-        <tr>
-            <th>Place</th>
-            <th>Team Name</th>
-            <th>Long Term</th>
-            <th>Balsa</th>
-            <th>Style</th>
-            <th>Spontaneous</th>
-            <th>Penalty</th>
-            <th>Total</th>
-        </tr>
-        <tr th:each="score : ${group.teamScores}">
-            <td th:text="${score.place}"></td>
-            <td th:text="${score.teamName}"></td>
-            <td th:text="${score.longTermScore}"></td>
-            <td th:text="${score.balsaScore}"></td>
-            <td th:text="${score.styleScore}"></td>
-            <td th:text="${score.spontaneousScore}"></td>
-            <td th:text="${score.penalty}"></td>
-            <td th:text="${score.total}"></td>
-        </tr>
-    </table>
-    <br/>
+<div class="page">
+    <h1>My PDF Content</h1>
+    <p>Some main content here...</p>
+
+    <!-- Footer -->
+    <div class="footer">
+        <span class="footer-left">Odyseja Umysłu</span>
+        <span class="footer-center">str. 1</span>
+        <span class="footer-right">WYNIKI</span>
+    </div>
 </div>
+
+<div class="page">
+    <h1>My PDF Content</h1>
+    <p>Some main content here...</p>
+
+    <!-- Footer -->
+    <div class="footer">
+        <span class="footer-left">Odyseja Umysłu</span>
+        <span class="footer-center">str. <span class="page-number"></span></span>
+        <span class="footer-right">WYNIKI</span>
+    </div>
+</div>
+
 </body>
 </html>
