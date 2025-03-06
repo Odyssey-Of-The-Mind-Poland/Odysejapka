@@ -83,7 +83,7 @@ internal class GadRunner(
                     "", // spontaneous
                     "https://docs.google.com/spreadsheets/d/${file.id}"
             )
-            sheetsAdapter.writeZsp("K${team.zspRow}:Q${team.zspRow}", values, sheetTitle)
+            sheetsAdapter.writeZsp("K${team.zspRow}:S${team.zspRow}", values, sheetTitle)
             logger.log("Created: ${file.name}")
         }
     }
