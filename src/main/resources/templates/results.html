@@ -10,9 +10,10 @@
 
         .page {
             position: relative;
-            width: 100%;
+            width: 500px;
             height: 900px;
             padding: 50px;
+            background: aqua;
         }
 
         .footer {
@@ -43,19 +44,97 @@
             font-weight: bold;
         }
 
-        .flex {
-            display: flex;
+        .center {
+            text-align: center;
         }
+
+        .header {
+            font-size: 30px;
+            font-weight: normal;
+        }
+
+        table {
+            border-collapse: collapse;
+            border: none;
+            width: auto;
+            margin-top: 20px;
+        }
+
+        td, th {
+            text-align: left;
+            border: none;
+            font-weight: normal;
+            font-size: 10px;
+            white-space: nowrap;
+            padding: 5px 10px;
+        }
+
+        /* Column specific widths */
+        th:nth-child(1), td:nth-child(1) { width: 40px; }  /* M-ce */
+        th:nth-child(2), td:nth-child(2) { width: 300px; } /* Placowka */
+        th:nth-child(3), td:nth-child(3) { width: 80px; }  /* Przeliczone label */
+        th:nth-child(4), td:nth-child(4) { width: 70px; }  /* Problem */
+        th:nth-child(5), td:nth-child(5) { width: 70px; }  /* Styl */
+        th:nth-child(6), td:nth-child(6) { width: 70px; }  /* Spontan */
+        th:nth-child(7), td:nth-child(7) { width: 70px; }  /* Karne */
     </style>
 </head>
 <body>
 
 <div class="page">
-    <div class="flex">
-        <h1>Problem 1: Wymyslny wyścig   |   Grupa wiekowa 1</h1>
+    <div class="center">
+        <div class="header"><b>P</b>roblem <b>1</b>: Wymyslny wyscig   |   <b>G</b>rupa wiekowa 1</div>
     </div>
 
-    <!-- Footer -->
+    <table>
+        <tr>
+            <th>M-ce</th>
+            <th>Placowka</th>
+            <th></th>
+            <th>Problem</th>
+            <th>Styl</th>
+            <th>Spontan</th>
+            <th>Karne</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Zespol Szkolno-Przedszkolny nr 16</td>
+            <td>Przeliczone:</td>
+            <td>200.00</td>
+            <td>50.00</td>
+            <td>100.00</td>
+            <td>349.00</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Zespol Szkolno-Przedszkolny nr 16</td>
+            <td>Przeliczone:</td>
+            <td>200.00</td>
+            <td>50.00</td>
+            <td>100.00</td>
+            <td>349.00</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Zespol Szkolno-Przedszkolny nr 16</td>
+            <td>Przeliczone:</td>
+            <td>200.00</td>
+            <td>50.00</td>
+            <td>100.00</td>
+            <td>349.00</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Zespol Szkolno-Przedszkolny nr 16</td>
+            <td>Przeliczone:</td>
+            <td>200.00</td>
+            <td>50.00</td>
+            <td>100.00</td>
+            <td>349.00</td>
+        </tr>
+    </table>
+
+
     <div class="footer">
         <span class="footer-left">33. Ogolnopolski Final Odysei Umyslu</span>
         <span class="footer-center">str. 1</span>
@@ -69,7 +148,7 @@
 
     <!-- Footer -->
     <div class="footer">
-        <span class="footer-left">Odyseja Umysłu</span>
+        <span class="footer-left">Odyseja Umyslu</span>
         <span class="footer-center">str. <span class="page-number"></span></span>
         <span class="footer-right">WYNIKI</span>
     </div>

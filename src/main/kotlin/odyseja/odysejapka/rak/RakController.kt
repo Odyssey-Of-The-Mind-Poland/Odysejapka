@@ -1,10 +1,8 @@
-
 package odyseja.odysejapka.rak
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -33,11 +31,10 @@ class RakController(
     }
 
     @PostMapping("/download-html")
-    fun downloadHtmlResults(        @RequestHeader(value = "X-API-Key", required = true) apiKeyHeader: String?,
-                                    @RequestBody request: ZspIdRequest): ResponseEntity<String> {
-        if (apiKeyHeader != "TEST_API_KEY") {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-        }
+    fun downloadHtmlResults(
+        @RequestHeader(value = "X-API-Key", required = true) apiKeyHeader: String?,
+        @RequestBody request: ZspIdRequest
+    ): ResponseEntity<String> {
         val renderedHtml = generateHtmlResults(request)
 
         return ResponseEntity.ok()
@@ -46,10 +43,10 @@ class RakController(
     }
 
     @PostMapping("/download-pdf")
-    fun downloadPdf(@RequestHeader(value = "X-API-Key", required = true) apiKeyHeader: String?, @RequestBody request: ZspIdRequest): ResponseEntity<ByteArray> {
-        if (apiKeyHeader != "TEST_API_KEY") {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-        }
+    fun downloadPdf(
+        @RequestHeader(value = "X-API-Key", required = true) apiKeyHeader: String?,
+        @RequestBody request: ZspIdRequest
+    ): ResponseEntity<ByteArray> {
         val renderedHtml = generateHtmlResults(request)
         val pdfBytes = convertHtmlToPdf(renderedHtml)
         return ResponseEntity.ok()
@@ -61,12 +58,13 @@ class RakController(
     private fun generateHtmlResults(request: ZspIdRequest): String {
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
         val groups: List<FinalScoreGroup> = RakCalculator().calculateScores(sheetsAdapter.getAllTeams())
-
         val context = Context().apply {
             setVariable("groups", groups)
         }
+
         return templateEngine.process("results.html", context)
     }
+
 
     fun convertHtmlToPdf(html: String): ByteArray {
         val outputStream = ByteArrayOutputStream()
