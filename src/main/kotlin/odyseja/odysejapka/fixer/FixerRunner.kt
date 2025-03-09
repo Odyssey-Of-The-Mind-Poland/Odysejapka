@@ -4,6 +4,7 @@ import odyseja.odysejapka.async.Log
 import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
+import java.lang.Thread.sleep
 
 class FixerRunner(
     private val driveAdapter: DriveAdapter,
@@ -21,11 +22,13 @@ class FixerRunner(
                 }
             }
         }
+        println("finished fixing sheets")
     }
 
     private fun fixSheet(id: String) {
         for (cell in cells) {
-            sheetsAdapter.writeValue(id, cell.sheetName, cell.cell, cell.value, "RAW")
+            sheetsAdapter.writeValue(id, cell.sheetName, cell.cell, cell.value)
+            sleep(500)
         }
     }
 
