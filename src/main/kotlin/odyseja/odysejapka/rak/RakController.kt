@@ -6,8 +6,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.thymeleaf.TemplateEngine
-import org.thymeleaf.context.Context
 import java.io.ByteArrayOutputStream
 
 
@@ -19,7 +17,9 @@ data class ZspIdRequest(
 @RequestMapping("/api/v1/rak")
 class RakController(
     private val rakService: RakService,
-    private val templateEngine: TemplateEngine
+    private val htmlGeneratorService: HtmlGeneratorService,
+    private val pdfGeneratorService: PdfGeneratorService,
+    private val mockedPdfService: MockedPdfService
 ) {
     @PostMapping("/generate")
     fun generateCsv(@RequestBody request: ZspIdRequest): ResponseEntity<ByteArray> {
@@ -32,10 +32,10 @@ class RakController(
 
     @PostMapping("/download-html")
     fun downloadHtmlResults(
-        @RequestHeader(value = "X-API-Key", required = true) apiKeyHeader: String?,
         @RequestBody request: ZspIdRequest
     ): ResponseEntity<String> {
-        val renderedHtml = generateHtmlResults(request)
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
+        val renderedHtml = htmlGeneratorService.generateHtmlResults(sheetsAdapter.getAllTeams())
 
         return ResponseEntity.ok()
             .contentType(MediaType.TEXT_HTML)
@@ -44,38 +44,23 @@ class RakController(
 
     @PostMapping("/download-pdf")
     fun downloadPdf(
-        @RequestHeader(value = "X-API-Key", required = true) apiKeyHeader: String?,
         @RequestBody request: ZspIdRequest
     ): ResponseEntity<ByteArray> {
-        val renderedHtml = generateHtmlResults(request)
-        val pdfBytes = convertHtmlToPdf(renderedHtml)
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
+        val pdfBytes = pdfGeneratorService.generatePdf(sheetsAdapter.getAllTeams())
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)
             .body(pdfBytes)
     }
 
-    private fun generateHtmlResults(request: ZspIdRequest): String {
-        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
-        val groups: List<FinalScoreGroup> = RakCalculator().calculateScores(sheetsAdapter.getAllTeams())
-        val context = Context().apply {
-            setVariable("groups", groups)
-        }
-
-        return templateEngine.process("results.html", context)
-    }
-
-
-    fun convertHtmlToPdf(html: String): ByteArray {
-        val outputStream = ByteArrayOutputStream()
-        val builder = PdfRendererBuilder()
-
-        builder.withHtmlContent(html, null)
-        builder.toStream(outputStream)
-
-        builder.run()
-
-        return outputStream.toByteArray()
+    @PostMapping("/download-mocked-pdf")
+    fun downloadMockedPdf(): ResponseEntity<ByteArray> {
+        val pdfBytes = mockedPdfService.generatePdf()
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results.pdf\"")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdfBytes)
     }
 
 

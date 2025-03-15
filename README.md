@@ -15,6 +15,7 @@ For IntelliJ there is run configuration called `Odysejapka` just run it and it w
 you.
 
 ### Other
+
 1. Run `docker-compose up -d` for database
 2. Build and run **OdysejapkaApplication.kt**
 3. Move to `odyseja-ui` and run `npm run dev`
@@ -27,3 +28,7 @@ To do that set `GOOGLE_APPLICATION_CREDENTIALS` to your `credentials.json` locat
 
 To get `credentials.json` contact maintainer of this application.
 
+### Dynamic modifying results template
+
+If you want to dynamically change results template set profile `dev` and set `SPRING_THYMELEAF_PREFIX` env variable to
+path with your template

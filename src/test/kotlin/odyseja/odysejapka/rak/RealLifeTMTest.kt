@@ -1,13 +1,10 @@
 package odyseja.odysejapka.rak
 
 import Team
-import com.opencsv.bean.CsvToBeanBuilder
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.stream.Stream
 import kotlin.math.abs
 
@@ -16,6 +13,7 @@ import kotlin.math.abs
 class RealLifeTMTest {
 
     private val rakCalculator = RakCalculator()
+    private val csvTeamService = CsvTeamService()
 
     companion object {
         @JvmStatic
@@ -34,41 +32,10 @@ class RealLifeTMTest {
     @ParameterizedTest(name = "Checking CSV: {0}")
     @MethodSource("csvPathsProvider")
     fun `compare TM Calculator with real TM results`(csvResourcePath: String) {
-        val csvStream = this::class.java.getResourceAsStream(csvResourcePath)
-            ?: fail("Could not find '$csvResourcePath' in resources")
-
-        val csvRows: List<TeamCsvRow> = BufferedReader(InputStreamReader(csvStream)).use { reader ->
-            CsvToBeanBuilder<TeamCsvRow>(reader)
-                .withType(TeamCsvRow::class.java)
-                .withIgnoreLeadingWhiteSpace(true)
-                .build()
-                .parse()
-        }
-
-        val teams = csvRows.map { row ->
-            Team(
-                performanceHour = "",
-                spontanHour = "",
-                code = "P${row.problem}G${row.division}",
-                membershipNumber = row.membershipNumber,
-                league = row.league,
-                part = "",
-                teamName = row.teamName,
-                shortTeamName = row.teamName,
-                city = row.city,
-                zspRow = 0,
-                day = "",
-                stage = 0,
-                zspSheet = "",
-                longTermScore = row.longTermRaw,
-                spontaneousScore = row.spontaneousRaw,
-                styleScore = row.styleRaw,
-                penaltyScore = row.penalty,
-                weightHeld = row.weightHeld
-            )
-        }
-
+        val teams = csvTeamService.readTeamsFromCsv(csvResourcePath)
         val finalScoreGroups = rakCalculator.calculateScores(teams)
+
+        val csvRows = csvTeamService.readCsvRows(csvResourcePath)
 
         val finalScoresByKey = mutableMapOf<String, FinalTeamScore>()
         finalScoreGroups.forEach { group ->
