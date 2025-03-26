@@ -59,13 +59,20 @@ data class Team(
             stage,
             performanceHour,
             spontanHour,
-            part.toInt(),
+            getPart(),
             day.lowercase(),
             getSpontanDay(),
             getFormattedLeague(),
             zspRow = zspRow,
             zspSheet = zspSheet
         )
+    }
+
+    private fun getPart(): Int {
+        if (part.isBlank()) {
+            return 0
+        }
+        return part.toInt()
     }
 
     fun getCity(teamName: String): String {
@@ -84,7 +91,7 @@ data class Team(
     }
 
     private fun getFormattedLeague(): String {
-        return if (league == "0") "" else league
+        return if (league == "0" || league.isBlank()) "" else league
     }
 
     fun getAbsPenaltyScore(): Float {
