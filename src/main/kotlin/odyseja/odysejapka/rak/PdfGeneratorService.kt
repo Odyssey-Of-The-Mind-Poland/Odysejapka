@@ -2,11 +2,14 @@ package odyseja.odysejapka.rak
 
 import Team
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
+import odyseja.odysejapka.problem.ProblemService
 import org.springframework.stereotype.Service
 import java.io.ByteArrayOutputStream
 
 @Service
-class PdfGeneratorService(private val htmlGeneratorService: HtmlGeneratorService) {
+class PdfGeneratorService(
+    private val htmlGeneratorService: HtmlGeneratorService
+) {
 
     fun generatePdf(teams: List<Team>): ByteArray {
         var html = htmlGeneratorService.generateHtmlResults(teams)

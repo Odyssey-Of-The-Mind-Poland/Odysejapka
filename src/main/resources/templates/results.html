@@ -7,15 +7,12 @@
             margin: 0;
             padding: 0;
         }
-
         .page {
             position: relative;
             width: 100%;
             height: 1018px;
             margin-bottom: 10px;
-            /*background: aqua;*/
         }
-
         .footer {
             position: absolute;
             bottom: 0;
@@ -26,41 +23,34 @@
             padding: 10px 0;
             border-top: 1px solid lightgray;
         }
-
         .footer-left {
             position: absolute;
             left: 0;
         }
-
         .footer-center {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
         }
-
         .footer-right {
             position: absolute;
             right: 0;
             font-weight: bold;
         }
-
         .center {
             text-align: center;
         }
-
         .header {
             padding-top: 20px;
             font-size: 20px;
             font-weight: normal;
         }
-
         table {
             border-collapse: collapse;
             border: none;
             width: auto;
-            margin-top: 20px;
+            margin: 20px auto 0 auto;
         }
-
         td, th {
             text-align: left;
             border: none;
@@ -70,29 +60,46 @@
             padding: 5px 10px;
             gap: 5px;
         }
-
         .gray {
             color: gray;
         }
-
         /* Column specific widths */
-        th:nth-child(1), td:nth-child(1) { width: 40px; }  /* M-ce */
-        th:nth-child(2), td:nth-child(2) { width: 300px; } /* Placowka */
-        th:nth-child(3), td:nth-child(3) { width: 80px; }  /* Przeliczone label */
-        th:nth-child(4), td:nth-child(4) { width: 70px; }  /* Problem */
-        th:nth-child(5), td:nth-child(5) { width: 70px; }  /* Styl */
-        th:nth-child(6), td:nth-child(6) { width: 70px; }  /* Spontan */
-        th:nth-child(7), td:nth-child(7) { width: 70px; }  /* Karne */
+        th:nth-child(1), td:nth-child(1) { width: 40px; }   /* M-ce */
+        th:nth-child(2), td:nth-child(2) { width: 300px; }  /* Placowka */
+        th:nth-child(3), td:nth-child(3) { width: 80px; }   /* Przeliczone label */
+        th:nth-child(4), td:nth-child(4) { width: 70px; }   /* Problem */
+        th:nth-child(5), td:nth-child(5) { width: 70px; }   /* Styl */
+        th:nth-child(6), td:nth-child(6) { width: 70px; }   /* Spontan */
+        th:nth-child(7), td:nth-child(7) { width: 70px; }   /* Karne */
     </style>
 </head>
 <body>
 
-<div class="page">
+<!--
+  We loop through each FinalScoreGroup to generate separate pages.
+  'groups' is from the context: setVariable("groups", groups)
+  'problems' is from the context: setVariable("problems", problemService.getProblems())
+-->
+<div th:each="group, pageStat : ${groups}" class="page">
+
     <div class="center">
-        <div class="header"><b>P</b>roblem <b>1</b>: Wymyslny wyscig   |   <b>G</b>rupa wiekowa 1</div>
+        <div class="header">
+            <!-- Problem number -->
+            <b>P</b>roblem <b th:text="${group.problem}">1</b>:
+            <!-- Look up problem name by ID -->
+            <span th:each="p : ${problems}"
+                  th:if="${p.id} == ${group.problem}"
+                  th:text="${p.name}">N/A</span>
+            <!-- Division/League info -->
+            &#160; | &#160;
+            <b>G</b>rupa wiekowa <span th:text="${group.division}">1</span>
+            &#160; | &#160;
+            <span th:text="${group.league}">Some League</span>
+        </div>
     </div>
 
     <table>
+        <thead>
         <tr>
             <th>M-ce</th>
             <th>Placowka</th>
@@ -102,174 +109,53 @@
             <th>Spontan</th>
             <th>Karne</th>
         </tr>
-        <tr>
-            <td>1<br></br> &#160; </td>
-            <td>Zespol Szkolno-Przedszkolny nr 16 <br></br> Dlugoleka </td>
-            <td>Przeliczone: <br></br> <div class="gray"> Surowe: </div></td>
-            <td>200.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>50.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>13.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>13.00 <br></br> <div class="gray"> 114.12 </div></td>
+        </thead>
+        <tbody>
+        <!-- Loop through each team's final scores -->
+        <tr th:each="score : ${group.teamScores}">
+            <td th:text="${score.place}"></td>
+            <td>
+                <span th:text="${score.teamName}"></span>
+                <br/>
+                <span class="gray" th:text="${score.team.city}"></span>
+            </td>
+            <td>
+                <span>Przeliczone: </span>
+                <br/>
+                <div class="gray">Surowe:</div>
+            </td>
+            <td>
+                <span th:text="${#numbers.formatDecimal(score.longTermScore, 2, 2)}"></span>
+                <br/>
+                <div class="gray" th:text="${#numbers.formatDecimal(score.longTermScore, 2, 2)}"/>
+            </td>
+            <td>
+                <span th:text="${#numbers.formatDecimal(score.styleScore, 2, 2)}"></span>
+                <br/>
+                <div class="gray" th:text="${#numbers.formatDecimal(score.styleScore, 2, 2)}" />
+            </td>
+            <td>
+                <span th:text="${#numbers.formatDecimal(score.spontaneousScore, 2, 2)}"></span>
+                <br/>
+                <div class="gray" th:text="${#numbers.formatDecimal(score.spontaneousScore, 2, 2)}"/>
+            </td>
+            <td>
+                <span th:text="${#numbers.formatDecimal(score.penalty, 2, 2)}"></span>
+                <br/>
+                <div class="gray" th:text="${#numbers.formatDecimal(score.penalty, 2, 2)}"/>
+            </td>
         </tr>
-        <tr>
-            <td>1<br></br> &#160; </td>
-            <td>Zespol Szkolno-Przedszkolny nr 16 <br></br> Dlugoleka </td>
-            <td>Przeliczone: <br></br> <div class="gray"> Surowe: </div></td>
-            <td>200.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>50.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>13.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>13.00 <br></br> <div class="gray"> 114.12 </div></td>
-        </tr>
-        <tr>
-            <td>1<br></br> &#160; </td>
-            <td>Zespol Szkolno-Przedszkolny nr 16 <br></br> Dlugoleka </td>
-            <td>Przeliczone: <br></br> <div class="gray"> Surowe: </div></td>
-            <td>200.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>50.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>13.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>13.00 <br></br> <div class="gray"> 114.12 </div></td>
-        </tr>
-        <tr>
-            <td>1<br></br> &#160; </td>
-            <td>Zespol Szkolno-Przedszkolny nr 16 <br></br> Dlugoleka </td>
-            <td>Przeliczone: <br></br> <div class="gray"> Surowe: </div></td>
-            <td>200.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>50.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>13.00 <br></br> <div class="gray"> 114.12 </div></td>
-            <td>13.00 <br></br> <div class="gray"> 114.12 </div></td>
-        </tr>
+        </tbody>
     </table>
-
 
     <div class="footer">
         <span class="footer-left">33. Ogolnopolski Final Odysei Umyslu</span>
-        <span class="footer-center">str. 1</span>
+        <!-- Show page number as index+1:
+             'pageStat' is the status variable from th:each (group, pageStat : ${groups}) -->
+        <span class="footer-center">str. <span th:text="${pageStat.index + 1}"></span></span>
         <span class="footer-right">WYNIKI</span>
     </div>
+
 </div>
-
-<div class="page">
-    <div class="center">
-        <div class="header"><b>P</b>roblem <b>1</b>: Wymyslny wyscig   |   <b>G</b>rupa wiekowa 1</div>
-    </div>
-
-    <table>
-        <tr>
-            <th>M-ce</th>
-            <th>Placowka</th>
-            <th></th>
-            <th>Problem</th>
-            <th>Styl</th>
-            <th>Spontan</th>
-            <th>Karne</th>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>Zespol Szkolno-Przedszkolny nr 16</td>
-            <td>Przeliczone:</td>
-            <td>200.00</td>
-            <td>50.00</td>
-            <td>100.00</td>
-            <td>349.00</td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>Zespol Szkolno-Przedszkolny nr 16</td>
-            <td>Przeliczone:</td>
-            <td>200.00</td>
-            <td>50.00</td>
-            <td>100.00</td>
-            <td>349.00</td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>Zespol Szkolno-Przedszkolny nr 16</td>
-            <td>Przeliczone:</td>
-            <td>200.00</td>
-            <td>50.00</td>
-            <td>100.00</td>
-            <td>349.00</td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>Zespol Szkolno-Przedszkolny nr 16</td>
-            <td>Przeliczone:</td>
-            <td>200.00</td>
-            <td>50.00</td>
-            <td>100.00</td>
-            <td>349.00</td>
-        </tr>
-    </table>
-
-
-    <div class="footer">
-        <span class="footer-left">33. Ogolnopolski Final Odysei Umyslu</span>
-        <span class="footer-center">str. 1</span>
-        <span class="footer-right">WYNIKI</span>
-    </div>
-</div>
-
-<div class="page">
-    <div class="center">
-        <div class="header"><b>P</b>roblem <b>1</b>: Wymyslny wyscig   |   <b>G</b>rupa wiekowa 1</div>
-    </div>
-
-    <table>
-        <tr>
-            <th>M-ce</th>
-            <th>Placowka</th>
-            <th></th>
-            <th>Problem</th>
-            <th>Styl</th>
-            <th>Spontan</th>
-            <th>Karne</th>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>Zespol Szkolno-Przedszkolny nr 16</td>
-            <td>Przeliczone:</td>
-            <td>200.00</td>
-            <td>50.00</td>
-            <td>100.00</td>
-            <td>349.00</td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>Zespol Szkolno-Przedszkolny nr 16</td>
-            <td>Przeliczone:</td>
-            <td>200.00</td>
-            <td>50.00</td>
-            <td>100.00</td>
-            <td>349.00</td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>Zespol Szkolno-Przedszkolny nr 16</td>
-            <td>Przeliczone:</td>
-            <td>200.00</td>
-            <td>50.00</td>
-            <td>100.00</td>
-            <td>349.00</td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td>Zespol Szkolno-Przedszkolny nr 16</td>
-            <td>Przeliczone:</td>
-            <td>200.00</td>
-            <td>50.00</td>
-            <td>100.00</td>
-            <td>349.00</td>
-        </tr>
-    </table>
-
-
-    <div class="footer">
-        <span class="footer-left">33. Ogolnopolski Final Odysei Umyslu</span>
-        <span class="footer-center">str. 1</span>
-        <span class="footer-right">WYNIKI</span>
-    </div>
-</div>
-
-
 </body>
 </html>
