@@ -129,22 +129,22 @@
             <td>
                 <span th:text="${#numbers.formatDecimal(score.longTermScore, 2, 2)}"></span>
                 <br/>
-                <div class="gray" th:text="${#numbers.formatDecimal(score.longTermScore, 2, 2)}"/>
+                <div class="gray" th:text="${#numbers.formatDecimal(score.team.longTermScore, 2, 2)}"/>
             </td>
             <td>
                 <span th:text="${#numbers.formatDecimal(score.styleScore, 2, 2)}"></span>
                 <br/>
-                <div class="gray" th:text="${#numbers.formatDecimal(score.styleScore, 2, 2)}" />
+                <div class="gray" th:text="${#numbers.formatDecimal(score.team.styleScore, 2, 2)}" />
             </td>
             <td>
                 <span th:text="${#numbers.formatDecimal(score.spontaneousScore, 2, 2)}"></span>
                 <br/>
-                <div class="gray" th:text="${#numbers.formatDecimal(score.spontaneousScore, 2, 2)}"/>
+                <div class="gray" th:text="${#numbers.formatDecimal(score.team.spontaneousScore, 2, 2)}"/>
             </td>
             <td>
                 <span th:text="${#numbers.formatDecimal(score.penalty, 2, 2)}"></span>
                 <br/>
-                <div class="gray" th:text="${#numbers.formatDecimal(score.penalty, 2, 2)}"/>
+                <div class="gray" th:text="${#numbers.formatDecimal(score.team.penaltyScore, 2, 2)}"/>
             </td>
         </tr>
         </tbody>
@@ -152,8 +152,6 @@
 
     <div class="footer">
         <span class="footer-left">33. Ogolnopolski Final Odysei Umyslu</span>
-        <!-- Show page number as index+1:
-             'pageStat' is the status variable from th:each (group, pageStat : ${groups}) -->
         <span class="footer-center">str. <span th:text="${pageStat.index + 1}"></span></span>
         <span class="footer-right">WYNIKI</span>
     </div>
