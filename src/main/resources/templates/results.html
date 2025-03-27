@@ -10,7 +10,7 @@
         .page {
             position: relative;
             width: 100%;
-            height: 1018px;
+            height: 1014px;
             margin-bottom: 10px;
         }
         .footer {
@@ -93,8 +93,10 @@
             <!-- Division/League info -->
             &#160; | &#160;
             <b>G</b>rupa wiekowa <span th:text="${group.division}">1</span>
-            &#160; | &#160;
-            <span th:text="${group.league}">Some League</span>
+            <div th:if="${group.league} != ''">
+                &#160; | &#160;
+                <span th:text="${group.league}">Some League</span>
+            </div>
         </div>
     </div>
 
@@ -111,7 +113,7 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Loop through each team's final scores -->
+
         <tr th:each="score : ${group.teamScores}">
             <td th:text="${score.place}"></td>
             <td>
