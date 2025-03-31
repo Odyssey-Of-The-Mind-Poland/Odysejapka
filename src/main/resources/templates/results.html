@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"> </meta>
+    <meta charset="UTF-8"></meta>
     <style>
         body {
             font-family: 'Ubuntu', sans-serif;
@@ -98,11 +98,12 @@
         <colgroup>
             <col style="width:40px;"></col>
             <col style="width:300px;"></col>
+            <col style="width:50px;"></col>
             <col th:if="${group.problem} == 4" style="width:70px;"/>
-            <col style="width:70px;"></col>
-            <col style="width:70px;"></col>
-            <col style="width:70px;"></col>
-            <col style="width:70px;"></col>
+            <col style="width:60px;"></col>
+            <col style="width:60px;"></col>
+            <col style="width:60px;"></col>
+            <col style="width:60px;"></col>
         </colgroup>
 
 
@@ -110,6 +111,7 @@
         <tr>
             <th>M-ce</th>
             <th>Placówka</th>
+            <th></th>
             <!-- Conditionally show "Udźwig" column header if problem == 4 -->
             <th th:if="${group.problem} == 4">Udźwig</th>
             <th>Problem</th>
@@ -120,11 +122,19 @@
         </thead>
         <tbody>
         <tr th:each="score : ${group.teamScores}">
-            <td th:text="${score.place}"></td>
+            <td>
+                <span th:text="${score.place}"></span>
+                <br/>
+                <span class="gray">&#160;</span>
+            </td>
             <td>
                 <span th:text="${score.teamName}"></span>
-                <br/>
+                <br th:if="${group.problem} != 4"/>
                 <span class="gray" th:text="${score.team.city}"></span>
+            </td>
+            <td>
+                <span>Przeliczone:</span>
+                <span class="gray">Surowe</span>
             </td>
             <!-- Conditionally show balsaScore if problem == 4 -->
             <td th:if="${group.problem} == 4">
@@ -145,7 +155,7 @@
             <!-- Styl -->
             <td>
                 <span th:text="${#numbers.formatDecimal(score.styleScore, 2, 2)}"></span>
-                <br/>
+
                 <div class="gray"
                      th:text="${#numbers.formatDecimal(score.team.styleScore, 2, 2)}"></div>
             </td>
@@ -161,7 +171,7 @@
             <!-- Karne -->
             <td>
                 <span th:text="${#numbers.formatDecimal(score.penalty, 2, 2)}"></span>
-                <br/>
+
                 <div th:style="${score.team.penaltyScore != 0 ? 'color:red;' : 'color:gray;'}"
                      th:text="${#numbers.formatDecimal(score.team.penaltyScore, 2, 2)}">
                 </div>
