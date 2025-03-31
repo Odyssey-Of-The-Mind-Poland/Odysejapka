@@ -64,7 +64,8 @@ data class Team(
             getSpontanDay(),
             getFormattedLeague(),
             zspRow = zspRow,
-            zspSheet = zspSheet
+            zspSheet = zspSheet,
+            performanceDate = null
         )
     }
 
