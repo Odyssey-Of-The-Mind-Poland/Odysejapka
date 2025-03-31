@@ -7,12 +7,14 @@
             margin: 0;
             padding: 0;
         }
+
         .page {
             position: relative;
             width: 100%;
             height: 1014px;
             margin-bottom: 10px;
         }
+
         .footer {
             position: absolute;
             bottom: 0;
@@ -23,34 +25,41 @@
             padding: 10px 0;
             border-top: 1px solid lightgray;
         }
+
         .footer-left {
             position: absolute;
             left: 0;
         }
+
         .footer-center {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
         }
+
         .footer-right {
             position: absolute;
             right: 0;
             font-weight: bold;
         }
+
         .center {
             text-align: center;
         }
+
         .header {
             padding-top: 20px;
             font-size: 20px;
             font-weight: normal;
         }
+
         table {
             border-collapse: collapse;
-            border: none;
-            width: auto;
             margin: 20px auto 0 auto;
+            table-layout: fixed;
+            width: auto;
         }
+
         td, th {
             text-align: left;
             border: none;
@@ -60,37 +69,21 @@
             padding: 5px 10px;
             gap: 5px;
         }
+
         .gray {
             color: gray;
         }
-        /* Column specific widths */
-        th:nth-child(1), td:nth-child(1) { width: 40px; }   /* M-ce */
-        th:nth-child(2), td:nth-child(2) { width: 300px; }  /* Placowka */
-        th:nth-child(3), td:nth-child(3) { width: 80px; }   /* Przeliczone label */
-        th:nth-child(4), td:nth-child(4) { width: 70px; }   /* Problem */
-        th:nth-child(5), td:nth-child(5) { width: 70px; }   /* Styl */
-        th:nth-child(6), td:nth-child(6) { width: 70px; }   /* Spontan */
-        th:nth-child(7), td:nth-child(7) { width: 70px; }   /* Karne */
     </style>
 </head>
 <body>
 
-<!--
-  We loop through each FinalScoreGroup to generate separate pages.
-  'groups' is from the context: setVariable("groups", groups)
-  'problems' is from the context: setVariable("problems", problemService.getProblems())
--->
 <div th:each="group, pageStat : ${groups}" class="page">
-
     <div class="center">
         <div class="header">
-            <!-- Problem number -->
             <b>P</b>roblem <b th:text="${group.problem}">1</b>:
-            <!-- Look up problem name by ID -->
             <span th:each="p : ${problems}"
                   th:if="${p.id} == ${group.problem}"
                   th:text="${p.name}">N/A</span>
-            <!-- Division/League info -->
             &#160; | &#160;
             <b>G</b>rupa wiekowa <span th:text="${group.division}">1</span>
             <div th:if="${group.league} != ''">
@@ -101,11 +94,23 @@
     </div>
 
     <table>
+        <colgroup>
+            <col style="width:40px;"></col>
+            <col style="width:300px;"></col>
+            <col th:if="${group.problem} == 4" style="width:70px;"/>
+            <col style="width:70px;"></col>
+            <col style="width:70px;"></col>
+            <col style="width:70px;"></col>
+            <col style="width:70px;"></col>
+        </colgroup>
+
+
         <thead>
         <tr>
             <th>M-ce</th>
             <th>Placowka</th>
-            <th></th>
+            <!-- Conditionally show "Udźwig" column header if problem == 4 -->
+            <th th:if="${group.problem} == 4">Udźwig</th>
             <th>Problem</th>
             <th>Styl</th>
             <th>Spontan</th>
@@ -113,7 +118,6 @@
         </tr>
         </thead>
         <tbody>
-
         <tr th:each="score : ${group.teamScores}">
             <td th:text="${score.place}"></td>
             <td>
@@ -121,26 +125,39 @@
                 <br/>
                 <span class="gray" th:text="${score.team.city}"></span>
             </td>
-            <td>
-                <span>Przeliczone: </span>
+            <!-- Conditionally show balsaScore if problem == 4 -->
+            <td th:if="${group.problem} == 4">
+                <span th:text="${#numbers.formatDecimal(score.balsaScore, 2, 2)}"></span>
                 <br/>
-                <div class="gray">Surowe:</div>
+                <div class="gray"
+                     th:text="${#numbers.formatDecimal(score.team.weightHeld, 2, 2)}"></div>
             </td>
+
+            <!-- Problem -->
             <td>
                 <span th:text="${#numbers.formatDecimal(score.longTermScore, 2, 2)}"></span>
                 <br/>
-                <div class="gray" th:text="${#numbers.formatDecimal(score.team.longTermScore, 2, 2)}"/>
+                <div class="gray"
+                     th:text="${#numbers.formatDecimal(score.team.longTermScore, 2, 2)}"></div>
             </td>
+
+            <!-- Styl -->
             <td>
                 <span th:text="${#numbers.formatDecimal(score.styleScore, 2, 2)}"></span>
                 <br/>
-                <div class="gray" th:text="${#numbers.formatDecimal(score.team.styleScore, 2, 2)}" />
+                <div class="gray"
+                     th:text="${#numbers.formatDecimal(score.team.styleScore, 2, 2)}"></div>
             </td>
+
+            <!-- Spontan -->
             <td>
                 <span th:text="${#numbers.formatDecimal(score.spontaneousScore, 2, 2)}"></span>
                 <br/>
-                <div class="gray" th:text="${#numbers.formatDecimal(score.team.spontaneousScore, 2, 2)}"/>
+                <div class="gray"
+                     th:text="${#numbers.formatDecimal(score.team.spontaneousScore, 2, 2)}"></div>
             </td>
+
+            <!-- Karne -->
             <td>
                 <span th:text="${#numbers.formatDecimal(score.penalty, 2, 2)}"></span>
                 <br/>
