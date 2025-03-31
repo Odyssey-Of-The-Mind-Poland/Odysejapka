@@ -17,7 +17,7 @@ data class Performance (
   var league: String,
   var zspRow: Int?,
   var zspSheet: String?,
-  var performanceDate: LocalDate = LocalDate.of(2025, 4, 1)
+  var performanceDate: LocalDate
 ) {
 
 

@@ -4,6 +4,7 @@ import odyseja.odysejapka.age.AgeEntity
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.stage.StageEntity
+import java.time.LocalDate
 import javax.persistence.*
 
 
@@ -56,7 +57,8 @@ class PerformanceEntity(
             spontanDay = spontanDay,
             league = league,
             zspRow = zspRow,
-            zspSheet = zspSheet
+            zspSheet = zspSheet,
+            performanceDate = getPerformanceDate()
         )
     }
 
@@ -69,5 +71,11 @@ class PerformanceEntity(
             part = part,
             league = league
         )
+    }
+
+    private fun getPerformanceDate(): LocalDate {
+        if (performanceDay.lowercase().contains("sobota"))
+            return LocalDate.of(2025, 4, 5)
+        return LocalDate.of(2025, 4, 6)
     }
 }
