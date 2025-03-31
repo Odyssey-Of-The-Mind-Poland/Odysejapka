@@ -2,6 +2,7 @@ package odyseja.odysejapka.sponsor
 
 import odyseja.odysejapka.city.CityEntity
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
@@ -17,8 +18,11 @@ class SponsorController(private val sponsorService: SponsorService) {
     )
     @ResponseBody
     @Throws(IOException::class)
-    fun getImage(@PathVariable imageId: Int): ByteArray? {
-        return sponsorService.getImage(imageId)
+    fun getImage(@PathVariable imageId: Int): ResponseEntity<ByteArray> {
+        val image = sponsorService.getImage(imageId)
+        return ResponseEntity.ok()
+            .cacheControl(org.springframework.http.CacheControl.maxAge(java.time.Duration.ofHours(4)))
+            .body(image)
     }
 
     @GetMapping
