@@ -17,7 +17,7 @@ data class Performance (
   var league: String,
   var zspRow: Int?,
   var zspSheet: String?,
-  var performanceDate: LocalDate
+  var performanceDate: LocalDate?
 ) {
 
 

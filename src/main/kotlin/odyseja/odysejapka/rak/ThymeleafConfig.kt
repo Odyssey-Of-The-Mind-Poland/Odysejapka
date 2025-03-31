@@ -23,6 +23,7 @@ class ThymeleafConfig {
         templateResolver.prefix = templatePrefix
         templateResolver.suffix = ".html"
         templateResolver.templateMode = TemplateMode.HTML
+        templateResolver.characterEncoding = "UTF-8"
         templateResolver.isCacheable = false
         return templateResolver
     }

@@ -2,6 +2,8 @@ auth0:
   audience: https://app.odyseja.org
 
 spring:
+  thymeleaf:
+    encoding: UTF-8
   mvc:
     static-path-pattern: /static/**
   security:

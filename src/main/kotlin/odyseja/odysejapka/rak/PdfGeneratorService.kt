@@ -22,6 +22,9 @@ class PdfGeneratorService(
 
         builder.withHtmlContent(html, null)
         builder.toStream(outputStream)
+        builder.useFastMode()
+        builder.useFont({ this.javaClass.getResourceAsStream("/static/fonts/Ubuntu-Regular.ttf") }, "Ubuntu")
+        builder.withHtmlContent(html, null)
 
         builder.run()
 
