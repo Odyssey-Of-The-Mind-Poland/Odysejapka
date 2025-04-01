@@ -1,5 +1,7 @@
 import odyseja.odysejapka.gad.TeamsGroupKey
 import odyseja.odysejapka.timetable.Performance
+import java.text.Normalizer
+import java.util.regex.Pattern
 import kotlin.math.abs
 
 data class Team(
@@ -119,7 +121,12 @@ data class Team(
     fun getTmRow(): String {
         return "${
             getProblem()
-        },${getProblemLeague()},${membershipNumber},${shortTeamName},${city},${getBalsaScore()},${getLongTermScore()},${styleScore},${spontaneousScore},${getAbsPenaltyScore()},${membershipNumber}"
+        },${getProblemLeague()},${membershipNumber},${removePolishChars(shortTeamName)},${removePolishChars(city)},${getBalsaScore()},${getLongTermScore()},${styleScore},${spontaneousScore},${getAbsPenaltyScore()},${membershipNumber}"
+    }
+
+    private fun removePolishChars(text: String): String {
+        val normalized = Normalizer.normalize(text, Normalizer.Form.NFD)
+        return Pattern.compile("\\p{InCombiningDiacriticalMarks}+").matcher(normalized).replaceAll("")
     }
 
     private fun getBalsaScore(): String {
