@@ -30,6 +30,7 @@
             penalty: '',
             balsa: '',
             anomaly: '',
+            anomalyVerify: '',
         } as PunctationCells;
         cell[field] = value;
         data.problemPunctuationCells[index] = cell;
@@ -114,6 +115,12 @@
                              value="{data.problemPunctuationCells[i]?.anomaly ?? ''}"
                              on:input={(e) => updateProblemPunctuationCells(i, 'anomaly', e.target.value)}
                              placeholder="Komórka Anomalii"/>
+        </label>
+        <label class="ml-5">
+            Weryfikacja Anomali: <input class="input flex-grow flex-1" type="text"
+                                        value="{data.problemPunctuationCells[i]?.anomalyVerify ?? ''}"
+                                        on:input={(e) => updateProblemPunctuationCells(i, 'anomaly', e.target.value)}
+                                        placeholder="Komórka Anomalii"/>
         </label>
         <label class="ml-5">
             Czas występu:
