@@ -119,9 +119,11 @@ data class Team(
     }
 
     fun getTmRow(): String {
-        return "${
-            getProblem()
-        },${getProblemLeague()},${membershipNumber},${removePolishChars(shortTeamName)},${removePolishChars(city)},${getBalsaScore()},${getLongTermScore()},${styleScore},${spontaneousScore},${getAbsPenaltyScore()},${membershipNumber}"
+        return "${getProblem()},${getProblemLeague()},${membershipNumber},${removePolishChars(shortTeamName)},${
+            removePolishChars(
+                city
+            )
+        },${getBalsaScore()},${getLongTermScore()},${styleScore},${spontaneousScore},${getAbsPenaltyScore()},${membershipNumber}"
     }
 
     private fun removePolishChars(text: String): String {
