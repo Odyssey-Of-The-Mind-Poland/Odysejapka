@@ -9,8 +9,6 @@ import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
 import odyseja.odysejapka.drive.SpontanGroups
 import odyseja.odysejapka.drive.ZspSheetsAdapter
-import odyseja.odysejapka.timetable.Performance
-import odyseja.odysejapka.timetable.TimeTableService
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class SakRunner(
@@ -81,7 +79,7 @@ internal class SakRunner(
         sheetsAdapter.writeValue(
             zspId,
             team.zspSheet!!,
-            "R${team.zspRow}",
+            "S${team.zspRow}",
             getZspValue(sheetId, sheetName, "${pointsCell.first}${pointsCell.second}")
         )
         processedTeamsCount.incrementAndGet()
