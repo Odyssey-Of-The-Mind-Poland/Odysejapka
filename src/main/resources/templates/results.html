@@ -130,7 +130,7 @@
             </td>
             <td>
                 <span th:text="${score.teamName}"></span>
-                <br th:if="${group.problem} != 4"/>
+                <br th:if="(${#strings.length(score.teamName)} <= 35)"/>
                 <span class="gray" th:text="${score.team.city}"></span>
             </td>
             <td>
