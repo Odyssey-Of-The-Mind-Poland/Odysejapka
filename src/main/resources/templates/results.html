@@ -134,9 +134,11 @@
                 <span class="gray" th:unless="${score.team.ranatra}">&#160;</span>
             </td>
             <td>
-                <span th:class="${score.place <= 2 ? 'top-place' : ''}" th:text="${score.teamName}"></span>
+                <span th:class="${score.place <= 2 or score.team.ranatra ? 'top-place' : ''}"
+                      th:text="${score.teamName}"></span>
                 <br th:if="(${#strings.length(score.teamName)} <= 35)"/>
-                <span th:class="${score.place <= 2 ? 'top-place' : 'gray'}" th:text="${score.team.city}"></span>
+                <span th:class="${score.place <= 2 or score.team.ranatra? 'top-place' : 'gray'}"
+                      th:text="${score.team.city}"></span>
             </td>
             <td>
                 <span>Przeliczone:</span>
