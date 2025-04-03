@@ -1,6 +1,5 @@
 package odyseja.odysejapka.sponsor
 
-import odyseja.odysejapka.city.CityEntity
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -49,9 +48,5 @@ class SponsorController(private val sponsorService: SponsorService) {
 
     data class UploadSponsorRequest(
         val row: Int
-    ) {
-        fun toSponsorEntity(image: ByteArray, cityEntity: CityEntity): SponsorEntity {
-            return SponsorEntity(0, image, row, 0, cityEntity)
-        }
-    }
+    )
 }

@@ -1,6 +1,7 @@
 package odyseja.odysejapka.sponsor
 
 import odyseja.odysejapka.change.ChangeService
+import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -51,7 +52,7 @@ class SponsorService(
     }
 
     val city = cityRepository.findFirstById(cityId)
-    val sponsor = sponsorRepository.save(uploadSponsorRequest.toSponsorEntity(file.bytes, city))
+    val sponsor = sponsorRepository.save(toSponsorEntity(file.bytes, city, uploadSponsorRequest.row))
 
     changeService.updateVersion()
     return sponsor.toSponsor()
@@ -61,5 +62,10 @@ class SponsorService(
     sponsorRepository.deleteById(imageId)
 
     changeService.updateVersion()
+  }
+
+  private fun toSponsorEntity(image: ByteArray, cityEntity: CityEntity, row: Int): SponsorEntity {
+    val lastColumn = sponsorRepository.findMaxColumnOrderByRowOrderAndCity_Id(row, cityEntity.id) ?: -1
+    return SponsorEntity(0, image, row, lastColumn + 1, cityEntity)
   }
 }
