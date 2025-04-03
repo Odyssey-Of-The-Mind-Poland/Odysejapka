@@ -63,18 +63,18 @@ class ZspSheetsAdapter(
     }
 
     fun getTeams(sheetName: String): Teams {
-        val values = sheetAdapter.getValue(zspId, sheetName, "A1:S")
+        val values = sheetAdapter.getValue(zspId, sheetName, "A1:U")
         val teams = mutableListOf<Team>()
         var judges = ""
         var day = ""
         var stage = 1
         for ((i, row) in values.withIndex()) {
-            if (row.size > 0 && isJudge(row[0])){
-                if (row.size == 1){
-                    judges = "" // For Regional Finals Judges names are not printed onto the scoring sheet => Judges section is empty = we don't print it
+            if (row.size > 0 && isJudge(row[0])) {
+                if (row.size == 1) {
+                    judges =
+                        "" // For Regional Finals Judges names are not printed onto the scoring sheet => Judges section is empty = we don't print it
                     break
-                }
-                else if (row.size > 1){
+                } else if (row.size > 1) {
                     judges = row[1] // For Country Finals Judges names will be used
                     break
                 }
@@ -93,25 +93,26 @@ class ZspSheetsAdapter(
             }
 
             val team = Team(
-                    performanceHour = row[0],
-                    spontanHour = row[1],
-                    code = row[2],
-                    membershipNumber = row[3],
-                    league = row[4],
-                    part = row[5],
-                    teamName = row[6],
-                    shortTeamName = row[7],
-                    city = row[8],
-                    zspRow = i + 1,
-                    day = day,
-                    stage = stage,
-                    zspSheet = sheetName,
-                    longTermScore = getNumericalValue(row, 10),
-                    styleScore = getNumericalValue(row, 11),
-                    penaltyScore = getNumericalValue(row, 12),
-                    weightHeld = getNumericalValue(row, 13),
+                performanceHour = row[0],
+                spontanHour = row[1],
+                code = row[2],
+                membershipNumber = row[3],
+                league = row[4],
+                part = row[5],
+                teamName = row[6],
+                shortTeamName = row[7],
+                city = row[8],
+                zspRow = i + 1,
+                day = day,
+                stage = stage,
+                zspSheet = sheetName,
+                longTermScore = getNumericalValue(row, 10),
+                styleScore = getNumericalValue(row, 11),
+                penaltyScore = getNumericalValue(row, 12),
+                weightHeld = getNumericalValue(row, 13),
                 spontaneousScore = getNumericalValue(row, 18),
-                )
+                ranatra = getRanatra(row)
+            )
 
             teams.add(
                 team
@@ -120,6 +121,13 @@ class ZspSheetsAdapter(
 
         }
         return Teams(judges, teams)
+    }
+
+    private fun getRanatra(row: MutableList<String>): Boolean {
+        if (row.size <= 20) {
+            return false
+        }
+        return row[20] == "PRAWDA"
     }
 
     private fun isJudge(judge: String): Boolean {

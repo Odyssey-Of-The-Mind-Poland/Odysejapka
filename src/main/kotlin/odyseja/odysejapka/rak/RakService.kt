@@ -29,7 +29,7 @@ class RakService {
         println("${teams.filter { it.isForeign() }.size} foreign teams")
 
         for (team in teams) {
-            if (team.isJunior() || team.isForeign()) {
+            if (team.isOutsideTournament()) {
                 println("Skipping ${team.teamName}")
                 continue
             }

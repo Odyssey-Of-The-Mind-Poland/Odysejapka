@@ -22,7 +22,8 @@ data class Team(
     var styleScore: Float?,
     var penaltyScore: Float?,
     var weightHeld: Float?,
-    var spontaneousScore: Float?
+    var spontaneousScore: Float?,
+    var ranatra: Boolean
 ) {
     fun getFileName(): String {
         return "$`code`_$teamName"
@@ -83,6 +84,10 @@ data class Team(
         return if (teamAndCity.size > 1) {
             teamAndCity[teamAndCity.size - 1]
         } else "-"
+    }
+
+    fun isOutsideTournament(): Boolean {
+        return isJunior() || isForeigner()
     }
 
     fun isJunior(): Boolean {
@@ -151,7 +156,7 @@ data class Team(
     }
 
     fun isForeigner(): Boolean {
-        for (foreigner in listOf("spain", "china")) {
+        for (foreigner in listOf("spain", "china", "slovakia")) {
             if (city.lowercase().contains(foreigner) || teamName.lowercase().contains(foreigner)) {
                 return true
             }

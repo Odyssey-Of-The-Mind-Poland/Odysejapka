@@ -7,6 +7,7 @@ data class TeamsGroups(val groups: List<TeamsGroup>) {
     companion object {
         fun fromTeams(teams: List<Team>): TeamsGroups {
             val grouped = teams
+                .filter { !it.isOutsideTournament() }
                 .groupBy { it.getGroup() }
                 .map { TeamsGroup(it.key, it.value) }
             return TeamsGroups(grouped)

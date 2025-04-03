@@ -30,7 +30,8 @@ class CsvTeamService {
                 spontaneousScore = row.spontaneousRaw,
                 styleScore = row.styleRaw,
                 penaltyScore = row.penalty,
-                weightHeld = row.weightHeld
+                weightHeld = row.weightHeld,
+                ranatra = row.problem * row.division % 5 == 0
             )
         }
     }
