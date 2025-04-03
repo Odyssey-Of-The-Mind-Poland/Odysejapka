@@ -130,7 +130,8 @@
             <td>
                 <span th:class="${score.place <= 2 ? 'top-place' : ''}" th:text="${score.place}"></span>
                 <br/>
-                <span class="gray">&#160;</span>
+                <span style="color: #ff6500;" th:if="${score.team.ranatra}">[RF]</span>
+                <span class="gray" th:unless="${score.team.ranatra}">&#160;</span>
             </td>
             <td>
                 <span th:class="${score.place <= 2 ? 'top-place' : ''}" th:text="${score.teamName}"></span>

@@ -50,5 +50,5 @@ data class FinalTeamScore(
     val styleScore: Double,
     val penalty: Double,
     val teamName: String,
-    val total: Double
+    val total: Double,
 )

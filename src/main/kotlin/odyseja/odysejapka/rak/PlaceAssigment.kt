@@ -17,7 +17,7 @@ internal class PlaceAssigment(private val computedScores: List<ComputedTeamScore
                 penalty = it.penalty,
                 teamName = it.team.teamName,
                 total = it.total,
-                team = it.team,
+                team = it.team
             )
         }
     }

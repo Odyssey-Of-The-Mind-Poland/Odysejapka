@@ -127,7 +127,7 @@ class ZspSheetsAdapter(
         if (row.size <= 20) {
             return false
         }
-        return row[20] == "PRAWDA"
+        return row[20] == "PRAWDA" || row[20] == "TRUE"
     }
 
     private fun isJudge(judge: String): Boolean {
