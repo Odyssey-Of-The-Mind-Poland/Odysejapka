@@ -76,7 +76,8 @@
         }
 
         .top-place {
-            color: blue;
+            color: #0000cc;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -90,7 +91,7 @@
                   th:if="${p.id} == ${group.problem}"
                   th:text="${p.name}">N/A</span>
             &#160; | &#160;
-            <b>G</b>rupa wiekowa <span th:text="${group.division}">1</span>
+            <b>G</b>rupa wiekowa <b><span th:text="${group.division}">1</span></b>
             <div th:if="${group.league} != ''">
                 &#160; | &#160;
                 <span th:text="${group.league}">Some League</span>
@@ -181,7 +182,7 @@
                 <span th:text="${#numbers.formatDecimal(score.penalty, 2, 2)}"></span>
 
                 <div th:style="${score.team.penaltyScore != 0 ? 'color:red;' : 'color:gray;'}"
-                     th:text="${#numbers.formatDecimal(score.team.penaltyScore, 2, 2)}">
+                     th:text="${#numbers.formatDecimal(score.team.penaltyScore, 2, 0)}">
                 </div>
             </td>
         </tr>
