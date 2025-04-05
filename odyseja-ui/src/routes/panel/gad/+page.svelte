@@ -119,8 +119,8 @@
         <label class="ml-5">
             Weryfikacja Anomali: <input class="input flex-grow flex-1" type="text"
                                         value="{data.problemPunctuationCells[i]?.anomalyVerify ?? ''}"
-                                        on:input={(e) => updateProblemPunctuationCells(i, 'anomaly', e.target.value)}
-                                        placeholder="Komórka Anomalii"/>
+                                        on:input={(e) => updateProblemPunctuationCells(i, 'anomalyVerify', e.target.value)}
+                                        placeholder="Weryfikacja Anomali"/>
         </label>
         <label class="ml-5">
             Czas występu:

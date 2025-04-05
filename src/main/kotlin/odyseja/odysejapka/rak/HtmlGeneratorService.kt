@@ -10,7 +10,8 @@ import org.thymeleaf.context.Context
 class HtmlGeneratorService(private val templateEngine: TemplateEngine, private val problemService: ProblemService) {
 
     fun generateHtmlResults(teams: List<Team>): String {
-        val initialGroups: List<FinalScoreGroup> = RakCalculator().calculateScores(teams)
+        val initialGroups: List<FinalScoreGroup> =
+            RakCalculator().calculateScores(teams).sortedWith(compareBy({ it.problem }, { it.division }))
         val splitGroups = initialGroups.flatMap { splitLargeGroup(it) }
         val context = Context().apply {
             setVariable("groups", splitGroups)

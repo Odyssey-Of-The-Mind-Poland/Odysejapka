@@ -136,8 +136,8 @@
             </td>
             <td>
                 <span th:class="${score.place <= 2 or score.team.ranatra ? 'top-place' : ''}"
-                      th:text="${score.teamName}"></span>
-                <br th:if="(${#strings.length(score.teamName)} <= 35)"/>
+                      th:text="${score.team.shortTeamName}"></span>
+                <br th:if="(${#strings.length(score.team.shortTeamName)} <= 37)"/>
                 <span th:class="${score.place <= 2 or score.team.ranatra? 'top-place' : 'gray'}"
                       th:text="${score.team.city}"></span>
             </td>
