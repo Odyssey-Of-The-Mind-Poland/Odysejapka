@@ -1,4 +1,3 @@
-
 <script lang="ts">
     import {logout} from "../../authService";
     import {AppShell, LightSwitch, Toast} from "@skeletonlabs/skeleton";
@@ -17,6 +16,7 @@
         {label: 'GAD', route: '/panel/gad ', icon: 'ic:outline-curtains'},
         {label: 'SAK', route: '/panel/sak ', icon: 'ic:outline-curtains'},
         {label: 'RAK', route: '/panel/rak ', icon: 'ic:outline-curtains'},
+        {label: 'ZSP', route: '/panel/zsp', icon: 'ic:round-leaderboard'},
         {label: 'Fixer', route: '/panel/fixer ', icon: 'fluent-mdl2:repair'}
     ];
 

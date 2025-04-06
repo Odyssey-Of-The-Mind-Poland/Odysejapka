@@ -173,3 +173,41 @@ export enum Status {
 export type ZspIdRequest = {
     zspId: String
 }
+
+// ZSP Team types
+export type ZspTeam = {
+    performanceHour: string;
+    spontanHour: string;
+    code: string;
+    membershipNumber: string;
+    league: string;
+    part: string;
+    teamName: string;
+    shortTeamName: string;
+    city: string;
+    zspRow: number;
+    day: string;
+    stage: number;
+    zspSheet: string;
+    longTermScore: number | null;
+    styleScore: number | null;
+    penaltyScore: number | null;
+    weightHeld: number | null;
+    spontaneousScore: number | null;
+    ranatra: boolean;
+}
+
+export type ZspTeamGroup = {
+    problem: number;
+    age: number;
+    league: string;
+    teams: ZspTeam[];
+    allTeamsCount: number;
+    scoredTeamsCount: number;
+    showDetails?: boolean;
+}
+
+export type ZspResponse = {
+    teams: Record<number, ZspTeamGroup[]>;
+    lastFetchTime: string;
+}

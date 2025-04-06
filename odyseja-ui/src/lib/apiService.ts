@@ -2,7 +2,7 @@ import type {ToastSettings} from '@skeletonlabs/skeleton';
 import {toastStore} from '@skeletonlabs/skeleton';
 import {env} from '$env/dynamic/public';
 import {city} from "$lib/cityStore.js";
-import type {City} from "$lib/types";
+import type {City, ZspResponse} from "$lib/types";
 
 export const BASE_URL = env.PUBLIC_BASE_URL || "http://localhost:8081";
 
@@ -99,6 +99,27 @@ function showToast(message: string, background: string) {
 
 export function getBearer(): string {
     return 'Bearer ' + getCookie("access_token")
+}
+
+export async function getZspTeams(): Promise<ZspResponse> {
+    try {
+        const response = await fetch(`${BASE_URL}/api/zsp/teams/grouped`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching ZSP teams:', error);
+        showSadToast('Nie udało się pobrać zespołów ZSP');
+        throw error;
+    }
 }
 
 // @ts-ignore
