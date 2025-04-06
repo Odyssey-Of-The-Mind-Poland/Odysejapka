@@ -182,7 +182,7 @@
                 <span th:text="${#numbers.formatDecimal(score.total, 2, 2)}"></span>
 
                 <div th:style="${score.team.penaltyScore != 0 ? 'color:red;' : 'color:gray;'}"
-                     th:text="${#numbers.formatDecimal(score.team.penaltyScore, 2, 0)}">
+                     th:text="${#numbers.formatDecimal(score.team.penaltyScore, 0, 0)}">
                 </div>
             </td>
         </tr>
