@@ -1,7 +1,6 @@
 import odyseja.odysejapka.gad.TeamsGroupKey
 import odyseja.odysejapka.timetable.Performance
-import java.text.Normalizer
-import java.util.regex.Pattern
+import org.apache.commons.lang3.StringUtils
 import kotlin.math.abs
 
 data class Team(
@@ -132,8 +131,7 @@ data class Team(
     }
 
     private fun removePolishChars(text: String): String {
-        val normalized = Normalizer.normalize(text, Normalizer.Form.NFD)
-        return Pattern.compile("\\p{InCombiningDiacriticalMarks}+").matcher(normalized).replaceAll("")
+        return StringUtils.stripAccents(text)
     }
 
     private fun getBalsaScore(): String {
