@@ -1,7 +1,9 @@
 import odyseja.odysejapka.gad.TeamsGroupKey
 import odyseja.odysejapka.timetable.Performance
 import org.apache.commons.lang3.StringUtils
+import java.util.UUID
 import kotlin.math.abs
+import kotlin.random.Random
 
 data class Team(
     val performanceHour: String,
@@ -123,11 +125,12 @@ data class Team(
     }
 
     fun getTmRow(): String {
-        return "${getProblem()},${getProblemLeague()},${membershipNumber},${removePolishChars(shortTeamName)},${
+        val adjustedMemNbr = Random.nextInt(0, 99999)
+        return "${getProblem()},${getProblemLeague()},${adjustedMemNbr},${removePolishChars(shortTeamName)},${
             removePolishChars(
                 city
             )
-        },${getBalsaScore()},${getLongTermScore()},${styleScore},${spontaneousScore},${getAbsPenaltyScore()},${membershipNumber}"
+        },${getBalsaScore()},${getLongTermScore()},${styleScore},${spontaneousScore},${getAbsPenaltyScore()},${adjustedMemNbr}"
     }
 
     private fun removePolishChars(text: String): String {
