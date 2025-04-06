@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 @EnableScheduling
 class ZspScheduler(private val zspService: ZspService) {
 
-    @Scheduled(fixedRate = 300000)
+//    @Scheduled(fixedRate = 300000)
     fun scheduleTeamsFetch() {
         println("refetching teams")
         zspService.refreshTeams()
