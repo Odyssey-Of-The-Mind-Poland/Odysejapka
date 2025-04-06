@@ -1,6 +1,8 @@
 package odyseja.odysejapka.rak
 
 import Team
+import java.util.*
+import kotlin.math.floor
 
 internal class TeamScorer(private val team: Team) {
 
@@ -32,6 +34,8 @@ internal class TeamScorer(private val team: Team) {
 
     private fun scale(raw: Float, maxRaw: Float, maxScaled: Double): Double {
         if (maxRaw <= 0f) return 0.0
-        return (raw / maxRaw) * maxScaled
+        val result = (raw / maxRaw) * maxScaled
+        return String.format(Locale.US, "%.2f", result).toDouble()
     }
+
 }
