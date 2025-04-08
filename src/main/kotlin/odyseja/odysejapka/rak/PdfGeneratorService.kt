@@ -11,8 +11,13 @@ class PdfGeneratorService(
     private val htmlGeneratorService: HtmlGeneratorService
 ) {
 
+    fun generateShortPdf(teams: List<Team>): ByteArray {
+        val html =  htmlGeneratorService.generateShortResults(teams)
+        return convertHtmlToPdf(html)
+    }
+
     fun generatePdf(teams: List<Team>): ByteArray {
-        var html = htmlGeneratorService.generateHtmlResults(teams)
+        val html = htmlGeneratorService.generateHtmlResults(teams)
         return convertHtmlToPdf(html)
     }
 

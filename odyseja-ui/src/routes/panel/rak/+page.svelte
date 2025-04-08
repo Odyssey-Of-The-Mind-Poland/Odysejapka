@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {generateCsv, generateHtmlResults, generatePdfResults} from './rak';
+    import {generateCsv, generateHtmlResults, generatePdfResults, generateShortPdfResults} from './rak';
     import {ProgressRadial} from '@skeletonlabs/skeleton';
 
     let zspId = "";
@@ -33,6 +33,7 @@
     const downloadCsv = () => downloadFile(generateCsv, 'text/csv', 'csv');
     const downloadHtmlResults = () => downloadFile(generateHtmlResults, 'text/html', 'html');
     const downloadPdfResults = () => downloadFile(generatePdfResults, 'application/pdf', 'pdf');
+    const downloadShortPdfResults = () => downloadFile(generateShortPdfResults, 'application/pdf', 'pdf');
 </script>
 
 <div class="flex flex-col gap-5">
@@ -50,6 +51,9 @@
             </button>
             <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadPdfResults} disabled={isLoading}>
                 Generuj pdf results
+            </button>
+            <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadShortPdfResults} disabled={isLoading}>
+                Generuj skrócony pdf
             </button>
             {#if isLoading}
                 <ProgressRadial width="w-6" />

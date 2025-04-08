@@ -54,6 +54,18 @@ class RakController(
             .body(pdfBytes)
     }
 
+    @PostMapping("/download-short-pdf")
+    fun downloadShortPdf(
+        @RequestBody request: ZspIdRequest
+    ): ResponseEntity<ByteArray> {
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
+        val pdfBytes = pdfGeneratorService.generateShortPdf(sheetsAdapter.getAllTeams())
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results-short.pdf\"")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdfBytes)
+    }
+
     @PostMapping("/download-mocked-pdf")
     fun downloadMockedPdf(): ResponseEntity<ByteArray> {
         val pdfBytes = mockedPdfService.generatePdf()
