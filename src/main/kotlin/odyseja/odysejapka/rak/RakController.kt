@@ -4,7 +4,10 @@ import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 
 data class ZspIdRequest(
@@ -14,7 +17,8 @@ data class ZspIdRequest(
 @RestController
 @RequestMapping("/api/v1/rak")
 class RakController(
-    private val rakService: RakService,
+    private val rakService: TmCsvService,
+    private val csvService: CsvService,
     private val htmlGeneratorService: HtmlGeneratorService,
     private val pdfGeneratorService: PdfGeneratorService,
     private val mockedPdfService: MockedPdfService
@@ -30,7 +34,7 @@ class RakController(
 
     @PostMapping("/generate-detailed")
     fun generateDetailedCsv(@RequestBody request: ZspIdRequest): ResponseEntity<ByteArray> {
-        val csvData = rakService.generateDetailedCsv(request.zspId)
+        val csvData = csvService.generateCsv(request.zspId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=detailed_results.csv")
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
