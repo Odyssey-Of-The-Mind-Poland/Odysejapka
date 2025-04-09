@@ -9,7 +9,7 @@ import java.nio.charset.Charset
 
 
 @Service
-class RakService {
+class TmCsvService {
 
     fun generateCsv(zspId: String): ByteArray {
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)

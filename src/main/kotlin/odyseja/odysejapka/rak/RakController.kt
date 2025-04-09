@@ -1,12 +1,10 @@
 package odyseja.odysejapka.rak
 
-import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.io.ByteArrayOutputStream
 
 
 data class ZspIdRequest(
@@ -26,6 +24,15 @@ class RakController(
         val csvData = rakService.generateCsv(request.zspId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=your_file.csv")
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .body(csvData)
+    }
+
+    @PostMapping("/generate-detailed")
+    fun generateDetailedCsv(@RequestBody request: ZspIdRequest): ResponseEntity<ByteArray> {
+        val csvData = rakService.generateDetailedCsv(request.zspId)
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=detailed_results.csv")
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .body(csvData)
     }

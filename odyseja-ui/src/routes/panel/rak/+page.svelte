@@ -1,5 +1,11 @@
 <script lang="ts">
-    import {generateCsv, generateHtmlResults, generatePdfResults, generateShortPdfResults} from './rak';
+    import {
+        generateCsv,
+        generateDetailedCsv,
+        generateHtmlResults,
+        generatePdfResults,
+        generateShortPdfResults
+    } from './rak';
     import {ProgressRadial} from '@skeletonlabs/skeleton';
 
     let zspId = "";
@@ -31,6 +37,7 @@
     }
 
     const downloadCsv = () => downloadFile(generateCsv, 'text/csv', 'csv');
+    const downloadDetailedCsv = () => downloadFile(generateDetailedCsv, 'text/csv', 'csv');
     const downloadHtmlResults = () => downloadFile(generateHtmlResults, 'text/html', 'html');
     const downloadPdfResults = () => downloadFile(generatePdfResults, 'application/pdf', 'pdf');
     const downloadShortPdfResults = () => downloadFile(generateShortPdfResults, 'application/pdf', 'pdf');
@@ -44,7 +51,11 @@
                type="text"/>
         <div class="flex gap-3 items-center">
             <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadCsv} disabled={isLoading}>
-                Generuj csv
+                Generuj TM csv
+            </button>
+            <button class="btn btn-md variant-filled-secondary h-10" disabled={isLoading}
+                    on:click={downloadDetailedCsv}>
+                Generuj szczegółowy csv
             </button>
             <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadHtmlResults} disabled={isLoading}>
                 Generuj html results

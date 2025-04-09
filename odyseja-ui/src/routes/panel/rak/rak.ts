@@ -72,3 +72,14 @@ export async function generateShortPdfResults(zspIdRequest: string) {
     showHappyToast('Csv generated')
     return response.arrayBuffer();
 }
+
+export async function generateDetailedCsv(zspId: string): Promise<ArrayBuffer> {
+    const response = await fetch('/api/v1/rak/generate-detailed', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({zspId})
+    });
+    return response.arrayBuffer();
+}
