@@ -1,6 +1,5 @@
 package odyseja.odysejapka.form
 
-import odyseja.odysejapka.problem.ProblemService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -31,5 +30,15 @@ class FormController(private val formService: FormService) {
     @GetMapping("/{problem}/judge-count")
     fun getJudgeCount(@PathVariable problem: Int): Int {
         return formService.getJudgeCount(problem)
+    }
+
+    @PutMapping("/{performanceId}/result")
+    fun setTeamResults(@PathVariable performanceId: Int, @RequestBody result: PerformanceResultsRequest) {
+        formService.setTeamResults(performanceId, result)
+    }
+
+    @GetMapping("/{performanceId}/result")
+    fun getTeamResults(@PathVariable performanceId: Int): List<FormResult> {
+        return formService.getTeamResults(performanceId)
     }
 }

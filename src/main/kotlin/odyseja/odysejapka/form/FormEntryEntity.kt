@@ -35,6 +35,6 @@ class FormEntryEntity {
     }
 
     fun toFormEntry(): FormEntry {
-        return FormEntry(name, calcType)
+        return FormEntry(id, name, calcType)
     }
 }

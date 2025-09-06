@@ -138,4 +138,10 @@ class TimeTableService(
     fun deleteCity(cityId: Int) {
         timeTableRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
     }
+
+    fun getPerformance(performanceId: Int): Performance {
+        return (timeTableRepository.findById(performanceId)
+            .orElseThrow { IllegalArgumentException("Performance $performanceId not found") }
+            ?.toPerformance() ?: IllegalArgumentException("Performance $performanceId not found")) as Performance
+    }
 }

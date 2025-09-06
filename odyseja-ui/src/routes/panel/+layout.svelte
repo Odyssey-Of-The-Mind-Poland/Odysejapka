@@ -18,7 +18,8 @@
         {label: 'RAK', route: '/panel/rak ', icon: 'ic:outline-curtains'},
         {label: 'ZSP', route: '/panel/zsp', icon: 'ic:round-leaderboard'},
         {label: 'Fixer', route: '/panel/fixer ', icon: 'fluent-mdl2:repair'},
-        {label: 'Forms', route: '/panel/form ', icon: 'fluent-mdl2:repair'}
+        {label: 'Forms', route: '/panel/form ', icon: 'fluent-mdl2:repair'},
+        {label: 'DT Forms', route: '/panel/form/teams ', icon: 'fluent-mdl2:repair'}
     ];
 
     export let data: Cities

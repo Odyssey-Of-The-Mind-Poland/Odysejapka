@@ -58,7 +58,6 @@
             const data = await get(`/api/v1/form/${problem}/judge-count`);
             judgeCount = Number.isFinite(Number(data)) ? Number(data) : 0;
         } catch (e: any) {
-            // don't nuke existing entries error state unless this fails alone
             error = e?.message ?? 'Failed to load judge count.';
             judgeCount = 0;
         } finally {

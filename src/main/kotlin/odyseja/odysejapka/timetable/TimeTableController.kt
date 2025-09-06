@@ -16,6 +16,11 @@ class TimeTableController(
         return cityId?.let { timeTableService.getByCity(cityId) } ?: timeTableService.getFinals()
     }
 
+    @GetMapping("{performanceId}")
+    fun getPerformance(@PathVariable performanceId: Int): Performance {
+        return timeTableService.getPerformance(performanceId)
+    }
+
     @Secured("ROLE_ADMIN")
     @PostMapping("/load")
     @ResponseBody
