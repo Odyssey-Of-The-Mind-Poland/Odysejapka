@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { get, put } from '$lib/apiService';
+    import { get, put, post } from '$lib/apiService'; // ⬅ add `post`
 
     type CalcType = 'SUM' | 'AVERAGE';
     type FormEntry = { name: string; calcType: CalcType };
@@ -11,6 +11,11 @@
     let error: string | null = null;
     let success = false;
 
+    // judge-specific state
+    let loadingJudge = false;
+    let savingJudge = false;
+    let judgeCount = 0;
+
     // problem selector (select binds strings; keep a numeric mirror)
     let selectedProblem = '0';
     $: selectedProblemNum = Number(selectedProblem);
@@ -20,12 +25,16 @@
     let mounted = false;
     onMount(async () => {
         mounted = true;
-        await loadEntries(selectedProblemNum);
+        await Promise.all([
+            loadEntries(selectedProblemNum),
+            loadJudgeCount(selectedProblemNum),
+        ]);
     });
 
     // Refetch when the problem changes
     $: if (mounted) {
         loadEntries(selectedProblemNum);
+        loadJudgeCount(selectedProblemNum);
     }
 
     async function loadEntries(problem: number) {
@@ -43,6 +52,20 @@
         }
     }
 
+    async function loadJudgeCount(problem: number) {
+        loadingJudge = true;
+        try {
+            const data = await get(`/api/v1/form/${problem}/judge-count`);
+            judgeCount = Number.isFinite(Number(data)) ? Number(data) : 0;
+        } catch (e: any) {
+            // don't nuke existing entries error state unless this fails alone
+            error = e?.message ?? 'Failed to load judge count.';
+            judgeCount = 0;
+        } finally {
+            loadingJudge = false;
+        }
+    }
+
     function addEntry() {
         entries = [...entries, { name: '', calcType: 'SUM' }];
     }
@@ -56,12 +79,27 @@
         error = null;
         success = false;
         try {
-             await put(entries, `/api/v1/form/${selectedProblemNum}`, 'Form entries saved.');
+            await put(entries, `/api/v1/form/${selectedProblemNum}`, 'Form entries saved.');
             success = true;
         } catch (e: any) {
             error = e?.message ?? 'Failed to save form entries.';
         } finally {
             saving = false;
+        }
+    }
+
+    async function saveJudge() {
+        savingJudge = true;
+        error = null;
+        success = false;
+        try {
+            // backend expects a JSON number in the body
+            await post(Number(judgeCount), `/api/v1/form/${selectedProblemNum}/judge-count`, 'Judge count saved.');
+            success = true;
+        } catch (e: any) {
+            error = e?.message ?? 'Failed to save judge count.';
+        } finally {
+            savingJudge = false;
         }
     }
 </script>
@@ -84,18 +122,43 @@
         </label>
     </div>
 
-    <!-- Alerts -->
-    {#if loading}
+
+    {#if loading || loadingJudge}
         <div class="p-3 rounded preset-tonal-surface">Loading…</div>
     {/if}
     {#if error}
         <div class="p-3 rounded preset-tonal-error">{error}</div>
     {/if}
-    {#if success}
-        <div class="p-3 rounded preset-tonal-success">Saved!</div>
-    {/if}
+    <!-- Judges section -->
+    <section class="space-y-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold">Judges</h2>
+        </div>
 
+        <div class="flex items-center gap-3">
+            <label class="label">
+                <span class="label-text">Judge count</span>
+                <input
+                        class="input w-28"
+                        type="number"
+                        min="0"
+                        step="1"
+                        bind:value={judgeCount}
+                        on:change={() => (judgeCount = Number(judgeCount))}
+                        aria-label="Judge count" />
+            </label>
 
+            <button
+                    type="button"
+                    class="btn variant-filled-primary"
+                    on:click={saveJudge}
+                    disabled={savingJudge || loadingJudge}>
+                {#if savingJudge}Saving…{/if}{#if !savingJudge}Save judge count{/if}
+            </button>
+        </div>
+    </section>
+
+    <!-- Entries section (unchanged) -->
     <section class="space-y-4">
         <div class="flex items-center justify-between">
             <h2 class="text-lg font-semibold">Entries</h2>
@@ -151,4 +214,3 @@
         </button>
     </div>
 </div>
-
