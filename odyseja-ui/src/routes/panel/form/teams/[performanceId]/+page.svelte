@@ -4,7 +4,9 @@
     import { get, put } from '$lib/apiService';
 
     type CalcType = 'SUM' | 'AVERAGE';
-    type FormEntry = { id?: number; name: string; calcType: CalcType };
+    type FormCategory = 'DT' | 'STYLE' | 'PENALTY';
+    // entries from backend always have an id + category here
+    type FormEntry = { id: number; name: string; calcType: CalcType; category: FormCategory };
     type FormResult = { entryId: number; judge: number; result: number };
     type Performance = {
         id: number;
@@ -47,7 +49,7 @@
             perf = await get(`/timeTable/${performanceId}`);
             const problem = Number(perf?.problem ?? 0);
 
-            // 2) form entries for problem
+            // 2) form entries for problem (now include category)
             entries = await get(`/api/v1/form/${problem}`);
 
             // 3) judge count for problem
@@ -88,14 +90,7 @@
         const n = Number(value);
         if (Number.isFinite(n)) {
             valueMap[keyOf(entryId, judge)] = n;
-        } else {
-            // leave previous number if user clears mid-typing; do nothing
         }
-    }
-
-    function getCell(entryId: number, judge: number): number | '' {
-        const v = valueMap[keyOf(entryId, judge)];
-        return Number.isFinite(v) ? v : '';
     }
 
     function aggregate(entry: FormEntry): number {
@@ -107,6 +102,21 @@
         if (vals.length === 0) return 0;
         const sum = vals.reduce((a, b) => a + b, 0);
         return entry.calcType === 'AVERAGE' ? sum / vals.length : sum;
+    }
+
+    // ---- Grouping & subtotals ----
+    const categories: { key: FormCategory; title: string }[] = [
+        { key: 'DT', title: 'DT Entries' },
+        { key: 'STYLE', title: 'Style Entries' },
+        { key: 'PENALTY', title: 'Penalty Entries' }
+    ];
+
+    function entriesFor(cat: FormCategory): FormEntry[] {
+        return entries.filter(e => e.category === cat);
+    }
+
+    function categoryTotal(cat: FormCategory): number {
+        return entriesFor(cat).reduce((acc, e) => acc + aggregate(e), 0);
     }
 
     async function save() {
@@ -166,47 +176,59 @@
     {/if}
 
     {#if !loading && entries.length > 0}
-        <section class="space-y-4">
-            <div class="flex items-center justify-between">
-                <h2 class="text-lg font-semibold">Results</h2>
-                <div class="opacity-70">Judges: {judgeCount}</div>
-            </div>
+        {#each categories as c (c.key)}
+            <section class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold">{c.title}</h2>
+                </div>
 
-            <!-- Header row -->
-            <div class="grid gap-2 items-center"
-                 style="grid-template-columns: minmax(180px,1fr) repeat({Math.max(judgeCount,1)}, 120px) 140px;">
-                <div class="px-2 text-sm opacity-70">Entry</div>
-                {#each Array(judgeCount) as _, j}
-                    <div class="px-2 text-sm opacity-70">Judge {j + 1}</div>
-                {/each}
-                <div class="px-2 text-sm opacity-70">Result ({entries[0]?.calcType ?? 'SUM'})</div>
-            </div>
+                <!-- Header row -->
+                <div class="grid gap-2 items-center"
+                     style="grid-template-columns: minmax(200px,1fr) repeat({Math.max(judgeCount,1)}, 120px) 160px;">
+                    <div class="px-2 text-sm opacity-70">Entry</div>
+                    {#each Array(judgeCount) as _, j}
+                        <div class="px-2 text-sm opacity-70">Judge {j + 1}</div>
+                    {/each}
+                    <div class="px-2 text-sm opacity-70">Aggregate</div>
+                </div>
 
-            <!-- Rows -->
-            <div class="space-y-2">
-                {#each entries as e (e.id)}
-                    <div class="grid gap-2 items-center"
-                         style="grid-template-columns: minmax(180px,1fr) repeat({Math.max(judgeCount,1)}, 120px) 140px;">
-                        <div class="px-2">{e.name}</div>
+                <!-- Rows for this category -->
+                <div class="space-y-2">
+                    {#each entriesFor(c.key) as e (e.id)}
+                        <div class="grid gap-2 items-center"
+                             style="grid-template-columns: minmax(200px,1fr) repeat({Math.max(judgeCount,1)}, 120px) 160px;">
+                            <div class="px-2">
+                                <div>{e.name}</div>
+                                <div class="text-xs opacity-60">({e.calcType})</div>
+                            </div>
 
-                        {#each Array(judgeCount) as _, j}
-                            <input
-                                    class="input w-full"
-                                    type="number"
-                                    min="0"
-                                    step="1"
-                                    bind:value={valueMap[`${e.id}:${j}`]}
-                                    on:input={(ev) => setCell(e.id, j, ev.currentTarget.value)}
-                                    aria-label={`Result for ${e.name}, judge ${j+1}`} />
-                        {/each}
+                            {#each Array(judgeCount) as _, j}
+                                <input
+                                        class="input w-full"
+                                        type="number"
+                                        min="0"
+                                        step="1"
+                                        bind:value={valueMap[`${e.id}:${j}`]}
+                                        on:input={(ev) => setCell(e.id, j, (ev.currentTarget).value)}
+                                        aria-label={`Result for ${e.name}, judge ${j+1}`} />
+                            {/each}
 
-                        <div class="px-2 font-medium tabular-nums">
-                            {aggregate(e).toFixed(2)}
+                            <div class="px-2 font-medium tabular-nums">
+                                {aggregate(e).toFixed(2)}
+                            </div>
                         </div>
-                    </div>
-                {/each}
-            </div>
-        </section>
+                    {/each}
+                </div>
+
+                <!-- Subtotal row -->
+                <div class="grid gap-2 items-center font-semibold"
+                     style="grid-template-columns: minmax(200px,1fr) repeat({Math.max(judgeCount,1)}, 120px) 160px;">
+                    <div class="px-2">Subtotal ({c.key})</div>
+                    {#each Array(judgeCount) as judge}<div></div>{/each}
+                    <div class="px-2 tabular-nums text-green-300">{categoryTotal(c.key).toFixed(2)}</div>
+                </div>
+            </section>
+        {/each}
 
         <div class="flex gap-3">
             <button class="btn variant-filled-primary" on:click={save} disabled={saving || loading}>

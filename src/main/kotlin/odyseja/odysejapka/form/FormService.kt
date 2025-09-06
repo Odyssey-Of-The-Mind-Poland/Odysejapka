@@ -39,6 +39,7 @@ class FormService(
 
             entity.name = dto.name
             entity.calcType = dto.calcType
+            entity.formCategory = dto.category
 
             toPersist += entity
         }
@@ -46,6 +47,7 @@ class FormService(
         val toDelete = existing.filter { it.id !in requestedIds }
         if (toDelete.isNotEmpty()) {
             formEntryRepository.deleteAll(toDelete)
+            toDelete.forEach { teamResultEntryRepository.deleteAllByFormEntryEntity(it) }
         }
 
         formEntryRepository.saveAll(toPersist)

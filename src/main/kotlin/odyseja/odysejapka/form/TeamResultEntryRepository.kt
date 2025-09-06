@@ -10,4 +10,5 @@ interface TeamResultEntryRepository : CrudRepository<TeamResultEntryEntity, Long
     ): TeamResultEntryEntity?
 
     fun findByPerformanceEntityId(performanceId: Int): List<TeamResultEntryEntity>
+    fun deleteAllByFormEntryEntity(formEntry: FormEntryEntity)
 }

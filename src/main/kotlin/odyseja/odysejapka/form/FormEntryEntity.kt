@@ -24,6 +24,10 @@ class FormEntryEntity {
     @Enumerated(javax.persistence.EnumType.STRING)
     var calcType: CalcType = CalcType.SUM
 
+    @Column
+    @Enumerated(javax.persistence.EnumType.STRING)
+    var formCategory: FormEntry.FormCategory = FormEntry.FormCategory.DT
+
     companion object {
         fun from(problem: Int, entry: FormEntry): FormEntryEntity {
             return FormEntryEntity().apply {
@@ -35,6 +39,6 @@ class FormEntryEntity {
     }
 
     fun toFormEntry(): FormEntry {
-        return FormEntry(id, name, calcType)
+        return FormEntry(id, name, calcType, formCategory)
     }
 }
