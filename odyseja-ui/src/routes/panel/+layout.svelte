@@ -17,7 +17,8 @@
         {label: 'SAK', route: '/panel/sak ', icon: 'ic:outline-curtains'},
         {label: 'RAK', route: '/panel/rak ', icon: 'ic:outline-curtains'},
         {label: 'ZSP', route: '/panel/zsp', icon: 'ic:round-leaderboard'},
-        {label: 'Fixer', route: '/panel/fixer ', icon: 'fluent-mdl2:repair'}
+        {label: 'Fixer', route: '/panel/fixer ', icon: 'fluent-mdl2:repair'},
+        {label: 'Forms', route: '/panel/form ', icon: 'fluent-mdl2:repair'}
     ];
 
     export let data: Cities
