@@ -22,7 +22,7 @@ spring:
   datasource:
     # Postgres database
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:24888/odyseja
+    url: jdbc:postgresql://localhost:24889/odyseja
     username: odyseja
     password: odyseja
   sql:
@@ -30,6 +30,12 @@ spring:
       mode: never
 server:
   port: 8081
+
+clsi:
+  base-url: http://grzybek.snet.ovh:3013
+  compiler: lualatex
+  timeout-sec: 60
+  project-id: 1
 
 #-------------------------------------------------------------------------------------------------
 # ZSP Configuration

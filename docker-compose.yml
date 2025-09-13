@@ -5,7 +5,7 @@ services:
     image: docker.io/library/postgres:12
     restart: unless-stopped
     ports:
-      - "${POSTGRES_PORT:-24888}:5432"
+      - "${POSTGRES_PORT:-24889}:5432"
     environment:
       POSTGRES_DB: "${POSTGRES_DB:-odyseja}"
       POSTGRES_USER: "${POSTGRES_USER:-odyseja}"
