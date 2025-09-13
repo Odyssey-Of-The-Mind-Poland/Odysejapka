@@ -1,9 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from 'svelte';
     import {
-        generateCsv,
-        generateDetailedCsv,
-        generateHtmlResults,
         generatePdfResults,
         generateShortPdfResults,
         getPdfTemplate,
