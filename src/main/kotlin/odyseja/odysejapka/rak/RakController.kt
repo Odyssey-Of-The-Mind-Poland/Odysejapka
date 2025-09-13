@@ -1,6 +1,7 @@
 package odyseja.odysejapka.rak
 
 import odyseja.odysejapka.drive.ZspSheetsAdapter
+import odyseja.odysejapka.rak.PdfGeneratorService.Companion.RESULTS_TEMPLATE
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -20,7 +21,6 @@ data class ZspIdRequest(
 class RakController(
     private val rakService: TmCsvService,
     private val csvService: CsvService,
-    private val htmlGeneratorService: HtmlGeneratorService,
     private val pdfGeneratorService: PdfGeneratorService,
     private val mockedPdfService: MockedPdfService,
     private val templateStoreService: TemplateStoreService
@@ -43,18 +43,6 @@ class RakController(
             .body(csvData)
     }
 
-    @PostMapping("/download-html")
-    fun downloadHtmlResults(
-        @RequestBody request: ZspIdRequest
-    ): ResponseEntity<String> {
-        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
-        val renderedHtml = htmlGeneratorService.generateHtmlResults(sheetsAdapter.getAllTeams())
-
-        return ResponseEntity.ok()
-            .contentType(MediaType.TEXT_HTML)
-            .body(renderedHtml)
-    }
-
     @PostMapping("/download-pdf")
     fun downloadPdf(
         @RequestBody request: ZspIdRequest
@@ -69,7 +57,7 @@ class RakController(
 
     @GetMapping("/pdf-template")
     fun getPdfTemplate(): ResponseEntity<String> {
-        val template = templateStoreService.find("results.latex")?.content ?: "Template not found"
+        val template = templateStoreService.find(RESULTS_TEMPLATE)?.content ?: "Template not found"
         return ResponseEntity.ok()
             .contentType(MediaType.TEXT_PLAIN)
             .body(template)
@@ -81,7 +69,7 @@ class RakController(
         produces = [MediaType.TEXT_PLAIN_VALUE]
     )
     fun setPdfTemplate(@RequestBody body: String): ResponseEntity<String> {
-        val saved = templateStoreService.update("results.latex", body).content
+        val saved = templateStoreService.update(RESULTS_TEMPLATE, body).content
         return ResponseEntity.ok()
             .contentType(MediaType.TEXT_PLAIN)
             .body(saved)
