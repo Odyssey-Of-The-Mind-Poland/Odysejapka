@@ -83,3 +83,22 @@ export async function generateDetailedCsv(zspId: string): Promise<ArrayBuffer> {
     });
     return response.arrayBuffer();
 }
+
+export async function getPdfTemplate(): Promise<string> {
+    const res = await fetch(BASE_URL + '/api/v1/rak/pdf-template', {
+        method: 'GET',
+        headers: {'Accept': 'text/plain'}
+    });
+    if (!res.ok) throw new Error('Failed to load template');
+    return res.text();
+}
+
+export async function savePdfTemplate(body: string): Promise<string> {
+    const res = await fetch(BASE_URL + '/api/v1/rak/pdf-template', {
+        method: 'POST',
+        headers: {'Content-Type': 'text/plain; charset=utf-8'},
+        body
+    });
+    if (!res.ok) throw new Error('Failed to save template');
+    return res.text();
+}
