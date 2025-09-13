@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {onMount, onDestroy} from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import {
         generateCsv,
         generateDetailedCsv,
@@ -9,10 +9,11 @@
         getPdfTemplate,
         savePdfTemplate
     } from './rak';
-    import {ProgressRadial} from '@skeletonlabs/skeleton';
+    import { ProgressRadial } from '@skeletonlabs/skeleton';
 
     import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
     import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+    import {registerLatexThymeleaf} from "./monace";
 
     let zspId = '';
     let isLoading = false;
@@ -32,12 +33,17 @@
             getWorker: () => new EditorWorker()
         };
 
+        registerLatexThymeleaf(monaco);
+
         editor = monaco.editor.create(editorEl, {
             value: '',
-            language: 'plaintext',
+            language: 'latex-th',
+            theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'latex-th-dark' : 'latex-th-light',
             fontSize: 14,
             automaticLayout: true,
-            minimap: {enabled: false},
+            minimap: { enabled: false },
+            wordWrap: 'on',
+            tabSize: 2
         });
 
         try {
@@ -61,7 +67,7 @@
         try {
             isLoading = true;
             const content = await generateFn(zspId);
-            const blob = new Blob([content], {type: fileType});
+            const blob = new Blob([content], { type: fileType });
             const url = URL.createObjectURL(blob);
 
             const a = document.createElement('a');
@@ -78,11 +84,6 @@
         }
     }
 
-    const downloadCsv = () => downloadFile(generateCsv, 'text/csv', 'csv');
-    const downloadDetailedCsv = () => downloadFile(generateDetailedCsv, 'text/csv', 'csv');
-    const downloadHtmlResults = () => downloadFile(generateHtmlResults, 'text/html', 'html');
-    const downloadShortPdfResults = () => downloadFile(generateShortPdfResults, 'application/pdf', 'pdf');
-
     async function saveAndPreviewPdf() {
         if (!zspId?.trim()) return;
         if (!editor) return;
@@ -93,7 +94,7 @@
             await savePdfTemplate(current);
             const content = await generatePdfResults(zspId);
             revokePdfUrl();
-            const blob = new Blob([content], {type: 'application/pdf'});
+            const blob = new Blob([content], { type: 'application/pdf' });
             pdfUrl = URL.createObjectURL(blob);
         } finally {
             isGenerating = false;
@@ -110,7 +111,7 @@
             await savePdfTemplate(current);
             const content = await generateShortPdfResults(zspId);
             revokePdfUrl();
-            const blob = new Blob([content], {type: 'application/pdf'});
+            const blob = new Blob([content], { type: 'application/pdf' });
             pdfUrl = URL.createObjectURL(blob);
         } finally {
             isGenerating = false;
@@ -129,7 +130,7 @@
     <h1>Rankingowy Analizator Końcowy</h1>
 
     <div class="flex flex-col gap-3">
-        <input bind:value={zspId} class="input" placeholder="ZSP ID" type="text"/>
+        <input bind:value={zspId} class="input" placeholder="ZSP ID" type="text" />
 
         <div class="flex gap-3 items-center mt-3">
             <button
@@ -149,7 +150,7 @@
                 Skrócone wyniki
             </button>
             {#if isGenerating}
-                <ProgressRadial width="w-6"/>
+                <ProgressRadial width="w-6" />
             {/if}
         </div>
     </div>
@@ -161,7 +162,7 @@
 
         <div class="border rounded pane overflow-hidden">
             {#if pdfUrl}
-                <iframe src={pdfUrl} class="w-full h-full" title="Podgląd PDF"/>
+                <iframe src={pdfUrl} class="w-full h-full" title="Podgląd PDF" />
             {:else}
                 <div class="p-6 text-sm opacity-70">Wygeneruj PDF, aby zobaczyć podgląd tutaj.</div>
             {/if}
