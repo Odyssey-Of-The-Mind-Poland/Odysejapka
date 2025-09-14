@@ -1,6 +1,6 @@
 package odyseja.odysejapka.info
 
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity(name = "info_category")
 class InfoCategoryEntity(

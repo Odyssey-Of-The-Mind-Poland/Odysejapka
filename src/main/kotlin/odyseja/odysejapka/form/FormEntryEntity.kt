@@ -1,12 +1,12 @@
 package odyseja.odysejapka.form
 
 import odyseja.odysejapka.form.FormEntry.CalcType
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
 
 @Entity
 class FormEntryEntity {
@@ -21,11 +21,11 @@ class FormEntryEntity {
     var name: String = ""
 
     @Column
-    @Enumerated(javax.persistence.EnumType.STRING)
+    @Enumerated(jakarta.persistence.EnumType.STRING)
     var calcType: CalcType = CalcType.SUM
 
     @Column
-    @Enumerated(javax.persistence.EnumType.STRING)
+    @Enumerated(jakarta.persistence.EnumType.STRING)
     var formCategory: FormEntry.FormCategory = FormEntry.FormCategory.DT
 
     companion object {

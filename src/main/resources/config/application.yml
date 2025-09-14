@@ -4,6 +4,7 @@ auth0:
 spring:
   thymeleaf:
     encoding: UTF-8
+    prefix: classpath:/templates/
   mvc:
     static-path-pattern: /static/**
   security:

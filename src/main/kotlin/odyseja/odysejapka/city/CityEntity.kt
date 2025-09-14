@@ -1,6 +1,6 @@
 package odyseja.odysejapka.city
 
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity(name = "city")
 class CityEntity(

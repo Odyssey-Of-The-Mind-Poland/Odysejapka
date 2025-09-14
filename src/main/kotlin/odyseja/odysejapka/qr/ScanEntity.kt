@@ -1,7 +1,7 @@
 package odyseja.odysejapka.qr
 
 import java.sql.Timestamp
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity(name = "scan")
 class ScanEntity(

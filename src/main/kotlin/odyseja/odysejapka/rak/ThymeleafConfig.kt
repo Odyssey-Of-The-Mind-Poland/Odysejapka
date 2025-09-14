@@ -11,7 +11,6 @@ import org.thymeleaf.templatemode.TemplateMode
 import org.thymeleaf.templateresolver.FileTemplateResolver
 
 @Configuration
-@Profile("dev")
 class ThymeleafConfig {
 
     @Value("\${spring.thymeleaf.prefix}")

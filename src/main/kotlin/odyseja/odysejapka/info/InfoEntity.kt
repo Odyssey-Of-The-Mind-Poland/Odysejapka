@@ -1,7 +1,7 @@
 package odyseja.odysejapka.info
 
 import odyseja.odysejapka.city.CityEntity
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity(name = "info")
 class InfoEntity(

@@ -1,7 +1,6 @@
 import odyseja.odysejapka.gad.TeamsGroupKey
 import odyseja.odysejapka.timetable.Performance
 import org.apache.commons.lang3.StringUtils
-import java.util.UUID
 import kotlin.math.abs
 import kotlin.random.Random
 

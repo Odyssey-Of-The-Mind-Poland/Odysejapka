@@ -1,7 +1,7 @@
 package odyseja.odysejapka.gad
 
 import org.springframework.data.jpa.repository.JpaRepository
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 class GadCommandEntity(

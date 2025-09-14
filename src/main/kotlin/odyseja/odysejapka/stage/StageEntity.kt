@@ -1,7 +1,7 @@
 package odyseja.odysejapka.stage
 
 import odyseja.odysejapka.city.CityEntity
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity(name = "stage")
 class StageEntity (

@@ -1,7 +1,7 @@
 package odyseja.odysejapka.change
 
 import java.sql.Timestamp
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity(name = "change")
 class ChangeEntity (

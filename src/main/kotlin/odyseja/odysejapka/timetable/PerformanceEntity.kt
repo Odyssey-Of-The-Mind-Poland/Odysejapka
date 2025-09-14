@@ -5,7 +5,7 @@ import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.stage.StageEntity
 import java.time.LocalDate
-import javax.persistence.*
+import jakarta.persistence.*
 
 
 @Entity(name = "performance")

@@ -1,7 +1,7 @@
 package odyseja.odysejapka.sponsor
 
 import odyseja.odysejapka.city.CityEntity
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity(name = "sponsor")
 class SponsorEntity(
@@ -15,7 +15,6 @@ class SponsorEntity(
   @Column
   val rowOrder: Int,
   @Column
-  @GeneratedValue(strategy = GenerationType.AUTO)
   val columnOrder: Int,
   @ManyToOne(fetch = FetchType.LAZY)
   val city: CityEntity

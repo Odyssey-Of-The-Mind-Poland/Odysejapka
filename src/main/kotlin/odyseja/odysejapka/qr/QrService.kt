@@ -3,7 +3,7 @@ package odyseja.odysejapka.qr
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.util.*
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 @Service
 class QrService(
