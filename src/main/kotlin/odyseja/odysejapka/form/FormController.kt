@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController
 class FormController(private val formService: FormService?) {
 
     @PutMapping("/{problem}")
-    fun setFormEntries(@PathVariable problem: Int, @RequestBody formEntries: List<FormEntry>) {
-        formService!!.setFormEntries(problem, formEntries)
+    fun setProblemForm(@PathVariable problem: Int, @RequestBody problemForm: ProblemForm) {
+        formService!!.setFormEntries(problem, problemForm)
     }
 
     @GetMapping("/{problem}")
-    fun getFormEntries(@PathVariable problem: Int): List<FormEntry> {
+    fun getProblemForm(@PathVariable problem: Int): ProblemForm {
         return formService!!.getFormEntries(problem)
     }
 

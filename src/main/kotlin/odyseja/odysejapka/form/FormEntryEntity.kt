@@ -26,19 +26,24 @@ class FormEntryEntity {
 
     @Column
     @Enumerated(jakarta.persistence.EnumType.STRING)
-    var formCategory: FormEntry.FormCategory = FormEntry.FormCategory.DT
+    var formCategory: FormCategory = FormCategory.DT
 
     companion object {
-        fun from(problem: Int, entry: FormEntry): FormEntryEntity {
+        fun from(problem: Int, entry: FormEntry, category: FormEntryEntity.FormCategory): FormEntryEntity {
             return FormEntryEntity().apply {
                 this.problem = problem
                 this.name = entry.name
                 this.calcType = entry.calcType
+                this.formCategory = category
             }
         }
     }
 
     fun toFormEntry(): FormEntry {
-        return FormEntry(id, name, calcType, formCategory)
+        return FormEntry(id, name, calcType)
+    }
+
+    enum class FormCategory {
+        DT, STYLE, PENALTY
     }
 }

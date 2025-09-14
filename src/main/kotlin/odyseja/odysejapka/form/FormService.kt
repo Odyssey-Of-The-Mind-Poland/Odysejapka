@@ -1,5 +1,6 @@
 package odyseja.odysejapka.form
 
+import odyseja.odysejapka.form.FormEntryEntity.Companion.from
 import odyseja.odysejapka.timetable.PerformanceRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,48 +14,62 @@ class FormService(
 ) {
 
     @Transactional
-    fun setFormEntries(problem: Int, formEntries: List<FormEntry>) {
+    fun setFormEntries(problem: Int, form: ProblemForm) {
         val existing = formEntryRepository.findByProblem(problem)
-        val byId = existing.associateBy { it.id }
+        val existingById = existing.associateBy { it.id }
+        val existingByCategory = existing.groupBy { it.formCategory }
 
-        val requestedIds: Set<Long> = formEntries.mapNotNull { it.id }.toSet()
-
-        val toPersist = mutableListOf<FormEntryEntity>()
-
-        for (dto in formEntries) {
-            val entity = when (val id = dto.id) {
-                null -> {
-                    FormEntryEntity().apply { this.problem = problem }
+        fun toEntity(
+            dto: FormEntry,
+            category: FormEntryEntity.FormCategory
+        ): FormEntryEntity {
+            val entity = dto.id?.let { existingById[it] }
+            return if (entity != null) {
+                entity.apply {
+                    name = dto.name
+                    calcType = dto.calcType
+                    formCategory = category
                 }
-                else -> {
-                    val found = byId[id]
-                    if (found != null) {
-                        found.problem = problem
-                        found
-                    } else {
-                        FormEntryEntity().apply { this.problem = problem }
-                    }
-                }
+            } else {
+                from(problem, dto, category)
             }
-
-            entity.name = dto.name
-            entity.calcType = dto.calcType
-            entity.formCategory = dto.category
-
-            toPersist += entity
         }
 
-        val toDelete = existing.filter { it.id !in requestedIds }
-        if (toDelete.isNotEmpty()) {
-            formEntryRepository.deleteAll(toDelete)
-            toDelete.forEach { teamResultEntryRepository.deleteAllByFormEntryEntity(it) }
+        fun purgeMissing(dtos: List<FormEntry>, category: FormEntryEntity.FormCategory) {
+            val requestedIds = dtos.asSequence().mapNotNull { it.id }.toSet()
+            val toDelete = existingByCategory[category].orEmpty()
+                .filter { it.id !in requestedIds }
+
+            if (toDelete.isNotEmpty()) {
+                toDelete.forEach { teamResultEntryRepository.deleteAllByFormEntryEntity(it) }
+                formEntryRepository.deleteAll(toDelete)
+            }
         }
+
+        val categories = listOf(
+            FormEntryEntity.FormCategory.DT to form.dtEntries,
+            FormEntryEntity.FormCategory.STYLE to form.styleEntries,
+            FormEntryEntity.FormCategory.PENALTY to form.penaltyEntries
+        )
+
+        categories.forEach { (cat, dtos) -> purgeMissing(dtos, cat) }
+
+        val toPersist = categories
+            .flatMap { (cat, dtos) -> dtos.map { dto -> toEntity(dto, cat) } }
 
         formEntryRepository.saveAll(toPersist)
     }
 
-    fun getFormEntries(problem: Int): List<FormEntry> {
-        return formEntryRepository.findByProblem(problem).map { it.toFormEntry() }
+
+    fun getFormEntries(problem: Int): ProblemForm {
+        val entries = formEntryRepository.findByProblem(problem)
+        return ProblemForm(
+            entries.filter { it.formCategory == FormEntryEntity.FormCategory.DT }
+                .map { it.toFormEntry() },
+            entries.filter { it.formCategory == FormEntryEntity.FormCategory.STYLE }
+                .map { it.toFormEntry() },
+            entries.filter { it.formCategory == FormEntryEntity.FormCategory.PENALTY }
+                .map { it.toFormEntry() })
     }
 
     @Transactional

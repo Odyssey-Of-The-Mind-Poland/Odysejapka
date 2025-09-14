@@ -2,19 +2,111 @@ package odyseja.odysejapka.rak
 
 import odyseja.odysejapka.OdysejaDsl
 import odyseja.odysejapka.form.FormEntry
+import odyseja.odysejapka.form.ProblemForm
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
 
 @WithMockUser(username = "testuser", roles = ["ADMINISTRATOR"])
 class FormTest : OdysejaDsl() {
 
+    private val PROBLEM_ID = 1
+
+    private fun setForm(
+        dt: List<FormEntry>,
+        style: List<FormEntry>,
+        penalty: List<FormEntry>
+    ) {
+        formClient.setProblemForm(PROBLEM_ID, ProblemForm(dt, style, penalty))
+    }
+
+    private fun form() = formClient.getProblemForm(PROBLEM_ID)
+
+    private fun seedDefault(): Unit = setForm(
+        dt = listOf(FormEntry(null, "DT", FormEntry.CalcType.AVERAGE)),
+        style = listOf(FormEntry(null, "Style", FormEntry.CalcType.SUM)),
+        penalty = listOf(FormEntry(null, "Penalty", FormEntry.CalcType.SUM))
+    )
+
     @Test
     fun `should set form entry`() {
-        formClient.setFormEntries(
-            1,
-            listOf(FormEntry(0, "Label", FormEntry.CalcType.SUM, FormEntry.FormCategory.DT))
+        seedDefault()
+
+        val entries = form()
+        assertThat(entries.dtEntries).hasSize(1)
+        assertThat(entries.dtEntries[0].calcType).isEqualTo(FormEntry.CalcType.AVERAGE)
+        assertThat(entries.styleEntries[0].name).isEqualTo("Style")
+    }
+
+    @Test
+    fun `should update entry`() {
+        seedDefault()
+        val existing = form()
+
+        val dtId = existing.dtEntries.first().id
+        val styleId = existing.styleEntries.first().id
+        val penaltyId = existing.penaltyEntries.first().id
+
+        setForm(
+            dt = listOf(FormEntry(dtId, "DT new", FormEntry.CalcType.SUM)),
+            style = listOf(FormEntry(styleId, "Style", FormEntry.CalcType.SUM)),
+            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.CalcType.SUM))
         )
-        val entries = formClient.getFormEntries(1)
-        assert(entries.size == 1)
+
+        val updated = form()
+        assertThat(updated.dtEntries).hasSize(1)
+        assertThat(updated.dtEntries[0].name).isEqualTo("DT new")
+        assertThat(updated.dtEntries[0].calcType).isEqualTo(FormEntry.CalcType.SUM)
+    }
+
+    @Test
+    fun `should delete entry when omitted from request`() {
+        seedDefault()
+        val existing = form()
+        val styleId = existing.styleEntries.first().id
+        val penaltyId = existing.penaltyEntries.first().id
+
+        setForm(
+            dt = emptyList(),
+            style = listOf(FormEntry(styleId, "Style", FormEntry.CalcType.SUM)),
+            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.CalcType.SUM))
+        )
+
+        val afterDelete = form()
+        assertThat(afterDelete.dtEntries).isEmpty()
+        assertThat(afterDelete.styleEntries).hasSize(1)
+        assertThat(afterDelete.styleEntries[0].name).isEqualTo("Style")
+        assertThat(afterDelete.penaltyEntries).hasSize(1)
+        assertThat(afterDelete.penaltyEntries[0].name).isEqualTo("Penalty")
+    }
+
+    @Test
+    fun `should add new entry to existing category`() {
+        seedDefault()
+        val existing = form()
+        val dtId = existing.dtEntries.first().id
+        val styleId = existing.styleEntries.first().id
+        val penaltyId = existing.penaltyEntries.first().id
+
+        setForm(
+            dt = listOf(FormEntry(dtId, "DT", FormEntry.CalcType.AVERAGE)),
+            style = listOf(
+                FormEntry(styleId, "Style", FormEntry.CalcType.SUM),
+                FormEntry(null, "Style 2", FormEntry.CalcType.SUM)
+            ),
+            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.CalcType.SUM))
+        )
+
+        val afterAdd = form()
+        assertThat(afterAdd.styleEntries).hasSize(2)
+        assertThat(afterAdd.styleEntries.map { it.name })
+            .containsExactlyInAnyOrder("Style", "Style 2")
+
+        assertThat(afterAdd.dtEntries).hasSize(1)
+        assertThat(afterAdd.dtEntries[0].name).isEqualTo("DT")
+        assertThat(afterAdd.dtEntries[0].calcType).isEqualTo(FormEntry.CalcType.AVERAGE)
+
+        assertThat(afterAdd.penaltyEntries).hasSize(1)
+        assertThat(afterAdd.penaltyEntries[0].name).isEqualTo("Penalty")
     }
 }
