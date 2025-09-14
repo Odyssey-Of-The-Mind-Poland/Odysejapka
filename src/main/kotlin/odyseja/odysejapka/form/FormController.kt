@@ -10,35 +10,35 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/form")
-class FormController(private val formService: FormService) {
+class FormController(private val formService: FormService?) {
 
     @PutMapping("/{problem}")
     fun setFormEntries(@PathVariable problem: Int, @RequestBody formEntries: List<FormEntry>) {
-        formService.setFormEntries(problem, formEntries)
+        formService!!.setFormEntries(problem, formEntries)
     }
 
     @GetMapping("/{problem}")
     fun getFormEntries(@PathVariable problem: Int): List<FormEntry> {
-        return formService.getFormEntries(problem)
+        return formService!!.getFormEntries(problem)
     }
 
     @PostMapping("/{problem}/judge-count")
     fun addJudge(@PathVariable problem: Int, @RequestBody count: Int): Int {
-        return formService.setJudgeCount(problem, count)
+        return formService!!.setJudgeCount(problem, count)
     }
 
     @GetMapping("/{problem}/judge-count")
     fun getJudgeCount(@PathVariable problem: Int): Int {
-        return formService.getJudgeCount(problem)
+        return formService!!.getJudgeCount(problem)
     }
 
     @PutMapping("/{performanceId}/result")
     fun setTeamResults(@PathVariable performanceId: Int, @RequestBody result: PerformanceResultsRequest) {
-        formService.setTeamResults(performanceId, result)
+        formService!!.setTeamResults(performanceId, result)
     }
 
     @GetMapping("/{performanceId}/result")
     fun getTeamResults(@PathVariable performanceId: Int): List<FormResult> {
-        return formService.getTeamResults(performanceId)
+        return formService!!.getTeamResults(performanceId)
     }
 }

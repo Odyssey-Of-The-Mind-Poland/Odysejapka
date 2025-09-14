@@ -358,7 +358,9 @@ class RakCalculatorTest {
             spontaneousScore = spontaneousScore ?: 0.0f,
             styleScore = styleScore ?: 0.0f,
             penaltyScore = penalty ?: 0.0f,
-            weightHeld = weightHeld
+            weightHeld = weightHeld,
+            ranatra = false
+
         )
     }
 }
