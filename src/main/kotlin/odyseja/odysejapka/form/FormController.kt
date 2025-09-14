@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -23,13 +24,13 @@ class FormController(private val formService: FormService?) {
     }
 
     @PostMapping("/{problem}/judge-count")
-    fun addJudge(@PathVariable problem: Int, @RequestBody count: Int): Int {
-        return formService!!.setJudgeCount(problem, count)
+    fun setJudgesCount(@PathVariable problem: Int, @RequestParam cityId: Int, @RequestBody count: Int): Int {
+        return formService!!.setJudgeCount(problem, cityId, count)
     }
 
     @GetMapping("/{problem}/judge-count")
-    fun getJudgeCount(@PathVariable problem: Int): Int {
-        return formService!!.getJudgeCount(problem)
+    fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): Int {
+        return formService!!.getJudgeCount(problem, cityId)
     }
 
     @PutMapping("/{performanceId}/result")

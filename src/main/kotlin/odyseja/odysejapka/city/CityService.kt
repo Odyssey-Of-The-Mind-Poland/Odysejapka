@@ -14,10 +14,11 @@ class CityService(
     return cityRepository.findAll()
   }
 
-  fun addCity(city: CityEntity) {
-    cityRepository.save(city)
-
+  @Transactional
+  fun addCity(city: CreateCityRequest): CityEntity {
+    val saved = cityRepository.save(CityEntity(0, city.name))
     changeService.updateVersion()
+    return saved
   }
 
   @Transactional

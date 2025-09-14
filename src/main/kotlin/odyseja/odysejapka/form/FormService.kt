@@ -1,5 +1,6 @@
 package odyseja.odysejapka.form
 
+import odyseja.odysejapka.city.CityRepository
 import odyseja.odysejapka.form.FormEntryEntity.Companion.from
 import odyseja.odysejapka.timetable.PerformanceRepository
 import org.springframework.stereotype.Service
@@ -10,7 +11,8 @@ class FormService(
     private val formEntryRepository: FormEntryRepository,
     private val formProblemRepository: FormProblemRepository,
     private val teamResultEntryRepository: TeamResultEntryRepository,
-    private val performanceRepository: PerformanceRepository
+    private val performanceRepository: PerformanceRepository,
+    private val cityRepository: CityRepository,
 ) {
 
     @Transactional
@@ -73,17 +75,20 @@ class FormService(
     }
 
     @Transactional
-    fun setJudgeCount(problem: Int, count: Int): Int {
-        val problemEntity = formProblemRepository.findByProblem(problem) ?: FormProblemEntity().apply {
+    fun setJudgeCount(problem: Int, cityId: Int, count: Int): Int {
+        val city = cityRepository.findFirstById(cityId)
+        val problemEntity = formProblemRepository.findByProblemAndCity(problem, city) ?: FormProblemEntity().apply {
             this.problem = problem
+            this.city = city
         }
         problemEntity.judgeCount = count
         formProblemRepository.save(problemEntity)
         return count
     }
 
-    fun getJudgeCount(problem: Int): Int {
-        return formProblemRepository.findByProblem(problem)?.judgeCount ?: 0
+    fun getJudgeCount(problem: Int, cityId: Int): Int {
+        val city = cityRepository.findFirstById(cityId)
+        return formProblemRepository.findByProblemAndCity(problem, city)?.judgeCount ?: 0
     }
 
     @Transactional

@@ -1,13 +1,15 @@
 package odyseja.odysejapka.rak
 
 import odyseja.odysejapka.OdysejaDsl
+import odyseja.odysejapka.city.CityEntity
+import odyseja.odysejapka.city.CreateCityRequest
 import odyseja.odysejapka.form.FormEntry
 import odyseja.odysejapka.form.ProblemForm
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
 
-@WithMockUser(username = "testuser", roles = ["ADMINISTRATOR"])
+@WithMockUser(username = "testuser", roles = ["ADMIN"])
 class FormTest : OdysejaDsl() {
 
     private val PROBLEM_ID = 1
@@ -108,5 +110,20 @@ class FormTest : OdysejaDsl() {
 
         assertThat(afterAdd.penaltyEntries).hasSize(1)
         assertThat(afterAdd.penaltyEntries[0].name).isEqualTo("Penalty")
+    }
+
+    @Test
+    fun `should set judges count for city`() {
+        val city1 = cityClient.saveCity(CreateCityRequest("City 1"))
+        val city2 = cityClient.saveCity(CreateCityRequest("City 2"))
+
+        formClient.setJudgesCount(PROBLEM_ID, city1.id, 5)
+        formClient.setJudgesCount(PROBLEM_ID, city2.id, 3)
+
+        val city1Judges = formClient.getJudgeCount(PROBLEM_ID, city1.id)
+        val city2Judges = formClient.getJudgeCount(PROBLEM_ID, city2.id)
+
+        assertThat(city1Judges).isEqualTo(5)
+        assertThat(city2Judges).isEqualTo(3)
     }
 }

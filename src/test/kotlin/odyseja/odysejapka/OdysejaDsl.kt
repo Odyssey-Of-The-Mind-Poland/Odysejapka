@@ -1,5 +1,6 @@
 package odyseja.odysejapka
 
+import odyseja.odysejapka.city.CityController
 import odyseja.odysejapka.form.FormController
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +19,7 @@ import ovh.snet.grzybek.controller.client.core.ControllerClientFactory
 open class OdysejaDsl {
 
     lateinit var formClient: FormController
+    lateinit var cityClient: CityController
 
     @Autowired
     lateinit var controllerClientFactory: ControllerClientFactory
@@ -25,6 +27,7 @@ open class OdysejaDsl {
     @BeforeEach
     fun setUp() {
         formClient = controllerClientFactory.create(FormController::class.java)
+        cityClient = controllerClientFactory.create(CityController::class.java)
     }
 
 }
