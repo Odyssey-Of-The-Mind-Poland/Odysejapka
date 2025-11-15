@@ -1,7 +1,6 @@
 package odyseja.odysejapka.rak
 
 import odyseja.odysejapka.OdysejaDsl
-import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CreateCityRequest
 import odyseja.odysejapka.form.FormEntry
 import odyseja.odysejapka.form.ProblemForm
@@ -11,24 +10,6 @@ import org.springframework.security.test.context.support.WithMockUser
 
 @WithMockUser(username = "testuser", roles = ["ADMIN"])
 class FormTest : OdysejaDsl() {
-
-    private val PROBLEM_ID = 1
-
-    private fun setForm(
-        dt: List<FormEntry>,
-        style: List<FormEntry>,
-        penalty: List<FormEntry>
-    ) {
-        formClient.setProblemForm(PROBLEM_ID, ProblemForm(dt, style, penalty))
-    }
-
-    private fun form() = formClient.getProblemForm(PROBLEM_ID)
-
-    private fun seedDefault(): Unit = setForm(
-        dt = listOf(FormEntry(null, "DT", FormEntry.CalcType.AVERAGE)),
-        style = listOf(FormEntry(null, "Style", FormEntry.CalcType.SUM)),
-        penalty = listOf(FormEntry(null, "Penalty", FormEntry.CalcType.SUM))
-    )
 
     @Test
     fun `should set form entry`() {

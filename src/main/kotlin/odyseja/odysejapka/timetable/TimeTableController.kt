@@ -21,40 +21,40 @@ class TimeTableController(
         return timeTableService.getPerformance(performanceId)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     @PostMapping("/load")
     @ResponseBody
     fun addPerformance(@RequestBody performances: List<Performance>): List<PerformanceEntity> {
         return timeTableService.addPerformance(performances)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     @PostMapping()
     @ResponseBody
     fun addPerformance(@RequestBody performance: Performance): PerformanceEntity {
         return timeTableService.addPerformance(performance)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     @PutMapping
     fun updatePerformance(@RequestBody performance: Performance) {
         timeTableService.updatePerformance(performance)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     @DeleteMapping("{performanceId}")
     fun delPerformance(@PathVariable performanceId: Int) {
         timeTableService.delPerformance(performanceId)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     @PostMapping("/import")
     fun import(@RequestBody importTimeTable: ImportTimeTable, @RequestParam cityId: Int) {
         return importTimetableService.import(importTimeTable.zspId, cityId)
     }
 
     @PostMapping("/import/stop")
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     fun stopImport() {
         importTimetableService.stop()
     }

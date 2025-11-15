@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.*
 class SakController(private val sakService: SakService) {
 
     @PostMapping
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     fun startGad(@RequestBody generateGadCommand: GenerateSakCommand) {
         sakService.runGad(generateGadCommand)
     }
 
     @PostMapping("/stop")
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     fun stopGad() {
         sakService.stop()
     }

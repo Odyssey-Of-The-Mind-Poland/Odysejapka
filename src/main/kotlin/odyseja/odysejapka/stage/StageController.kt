@@ -14,7 +14,7 @@ class StageController(
     return cityId?.let { stageService.getStages(cityId) } ?: stageService.getStages(0)
   }
 
-  @Secured("ROLE_ADMIN")
+  @Secured("ROLE_ADMINISTRATOR")
   @PutMapping
   fun updateStage(@RequestBody stages: List<Stage>) {
     return stageService.updateStage(stages)

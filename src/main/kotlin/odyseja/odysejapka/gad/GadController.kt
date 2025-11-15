@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.*
 class GadController(private val gadCommandService: GadCommandService, private val gadService: GadService) {
 
     @PostMapping
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     fun startGad(@RequestBody generateGadCommand: GenerateGadCommand) {
         gadService.runGad(generateGadCommand)
     }
 
     @PostMapping("/stop")
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     fun stopGad() {
         gadService.stop()
     }

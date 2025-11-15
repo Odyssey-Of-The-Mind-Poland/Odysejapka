@@ -14,13 +14,13 @@ class CityController(
     return cityService!!.getCities()
   }
 
-  @Secured("ROLE_ADMIN")
+  @Secured("ROLE_ADMINISTRATOR")
   @PostMapping
   fun saveCity(@RequestBody cityRequest: CreateCityRequest): CityEntity {
     return cityService!!.addCity(cityRequest)
   }
 
-  @Secured("ROLE_ADMIN")
+  @Secured("ROLE_ADMINISTRATOR")
   @DeleteMapping("{cityId}")
   fun deleteCity(@PathVariable cityId: Int) {
     return cityService!!.deleteCity(cityId)

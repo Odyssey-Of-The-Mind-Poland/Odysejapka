@@ -13,13 +13,13 @@ class AgeController(private val ageService: AgeService) {
     return ageService.getAge()
   }
 
-  @Secured("ROLE_ADMIN")
+  @Secured("ROLE_ADMINISTRATOR")
   @PutMapping
   fun updateAge(@RequestBody ageEntities: List<AgeEntity>) {
     return ageService.updateAge(ageEntities)
   }
 
-  @Secured("ROLE_ADMIN")
+  @Secured("ROLE_ADMINISTRATOR")
   @DeleteMapping("{ageId}")
   fun deleteAge(@PathVariable ageId: Int) {
     return ageService.deleteAge(ageId)

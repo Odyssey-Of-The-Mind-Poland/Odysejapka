@@ -13,7 +13,7 @@ class BreakingChangeController(private val breakingChangeService: BreakingChange
     }
 
     @PutMapping
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     fun setBreakingChange(@RequestBody breakingChange: BreakingChange) {
         breakingChangeService.setBreakingChange(breakingChange)
     }

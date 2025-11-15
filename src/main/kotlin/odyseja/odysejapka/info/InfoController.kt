@@ -28,20 +28,20 @@ class InfoController(
     return infoService.getInfoCategory()
   }
 
-  @Secured("ROLE_ADMIN")
+  @Secured("ROLE_ADMINISTRATOR")
   @PostMapping
   @ResponseBody
   fun addInfo(@RequestBody info: Info): Info {
     return infoService.addInfo(info)
   }
 
-  @Secured("ROLE_ADMIN")
+  @Secured("ROLE_ADMINISTRATOR")
   @PutMapping
   fun updateInfo(@RequestBody info: Info): Info {
     return infoService.updateInfo(info)
   }
 
-  @Secured("ROLE_ADMIN")
+  @Secured("ROLE_ADMINISTRATOR")
   @DeleteMapping("/{id}")
   @ResponseBody
   fun deleteInfo(@PathVariable id: Int) {

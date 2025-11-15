@@ -1,5 +1,6 @@
 auth0:
-  audience: https://app.odyseja.org
+  domain: https://odyseja.eu.auth0.com
+  clientId: 8TI8RllRK5wf5l1Rv85msCTOF0e88lZg
 
 spring:
   thymeleaf:

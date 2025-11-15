@@ -2,6 +2,9 @@ package odyseja.odysejapka
 
 import odyseja.odysejapka.city.CityController
 import odyseja.odysejapka.form.FormController
+import odyseja.odysejapka.form.FormEntry
+import odyseja.odysejapka.form.ProblemForm
+import odyseja.odysejapka.timetable.TimeTableController
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -20,6 +23,7 @@ open class OdysejaDsl {
 
     lateinit var formClient: FormController
     lateinit var cityClient: CityController
+    lateinit var timeTableClient: TimeTableController
 
     @Autowired
     lateinit var controllerClientFactory: ControllerClientFactory
@@ -29,5 +33,24 @@ open class OdysejaDsl {
         formClient = controllerClientFactory.create(FormController::class.java)
         cityClient = controllerClientFactory.create(CityController::class.java)
     }
+
+
+    val PROBLEM_ID = 1
+
+    fun setForm(
+        dt: List<FormEntry>,
+        style: List<FormEntry>,
+        penalty: List<FormEntry>
+    ) {
+        formClient.setProblemForm(PROBLEM_ID, ProblemForm(dt, style, penalty))
+    }
+
+    fun form() = formClient.getProblemForm(PROBLEM_ID)
+
+    fun seedDefault(): Unit = setForm(
+        dt = listOf(FormEntry(null, "DT", FormEntry.CalcType.AVERAGE)),
+        style = listOf(FormEntry(null, "Style", FormEntry.CalcType.SUM)),
+        penalty = listOf(FormEntry(null, "Penalty", FormEntry.CalcType.SUM))
+    )
 
 }

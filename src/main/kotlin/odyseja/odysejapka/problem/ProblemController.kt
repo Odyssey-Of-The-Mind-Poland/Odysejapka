@@ -12,13 +12,13 @@ class ProblemController(private val problemService: ProblemService) {
         return problemService.getProblems()
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     @PutMapping
     fun updateProblem(@RequestBody problemEntities: List<ProblemEntity>) {
         return problemService.updateProblem(problemEntities)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMINISTRATOR")
     @DeleteMapping("{problemId}")
     fun deleteProblem(@PathVariable problemId: Int) {
         return problemService.deleteProblem(problemId)
