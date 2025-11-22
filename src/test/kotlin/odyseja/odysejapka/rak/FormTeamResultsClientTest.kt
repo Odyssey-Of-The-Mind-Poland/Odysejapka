@@ -6,10 +6,13 @@ import odyseja.odysejapka.form.FormEntry
 import odyseja.odysejapka.form.ProblemForm
 import odyseja.odysejapka.form.PerformanceResultsRequest
 import odyseja.odysejapka.form.FormResult
+import odyseja.odysejapka.timetable.Performance
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @WithMockUser(username = "testuser", roles = ["ADMIN"])
 class FormTeamResultsClientTest : OdysejaDsl() {
@@ -30,9 +33,25 @@ class FormTeamResultsClientTest : OdysejaDsl() {
     private fun createCity(name: String) = cityClient.saveCity(CreateCityRequest(name))
 
     private fun createPerformance(cityId: Int): Int {
-        return timetableClient.createSimplePerformance(PROBLEM_ID, cityId).id
+        val cityName = cityClient.getCities().firstOrNull { it?.id == cityId }?.name ?: "Unknown"
+        val performance = Performance(
+            city = cityName, team = "Sample Team",
+            id = 0,
+            problem = 1,
+            age = 1,
+            stage = 1,
+            performance = "",
+            spontan = "",
+            part = 1,
+            performanceDay = "",
+            spontanDay = "",
+            league = "",
+            zspRow = 1,
+            zspSheet = "",
+            performanceDate = LocalDate.now(),
+        )
+        return timeTableClient.addPerformance(performance).id
     }
-
     private fun results(performanceId: Int) = formClient.getTeamResults(performanceId)
 
 

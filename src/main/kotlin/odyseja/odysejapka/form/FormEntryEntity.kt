@@ -29,7 +29,7 @@ class FormEntryEntity {
     var formCategory: FormCategory = FormCategory.DT
 
     companion object {
-        fun from(problem: Int, entry: FormEntry, category: FormEntryEntity.FormCategory): FormEntryEntity {
+        fun from(problem: Int, entry: FormEntry, category: FormCategory): FormEntryEntity {
             return FormEntryEntity().apply {
                 this.problem = problem
                 this.name = entry.name

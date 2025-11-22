@@ -32,6 +32,7 @@ open class OdysejaDsl {
     fun setUp() {
         formClient = controllerClientFactory.create(FormController::class.java)
         cityClient = controllerClientFactory.create(CityController::class.java)
+        timeTableClient = controllerClientFactory.create(TimeTableController::class.java)
     }
 
 
