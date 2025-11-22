@@ -4,7 +4,7 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/problem")
+@RequestMapping(value = ["/problem", "/api/problem"])
 class ProblemController(private val problemService: ProblemService) {
 
     @GetMapping

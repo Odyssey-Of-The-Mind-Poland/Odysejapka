@@ -1,10 +1,8 @@
 <script lang="ts">
     import AppSidebar from "./components/app-sidebar.svelte";
     import SiteHeader from "./components/site-header.svelte";
-    import * as Sidebar from "$lib/registry/ui/sidebar/index.js";
     import {goto} from "$app/navigation";
-    import {routes} from "./routes";
-    import {onMount, onDestroy} from "svelte";
+    import {onDestroy, onMount} from "svelte";
     import {session as sessionStore} from "$lib/sessionStore";
     import {get} from "svelte/store";
 
@@ -53,7 +51,9 @@
     <AppSidebar variant="sidebar"/>
     <Sidebar.Inset>
         <SiteHeader/>
-        <slot/>
+        <div class="p-4">
+            <slot/>
+        </div>
     </Sidebar.Inset>
 </Sidebar.Provider>
 

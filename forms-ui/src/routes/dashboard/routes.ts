@@ -17,5 +17,10 @@ export const routes = {
             url: "/dashboard/form",
             icon: UsersIcon,
         },
+        {
+            title: "Edytor",
+            url: "/dashboard/editor",
+            icon: UsersIcon,
+        },
     ],
 };
