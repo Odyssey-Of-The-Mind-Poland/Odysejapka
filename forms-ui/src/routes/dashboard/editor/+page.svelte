@@ -3,6 +3,11 @@
     import {Spinner} from "$lib/components/ui/spinner";
     import {goto} from "$app/navigation";
     import * as Table from '$lib/components/ui/table/index.js';
+    import {setBreadcrumbs} from "$lib/breadcrumbs";
+
+    setBreadcrumbs([
+        {name: 'Edytor Formularzy', href: '/dashboard/editor'}
+    ]);
 
     type Problem = {
         id: number,
