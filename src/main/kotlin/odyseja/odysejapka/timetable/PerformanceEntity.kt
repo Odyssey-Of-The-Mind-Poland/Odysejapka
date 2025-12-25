@@ -29,13 +29,13 @@ class PerformanceEntity(
     @Column
     var spontan: String,
     @Column(columnDefinition = "integer default 0")
-    var part: Int,
+    var part: Int?,
     @Column
     var performanceDay: String,
     @Column
     var spontanDay: String,
     @Column
-    var league: String,
+    var league: String?,
     @Column
     var zspRow: Int?,
     @Column
