@@ -29,7 +29,7 @@ class ImportCsvService(
         try {
             fileReader!!.close()
         } catch (ex: IOException) {
-            throw RuntimeException("Error during csv import")
+            throw RuntimeException("Error during csv import: ${ex.message}.")
         }
     }
 
@@ -44,7 +44,7 @@ class ImportCsvService(
 
             return timeTableService.addPerformance(csvToBean.parse())
         } catch (ex: Exception) {
-            throw RuntimeException("Error during csv import")
+            throw RuntimeException("Error during csv import: ${ex}.")
         } finally {
             closeFileReader(fileReader)
         }
