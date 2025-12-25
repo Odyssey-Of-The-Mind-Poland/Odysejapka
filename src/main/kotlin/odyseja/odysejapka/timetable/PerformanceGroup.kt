@@ -9,6 +9,6 @@ data class PerformanceGroup(
                    val problem: Int,
                    val age: Int,
                    val stage: Int,
-                   val part: Int,
-                   val league: String)
+                   val part: Int?,
+                   val league: String?)
 }
