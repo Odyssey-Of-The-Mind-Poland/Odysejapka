@@ -32,7 +32,7 @@ services:
       - /root/odysejapka/creds.json:/root/odysejapka/creds.json:ro
 
   frontend:
-    image: odyseja-ui-frontend:latest
+    image: odyseja-ui:latest
     container_name: frontend-dev
     restart: always
     pull_policy: always
