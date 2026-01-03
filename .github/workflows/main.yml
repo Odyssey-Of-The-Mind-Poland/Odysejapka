@@ -2,7 +2,7 @@ name: Build and push docker
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -12,40 +12,21 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
-      - name: Build Spring app
-        run: ./gradlew bootjar
+      - name: Run tests
+        run: ./gradlew test
 
-      - name: Login into docker registry
-        uses: docker/login-action@v2.1.0
-        with:
-          username: 1grzyb1
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and push Docker for backend
-        uses: docker/build-push-action@v4.0.0
-        with:
-          context: .
-          push: true
-          tags: 1grzyb1/odyseja:latest
-
-      - name: Build and push Docker for frontend
-        uses: docker/build-push-action@v4.0.0
-        with:
-          context: ./odyseja-ui
-          push: true
-          tags: 1grzyb1/odyseja-frontend:latest
-
-      - name: Deploy dev env
+      - name: Deploy app
         uses: appleboy/ssh-action@master
         with:
           host: 37.27.71.201
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           script: |
-            cd odysejapka/Odysejapka
+            cd Odysejapka
             git pull
-            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            export FRONTEND_URL='http://grzybek.snet.ovh:3000'
-            export BACKEND_URL='http://grzybek.snet.ovh:8082'
-            docker-compose -p odyseja -f deployment/docker-compose.yml up -d
+            ./gradlew bootjar
+            docker build -t odyseja-backend .
+            docker build -t odyseja-ui odyseja-ui
+            docker-compose -p odyseja -f odyseja-deployment/docker-compose.yml up -d
             docker image prune --filter "dangling=true"
+
