@@ -1,5 +1,4 @@
-// @ts-ignore
-import auth0 from 'auth0-js';
+import * as auth0 from 'auth0-js';
 import {goto} from '$app/navigation';
 import {env} from '$env/dynamic/public';
 import Token from "./token";
