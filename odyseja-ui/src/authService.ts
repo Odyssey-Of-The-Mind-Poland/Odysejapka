@@ -1,55 +1,63 @@
-import * as auth0 from 'auth0-js';
-import {goto} from '$app/navigation';
-import {env} from '$env/dynamic/public';
-import Token from "./token";
+import { browser } from '$app/environment';
+import { goto } from '$app/navigation';
+import { env } from '$env/dynamic/public';
 
-export const FRONTEND_URL = env.PUBLIC_FRONTEND_URL || "http://localhost:5173";
+export const FRONTEND_URL = env.PUBLIC_FRONTEND_URL || 'http://localhost:5173';
 const CLIENT_ID = '8TI8RllRK5wf5l1Rv85msCTOF0e88lZg';
 
-export const client = new auth0.WebAuth({
-  clientID: CLIENT_ID,
-  domain: 'odyseja.eu.auth0.com',
-  responseType: 'token id_token',
-  audience: 'https://app.odyseja.org',
-  redirectUri: FRONTEND_URL + '/callback',
-  scope: 'openid profile'
-});
+let client: any;
+
+async function getClient() {
+	if (!browser) return null; // SSR guard
+
+	if (!client) {
+		const auth0 = await import('auth0-js'); // CommonJS-friendly
+		const WebAuth = (auth0 as any).WebAuth ?? (auth0 as any).default?.WebAuth;
+
+		client = new WebAuth({
+			clientID: CLIENT_ID,
+			domain: 'odyseja.eu.auth0.com',
+			responseType: 'token id_token',
+			audience: 'https://app.odyseja.org',
+			redirectUri: `${FRONTEND_URL}/callback`,
+			scope: 'openid profile'
+		});
+	}
+
+	return client;
+}
 
 export async function login() {
-  try {
-    await client.authorize();
-  } catch (e) {
-    console.error(e);
-  }
+	const c = await getClient();
+	c?.authorize();
 }
 
 export async function logout() {
-  client.logout({
-    returnTo: FRONTEND_URL,
-    clientID: '8TI8RllRK5wf5l1Rv85msCTOF0e88lZg'
-  });
-  setCookie('access_token', '');
-  await goto('/');
+	const c = await getClient();
+	c?.logout({
+		returnTo: FRONTEND_URL,
+		clientID: CLIENT_ID
+	});
+
+	setCookie('access_token', '');
+	await goto('/');
 }
 
-export function handleAuthentication() {
-  return new Promise((resolve, reject) => {
-    // @ts-ignore
-    client.parseHash((error, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
+export async function handleAuthentication() {
+	const c = await getClient();
 
-        setCookie('access_token', authResult.accessToken);
-
-        resolve(authResult);
-      } else if (error) {
-        console.error('Error parsing the authentication result:', error);
-        reject(error);
-      }
-    });
-  });
+	return new Promise((resolve, reject) => {
+		c.parseHash((error: any, authResult: any) => {
+			if (authResult?.accessToken && authResult?.idToken) {
+				setCookie('access_token', authResult.accessToken);
+				resolve(authResult);
+			} else if (error) {
+				reject(error);
+			}
+		});
+	});
 }
-
 
 function setCookie(name: string, value: string) {
-  document.cookie = name + "=" + value;
+	document.cookie = `${name}=${value}`;
 }
