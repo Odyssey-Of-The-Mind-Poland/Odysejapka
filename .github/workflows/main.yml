@@ -24,6 +24,9 @@ jobs:
             ./gradlew bootjar
             docker build -t odyseja-backend .
             docker build -t odyseja-ui odyseja-ui
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            export FRONTEND_URL='http://grzybek.snet.ovh:3000'
+            export BACKEND_URL='http://grzybek.snet.ovh:8082'
             docker-compose -p odyseja -f deployment/docker-compose.yml up -d
             docker image prune --filter "dangling=true"
 
