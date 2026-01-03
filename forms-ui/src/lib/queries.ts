@@ -2,7 +2,7 @@ import { createQuery, createMutation, getQueryClientContext } from '@tanstack/sv
 import { toast } from 'svelte-sonner';
 import { apiFetch } from '$lib/api';
 
-export function createTexapiQuery<TData>({
+export function createOdysejaQuery<TData>({
 	queryKey,
 	path,
 	initialData = undefined,
@@ -24,7 +24,7 @@ export function createTexapiQuery<TData>({
 	}));
 }
 
-export function createSingleTextapiQuery<TData>({
+export function createSingleOdysejaQuery<TData>({
 	queryKey,
 	path
 }: {

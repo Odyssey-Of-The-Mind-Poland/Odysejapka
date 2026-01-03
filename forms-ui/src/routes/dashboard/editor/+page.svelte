@@ -4,6 +4,7 @@
     import {goto} from "$app/navigation";
     import * as Table from '$lib/components/ui/table/index.js';
     import {setBreadcrumbs} from "$lib/breadcrumbs";
+    import {createOdysejaQuery} from "$lib/queries";
 
     setBreadcrumbs([
         {name: 'Edytor Formularzy', href: '/dashboard/editor'}
@@ -14,12 +15,19 @@
         name: string
     }
 
-    let problemsPromise = apiFetch<Problem[]>('/api/problem')
+    let problemsQuery = createOdysejaQuery<Problem[]>({
+        queryKey: ['problems'],
+        path: '/api/problem',
+    });
 </script>
 
-{#await problemsPromise}
-    <Spinner/>
-{:then problems}
+{#if problemsQuery.error}
+    <div class="text-red-500 mb-4">{String(problemsQuery.error)}</div>
+{:else if problemsQuery.isPending}
+    <Spinner size="sm"/>
+{:else if problemsQuery?.data.length === 0}
+    <div>No problems found.</div>
+{:else}
     <div class="rounded-md border overflow-x-auto">
         <Table.Root>
             <Table.Header>
@@ -30,7 +38,7 @@
             </Table.Header>
 
             <Table.Body>
-                {#each problems as problem (problem.id)}
+                {#each problemsQuery.data as problem (problem.id)}
                     <Table.Row
                             class="cursor-pointer hover:bg-muted/50"
                             onclick={() => goto(`/dashboard/editor/${problem.id}`)}
@@ -42,6 +50,4 @@
             </Table.Body>
         </Table.Root>
     </div>
-{:catch error}
-    <p>Something went wrong: {error.message}</p>
-{/await}
+{/if}

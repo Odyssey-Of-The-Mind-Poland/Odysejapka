@@ -1,11 +1,17 @@
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import {defineConfig, loadEnv} from 'vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import adapter from '@sveltejs/adapter-auto';
 
 export default defineConfig(({mode}) => {
 	const env = loadEnv(mode, process.cwd(), '');
 
 	return {
+		preprocess: vitePreprocess({ script: true }),
+		kit: {
+			adapter: adapter()
+		},
 		plugins: [tailwindcss(), sveltekit()],
 		preview: {
 			allowedHosts: ['grzybek.snet.ovh']
@@ -27,9 +33,9 @@ export default defineConfig(({mode}) => {
 						proxy.on('proxyRes', (proxyRes, req, _res) => {
 							console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
 						});
-					},
+					}
 				}
 			}
 		}
-	}
+	};
 });
