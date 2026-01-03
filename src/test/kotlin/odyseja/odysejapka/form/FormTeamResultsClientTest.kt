@@ -13,9 +13,9 @@ class FormTeamResultsClientTest : OdysejaDsl() {
 
     private fun seedDefaultForm(): Triple<Long, Long, Long> {
         setForm(
-            dt = listOf(FormEntry(null, "DT", FormEntry.CalcType.AVERAGE)),
-            style = listOf(FormEntry(null, "Style", FormEntry.CalcType.SUM)),
-            penalty = listOf(FormEntry(null, "Penalty", FormEntry.CalcType.SUM))
+            dt = listOf(FormEntry(null, "DT", FormEntry.EntryType.PUNCTUATION, CalcType.AVERAGE)),
+            style = listOf(FormEntry(null, "Style", FormEntry.EntryType.PUNCTUATION, CalcType.SUM)),
+            penalty = listOf(FormEntry(null, "Penalty", FormEntry.EntryType.PUNCTUATION, CalcType.SUM))
         )
         val entries = form()
         val dtId = entries.dtEntries.first().id!!

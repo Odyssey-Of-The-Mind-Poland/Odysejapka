@@ -1,6 +1,7 @@
 package odyseja.odysejapka
 
 import odyseja.odysejapka.city.CityController
+import odyseja.odysejapka.form.CalcType
 import odyseja.odysejapka.form.FormController
 import odyseja.odysejapka.form.FormEntry
 import odyseja.odysejapka.form.ProblemForm
@@ -19,7 +20,7 @@ import ovh.snet.grzybek.controller.client.core.ControllerClientFactory
 @AutoConfigureMockMvc
 @ComponentScan(basePackages = ["odyseja.odysejapka"])
 @ActiveProfiles("test")
-open class OdysejaDsl {
+class OdysejaDsl {
 
     lateinit var formClient: FormController
     lateinit var cityClient: CityController
@@ -49,9 +50,9 @@ open class OdysejaDsl {
     fun form() = formClient.getProblemForm(PROBLEM_ID)
 
     fun seedDefault(): Unit = setForm(
-        dt = listOf(FormEntry(null, "DT", FormEntry.CalcType.AVERAGE)),
-        style = listOf(FormEntry(null, "Style", FormEntry.CalcType.SUM)),
-        penalty = listOf(FormEntry(null, "Penalty", FormEntry.CalcType.SUM))
+        dt = listOf(FormEntry(null, "DT", FormEntry.EntryType.PUNCTUATION, CalcType.AVERAGE)),
+        style = listOf(FormEntry(null, "Style", FormEntry.EntryType.PUNCTUATION, CalcType.SUM)),
+        penalty = listOf(FormEntry(null, "Penalty", FormEntry.EntryType.PUNCTUATION, CalcType.SUM))
     )
 
 }

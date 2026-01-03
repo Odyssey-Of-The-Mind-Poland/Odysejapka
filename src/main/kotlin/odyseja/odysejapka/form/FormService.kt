@@ -1,7 +1,6 @@
 package odyseja.odysejapka.form
 
 import odyseja.odysejapka.city.CityRepository
-import odyseja.odysejapka.form.FormEntryEntity.Companion.from
 import odyseja.odysejapka.timetable.PerformanceRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,24 +21,8 @@ class FormService(
         val existingById = existing.associateBy { it.id }
         val existingByCategory = existing.groupBy { it.formCategory }
 
-        fun toEntity(
-            dto: FormEntry,
-            category: FormEntryEntity.FormCategory
-        ): FormEntryEntity {
-            val entity = dto.id?.let { existingById[it] }
-            return if (entity != null) {
-                entity.apply {
-                    name = dto.name
-                    calcType = dto.calcType
-                    formCategory = category
-                }
-            } else {
-                from(problem, dto, category)
-            }
-        }
-
-        fun purgeMissing(dtos: List<FormEntry>, category: FormEntryEntity.FormCategory) {
-            val requestedIds = dtos.asSequence().mapNotNull { it.id }.toSet()
+        fun purgeMissing(entries: List<FormEntry>, category: FormEntryEntity.FormCategory) {
+            val requestedIds = FormEntryEntityConverter.collectAllIds(entries)
             val toDelete = existingByCategory[category].orEmpty()
                 .filter { it.id !in requestedIds }
 
@@ -55,10 +38,11 @@ class FormService(
             FormEntryEntity.FormCategory.PENALTY to form.penaltyEntries
         )
 
-        categories.forEach { (cat, dtos) -> purgeMissing(dtos, cat) }
+        categories.forEach { (cat, entries) -> purgeMissing(entries, cat) }
 
-        val toPersist = categories
-            .flatMap { (cat, dtos) -> dtos.map { dto -> toEntity(dto, cat) } }
+        val toPersist = categories.flatMap { (cat, entries) ->
+            FormEntryEntityConverter.flattenToEntities(problem, entries, cat, existingById)
+        }
 
         formEntryRepository.saveAll(toPersist)
     }
@@ -67,12 +51,16 @@ class FormService(
     fun getFormEntries(problem: Int): ProblemForm {
         val entries = formEntryRepository.findByProblem(problem)
         return ProblemForm(
-            entries.filter { it.formCategory == FormEntryEntity.FormCategory.DT }
-                .map { it.toFormEntry() },
-            entries.filter { it.formCategory == FormEntryEntity.FormCategory.STYLE }
-                .map { it.toFormEntry() },
-            entries.filter { it.formCategory == FormEntryEntity.FormCategory.PENALTY }
-                .map { it.toFormEntry() })
+            FormEntryEntityConverter.reconstructFromEntities(
+                entries.filter { it.formCategory == FormEntryEntity.FormCategory.DT }
+            ),
+            FormEntryEntityConverter.reconstructFromEntities(
+                entries.filter { it.formCategory == FormEntryEntity.FormCategory.STYLE }
+            ),
+            FormEntryEntityConverter.reconstructFromEntities(
+                entries.filter { it.formCategory == FormEntryEntity.FormCategory.PENALTY }
+            )
+        )
     }
 
     @Transactional
