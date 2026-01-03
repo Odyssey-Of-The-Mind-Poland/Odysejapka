@@ -24,6 +24,6 @@ jobs:
             ./gradlew bootjar
             docker build -t odyseja-backend .
             docker build -t odyseja-ui odyseja-ui
-            docker-compose -p odyseja -f odyseja-deployment/docker-compose.yml up -d
+            docker-compose -p odyseja -f deployment/docker-compose.yml up -d
             docker image prune --filter "dangling=true"
 
