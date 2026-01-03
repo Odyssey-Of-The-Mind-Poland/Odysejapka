@@ -39,7 +39,7 @@ class FormController(private val formService: FormService?) {
     }
 
     @GetMapping("/{performanceId}/result")
-    fun getTeamResults(@PathVariable performanceId: Int): List<FormResult> {
-        return formService!!.getTeamResults(performanceId)
+    fun getTeamResults(@PathVariable performanceId: Int): TeamForm {
+        return formService!!.getTeamForm(performanceId)
     }
 }

@@ -13,6 +13,7 @@ class FormService(
     private val teamResultEntryRepository: TeamResultEntryRepository,
     private val performanceRepository: PerformanceRepository,
     private val cityRepository: CityRepository,
+    private val teamFormService: TeamFormService,
 ) {
 
     @Transactional
@@ -132,14 +133,7 @@ class FormService(
         }
     }
 
-    fun getTeamResults(performanceId: Int): List<FormResult> {
-        return teamResultEntryRepository.findByPerformanceEntityId(performanceId).map {
-            FormResult(
-                performanceId = it.performanceEntity?.id ?: 0,
-                entryId = it.formEntryEntity?.id ?: 0,
-                judge = it.judge,
-                result = it.result
-            )
-        }
+    fun getTeamForm(performanceId: Int): TeamForm {
+        return teamFormService.getTeamForm(performanceId)
     }
 }

@@ -1,18 +1,12 @@
-package odyseja.odysejapka.rak
+package odyseja.odysejapka.form
 
 import odyseja.odysejapka.OdysejaDsl
 import odyseja.odysejapka.city.CreateCityRequest
-import odyseja.odysejapka.form.FormEntry
-import odyseja.odysejapka.form.ProblemForm
-import odyseja.odysejapka.form.PerformanceResultsRequest
-import odyseja.odysejapka.form.FormResult
 import odyseja.odysejapka.timetable.Performance
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @WithMockUser(username = "testuser", roles = ["ADMIN"])
 class FormTeamResultsClientTest : OdysejaDsl() {
@@ -52,6 +46,7 @@ class FormTeamResultsClientTest : OdysejaDsl() {
         )
         return timeTableClient.addPerformance(performance).id
     }
+
     private fun results(performanceId: Int) = formClient.getTeamResults(performanceId)
 
 
@@ -72,13 +67,11 @@ class FormTeamResultsClientTest : OdysejaDsl() {
         )
 
         val saved = results(perfId)
-        assertThat(saved).hasSize(2)
-        assertThat(saved.map { it.entryId to it.result to it.judge })
-            .containsExactlyInAnyOrder(
-                (dtId to 50L) to 1,
-                (styleId to 30L) to 1
-            )
-        assertThat(saved.map { it.performanceId }.toSet()).containsExactly(perfId)
+        Assertions.assertThat(saved.entries).hasSize(3) // All form entries (dt, style, penalty)
+        val dtEntry = saved.entries.first { it.entryId == dtId }
+        val styleEntry = saved.entries.first { it.entryId == styleId }
+        Assertions.assertThat(dtEntry.judgeResults).containsEntry(1, 50L)
+        Assertions.assertThat(styleEntry.judgeResults).containsEntry(1, 30L)
     }
 
     @Test
@@ -107,12 +100,14 @@ class FormTeamResultsClientTest : OdysejaDsl() {
             )
         )
 
-        val after = results(perfId)
+        val after = results(perfId).entries
 
-        assertThat(after).hasSize(3)
-        assertThat(after.first { it.entryId == dtId && it.judge == 1 }.result).isEqualTo(15L)
-        assertThat(after.first { it.entryId == styleId && it.judge == 1 }.result).isEqualTo(20L)
-        assertThat(after.first { it.entryId == styleId && it.judge == 2 }.result).isEqualTo(22L)
+        Assertions.assertThat(after).hasSize(3) // All form entries (dt, style, penalty)
+        val dtEntry = after.first { it.entryId == dtId }
+        val styleEntry = after.first { it.entryId == styleId }
+        Assertions.assertThat(dtEntry.judgeResults).containsEntry(1, 15L)
+        Assertions.assertThat(styleEntry.judgeResults).containsEntry(1, 20L)
+        Assertions.assertThat(styleEntry.judgeResults).containsEntry(2, 22L)
     }
 
     @Test
@@ -129,14 +124,16 @@ class FormTeamResultsClientTest : OdysejaDsl() {
         )
 
         formClient.setTeamResults(perfId, payload)
-        val first = results(perfId)
-        assertThat(first).hasSize(2)
+        val first = results(perfId).entries
+        Assertions.assertThat(first).hasSize(3) // All form entries (dt, style, penalty)
 
         formClient.setTeamResults(perfId, payload)
-        val second = results(perfId)
-        assertThat(second).hasSize(2)
-        assertThat(second.first { it.entryId == dtId && it.judge == 1 }.result).isEqualTo(44L)
-        assertThat(second.first { it.entryId == styleId && it.judge == 1 }.result).isEqualTo(66L)
+        val second = results(perfId).entries
+        Assertions.assertThat(second).hasSize(3)
+        val dtEntry = second.first { it.entryId == dtId }
+        val styleEntry = second.first { it.entryId == styleId }
+        Assertions.assertThat(dtEntry.judgeResults).containsEntry(1, 44L)
+        Assertions.assertThat(styleEntry.judgeResults).containsEntry(1, 66L)
     }
 
     @Test
@@ -166,20 +163,21 @@ class FormTeamResultsClientTest : OdysejaDsl() {
             )
         )
 
-        val a = results(perfA)
-        val b = results(perfB)
+        val a = results(perfA).entries
+        val b = results(perfB).entries
 
-        assertThat(a).hasSize(1)
-        assertThat(a[0].performanceId).isEqualTo(perfA)
-        assertThat(a[0].judge).isEqualTo(1)
-        assertThat(a[0].result).isEqualTo(11L)
+        Assertions.assertThat(a).hasSize(3) // All form entries (dt, style, penalty)
+        val dtEntryA = a.first { it.entryId == dtId }
+        Assertions.assertThat(dtEntryA.judgeResults).containsEntry(1, 11L)
 
-        assertThat(b).hasSize(2)
-        assertThat(b.map { it.performanceId }.toSet()).containsExactly(perfB)
-        assertThat(b.map { it.judge }).containsExactlyInAnyOrder(1, 2)
+        Assertions.assertThat(b).hasSize(3) // All form entries (dt, style, penalty)
+        val dtEntryB = b.first { it.entryId == dtId }
+        Assertions.assertThat(dtEntryB.judgeResults.keys).containsExactlyInAnyOrder(1, 2)
+        Assertions.assertThat(dtEntryB.judgeResults).containsEntry(1, 22L)
+        Assertions.assertThat(dtEntryB.judgeResults).containsEntry(2, 33L)
 
-        assertThat(formClient.getJudgeCount(PROBLEM_ID, cityA.id)).isEqualTo(3)
-        assertThat(formClient.getJudgeCount(PROBLEM_ID, cityB.id)).isEqualTo(5)
+        Assertions.assertThat(formClient.getJudgeCount(PROBLEM_ID, cityA.id)).isEqualTo(3)
+        Assertions.assertThat(formClient.getJudgeCount(PROBLEM_ID, cityB.id)).isEqualTo(5)
     }
 
     @Test
@@ -190,7 +188,7 @@ class FormTeamResultsClientTest : OdysejaDsl() {
 
         val unknownId = 9_999_999L
 
-        assertThatThrownBy {
+        Assertions.assertThatThrownBy {
             formClient.setTeamResults(
                 perfId,
                 PerformanceResultsRequest(
@@ -209,7 +207,8 @@ class FormTeamResultsClientTest : OdysejaDsl() {
 
         formClient.setTeamResults(perfId, PerformanceResultsRequest(emptyList()))
 
-        val after = results(perfId)
-        assertThat(after).isEmpty()
+        val after = results(perfId).entries
+        Assertions.assertThat(after).hasSize(3) // All form entries (dt, style, penalty) but with empty judgeResults
+        Assertions.assertThat(after.all { it.judgeResults.isEmpty() }).isTrue()
     }
 }
