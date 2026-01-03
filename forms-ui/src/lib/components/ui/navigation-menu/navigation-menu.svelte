@@ -15,13 +15,13 @@
 </script>
 
 <NavigationMenuPrimitive.Root
-        {...restProps}
         bind:ref
+        {...restProps}
+        data-slot="navigation-menu"
         class={cn(
 		"group/navigation-menu relative flex max-w-max flex-1 items-center justify-center",
 		className
 	)}
-        data-slot="navigation-menu"
         data-viewport={viewport}
 >
     {@render children?.()}

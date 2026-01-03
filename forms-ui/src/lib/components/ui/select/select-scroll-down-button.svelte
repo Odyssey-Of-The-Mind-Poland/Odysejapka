@@ -11,10 +11,10 @@
 </script>
 
 <SelectPrimitive.ScrollDownButton
-        {...restProps}
         bind:ref
-        class={cn("flex cursor-default items-center justify-center py-1", className)}
         data-slot="select-scroll-down-button"
+        {...restProps}
+        class={cn("flex cursor-default items-center justify-center py-1", className)}
 >
     <ChevronDownIcon class="size-4"/>
 </SelectPrimitive.ScrollDownButton>

@@ -10,8 +10,8 @@
 </script>
 
 <NavigationMenuPrimitive.Item
-        {...restProps}
         bind:ref
-        class={cn("relative", className)}
         data-slot="navigation-menu-item"
+        {...restProps}
+        class={cn("relative", className)}
 />
