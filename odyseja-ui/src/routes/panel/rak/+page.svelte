@@ -1,8 +1,5 @@
 <script lang="ts">
     import {
-        generateCsv,
-        generateDetailedCsv,
-        generateHtmlResults,
         generatePdfResults,
         generateShortPdfResults
     } from './rak';
@@ -36,9 +33,6 @@
         }
     }
 
-    const downloadCsv = () => downloadFile(generateCsv, 'text/csv', 'csv');
-    const downloadDetailedCsv = () => downloadFile(generateDetailedCsv, 'text/csv', 'csv');
-    const downloadHtmlResults = () => downloadFile(generateHtmlResults, 'text/html', 'html');
     const downloadPdfResults = () => downloadFile(generatePdfResults, 'application/pdf', 'pdf');
     const downloadShortPdfResults = () => downloadFile(generateShortPdfResults, 'application/pdf', 'pdf');
 </script>
@@ -50,16 +44,6 @@
         <input bind:value={zspId} class="input" placeholder="ZSP ID"
                type="text"/>
         <div class="flex gap-3 items-center">
-            <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadCsv} disabled={isLoading}>
-                Generuj TM csv
-            </button>
-            <button class="btn btn-md variant-filled-secondary h-10" disabled={isLoading}
-                    on:click={downloadDetailedCsv}>
-                Generuj szczegółowy csv
-            </button>
-            <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadHtmlResults} disabled={isLoading}>
-                Generuj html results
-            </button>
             <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadPdfResults} disabled={isLoading}>
                 Generuj pdf results
             </button>

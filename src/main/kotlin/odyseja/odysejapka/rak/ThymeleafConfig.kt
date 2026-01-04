@@ -17,14 +17,14 @@ class ThymeleafConfig {
     private lateinit var templatePrefix: String
 
     @Bean
-    fun templateResolver(): FileTemplateResolver {
-        val templateResolver = FileTemplateResolver()
-        templateResolver.prefix = templatePrefix
-        templateResolver.suffix = ".html"
-        templateResolver.templateMode = TemplateMode.HTML
-        templateResolver.characterEncoding = "UTF-8"
-        templateResolver.isCacheable = false
-        return templateResolver
+    fun templateResolver(): SpringResourceTemplateResolver {
+        val resolver = SpringResourceTemplateResolver()
+        resolver.prefix = templatePrefix
+        resolver.suffix = ".html"
+        resolver.templateMode = TemplateMode.HTML
+        resolver.characterEncoding = "UTF-8"
+        resolver.isCacheable = false
+        return resolver
     }
 
     @Bean
