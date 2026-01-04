@@ -106,9 +106,9 @@
 
     // ---- Grouping & subtotals ----
     const categories: { key: FormCategory; title: string }[] = [
-        { key: 'DT', title: 'ROZWIĄZANIE PROBLEMU DŁUGOTERMINOWEGO\t' },
-        { key: 'STYLE', title: 'Styl' },
-        { key: 'PENALTY', title: 'Punkty Karne' }
+        { key: 'DT', title: 'DT Entries' },
+        { key: 'STYLE', title: 'Style Entries' },
+        { key: 'PENALTY', title: 'Penalty Entries' }
     ];
 
     function entriesFor(cat: FormCategory): FormEntry[] {

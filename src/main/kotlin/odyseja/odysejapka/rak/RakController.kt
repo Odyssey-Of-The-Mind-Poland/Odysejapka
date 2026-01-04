@@ -4,7 +4,6 @@ import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -22,8 +21,7 @@ class RakController(
     private val csvService: CsvService,
     private val htmlGeneratorService: HtmlGeneratorService,
     private val pdfGeneratorService: PdfGeneratorService,
-    private val mockedPdfService: MockedPdfService,
-    private val templateStoreService: TemplateStoreService
+    private val mockedPdfService: MockedPdfService
 ) {
     @PostMapping("/generate")
     fun generateCsv(@RequestBody request: ZspIdRequest): ResponseEntity<ByteArray> {
@@ -66,27 +64,6 @@ class RakController(
             .contentType(MediaType.APPLICATION_PDF)
             .body(pdfBytes)
     }
-
-    @GetMapping("/pdf-template")
-    fun getPdfTemplate(): ResponseEntity<String> {
-        val template = templateStoreService.find("results.latex")?.content ?: "Template not found"
-        return ResponseEntity.ok()
-            .contentType(MediaType.TEXT_PLAIN)
-            .body(template)
-    }
-
-    @PostMapping(
-        "/pdf-template",
-        consumes = [MediaType.TEXT_PLAIN_VALUE],
-        produces = [MediaType.TEXT_PLAIN_VALUE]
-    )
-    fun setPdfTemplate(@RequestBody body: String): ResponseEntity<String> {
-        val saved = templateStoreService.update("results.latex", body).content
-        return ResponseEntity.ok()
-            .contentType(MediaType.TEXT_PLAIN)
-            .body(saved)
-    }
-
 
     @PostMapping("/download-short-pdf")
     fun downloadShortPdf(
