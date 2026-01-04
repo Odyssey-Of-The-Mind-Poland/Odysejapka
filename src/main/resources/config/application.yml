@@ -34,7 +34,7 @@ server:
   port: 8081
 
 clsi:
-  base-url: http://localhost:3013
+  base-url: http://grzybek.snet.ovh:3013
   compiler: lualatex
   timeout-sec: 60
   project-id: 1
