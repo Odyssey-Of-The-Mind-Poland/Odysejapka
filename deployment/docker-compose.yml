@@ -30,6 +30,7 @@ services:
       SPRING_CONFIG_IMPORT: file:/properties.yml
     volumes:
       - /root/odysejapka/creds.json:/root/odysejapka/creds.json:ro
+      - ./properties.yml:/properties.yml:ro
 
   frontend:
     image: odyseja-ui:latest
