@@ -10,8 +10,11 @@ class GadController(private val gadCommandService: GadCommandService, private va
 
     @PostMapping
     @Secured("ROLE_ADMINISTRATOR")
-    fun startGad(@RequestBody generateGadCommand: GenerateGadCommand) {
-        gadService.runGad(generateGadCommand)
+    fun startGad(
+        @RequestBody generateGadCommand: GenerateGadCommand,
+        @RequestParam(required = false) cityId: Int?
+    ) {
+        gadService.runGad(generateGadCommand, cityId)
     }
 
     @PostMapping("/stop")
@@ -26,7 +29,7 @@ class GadController(private val gadCommandService: GadCommandService, private va
     }
 
     @GetMapping
-    fun getGad(): GenerateGadCommand {
-        return gadCommandService.getCommand()
+    fun getGad(@RequestParam(required = false) cityId: Int?): GenerateGadCommand {
+        return gadCommandService.getCommand(cityId)
     }
 }

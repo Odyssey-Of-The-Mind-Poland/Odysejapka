@@ -11,6 +11,8 @@ async function getClient() {
 	if (!browser) return null; // SSR guard
 
 	if (!client) {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		const auth0 = await import('auth0-js'); // CommonJS-friendly
 		const WebAuth = (auth0 as any).WebAuth ?? (auth0 as any).default?.WebAuth;
 

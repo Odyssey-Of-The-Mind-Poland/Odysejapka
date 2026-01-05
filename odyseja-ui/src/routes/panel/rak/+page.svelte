@@ -4,8 +4,11 @@
         generateShortPdfResults
     } from './rak';
     import {ProgressRadial} from '@skeletonlabs/skeleton';
+    import type { ZspIdRequest } from '$lib/types';
 
-    let zspId = "";
+    export let data: ZspIdRequest;
+
+    let zspId = data.zspId;
     let isLoading = false;
 
     async function downloadFile(

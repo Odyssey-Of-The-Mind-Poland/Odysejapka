@@ -6,12 +6,18 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/sak")
-class SakController(private val sakService: SakService) {
+class SakController(
+    private val sakService: SakService,
+    private val sakCommandService: SakCommandService
+) {
 
     @PostMapping
     @Secured("ROLE_ADMINISTRATOR")
-    fun startGad(@RequestBody generateGadCommand: GenerateSakCommand) {
-        sakService.runGad(generateGadCommand)
+    fun startGad(
+        @RequestBody generateGadCommand: GenerateSakCommand,
+        @RequestParam(required = false) cityId: Int?
+    ) {
+        sakService.runGad(generateGadCommand, cityId)
     }
 
     @PostMapping("/stop")
@@ -23,5 +29,10 @@ class SakController(private val sakService: SakService) {
     @GetMapping("/status")
     fun getGadStatus(): Progress {
         return sakService.getProgress()
+    }
+
+    @GetMapping
+    fun getSak(@RequestParam(required = false) cityId: Int?): GenerateSakCommand {
+        return sakCommandService.getCommand(cityId)
     }
 }

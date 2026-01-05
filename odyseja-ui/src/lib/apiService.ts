@@ -28,7 +28,7 @@ export async function get(path: string): Promise<any> {
 }
 
 export async function post(request: any, path: string, succesText: string): Promise<any> {
-    const response = await fetch(BASE_URL + path, {
+    const response = await fetch(BASE_URL + path + '?cityId=' + currentCity.id, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

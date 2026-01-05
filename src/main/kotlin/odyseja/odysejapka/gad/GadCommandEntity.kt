@@ -1,12 +1,14 @@
 package odyseja.odysejapka.gad
 
-import org.springframework.data.jpa.repository.JpaRepository
 import jakarta.persistence.*
+import org.springframework.data.jpa.repository.JpaRepository
 
 @Entity
 class GadCommandEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
+
+    val cityId: Int? = null,
 
     @Column(columnDefinition = "TEXT")
     val jsonData: String
@@ -14,4 +16,5 @@ class GadCommandEntity(
 
 interface GadCommandRepository : JpaRepository<GadCommandEntity, Long> {
     fun findFirstByOrderByIdDesc(): GadCommandEntity?
+    fun findFirstByCityIdOrderByIdDesc(cityId: Int): GadCommandEntity?
 }

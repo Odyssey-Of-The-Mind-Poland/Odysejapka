@@ -13,8 +13,8 @@ class GadService(
 
     private var runner: ProcessRunner? = null
 
-    fun runGad(generateGadCommand: GenerateGadCommand) {
-        gadCommandService.saveCommand(generateGadCommand)
+    fun runGad(generateGadCommand: GenerateGadCommand, cityId: Int?) {
+        gadCommandService.saveCommand(generateGadCommand, cityId)
         runner = ProcessRunner(
             GadConfiguration(
                 generateGadCommand.templatesFolderId,

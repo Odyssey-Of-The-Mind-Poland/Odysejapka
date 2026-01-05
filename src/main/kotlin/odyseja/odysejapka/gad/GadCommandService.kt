@@ -9,23 +9,32 @@ class GadCommandService(
     private val objectMapper: ObjectMapper
 ) {
 
-    fun saveCommand(command: GenerateGadCommand) {
-        val json =
-            repository.save(GadCommandEntity(jsonData = objectMapper.writeValueAsString(command)))
+    fun saveCommand(command: GenerateGadCommand, cityId: Int?) {
+        repository.save(
+            GadCommandEntity(
+                cityId = cityId,
+                jsonData = objectMapper.writeValueAsString(command)
+            )
+        )
     }
 
-    fun getCommand(): GenerateGadCommand {
-        val entity = repository.findFirstByOrderByIdDesc()
-        if (entity == null) {
-            val command = GenerateGadCommand(
+    fun getCommand(cityId: Int?): GenerateGadCommand {
+        val entity = if (cityId != null) {
+            repository.findFirstByCityIdOrderByIdDesc(cityId)
+        } else {
+            repository.findFirstByOrderByIdDesc()
+        }
+
+        return if (entity == null) {
+            GenerateGadCommand(
                 templatesFolderId = "",
                 destinationFolderId = "",
                 zspId = "",
                 problemPunctuationCells = mapOf()
             )
-            return command
+        } else {
+            objectMapper.readValue(entity.jsonData, GenerateGadCommand::class.java)
         }
-        return objectMapper.readValue(entity.jsonData, GenerateGadCommand::class.java)
     }
 
 }

@@ -1,7 +1,12 @@
 import {BASE_URL, getBearer, showHappyToast, showSadToast} from "$lib/apiService";
+import {city} from "$lib/cityStore";
+import type {City} from "$lib/types";
+
+let currentCity: City = {id: 0, name: ''};
+city.subscribe((c) => currentCity = c);
 
 export async function generatePdfResults(zspIdRequest: string) {
-    const response = await fetch(BASE_URL + '/api/v1/rak/download-pdf', {
+    const response = await fetch(BASE_URL + '/api/v1/rak/download-pdf?cityId=' + currentCity.id, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -19,7 +24,7 @@ export async function generatePdfResults(zspIdRequest: string) {
 }
 
 export async function generateShortPdfResults(zspIdRequest: string) {
-    const response = await fetch(BASE_URL + '/api/v1/rak/download-short-pdf', {
+    const response = await fetch(BASE_URL + '/api/v1/rak/download-short-pdf?cityId=' + currentCity.id, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -4,8 +4,10 @@
     import {type Progress, type SakRequest, Status} from "$lib/types";
     import {getSakStatus, runSak, stopSakRun} from "./sakService";
 
-    let folderId = "";
-    let zspId = "";
+    export let data: SakRequest;
+
+    let folderId = data.templatesFolderId;
+    let zspId = data.zspId;
     let sakProgress: Progress = {status: Status.STOPPED, progress: 100};
     let intervalId: any = null;
 
