@@ -17,6 +17,7 @@ export default defineConfig(({mode}) => {
 			allowedHosts: ['grzybek.snet.ovh']
 		},
 		server: {
+			port: 5172,
 			proxy: {
 				'/api': {
 					target: env.VITE_API_BASE_URL,

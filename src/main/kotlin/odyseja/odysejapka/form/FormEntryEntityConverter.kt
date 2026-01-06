@@ -28,13 +28,29 @@ object FormEntryEntityConverter {
                     FormEntry.EntryType.SECTION -> FormEntryEntity.EntryType.SECTION
                     FormEntry.EntryType.PUNCTUATION_GROUP -> FormEntryEntity.EntryType.PUNCTUATION_GROUP
                 }
-                this.calcType = entry.calcType
+                when (entry.type) {
+                    FormEntry.EntryType.PUNCTUATION -> {
+                        entry.punctuation?.let { p ->
+                            this.punctuationType = p.punctuationType
+                            this.pointsMin = p.pointsMin
+                            this.pointsMax = p.pointsMax
+                            this.judges = p.judges
+                            this.noElement = p.noElement
+                        }
+                    }
+                    FormEntry.EntryType.SECTION -> {
+                    }
+                    FormEntry.EntryType.PUNCTUATION_GROUP -> {
+                        entry.punctuationGroup?.let { pg ->
+                            this.pointsMin = pg.pointsMin
+                            this.pointsMax = pg.pointsMax
+                        }
+                    }
+                }
             }
 
-            // Add parent entity first
             result += entity
 
-            // Then process children recursively
             entry.entries.forEachIndexed { idx, child ->
                 processEntry(child, entity, idx)
             }
@@ -59,25 +75,7 @@ object FormEntryEntityConverter {
             .groupBy { it.parent!!.id }
             .mapValues { (_, children) -> children.sortedBy { it.orderIndex } }
 
-        fun buildEntry(entity: FormEntryEntity): FormEntry {
-            val children = childrenByParent[entity.id] ?: emptyList()
-
-            val entryType = when (entity.entryType) {
-                FormEntryEntity.EntryType.PUNCTUATION -> FormEntry.EntryType.PUNCTUATION
-                FormEntryEntity.EntryType.SECTION -> FormEntry.EntryType.SECTION
-                FormEntryEntity.EntryType.PUNCTUATION_GROUP -> FormEntry.EntryType.PUNCTUATION_GROUP
-            }
-
-            return FormEntry(
-                id = entity.id,
-                name = entity.name,
-                type = entryType,
-                calcType = entity.calcType,
-                entries = children.map { buildEntry(it) }
-            )
-        }
-
-        return rootEntries.map { buildEntry(it) }
+        return rootEntries.map { it.toFormEntry(childrenByParent) }
     }
 
     fun collectAllIds(entries: List<FormEntry>): Set<Long> {

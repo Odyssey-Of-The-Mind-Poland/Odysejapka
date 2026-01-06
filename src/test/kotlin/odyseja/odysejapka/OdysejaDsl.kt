@@ -50,9 +50,36 @@ class OdysejaDsl {
     fun form() = formClient.getProblemForm(PROBLEM_ID)
 
     fun seedDefault(): Unit = setForm(
-        dt = listOf(FormEntry(null, "DT", FormEntry.EntryType.PUNCTUATION, CalcType.AVERAGE)),
-        style = listOf(FormEntry(null, "Style", FormEntry.EntryType.PUNCTUATION, CalcType.SUM)),
-        penalty = listOf(FormEntry(null, "Penalty", FormEntry.EntryType.PUNCTUATION, CalcType.SUM))
+        dt = listOf(FormEntry(
+            null, "DT", FormEntry.EntryType.PUNCTUATION,
+            punctuation = FormEntry.PunctuationData(
+                punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+                pointsMin = 0,
+                pointsMax = 100,
+                judges = FormEntry.JudgeType.A,
+                noElement = false
+            )
+        )),
+        style = listOf(FormEntry(
+            null, "Style", FormEntry.EntryType.PUNCTUATION,
+            punctuation = FormEntry.PunctuationData(
+                punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+                pointsMin = 0,
+                pointsMax = 50,
+                judges = FormEntry.JudgeType.B,
+                noElement = false
+            )
+        )),
+        penalty = listOf(FormEntry(
+            null, "Penalty", FormEntry.EntryType.PUNCTUATION,
+            punctuation = FormEntry.PunctuationData(
+                punctuationType = FormEntry.PunctuationType.OBJECTIVE,
+                pointsMin = 0,
+                pointsMax = 10,
+                judges = FormEntry.JudgeType.A,
+                noElement = false
+            )
+        ))
     )
 
 }

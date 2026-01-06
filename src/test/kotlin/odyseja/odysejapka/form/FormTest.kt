@@ -17,7 +17,8 @@ class FormTest : OdysejaDsl() {
         Assertions.assertThat(entries.dtEntries).hasSize(1)
         val dtEntry = entries.dtEntries[0]
         Assertions.assertThat(dtEntry.type).isEqualTo(FormEntry.EntryType.PUNCTUATION)
-        Assertions.assertThat(dtEntry.calcType).isEqualTo(CalcType.AVERAGE)
+        Assertions.assertThat(dtEntry.punctuation).isNotNull
+        Assertions.assertThat(dtEntry.punctuation?.punctuationType).isEqualTo(FormEntry.PunctuationType.SUBJECTIVE)
         val styleEntry = entries.styleEntries[0]
         Assertions.assertThat(styleEntry.name).isEqualTo("Style")
     }
@@ -32,16 +33,44 @@ class FormTest : OdysejaDsl() {
         val penaltyId = existing.penaltyEntries.first().id
 
         setForm(
-            dt = listOf(FormEntry(dtId, "DT new", FormEntry.EntryType.PUNCTUATION, CalcType.SUM)),
-            style = listOf(FormEntry(styleId, "Style", FormEntry.EntryType.PUNCTUATION, CalcType.SUM)),
-            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION, CalcType.SUM))
+            dt = listOf(FormEntry(
+                dtId, "DT new", FormEntry.EntryType.PUNCTUATION,
+                punctuation = FormEntry.PunctuationData(
+                    punctuationType = FormEntry.PunctuationType.OBJECTIVE,
+                    pointsMin = 0,
+                    pointsMax = 200,
+                    judges = FormEntry.JudgeType.B,
+                    noElement = true
+                )
+            )),
+            style = listOf(FormEntry(
+                styleId, "Style", FormEntry.EntryType.PUNCTUATION,
+                punctuation = FormEntry.PunctuationData(
+                    punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+                    pointsMin = 0,
+                    pointsMax = 50,
+                    judges = FormEntry.JudgeType.B,
+                    noElement = false
+                )
+            )),
+            penalty = listOf(FormEntry(
+                penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION,
+                punctuation = FormEntry.PunctuationData(
+                    punctuationType = FormEntry.PunctuationType.OBJECTIVE,
+                    pointsMin = 0,
+                    pointsMax = 10,
+                    judges = FormEntry.JudgeType.A,
+                    noElement = false
+                )
+            ))
         )
 
         val updated = form()
         Assertions.assertThat(updated.dtEntries).hasSize(1)
         val updatedDt = updated.dtEntries[0]
         Assertions.assertThat(updatedDt.name).isEqualTo("DT new")
-        Assertions.assertThat(updatedDt.calcType).isEqualTo(CalcType.SUM)
+        Assertions.assertThat(updatedDt.punctuation?.pointsMax).isEqualTo(200)
+        Assertions.assertThat(updatedDt.punctuation?.noElement).isTrue
     }
 
     @Test
@@ -53,8 +82,26 @@ class FormTest : OdysejaDsl() {
 
         setForm(
             dt = emptyList(),
-            style = listOf(FormEntry(styleId, "Style", FormEntry.EntryType.PUNCTUATION, CalcType.SUM)),
-            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION, CalcType.SUM))
+            style = listOf(FormEntry(
+                styleId, "Style", FormEntry.EntryType.PUNCTUATION,
+                punctuation = FormEntry.PunctuationData(
+                    punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+                    pointsMin = 0,
+                    pointsMax = 50,
+                    judges = FormEntry.JudgeType.B,
+                    noElement = false
+                )
+            )),
+            penalty = listOf(FormEntry(
+                penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION,
+                punctuation = FormEntry.PunctuationData(
+                    punctuationType = FormEntry.PunctuationType.OBJECTIVE,
+                    pointsMin = 0,
+                    pointsMax = 10,
+                    judges = FormEntry.JudgeType.A,
+                    noElement = false
+                )
+            ))
         )
 
         val afterDelete = form()
@@ -73,13 +120,21 @@ class FormTest : OdysejaDsl() {
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
+        val punctuationData = FormEntry.PunctuationData(
+            punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+            pointsMin = 0,
+            pointsMax = 100,
+            judges = FormEntry.JudgeType.A,
+            noElement = false
+        )
+
         setForm(
-            dt = listOf(FormEntry(dtId, "DT", FormEntry.EntryType.PUNCTUATION, CalcType.AVERAGE)),
+            dt = listOf(FormEntry(dtId, "DT", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)),
             style = listOf(
-                FormEntry(styleId, "Style", FormEntry.EntryType.PUNCTUATION, CalcType.SUM),
-                FormEntry(null, "Style 2", FormEntry.EntryType.PUNCTUATION, CalcType.SUM)
+                FormEntry(styleId, "Style", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData),
+                FormEntry(null, "Style 2", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)
             ),
-            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION, CalcType.SUM))
+            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData))
         )
 
         val afterAdd = form()
@@ -90,7 +145,6 @@ class FormTest : OdysejaDsl() {
         Assertions.assertThat(afterAdd.dtEntries).hasSize(1)
         val dtEntry = afterAdd.dtEntries[0]
         Assertions.assertThat(dtEntry.name).isEqualTo("DT")
-        Assertions.assertThat(dtEntry.calcType).isEqualTo(CalcType.AVERAGE)
 
         Assertions.assertThat(afterAdd.penaltyEntries).hasSize(1)
         Assertions.assertThat(afterAdd.penaltyEntries[0].name).isEqualTo("Penalty")
@@ -119,13 +173,21 @@ class FormTest : OdysejaDsl() {
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
+        val punctuationData = FormEntry.PunctuationData(
+            punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+            pointsMin = 0,
+            pointsMax = 100,
+            judges = FormEntry.JudgeType.A,
+            noElement = false
+        )
+
         setForm(
-            dt = listOf(FormEntry(dtId, "DT", FormEntry.EntryType.PUNCTUATION, CalcType.AVERAGE)),
+            dt = listOf(FormEntry(dtId, "DT", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)),
             style = listOf(
-                FormEntry(styleId, "Style", FormEntry.EntryType.PUNCTUATION, CalcType.SUM),
-                FormEntry(null, "Style 2", FormEntry.EntryType.PUNCTUATION, CalcType.SUM)
+                FormEntry(styleId, "Style", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData),
+                FormEntry(null, "Style 2", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)
             ),
-            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION, CalcType.SUM))
+            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData))
         )
     }
 
@@ -135,6 +197,14 @@ class FormTest : OdysejaDsl() {
         val existing = form()
         val dtId = existing.dtEntries.first().id
 
+        val punctuationData = FormEntry.PunctuationData(
+            punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+            pointsMin = 0,
+            pointsMax = 100,
+            judges = FormEntry.JudgeType.A,
+            noElement = false
+        )
+
         setForm(
             dt = listOf(
                 FormEntry(
@@ -142,8 +212,8 @@ class FormTest : OdysejaDsl() {
                     "DT Section",
                     FormEntry.EntryType.SECTION,
                     entries = listOf(
-                        FormEntry(null, "Sub Entry 1", FormEntry.EntryType.PUNCTUATION, CalcType.SUM),
-                        FormEntry(null, "Sub Entry 2", FormEntry.EntryType.PUNCTUATION, CalcType.AVERAGE)
+                        FormEntry(null, "Sub Entry 1", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData),
+                        FormEntry(null, "Sub Entry 2", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)
                     )
                 )
             ),
@@ -165,15 +235,27 @@ class FormTest : OdysejaDsl() {
     fun `should support punctuation group entries`() {
         seedDefault()
 
+        val punctuationData = FormEntry.PunctuationData(
+            punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+            pointsMin = 0,
+            pointsMax = 100,
+            judges = FormEntry.JudgeType.A,
+            noElement = false
+        )
+
         setForm(
             dt = listOf(
                 FormEntry(
                     null,
                     "DT Group",
                     FormEntry.EntryType.PUNCTUATION_GROUP,
+                    punctuationGroup = FormEntry.PunctuationGroupData(
+                        pointsMin = 0,
+                        pointsMax = 200
+                    ),
                     entries = listOf(
-                        FormEntry(null, "Group Entry 1", FormEntry.EntryType.PUNCTUATION, CalcType.SUM),
-                        FormEntry(null, "Group Entry 2", FormEntry.EntryType.PUNCTUATION, CalcType.AVERAGE)
+                        FormEntry(null, "Group Entry 1", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData),
+                        FormEntry(null, "Group Entry 2", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)
                     )
                 )
             ),
@@ -186,6 +268,9 @@ class FormTest : OdysejaDsl() {
         val group = after.dtEntries[0]
         Assertions.assertThat(group.name).isEqualTo("DT Group")
         Assertions.assertThat(group.type).isEqualTo(FormEntry.EntryType.PUNCTUATION_GROUP)
+        Assertions.assertThat(group.punctuationGroup).isNotNull
+        Assertions.assertThat(group.punctuationGroup?.pointsMin).isEqualTo(0)
+        Assertions.assertThat(group.punctuationGroup?.pointsMax).isEqualTo(200)
         Assertions.assertThat(group.entries).hasSize(2)
         Assertions.assertThat(group.entries.map { it.name })
             .containsExactlyInAnyOrder("Group Entry 1", "Group Entry 2")
