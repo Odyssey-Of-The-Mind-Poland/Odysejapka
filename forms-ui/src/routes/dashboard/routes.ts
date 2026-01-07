@@ -13,11 +13,6 @@ export const routes = {
             icon: UsersIcon,
         },
         {
-            title: "Form",
-            url: "/dashboard/form",
-            icon: UsersIcon,
-        },
-        {
             title: "Edytor",
             url: "/dashboard/editor",
             icon: UsersIcon,

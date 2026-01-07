@@ -1,33 +1,13 @@
 <script lang="ts">
-    import * as Table from '$lib/components/ui/table/index.js';
-    import * as Card from '$lib/components/ui/card/index.js';
     import {Spinner} from "$lib/components/ui/spinner";
     import {page} from "$app/state";
     import {setBreadcrumbs} from "$lib/breadcrumbs";
     import {createOdysejaQuery, createPutMutation} from "$lib/queries";
-    import FormEntry from "./FormEntry.svelte";
     import {Button} from "$lib/components/ui/button";
     import {toast} from "svelte-sonner";
-
-
-    type ProblemForm = {
-        dtEntries: FormEntry[],
-        styleEntries: FormEntry[],
-        penaltyEntries: FormEntry[],
-    }
-
-    type FormEntry = {
-        id: number,
-        name: string
-        calcType: CalcType
-    }
-
-    const CalcType = {
-        SUM: 'SUM',
-        AVERAGE: 'AVERAGE'
-    } as const;
-
-    type CalcType = typeof CalcType[keyof typeof CalcType];
+    import * as Separator from "$lib/components/ui/separator/index.js";
+    import type {FormEntryType, ProblemForm} from "./types";
+    import EntryCategoryCard from "./EntryCategoryCard.svelte";
 
     let problem = $derived(page.params.id);
     let formQuery = createOdysejaQuery<ProblemForm>({
@@ -43,12 +23,37 @@
         form = formQuery.data;
     })
 
-    function addDtEntry() {
-        const newEntry: FormEntry = {id: Date.now(), name: '', calcType: CalcType.SUM};
+    function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'PUNCTUATION' | 'SECTION' | 'PUNCTUATION_GROUP') {
+        const newEntry: FormEntryType = {
+            id: null,
+            name: '',
+            type,
+            entries: [],
+            ...(type === 'PUNCTUATION' ? {
+                punctuation: {
+                    punctuationType: 'SUBJECTIVE',
+                    pointsMin: 0,
+                    pointsMax: 100,
+                    judges: 'A',
+                    noElement: false
+                }
+            } : type === 'PUNCTUATION_GROUP' ? {
+                punctuationGroup: {
+                    pointsMin: 0,
+                    pointsMax: 100
+                }
+            } : {})
+        };
         form = {
             ...(form ?? {dtEntries: [], styleEntries: [], penaltyEntries: []}),
-            dtEntries: [...(form?.dtEntries ?? []), newEntry],
+            [category]: [...(form?.[category] ?? []), newEntry],
         } as ProblemForm;
+    }
+
+    function removeEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', index: number) {
+        if (form) {
+            form[category] = form[category].filter((_, i) => i !== index);
+        }
     }
 
     let saveMutation = createPutMutation<ProblemForm>({
@@ -67,17 +72,41 @@
 
 {#if formQuery.error}
     <div class="text-red-500 mb-4">{String(formQuery.error)}</div>
-{:else if formQuery.isPending}
+{:else if formQuery.isPending || !form}
     <Spinner size="sm"/>
 {:else}
-    <Button onclick={save}>Zapisz</Button>
-    <div class="flex flex-col">
-        <h4>Punktacja długoterminowa</h4>
-        <Card.Root class="gap-1">
-            {#each form?.dtEntries as entry (entry.id)}
-                <FormEntry id={entry.id} bind:name={entry.name}/>
-            {/each}
-            <Button variant="default" class="w-fit justify-start" onclick={addDtEntry}>Dodaj Kategorie</Button>
-        </Card.Root>
+    <div class="flex flex-col gap-6 p-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Edytor Formularza - Problem {problem}</h1>
+            <Button onclick={save}>Zapisz</Button>
+        </div>
+
+        <Separator.Root/>
+
+        <div class="flex flex-col gap-6">
+            <EntryCategoryCard
+                    title="Punktacja długoterminowa"
+                    category="dtEntries"
+                    entries={form.dtEntries}
+                    {form}
+                    onAddEntry={addEntry}
+            />
+
+            <EntryCategoryCard
+                    title=""
+                    category="styleEntries"
+                    entries={form.styleEntries}
+                    {form}
+                    onAddEntry={addEntry}
+            />
+
+            <EntryCategoryCard
+                    title="Karne"
+                    category="penaltyEntries"
+                    entries={form.penaltyEntries}
+                    {form}
+                    onAddEntry={addEntry}
+            />
+        </div>
     </div>
 {/if}
