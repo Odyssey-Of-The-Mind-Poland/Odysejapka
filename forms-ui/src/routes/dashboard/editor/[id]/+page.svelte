@@ -6,7 +6,7 @@
     import {Button} from "$lib/components/ui/button";
     import {toast} from "svelte-sonner";
     import * as Separator from "$lib/components/ui/separator/index.js";
-    import type {FormEntryType, ProblemForm} from "./types";
+    import {defaultEntry, type FormEntryType, type ProblemForm} from "./types";
     import EntryCategoryCard from "./EntryCategoryCard.svelte";
 
     let problem = $derived(page.params.id);
@@ -24,26 +24,7 @@
     })
 
     function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP') {
-        const newEntry: FormEntryType = {
-            id: null,
-            name: '',
-            type,
-            entries: [],
-            ...(type === 'SCORING' ? {
-                scoring: {
-                    scoringType: 'SUBJECTIVE',
-                    pointsMin: 0,
-                    pointsMax: 100,
-                    judges: 'A',
-                    noElement: false
-                }
-            } : type === 'SCORING_GROUP' ? {
-                scoringGroup: {
-                    pointsMin: 0,
-                    pointsMax: 100
-                }
-            } : {})
-        };
+        const newEntry: FormEntryType = defaultEntry(type)
         form = {
             ...(form ?? {dtEntries: [], styleEntries: [], penaltyEntries: []}),
             [category]: [...(form?.[category] ?? []), newEntry],
@@ -88,24 +69,27 @@
                     title="Punktacja długoterminowa"
                     category="dtEntries"
                     entries={form.dtEntries}
-                    {form}
+                    bind:form={form}
                     onAddEntry={addEntry}
+                    onRemoveEntry={removeEntry}
             />
 
             <EntryCategoryCard
                     title="Styl"
                     category="styleEntries"
                     entries={form.styleEntries}
-                    {form}
+                    bind:form={form}
                     onAddEntry={addEntry}
+                    onRemoveEntry={removeEntry}
             />
 
             <EntryCategoryCard
                     title="Karne"
                     category="penaltyEntries"
                     entries={form.penaltyEntries}
-                    {form}
+                    bind:form={form}
                     onAddEntry={addEntry}
+                    onRemoveEntry={removeEntry}
             />
         </div>
     </div>

@@ -13,6 +13,35 @@ export type FormEntryType = {
 	entries: FormEntryType[];
 };
 
+export function defaultEntry(
+	type: 'SCORING' | 'SECTION' | 'SCORING_GROUP'
+): FormEntryType {
+	return {
+		id: null,
+		name: '',
+		type,
+		entries: [],
+		...(type === 'SCORING'
+			? {
+					scoring: {
+						scoringType: 'SUBJECTIVE',
+						pointsMin: 0,
+						pointsMax: 100,
+						judges: 'A',
+						noElement: false
+					}
+				}
+			: type === 'SCORING_GROUP'
+				? {
+						scoringGroup: {
+							pointsMin: 0,
+							pointsMax: 100
+						}
+					}
+				: {})
+	};
+}
+
 export type ScoringData = {
 	scoringType: 'SUBJECTIVE' | 'OBJECTIVE';
 	pointsMin: number;

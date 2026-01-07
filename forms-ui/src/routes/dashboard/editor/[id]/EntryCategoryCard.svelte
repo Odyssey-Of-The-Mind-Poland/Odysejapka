@@ -12,19 +12,21 @@
         entries: FormEntryType[];
         form: ProblemForm;
         onAddEntry: (category: Category, type: 'SCORING' | 'SECTION' | 'SCORING_GROUP') => void;
+        onRemoveEntry: (category: Category, index: number) => void;
     }
 
-    let {title, category, entries, form, onAddEntry}: Props = $props();
+    let {title, category, entries, form = $bindable(), onAddEntry, onRemoveEntry}: Props = $props();
 </script>
 
 <Card.Root>
     <Card.Header>
         <Card.Title>{title}</Card.Title>
     </Card.Header>
-    <Card.Content class="flex flex-col gap-4">
+    <Card.Content class="flex flex-col gap-4 p-2">
         {#each entries ?? [] as entry, index (entry.id ?? index)}
             <FormEntry
                     bind:entry={form[category][index]}
+                    onRemove={() => onRemoveEntry(category, index)}
             />
         {/each}
         <div class="flex gap-2 flex-wrap">
