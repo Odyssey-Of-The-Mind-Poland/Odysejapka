@@ -16,9 +16,9 @@ class FormTest : OdysejaDsl() {
         val entries = form()
         Assertions.assertThat(entries.dtEntries).hasSize(1)
         val dtEntry = entries.dtEntries[0]
-        Assertions.assertThat(dtEntry.type).isEqualTo(FormEntry.EntryType.PUNCTUATION)
-        Assertions.assertThat(dtEntry.punctuation).isNotNull
-        Assertions.assertThat(dtEntry.punctuation?.punctuationType).isEqualTo(FormEntry.PunctuationType.SUBJECTIVE)
+        Assertions.assertThat(dtEntry.type).isEqualTo(FormEntry.EntryType.SCORING)
+        Assertions.assertThat(dtEntry.scoring).isNotNull
+        Assertions.assertThat(dtEntry.scoring?.scoringType).isEqualTo(FormEntry.ScoringType.SUBJECTIVE)
         val styleEntry = entries.styleEntries[0]
         Assertions.assertThat(styleEntry.name).isEqualTo("Style")
     }
@@ -34,9 +34,9 @@ class FormTest : OdysejaDsl() {
 
         setForm(
             dt = listOf(FormEntry(
-                dtId, "DT new", FormEntry.EntryType.PUNCTUATION,
-                punctuation = FormEntry.PunctuationData(
-                    punctuationType = FormEntry.PunctuationType.OBJECTIVE,
+                dtId, "DT new", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.OBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 200,
                     judges = FormEntry.JudgeType.B,
@@ -44,9 +44,9 @@ class FormTest : OdysejaDsl() {
                 )
             )),
             style = listOf(FormEntry(
-                styleId, "Style", FormEntry.EntryType.PUNCTUATION,
-                punctuation = FormEntry.PunctuationData(
-                    punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+                styleId, "Style", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.SUBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 50,
                     judges = FormEntry.JudgeType.B,
@@ -54,9 +54,9 @@ class FormTest : OdysejaDsl() {
                 )
             )),
             penalty = listOf(FormEntry(
-                penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION,
-                punctuation = FormEntry.PunctuationData(
-                    punctuationType = FormEntry.PunctuationType.OBJECTIVE,
+                penaltyId, "Penalty", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.OBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 10,
                     judges = FormEntry.JudgeType.A,
@@ -69,8 +69,8 @@ class FormTest : OdysejaDsl() {
         Assertions.assertThat(updated.dtEntries).hasSize(1)
         val updatedDt = updated.dtEntries[0]
         Assertions.assertThat(updatedDt.name).isEqualTo("DT new")
-        Assertions.assertThat(updatedDt.punctuation?.pointsMax).isEqualTo(200)
-        Assertions.assertThat(updatedDt.punctuation?.noElement).isTrue
+        Assertions.assertThat(updatedDt.scoring?.pointsMax).isEqualTo(200)
+        Assertions.assertThat(updatedDt.scoring?.noElement).isTrue
     }
 
     @Test
@@ -83,9 +83,9 @@ class FormTest : OdysejaDsl() {
         setForm(
             dt = emptyList(),
             style = listOf(FormEntry(
-                styleId, "Style", FormEntry.EntryType.PUNCTUATION,
-                punctuation = FormEntry.PunctuationData(
-                    punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+                styleId, "Style", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.SUBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 50,
                     judges = FormEntry.JudgeType.B,
@@ -93,9 +93,9 @@ class FormTest : OdysejaDsl() {
                 )
             )),
             penalty = listOf(FormEntry(
-                penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION,
-                punctuation = FormEntry.PunctuationData(
-                    punctuationType = FormEntry.PunctuationType.OBJECTIVE,
+                penaltyId, "Penalty", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.OBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 10,
                     judges = FormEntry.JudgeType.A,
@@ -120,8 +120,8 @@ class FormTest : OdysejaDsl() {
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
-        val punctuationData = FormEntry.PunctuationData(
-            punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+        val scoringData = FormEntry.ScoringData(
+            scoringType = FormEntry.ScoringType.SUBJECTIVE,
             pointsMin = 0,
             pointsMax = 100,
             judges = FormEntry.JudgeType.A,
@@ -129,12 +129,12 @@ class FormTest : OdysejaDsl() {
         )
 
         setForm(
-            dt = listOf(FormEntry(dtId, "DT", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)),
+            dt = listOf(FormEntry(dtId, "DT", FormEntry.EntryType.SCORING, scoring = scoringData)),
             style = listOf(
-                FormEntry(styleId, "Style", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData),
-                FormEntry(null, "Style 2", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)
+                FormEntry(styleId, "Style", FormEntry.EntryType.SCORING, scoring = scoringData),
+                FormEntry(null, "Style 2", FormEntry.EntryType.SCORING, scoring = scoringData)
             ),
-            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData))
+            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.SCORING, scoring = scoringData))
         )
 
         val afterAdd = form()
@@ -173,8 +173,8 @@ class FormTest : OdysejaDsl() {
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
-        val punctuationData = FormEntry.PunctuationData(
-            punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+        val scoringData = FormEntry.ScoringData(
+            scoringType = FormEntry.ScoringType.SUBJECTIVE,
             pointsMin = 0,
             pointsMax = 100,
             judges = FormEntry.JudgeType.A,
@@ -182,12 +182,12 @@ class FormTest : OdysejaDsl() {
         )
 
         setForm(
-            dt = listOf(FormEntry(dtId, "DT", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)),
+            dt = listOf(FormEntry(dtId, "DT", FormEntry.EntryType.SCORING, scoring = scoringData)),
             style = listOf(
-                FormEntry(styleId, "Style", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData),
-                FormEntry(null, "Style 2", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)
+                FormEntry(styleId, "Style", FormEntry.EntryType.SCORING, scoring = scoringData),
+                FormEntry(null, "Style 2", FormEntry.EntryType.SCORING, scoring = scoringData)
             ),
-            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData))
+            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.SCORING, scoring = scoringData))
         )
     }
 
@@ -197,8 +197,8 @@ class FormTest : OdysejaDsl() {
         val existing = form()
         val dtId = existing.dtEntries.first().id
 
-        val punctuationData = FormEntry.PunctuationData(
-            punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+        val scoringData = FormEntry.ScoringData(
+            scoringType = FormEntry.ScoringType.SUBJECTIVE,
             pointsMin = 0,
             pointsMax = 100,
             judges = FormEntry.JudgeType.A,
@@ -212,8 +212,8 @@ class FormTest : OdysejaDsl() {
                     "DT Section",
                     FormEntry.EntryType.SECTION,
                     entries = listOf(
-                        FormEntry(null, "Sub Entry 1", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData),
-                        FormEntry(null, "Sub Entry 2", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)
+                        FormEntry(null, "Sub Entry 1", FormEntry.EntryType.SCORING, scoring = scoringData),
+                        FormEntry(null, "Sub Entry 2", FormEntry.EntryType.SCORING, scoring = scoringData)
                     )
                 )
             ),
@@ -232,11 +232,11 @@ class FormTest : OdysejaDsl() {
     }
 
     @Test
-    fun `should support punctuation group entries`() {
+    fun `should support scoring group entries`() {
         seedDefault()
 
-        val punctuationData = FormEntry.PunctuationData(
-            punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+        val scoringData = FormEntry.ScoringData(
+            scoringType = FormEntry.ScoringType.SUBJECTIVE,
             pointsMin = 0,
             pointsMax = 100,
             judges = FormEntry.JudgeType.A,
@@ -248,14 +248,14 @@ class FormTest : OdysejaDsl() {
                 FormEntry(
                     null,
                     "DT Group",
-                    FormEntry.EntryType.PUNCTUATION_GROUP,
-                    punctuationGroup = FormEntry.PunctuationGroupData(
+                    FormEntry.EntryType.SCORING_GROUP,
+                    scoringGroup = FormEntry.ScoringGroupData(
                         pointsMin = 0,
                         pointsMax = 200
                     ),
                     entries = listOf(
-                        FormEntry(null, "Group Entry 1", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData),
-                        FormEntry(null, "Group Entry 2", FormEntry.EntryType.PUNCTUATION, punctuation = punctuationData)
+                        FormEntry(null, "Group Entry 1", FormEntry.EntryType.SCORING, scoring = scoringData),
+                        FormEntry(null, "Group Entry 2", FormEntry.EntryType.SCORING, scoring = scoringData)
                     )
                 )
             ),
@@ -267,10 +267,10 @@ class FormTest : OdysejaDsl() {
         Assertions.assertThat(after.dtEntries).hasSize(1)
         val group = after.dtEntries[0]
         Assertions.assertThat(group.name).isEqualTo("DT Group")
-        Assertions.assertThat(group.type).isEqualTo(FormEntry.EntryType.PUNCTUATION_GROUP)
-        Assertions.assertThat(group.punctuationGroup).isNotNull
-        Assertions.assertThat(group.punctuationGroup?.pointsMin).isEqualTo(0)
-        Assertions.assertThat(group.punctuationGroup?.pointsMax).isEqualTo(200)
+        Assertions.assertThat(group.type).isEqualTo(FormEntry.EntryType.SCORING_GROUP)
+        Assertions.assertThat(group.scoringGroup).isNotNull
+        Assertions.assertThat(group.scoringGroup?.pointsMin).isEqualTo(0)
+        Assertions.assertThat(group.scoringGroup?.pointsMax).isEqualTo(200)
         Assertions.assertThat(group.entries).hasSize(2)
         Assertions.assertThat(group.entries.map { it.name })
             .containsExactlyInAnyOrder("Group Entry 1", "Group Entry 2")

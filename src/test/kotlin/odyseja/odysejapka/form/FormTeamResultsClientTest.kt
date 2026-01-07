@@ -14,9 +14,9 @@ class FormTeamResultsClientTest : OdysejaDsl() {
     private fun seedDefaultForm(): Triple<Long, Long, Long> {
         setForm(
             dt = listOf(FormEntry(
-                null, "DT", FormEntry.EntryType.PUNCTUATION,
-                punctuation = FormEntry.PunctuationData(
-                    punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+                null, "DT", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.SUBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 100,
                     judges = FormEntry.JudgeType.A,
@@ -24,9 +24,9 @@ class FormTeamResultsClientTest : OdysejaDsl() {
                 )
             )),
             style = listOf(FormEntry(
-                null, "Style", FormEntry.EntryType.PUNCTUATION,
-                punctuation = FormEntry.PunctuationData(
-                    punctuationType = FormEntry.PunctuationType.SUBJECTIVE,
+                null, "Style", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.SUBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 50,
                     judges = FormEntry.JudgeType.B,
@@ -34,9 +34,9 @@ class FormTeamResultsClientTest : OdysejaDsl() {
                 )
             )),
             penalty = listOf(FormEntry(
-                null, "Penalty", FormEntry.EntryType.PUNCTUATION,
-                punctuation = FormEntry.PunctuationData(
-                    punctuationType = FormEntry.PunctuationType.OBJECTIVE,
+                null, "Penalty", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.OBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 10,
                     judges = FormEntry.JudgeType.A,

@@ -4,45 +4,45 @@ data class FormEntry(
     val id: Long?,
     val name: String,
     val type: EntryType,
-    val punctuation: PunctuationData? = null,
-    val punctuationGroup: PunctuationGroupData? = null,
+    val scoring: ScoringData? = null,
+    val scoringGroup: ScoringGroupData? = null,
     val entries: List<FormEntry> = emptyList()
 ) {
     init {
         when (type) {
-            EntryType.PUNCTUATION -> {
-                require(punctuation != null) { "Punctuation data is required for PUNCTUATION type" }
-                require(punctuationGroup == null) { "PunctuationGroup data must be null for PUNCTUATION type" }
+            EntryType.SCORING -> {
+                require(scoring != null) { "Scoring data is required for SCORING type" }
+                require(scoringGroup == null) { "ScoringGroup data must be null for SCORING type" }
             }
             EntryType.SECTION -> {
-                require(punctuation == null) { "Punctuation data must be null for SECTION type" }
-                require(punctuationGroup == null) { "PunctuationGroup data must be null for SECTION type" }
+                require(scoring == null) { "Scoring data must be null for SECTION type" }
+                require(scoringGroup == null) { "ScoringGroup data must be null for SECTION type" }
             }
-            EntryType.PUNCTUATION_GROUP -> {
-                require(punctuationGroup != null) { "PunctuationGroup data is required for PUNCTUATION_GROUP type" }
-                require(punctuation == null) { "Punctuation data must be null for PUNCTUATION_GROUP type" }
+            EntryType.SCORING_GROUP -> {
+                require(scoringGroup != null) { "ScoringGroup data is required for SCORING_GROUP type" }
+                require(scoring == null) { "Scoring data must be null for SCORING_GROUP type" }
             }
         }
     }
 
     enum class EntryType {
-        PUNCTUATION, SECTION, PUNCTUATION_GROUP
+        SCORING, SECTION, SCORING_GROUP
     }
 
-    data class PunctuationData(
-        val punctuationType: PunctuationType,
+    data class ScoringData(
+        val scoringType: ScoringType,
         val pointsMin: Int,
         val pointsMax: Int,
         val judges: JudgeType,
         val noElement: Boolean
     )
 
-    data class PunctuationGroupData(
+    data class ScoringGroupData(
         val pointsMin: Int,
         val pointsMax: Int
     )
 
-    enum class PunctuationType {
+    enum class ScoringType {
         SUBJECTIVE, OBJECTIVE
     }
 

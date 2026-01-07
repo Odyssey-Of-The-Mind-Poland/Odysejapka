@@ -24,14 +24,14 @@ object FormEntryEntityConverter {
                 this.parent = parent
                 this.orderIndex = orderIndex
                 this.entryType = when (entry.type) {
-                    FormEntry.EntryType.PUNCTUATION -> FormEntryEntity.EntryType.PUNCTUATION
+                    FormEntry.EntryType.SCORING -> FormEntryEntity.EntryType.SCORING
                     FormEntry.EntryType.SECTION -> FormEntryEntity.EntryType.SECTION
-                    FormEntry.EntryType.PUNCTUATION_GROUP -> FormEntryEntity.EntryType.PUNCTUATION_GROUP
+                    FormEntry.EntryType.SCORING_GROUP -> FormEntryEntity.EntryType.SCORING_GROUP
                 }
                 when (entry.type) {
-                    FormEntry.EntryType.PUNCTUATION -> {
-                        entry.punctuation?.let { p ->
-                            this.punctuationType = p.punctuationType
+                    FormEntry.EntryType.SCORING -> {
+                        entry.scoring?.let { p ->
+                            this.scoringType = p.scoringType
                             this.pointsMin = p.pointsMin
                             this.pointsMax = p.pointsMax
                             this.judges = p.judges
@@ -40,8 +40,8 @@ object FormEntryEntityConverter {
                     }
                     FormEntry.EntryType.SECTION -> {
                     }
-                    FormEntry.EntryType.PUNCTUATION_GROUP -> {
-                        entry.punctuationGroup?.let { pg ->
+                    FormEntry.EntryType.SCORING_GROUP -> {
+                        entry.scoringGroup?.let { pg ->
                             this.pointsMin = pg.pointsMin
                             this.pointsMax = pg.pointsMax
                         }

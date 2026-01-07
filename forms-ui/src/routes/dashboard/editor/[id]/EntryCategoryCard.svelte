@@ -11,7 +11,7 @@
         category: Category;
         entries: FormEntryType[];
         form: ProblemForm;
-        onAddEntry: (category: Category, type: 'PUNCTUATION' | 'SECTION' | 'PUNCTUATION_GROUP') => void;
+        onAddEntry: (category: Category, type: 'SCORING' | 'SECTION' | 'SCORING_GROUP') => void;
     }
 
     let {title, category, entries, form, onAddEntry}: Props = $props();
@@ -28,13 +28,13 @@
             />
         {/each}
         <div class="flex gap-2 flex-wrap">
-            <Button variant="outline" onclick={() => onAddEntry(category, 'PUNCTUATION')}>
+            <Button variant="outline" onclick={() => onAddEntry(category, 'SCORING')}>
                 Dodaj Punktację
             </Button>
             <Button variant="outline" onclick={() => onAddEntry(category, 'SECTION')}>
                 Dodaj Sekcję
             </Button>
-            <Button variant="outline" onclick={() => onAddEntry(category, 'PUNCTUATION_GROUP')}>
+            <Button variant="outline" onclick={() => onAddEntry(category, 'SCORING_GROUP')}>
                 Dodaj Grupę Punktacji
             </Button>
         </div>

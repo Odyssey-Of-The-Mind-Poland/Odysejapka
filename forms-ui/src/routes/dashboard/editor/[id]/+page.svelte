@@ -23,22 +23,22 @@
         form = formQuery.data;
     })
 
-    function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'PUNCTUATION' | 'SECTION' | 'PUNCTUATION_GROUP') {
+    function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP') {
         const newEntry: FormEntryType = {
             id: null,
             name: '',
             type,
             entries: [],
-            ...(type === 'PUNCTUATION' ? {
-                punctuation: {
-                    punctuationType: 'SUBJECTIVE',
+            ...(type === 'SCORING' ? {
+                scoring: {
+                    scoringType: 'SUBJECTIVE',
                     pointsMin: 0,
                     pointsMax: 100,
                     judges: 'A',
                     noElement: false
                 }
-            } : type === 'PUNCTUATION_GROUP' ? {
-                punctuationGroup: {
+            } : type === 'SCORING_GROUP' ? {
+                scoringGroup: {
                     pointsMin: 0,
                     pointsMax: 100
                 }
@@ -93,7 +93,7 @@
             />
 
             <EntryCategoryCard
-                    title=""
+                    title="Styl"
                     category="styleEntries"
                     entries={form.styleEntries}
                     {form}

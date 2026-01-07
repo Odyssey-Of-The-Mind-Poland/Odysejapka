@@ -1,17 +1,8 @@
 package odyseja.odysejapka.form
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import kotlin.collections.emptyList
-import kotlin.collections.map
+import jakarta.persistence.*
 
-@Entity
+@Entity(name = "form_entry")
 class FormEntryEntity {
 
     @Id
@@ -30,7 +21,7 @@ class FormEntryEntity {
 
     @Column
     @Enumerated(jakarta.persistence.EnumType.STRING)
-    var entryType: EntryType = EntryType.PUNCTUATION
+    var entryType: EntryType = EntryType.SCORING
 
     @ManyToOne
     @JoinColumn(name = "parent_id", nullable = true)
@@ -39,10 +30,10 @@ class FormEntryEntity {
     @Column
     var orderIndex: Int = 0
 
-    // PUNCTUATION fields
+    // SCORING fields
     @Column(nullable = true)
     @Enumerated(jakarta.persistence.EnumType.STRING)
-    var punctuationType: FormEntry.PunctuationType? = null
+    var scoringType: FormEntry.ScoringType? = null
 
     @Column(nullable = true)
     var pointsMin: Int? = null
@@ -58,7 +49,7 @@ class FormEntryEntity {
     var noElement: Boolean? = null
 
     enum class EntryType {
-        PUNCTUATION, SECTION, PUNCTUATION_GROUP
+        SCORING, SECTION, SCORING_GROUP
     }
 
     enum class FormCategory {
@@ -70,16 +61,16 @@ class FormEntryEntity {
         val children = childrenByParent[id] ?: listOf()
 
         val entryType = when (entryType) {
-            EntryType.PUNCTUATION -> FormEntry.EntryType.PUNCTUATION
+            EntryType.SCORING -> FormEntry.EntryType.SCORING
             EntryType.SECTION -> FormEntry.EntryType.SECTION
-            EntryType.PUNCTUATION_GROUP -> FormEntry.EntryType.PUNCTUATION_GROUP
+            EntryType.SCORING_GROUP -> FormEntry.EntryType.SCORING_GROUP
         }
 
-        val punctuation = when (entryType) {
-            FormEntry.EntryType.PUNCTUATION -> {
-                punctuationType?.let {
-                    FormEntry.PunctuationData(
-                        punctuationType = it,
+        val scoring = when (entryType) {
+            FormEntry.EntryType.SCORING -> {
+                scoringType?.let {
+                    FormEntry.ScoringData(
+                        scoringType = it,
                         pointsMin = pointsMin ?: 0,
                         pointsMax = pointsMax ?: 0,
                         judges = judges ?: FormEntry.JudgeType.A,
@@ -91,11 +82,11 @@ class FormEntryEntity {
             else -> null
         }
 
-        val punctuationGroup = when (entryType) {
-            FormEntry.EntryType.PUNCTUATION_GROUP -> {
+        val scoringGroup = when (entryType) {
+            FormEntry.EntryType.SCORING_GROUP -> {
                 pointsMin?.let { min ->
                     pointsMax?.let { max ->
-                        FormEntry.PunctuationGroupData(
+                        FormEntry.ScoringGroupData(
                             pointsMin = min,
                             pointsMax = max
                         )
@@ -110,8 +101,8 @@ class FormEntryEntity {
             id = id,
             name = name,
             type = entryType,
-            punctuation = punctuation,
-            punctuationGroup = punctuationGroup,
+            scoring = scoring,
+            scoringGroup = scoringGroup,
             entries = children.map { it.toFormEntry(childrenByParent) }
         )
     }
