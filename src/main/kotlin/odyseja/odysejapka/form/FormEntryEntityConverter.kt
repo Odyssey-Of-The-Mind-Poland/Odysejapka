@@ -27,6 +27,7 @@ object FormEntryEntityConverter {
                     FormEntry.EntryType.SCORING -> FormEntryEntity.EntryType.SCORING
                     FormEntry.EntryType.SECTION -> FormEntryEntity.EntryType.SECTION
                     FormEntry.EntryType.SCORING_GROUP -> FormEntryEntity.EntryType.SCORING_GROUP
+                    FormEntry.EntryType.STYLE -> FormEntryEntity.EntryType.STYLE
                 }
                 when (entry.type) {
                     FormEntry.EntryType.SCORING -> {
@@ -45,6 +46,8 @@ object FormEntryEntityConverter {
                             this.pointsMin = pg.pointsMin
                             this.pointsMax = pg.pointsMax
                         }
+                    }
+                    FormEntry.EntryType.STYLE -> {
                     }
                 }
             }

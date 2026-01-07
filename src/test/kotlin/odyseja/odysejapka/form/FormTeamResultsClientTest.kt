@@ -238,4 +238,164 @@ class FormTeamResultsClientTest : OdysejaDsl() {
         Assertions.assertThat(after).hasSize(3) // All form entries (dt, style, penalty) but with empty judgeResults
         Assertions.assertThat(after.all { it.judgeResults.isEmpty() }).isTrue()
     }
+
+    @Test
+    fun `should handle STYLE entries in form`() {
+        setForm(
+            dt = listOf(FormEntry(
+                null, "DT", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.SUBJECTIVE,
+                    pointsMin = 0,
+                    pointsMax = 100,
+                    judges = FormEntry.JudgeType.A,
+                    noElement = false
+                )
+            )),
+            style = listOf(
+                FormEntry(
+                    null, "Style Entry 1", FormEntry.EntryType.STYLE
+                ),
+                FormEntry(
+                    null, "Style Entry 2", FormEntry.EntryType.STYLE
+                )
+            ),
+            penalty = listOf(FormEntry(
+                null, "Penalty", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.OBJECTIVE,
+                    pointsMin = 0,
+                    pointsMax = 10,
+                    judges = FormEntry.JudgeType.A,
+                    noElement = false
+                )
+            ))
+        )
+
+        val entries = form()
+        Assertions.assertThat(entries.styleEntries).hasSize(2)
+        Assertions.assertThat(entries.styleEntries[0].type).isEqualTo(FormEntry.EntryType.STYLE)
+        Assertions.assertThat(entries.styleEntries[0].name).isEqualTo("Style Entry 1")
+        Assertions.assertThat(entries.styleEntries[0].scoring).isNull()
+        Assertions.assertThat(entries.styleEntries[0].scoringGroup).isNull()
+        Assertions.assertThat(entries.styleEntries[1].type).isEqualTo(FormEntry.EntryType.STYLE)
+        Assertions.assertThat(entries.styleEntries[1].name).isEqualTo("Style Entry 2")
+        Assertions.assertThat(entries.styleEntries[1].scoring).isNull()
+        Assertions.assertThat(entries.styleEntries[1].scoringGroup).isNull()
+    }
+
+    @Test
+    fun `should include STYLE entries in team results`() {
+        setForm(
+            dt = listOf(FormEntry(
+                null, "DT", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.SUBJECTIVE,
+                    pointsMin = 0,
+                    pointsMax = 100,
+                    judges = FormEntry.JudgeType.A,
+                    noElement = false
+                )
+            )),
+            style = listOf(
+                FormEntry(
+                    null, "Style Only", FormEntry.EntryType.STYLE
+                )
+            ),
+            penalty = listOf(FormEntry(
+                null, "Penalty", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.OBJECTIVE,
+                    pointsMin = 0,
+                    pointsMax = 10,
+                    judges = FormEntry.JudgeType.A,
+                    noElement = false
+                )
+            ))
+        )
+
+        val entries = form()
+        val dtId = entries.dtEntries.first().id!!
+        val styleId = entries.styleEntries.first().id!!
+        val penaltyId = entries.penaltyEntries.first().id!!
+
+        val city = createCity("Poznań")
+        val perfId = createPerformance(city.id)
+
+        formClient.setTeamResults(
+            perfId,
+            PerformanceResultsRequest(
+                listOf(
+                    PerformanceResultsRequest.PerformanceResult(entryId = dtId, result = 75, judge = 1),
+                    PerformanceResultsRequest.PerformanceResult(entryId = penaltyId, result = 5, judge = 1)
+                )
+            )
+        )
+
+        val saved = results(perfId)
+        Assertions.assertThat(saved.entries).hasSize(3) // dt, style, penalty
+        val styleEntry = saved.entries.first { it.entryId == styleId }
+        Assertions.assertThat(styleEntry.judgeResults).isEmpty() // STYLE entries don't accept results
+    }
+
+    @Test
+    fun `should support mixed SCORING and STYLE entries in style category`() {
+        setForm(
+            dt = listOf(FormEntry(
+                null, "DT", FormEntry.EntryType.SCORING,
+                scoring = FormEntry.ScoringData(
+                    scoringType = FormEntry.ScoringType.SUBJECTIVE,
+                    pointsMin = 0,
+                    pointsMax = 100,
+                    judges = FormEntry.JudgeType.A,
+                    noElement = false
+                )
+            )),
+            style = listOf(
+                FormEntry(
+                    null, "Scoring Style", FormEntry.EntryType.SCORING,
+                    scoring = FormEntry.ScoringData(
+                        scoringType = FormEntry.ScoringType.SUBJECTIVE,
+                        pointsMin = 0,
+                        pointsMax = 50,
+                        judges = FormEntry.JudgeType.B,
+                        noElement = false
+                    )
+                ),
+                FormEntry(
+                    null, "Style Only", FormEntry.EntryType.STYLE
+                )
+            ),
+            penalty = emptyList()
+        )
+
+        val entries = form()
+        Assertions.assertThat(entries.styleEntries).hasSize(2)
+        Assertions.assertThat(entries.styleEntries[0].type).isEqualTo(FormEntry.EntryType.SCORING)
+        Assertions.assertThat(entries.styleEntries[0].scoring).isNotNull()
+        Assertions.assertThat(entries.styleEntries[1].type).isEqualTo(FormEntry.EntryType.STYLE)
+        Assertions.assertThat(entries.styleEntries[1].scoring).isNull()
+
+        val scoringStyleId = entries.styleEntries[0].id!!
+        val styleOnlyId = entries.styleEntries[1].id!!
+
+        val city = createCity("Wrocław")
+        val perfId = createPerformance(city.id)
+
+        formClient.setTeamResults(
+            perfId,
+            PerformanceResultsRequest(
+                listOf(
+                    PerformanceResultsRequest.PerformanceResult(entryId = scoringStyleId, result = 40, judge = 1)
+                )
+            )
+        )
+
+        val saved = results(perfId)
+        Assertions.assertThat(saved.entries).hasSize(3) // dt, 2 style entries, 0 penalty
+        val scoringStyleEntry = saved.entries.first { it.entryId == scoringStyleId }
+        val styleOnlyEntry = saved.entries.first { it.entryId == styleOnlyId }
+        Assertions.assertThat(scoringStyleEntry.judgeResults).containsEntry(1, 40L)
+        Assertions.assertThat(styleOnlyEntry.judgeResults).isEmpty()
+    }
 }

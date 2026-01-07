@@ -22,11 +22,15 @@ data class FormEntry(
                 require(scoringGroup != null) { "ScoringGroup data is required for SCORING_GROUP type" }
                 require(scoring == null) { "Scoring data must be null for SCORING_GROUP type" }
             }
+            EntryType.STYLE -> {
+                require(scoring == null) { "Scoring data must be null for STYLE type" }
+                require(scoringGroup == null) { "ScoringGroup data must be null for STYLE type" }
+            }
         }
     }
 
     enum class EntryType {
-        SCORING, SECTION, SCORING_GROUP
+        SCORING, SECTION, SCORING_GROUP, STYLE
     }
 
     data class ScoringData(

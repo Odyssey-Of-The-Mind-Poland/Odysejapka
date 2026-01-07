@@ -32,7 +32,7 @@ class FormEntryEntity {
 
     // SCORING fields
     @Column(nullable = true)
-    @Enumerated(jakarta.persistence.EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     var scoringType: FormEntry.ScoringType? = null
 
     @Column(nullable = true)
@@ -49,7 +49,7 @@ class FormEntryEntity {
     var noElement: Boolean? = null
 
     enum class EntryType {
-        SCORING, SECTION, SCORING_GROUP
+        SCORING, SECTION, SCORING_GROUP, STYLE
     }
 
     enum class FormCategory {
@@ -64,6 +64,7 @@ class FormEntryEntity {
             EntryType.SCORING -> FormEntry.EntryType.SCORING
             EntryType.SECTION -> FormEntry.EntryType.SECTION
             EntryType.SCORING_GROUP -> FormEntry.EntryType.SCORING_GROUP
+            EntryType.STYLE -> FormEntry.EntryType.STYLE
         }
 
         val scoring = when (entryType) {

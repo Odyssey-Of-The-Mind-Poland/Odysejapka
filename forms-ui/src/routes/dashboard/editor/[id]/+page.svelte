@@ -7,7 +7,9 @@
     import {toast} from "svelte-sonner";
     import * as Separator from "$lib/components/ui/separator/index.js";
     import {defaultEntry, type FormEntryType, type ProblemForm} from "./types";
-    import EntryCategoryCard from "./EntryCategoryCard.svelte";
+    import ScoringCard from "./ScoringCard.svelte";
+    import StyleCard from "./StyleCard.svelte";
+    import PenaltyCard from "./PenaltyCard.svelte";
 
     let problem = $derived(page.params.id);
     let formQuery = createOdysejaQuery<ProblemForm>({
@@ -23,7 +25,7 @@
         form = formQuery.data;
     })
 
-    function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP') {
+    function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE') {
         const newEntry: FormEntryType = defaultEntry(type)
         form = {
             ...(form ?? {dtEntries: [], styleEntries: [], penaltyEntries: []}),
@@ -65,27 +67,24 @@
         <Separator.Root/>
 
         <div class="flex flex-col gap-6">
-            <EntryCategoryCard
+            <ScoringCard
                     title="Punktacja długoterminowa"
-                    category="dtEntries"
                     entries={form.dtEntries}
                     bind:form={form}
                     onAddEntry={addEntry}
                     onRemoveEntry={removeEntry}
             />
 
-            <EntryCategoryCard
+            <StyleCard
                     title="Styl"
-                    category="styleEntries"
                     entries={form.styleEntries}
                     bind:form={form}
                     onAddEntry={addEntry}
                     onRemoveEntry={removeEntry}
             />
 
-            <EntryCategoryCard
+            <PenaltyCard
                     title="Karne"
-                    category="penaltyEntries"
                     entries={form.penaltyEntries}
                     bind:form={form}
                     onAddEntry={addEntry}
