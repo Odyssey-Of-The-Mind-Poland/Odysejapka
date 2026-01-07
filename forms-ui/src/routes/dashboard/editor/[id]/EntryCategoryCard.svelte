@@ -31,7 +31,7 @@
         {/each}
         <div class="flex gap-2 flex-wrap">
             <Button variant="outline" onclick={() => onAddEntry(category, 'SCORING')}>
-                Dodaj Punktację
+                Dodaj Kategorie
             </Button>
             <Button variant="outline" onclick={() => onAddEntry(category, 'SECTION')}>
                 Dodaj Sekcję
