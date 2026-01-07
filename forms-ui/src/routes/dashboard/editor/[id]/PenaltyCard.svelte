@@ -8,7 +8,7 @@
         title: string;
         entries: FormEntryType[];
         form: ProblemForm;
-        onAddEntry: (category: 'penaltyEntries', type: 'SCORING') => void;
+        onAddEntry: (category: 'penaltyEntries', type: 'PENALTY') => void;
         onRemoveEntry: (category: 'penaltyEntries', index: number) => void;
     }
 
@@ -27,8 +27,8 @@
             />
         {/each}
         <div class="flex gap-2 flex-wrap">
-            <Button variant="outline" onclick={() => onAddEntry('penaltyEntries', 'SCORING')}>
-                Dodaj Kategorie
+            <Button variant="outline" onclick={() => onAddEntry('penaltyEntries', 'PENALTY')}>
+                Dodaj Karne
             </Button>
         </div>
     </Card.Content>

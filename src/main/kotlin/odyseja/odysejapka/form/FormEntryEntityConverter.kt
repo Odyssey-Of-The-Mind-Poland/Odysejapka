@@ -28,6 +28,7 @@ object FormEntryEntityConverter {
                     FormEntry.EntryType.SECTION -> FormEntryEntity.EntryType.SECTION
                     FormEntry.EntryType.SCORING_GROUP -> FormEntryEntity.EntryType.SCORING_GROUP
                     FormEntry.EntryType.STYLE -> FormEntryEntity.EntryType.STYLE
+                    FormEntry.EntryType.PENALTY -> FormEntryEntity.EntryType.PENALTY
                 }
                 when (entry.type) {
                     FormEntry.EntryType.SCORING -> {
@@ -48,6 +49,8 @@ object FormEntryEntityConverter {
                         }
                     }
                     FormEntry.EntryType.STYLE -> {
+                    }
+                    FormEntry.EntryType.PENALTY -> {
                     }
                 }
             }

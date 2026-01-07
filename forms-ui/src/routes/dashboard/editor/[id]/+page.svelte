@@ -25,7 +25,7 @@
         form = formQuery.data;
     })
 
-    function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE') {
+    function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY') {
         const newEntry: FormEntryType = defaultEntry(type)
         form = {
             ...(form ?? {dtEntries: [], styleEntries: [], penaltyEntries: []}),

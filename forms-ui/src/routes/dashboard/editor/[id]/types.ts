@@ -7,14 +7,14 @@ export type ProblemForm = {
 export type FormEntryType = {
 	id: number | null;
 	name: string;
-	type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE';
+	type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY';
 	scoring?: ScoringData | null;
 	scoringGroup?: ScoringGroupData | null;
 	entries: FormEntryType[];
 };
 
 export function defaultEntry(
-	type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE'
+	type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY'
 ): FormEntryType {
 	return {
 		id: null,

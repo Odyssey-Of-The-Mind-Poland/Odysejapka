@@ -49,7 +49,7 @@ class FormEntryEntity {
     var noElement: Boolean? = null
 
     enum class EntryType {
-        SCORING, SECTION, SCORING_GROUP, STYLE
+        SCORING, SECTION, SCORING_GROUP, STYLE, PENALTY
     }
 
     enum class FormCategory {
@@ -65,6 +65,7 @@ class FormEntryEntity {
             EntryType.SECTION -> FormEntry.EntryType.SECTION
             EntryType.SCORING_GROUP -> FormEntry.EntryType.SCORING_GROUP
             EntryType.STYLE -> FormEntry.EntryType.STYLE
+            EntryType.PENALTY -> FormEntry.EntryType.PENALTY
         }
 
         val scoring = when (entryType) {
