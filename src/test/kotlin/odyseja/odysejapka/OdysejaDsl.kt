@@ -4,6 +4,8 @@ import odyseja.odysejapka.city.CityController
 import odyseja.odysejapka.city.CreateCityRequest
 import odyseja.odysejapka.form.FormController
 import odyseja.odysejapka.form.LongTermFormEntry
+import odyseja.odysejapka.form.StyleFormEntry
+import odyseja.odysejapka.form.PenaltyFormEntry
 import odyseja.odysejapka.form.PerformanceResultsRequest
 import odyseja.odysejapka.form.ProblemForm
 import odyseja.odysejapka.timetable.Performance
@@ -44,8 +46,8 @@ class OdysejaDsl {
 
     fun setForm(
         dt: List<LongTermFormEntry>,
-        style: List<LongTermFormEntry>,
-        penalty: List<LongTermFormEntry>
+        style: List<StyleFormEntry>,
+        penalty: List<PenaltyFormEntry>
     ) {
         formClient.setProblemForm(PROBLEM_ID, ProblemForm(dt, style, penalty))
     }
@@ -63,25 +65,11 @@ class OdysejaDsl {
                 noElement = false
             )
         )),
-        style = listOf(LongTermFormEntry(
-            null, "Style", LongTermFormEntry.EntryType.SCORING,
-            scoring = LongTermFormEntry.ScoringData(
-                scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-                pointsMin = 0,
-                pointsMax = 50,
-                judges = LongTermFormEntry.JudgeType.B,
-                noElement = false
-            )
+        style = listOf(StyleFormEntry(
+            null, "Style", StyleFormEntry.EntryType.STYLE
         )),
-        penalty = listOf(LongTermFormEntry(
-            null, "Penalty", LongTermFormEntry.EntryType.SCORING,
-            scoring = LongTermFormEntry.ScoringData(
-                scoringType = LongTermFormEntry.ScoringType.OBJECTIVE,
-                pointsMin = 0,
-                pointsMax = 10,
-                judges = LongTermFormEntry.JudgeType.A,
-                noElement = false
-            )
+        penalty = listOf(PenaltyFormEntry(
+            null, "Penalty", PenaltyFormEntry.EntryType.PENALTY
         ))
     )
 

@@ -21,10 +21,9 @@ class FormService(
         val existingById = existing.associateBy { it.id }
         val existingByCategory = existing.groupBy { it.formCategory }
 
-        fun purgeMissing(entries: List<LongTermFormEntry>, category: FormEntryEntity.FormCategory) {
-            val requestedIds = FormEntryEntityConverter.collectAllIds(entries)
+        fun purgeMissing(ids: Set<Long>, category: FormEntryEntity.FormCategory) {
             val toDelete = existingByCategory[category].orEmpty()
-                .filter { it.id !in requestedIds }
+                .filter { it.id !in ids }
 
             if (toDelete.isNotEmpty()) {
                 toDelete.forEach { teamResultEntryRepository.deleteAllByFormEntryEntity(it) }
@@ -32,16 +31,18 @@ class FormService(
             }
         }
 
-        val categories = listOf(
-            FormEntryEntity.FormCategory.DT to form.dtEntries,
-            FormEntryEntity.FormCategory.STYLE to form.styleEntries,
-            FormEntryEntity.FormCategory.PENALTY to form.penaltyEntries
-        )
+        val dtIds = FormEntryEntityConverter.collectAllIds(form.dtEntries)
+        val styleIds = FormEntryEntityConverter.collectStyleIds(form.styleEntries)
+        val penaltyIds = FormEntryEntityConverter.collectPenaltyIds(form.penaltyEntries)
 
-        categories.forEach { (cat, entries) -> purgeMissing(entries, cat) }
+        purgeMissing(dtIds, FormEntryEntity.FormCategory.DT)
+        purgeMissing(styleIds, FormEntryEntity.FormCategory.STYLE)
+        purgeMissing(penaltyIds, FormEntryEntity.FormCategory.PENALTY)
 
-        val toPersist = categories.flatMap { (cat, entries) ->
-            FormEntryEntityConverter.flattenToEntities(problem, entries, cat, existingById)
+        val toPersist = buildList {
+            addAll(FormEntryEntityConverter.flattenLongTermToEntities(problem, form.dtEntries, FormEntryEntity.FormCategory.DT, existingById))
+            addAll(FormEntryEntityConverter.flattenStyleToEntities(problem, form.styleEntries, FormEntryEntity.FormCategory.STYLE, existingById))
+            addAll(FormEntryEntityConverter.flattenPenaltyToEntities(problem, form.penaltyEntries, FormEntryEntity.FormCategory.PENALTY, existingById))
         }
 
         formEntryRepository.saveAll(toPersist)
@@ -51,13 +52,13 @@ class FormService(
     fun getFormEntries(problem: Int): ProblemForm {
         val entries = formEntryRepository.findByProblem(problem)
         return ProblemForm(
-            FormEntryEntityConverter.reconstructFromEntities(
+            FormEntryEntityConverter.reconstructLongTermFromEntities(
                 entries.filter { it.formCategory == FormEntryEntity.FormCategory.DT }
             ),
-            FormEntryEntityConverter.reconstructFromEntities(
+            FormEntryEntityConverter.reconstructStyleFromEntities(
                 entries.filter { it.formCategory == FormEntryEntity.FormCategory.STYLE }
             ),
-            FormEntryEntityConverter.reconstructFromEntities(
+            FormEntryEntityConverter.reconstructPenaltyFromEntities(
                 entries.filter { it.formCategory == FormEntryEntity.FormCategory.PENALTY }
             )
         )

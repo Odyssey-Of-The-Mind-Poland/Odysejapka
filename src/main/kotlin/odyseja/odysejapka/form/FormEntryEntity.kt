@@ -16,11 +16,11 @@ class FormEntryEntity {
     var name: String = ""
 
     @Column
-    @Enumerated(jakarta.persistence.EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     var formCategory: FormCategory = FormCategory.DT
 
     @Column
-    @Enumerated(jakarta.persistence.EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     var entryType: EntryType = EntryType.SCORING
 
     @ManyToOne
@@ -42,7 +42,7 @@ class FormEntryEntity {
     var pointsMax: Int? = null
 
     @Column(nullable = true)
-    @Enumerated(jakarta.persistence.EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     var judges: LongTermFormEntry.JudgeType? = null
 
     @Column(nullable = true)
@@ -57,7 +57,7 @@ class FormEntryEntity {
     }
 
 
-    fun toFormEntry(childrenByParent: Map<Long, List<FormEntryEntity>>): LongTermFormEntry {
+    fun toLongTermFormEntry(childrenByParent: Map<Long, List<FormEntryEntity>>): LongTermFormEntry {
         val children = childrenByParent[id] ?: listOf()
 
         val entryType = when (entryType) {
@@ -105,7 +105,29 @@ class FormEntryEntity {
             type = entryType,
             scoring = scoring,
             scoringGroup = scoringGroup,
-            entries = children.map { it.toFormEntry(childrenByParent) }
+            entries = children.map { it.toLongTermFormEntry(childrenByParent) }
+        )
+    }
+
+    fun toStyleFormEntry(childrenByParent: Map<Long, List<FormEntryEntity>>): StyleFormEntry {
+        val children = childrenByParent[id] ?: listOf()
+
+        return StyleFormEntry(
+            id = id,
+            name = name,
+            type = StyleFormEntry.EntryType.STYLE,
+            entries = children.map { it.toStyleFormEntry(childrenByParent) }
+        )
+    }
+
+    fun toPenaltyFormEntry(childrenByParent: Map<Long, List<FormEntryEntity>>): PenaltyFormEntry {
+        val children = childrenByParent[id] ?: listOf()
+
+        return PenaltyFormEntry(
+            id = id,
+            name = name,
+            type = PenaltyFormEntry.EntryType.PENALTY,
+            entries = children.map { it.toPenaltyFormEntry(childrenByParent) }
         )
     }
 }

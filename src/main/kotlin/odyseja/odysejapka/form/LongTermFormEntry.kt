@@ -57,6 +57,45 @@ data class LongTermFormEntry(
     enum class JudgeType {
         A, B, A_PLUS_B
     }
+
+    fun toEntity(
+        problem: Int,
+        category: FormEntryEntity.FormCategory,
+        parent: FormEntryEntity?,
+        orderIndex: Int,
+        existing: FormEntryEntity? = null
+    ): FormEntryEntity {
+        val entity = existing ?: FormEntryEntity()
+        entity.apply {
+            this.problem = problem
+            this.name = this@LongTermFormEntry.name
+            this.formCategory = category
+            this.parent = parent
+            this.orderIndex = orderIndex
+            this.entryType = when (this@LongTermFormEntry.type) {
+                EntryType.SCORING -> FormEntryEntity.EntryType.SCORING
+                EntryType.SECTION -> FormEntryEntity.EntryType.SECTION
+                EntryType.SCORING_GROUP -> FormEntryEntity.EntryType.SCORING_GROUP
+                EntryType.STYLE -> FormEntryEntity.EntryType.STYLE
+                EntryType.PENALTY -> FormEntryEntity.EntryType.PENALTY
+            }
+            when (this@LongTermFormEntry.type) {
+                EntryType.SCORING -> scoring?.let {
+                    this.scoringType = it.scoringType
+                    this.pointsMin = it.pointsMin
+                    this.pointsMax = it.pointsMax
+                    this.judges = it.judges
+                    this.noElement = it.noElement
+                }
+                EntryType.SCORING_GROUP -> scoringGroup?.let {
+                    this.pointsMin = it.pointsMin
+                    this.pointsMax = it.pointsMax
+                }
+                else -> {}
+            }
+        }
+        return entity
+    }
 }
 
 enum class CalcType {
