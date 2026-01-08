@@ -48,6 +48,7 @@ export type ScoringData = {
 	pointsMax: number;
 	judges: 'A' | 'B' | 'A_PLUS_B';
 	noElement: boolean;
+	subjectiveRange?: string | null;
 };
 
 export type ScoringGroupData = {

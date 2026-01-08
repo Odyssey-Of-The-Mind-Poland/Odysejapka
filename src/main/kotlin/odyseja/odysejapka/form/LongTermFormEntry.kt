@@ -42,7 +42,8 @@ data class LongTermFormEntry(
         val pointsMin: Int,
         val pointsMax: Int,
         val judges: JudgeType,
-        val noElement: Boolean
+        val noElement: Boolean,
+        val subjectiveRange: SubjectiveRanges? = null
     )
 
     data class ScoringGroupData(
@@ -86,6 +87,7 @@ data class LongTermFormEntry(
                     this.pointsMax = it.pointsMax
                     this.judges = it.judges
                     this.noElement = it.noElement
+                    this.subjectiveRange = it.subjectiveRange
                 }
                 EntryType.SCORING_GROUP -> scoringGroup?.let {
                     this.pointsMin = it.pointsMin

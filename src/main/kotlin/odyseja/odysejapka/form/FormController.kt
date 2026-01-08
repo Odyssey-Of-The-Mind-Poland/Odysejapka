@@ -42,4 +42,9 @@ class FormController(private val formService: FormService?) {
     fun getTeamResults(@PathVariable performanceId: Int): TeamForm {
         return formService!!.getTeamForm(performanceId)
     }
+
+    @GetMapping("/subjective-ranges")
+    fun getSubjectiveRanges(): List<SubjectiveRangeDto> {
+        return SubjectiveRanges.entries.map { it.toRangesResponse() }
+    }
 }

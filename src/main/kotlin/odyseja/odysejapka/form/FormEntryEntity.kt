@@ -48,6 +48,10 @@ class FormEntryEntity {
     @Column(nullable = true)
     var noElement: Boolean? = null
 
+    @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
+    var subjectiveRange: SubjectiveRanges? = null
+
     enum class EntryType {
         SCORING, SECTION, SCORING_GROUP, STYLE, PENALTY
     }
@@ -76,7 +80,8 @@ class FormEntryEntity {
                         pointsMin = pointsMin ?: 0,
                         pointsMax = pointsMax ?: 0,
                         judges = judges ?: LongTermFormEntry.JudgeType.A,
-                        noElement = noElement ?: false
+                        noElement = noElement ?: false,
+                        subjectiveRange = subjectiveRange
                     )
                 }
             }

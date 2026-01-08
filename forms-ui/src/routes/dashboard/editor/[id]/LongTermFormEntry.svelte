@@ -5,6 +5,7 @@
     import type {FormEntryType} from "./types";
     import ScoringTypeSelect from "./ScoringTypeSelect.svelte";
     import EntryNameInput from "./EntryNameInput.svelte";
+    import SubjectiveRangeSelect from "./SubjectiveRangeSelect.svelte";
 
     interface Props {
         entry: FormEntryType;
@@ -12,24 +13,31 @@
     }
 
     let {entry = $bindable(), onRemove}: Props = $props();
+
+    let isSubjective = $derived(entry.scoring?.scoringType === 'SUBJECTIVE');
 </script>
 
 <Card.Root>
-    <div class="flex items-center gap-2 p-2">
-        {#if entry.scoring}
-            <ScoringTypeSelect bind:value={entry.scoring.scoringType} />
-        {/if}
-        <EntryNameInput bind:value={entry.name} id={entry.id} />
-        {#if onRemove}
-            <Button
-                    variant="ghost"
-                    size="icon"
-                    onclick={onRemove}
-                    class="shrink-0"
-                    title="Usuń wpis"
-            >
-                <Trash2Icon class="h-4 w-4 text-destructive"/>
-            </Button>
+    <div class="flex flex-col gap-2 p-2">
+        <div class="flex items-center gap-2">
+            {#if entry.scoring}
+                <ScoringTypeSelect bind:value={entry.scoring.scoringType} />
+            {/if}
+            <EntryNameInput bind:value={entry.name} id={entry.id} />
+            {#if onRemove}
+                <Button
+                        variant="ghost"
+                        size="icon"
+                        onclick={onRemove}
+                        class="shrink-0"
+                        title="Usuń wpis"
+                >
+                    <Trash2Icon class="h-4 w-4 text-destructive"/>
+                </Button>
+            {/if}
+        </div>
+        {#if isSubjective && entry.scoring}
+            <SubjectiveRangeSelect bind:scoring={entry.scoring} />
         {/if}
     </div>
 </Card.Root>
