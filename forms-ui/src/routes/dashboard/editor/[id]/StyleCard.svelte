@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as Card from '$lib/components/ui/card/index.js';
     import {Button} from "$lib/components/ui/button";
-    import FormEntry from "./FormEntry.svelte";
+    import StyleFormEntry from "./StyleFormEntry.svelte";
     import type {FormEntryType, ProblemForm} from "./types";
 
     interface Props {
@@ -21,7 +21,7 @@
     </Card.Header>
     <Card.Content class="flex flex-col gap-4 p-2">
         {#each entries ?? [] as entry, index (entry.id ?? index)}
-            <FormEntry
+            <StyleFormEntry
                     bind:entry={form.styleEntries[index]}
                     onRemove={() => onRemoveEntry('styleEntries', index)}
             />

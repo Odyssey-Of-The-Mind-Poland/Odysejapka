@@ -21,7 +21,7 @@ class FormService(
         val existingById = existing.associateBy { it.id }
         val existingByCategory = existing.groupBy { it.formCategory }
 
-        fun purgeMissing(entries: List<FormEntry>, category: FormEntryEntity.FormCategory) {
+        fun purgeMissing(entries: List<LongTermFormEntry>, category: FormEntryEntity.FormCategory) {
             val requestedIds = FormEntryEntityConverter.collectAllIds(entries)
             val toDelete = existingByCategory[category].orEmpty()
                 .filter { it.id !in requestedIds }

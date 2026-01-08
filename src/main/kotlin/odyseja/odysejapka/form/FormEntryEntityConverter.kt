@@ -4,14 +4,14 @@ object FormEntryEntityConverter {
 
     fun flattenToEntities(
         problem: Int,
-        entries: List<FormEntry>,
+        entries: List<LongTermFormEntry>,
         category: FormEntryEntity.FormCategory,
         existingById: Map<Long, FormEntryEntity> = emptyMap()
     ): List<FormEntryEntity> {
         val result = mutableListOf<FormEntryEntity>()
 
         fun processEntry(
-            entry: FormEntry,
+            entry: LongTermFormEntry,
             parent: FormEntryEntity?,
             orderIndex: Int
         ): FormEntryEntity {
@@ -24,14 +24,14 @@ object FormEntryEntityConverter {
                 this.parent = parent
                 this.orderIndex = orderIndex
                 this.entryType = when (entry.type) {
-                    FormEntry.EntryType.SCORING -> FormEntryEntity.EntryType.SCORING
-                    FormEntry.EntryType.SECTION -> FormEntryEntity.EntryType.SECTION
-                    FormEntry.EntryType.SCORING_GROUP -> FormEntryEntity.EntryType.SCORING_GROUP
-                    FormEntry.EntryType.STYLE -> FormEntryEntity.EntryType.STYLE
-                    FormEntry.EntryType.PENALTY -> FormEntryEntity.EntryType.PENALTY
+                    LongTermFormEntry.EntryType.SCORING -> FormEntryEntity.EntryType.SCORING
+                    LongTermFormEntry.EntryType.SECTION -> FormEntryEntity.EntryType.SECTION
+                    LongTermFormEntry.EntryType.SCORING_GROUP -> FormEntryEntity.EntryType.SCORING_GROUP
+                    LongTermFormEntry.EntryType.STYLE -> FormEntryEntity.EntryType.STYLE
+                    LongTermFormEntry.EntryType.PENALTY -> FormEntryEntity.EntryType.PENALTY
                 }
                 when (entry.type) {
-                    FormEntry.EntryType.SCORING -> {
+                    LongTermFormEntry.EntryType.SCORING -> {
                         entry.scoring?.let { p ->
                             this.scoringType = p.scoringType
                             this.pointsMin = p.pointsMin
@@ -40,17 +40,17 @@ object FormEntryEntityConverter {
                             this.noElement = p.noElement
                         }
                     }
-                    FormEntry.EntryType.SECTION -> {
+                    LongTermFormEntry.EntryType.SECTION -> {
                     }
-                    FormEntry.EntryType.SCORING_GROUP -> {
+                    LongTermFormEntry.EntryType.SCORING_GROUP -> {
                         entry.scoringGroup?.let { pg ->
                             this.pointsMin = pg.pointsMin
                             this.pointsMax = pg.pointsMax
                         }
                     }
-                    FormEntry.EntryType.STYLE -> {
+                    LongTermFormEntry.EntryType.STYLE -> {
                     }
-                    FormEntry.EntryType.PENALTY -> {
+                    LongTermFormEntry.EntryType.PENALTY -> {
                     }
                 }
             }
@@ -72,7 +72,7 @@ object FormEntryEntityConverter {
     }
 
 
-    fun reconstructFromEntities(entities: List<FormEntryEntity>): List<FormEntry> {
+    fun reconstructFromEntities(entities: List<FormEntryEntity>): List<LongTermFormEntry> {
         val rootEntries = entities.filter { it.parent == null }
             .sortedBy { it.orderIndex }
 
@@ -84,10 +84,10 @@ object FormEntryEntityConverter {
         return rootEntries.map { it.toFormEntry(childrenByParent) }
     }
 
-    fun collectAllIds(entries: List<FormEntry>): Set<Long> {
+    fun collectAllIds(entries: List<LongTermFormEntry>): Set<Long> {
         val ids = mutableSetOf<Long>()
 
-        fun collect(entry: FormEntry) {
+        fun collect(entry: LongTermFormEntry) {
             entry.id?.let { ids.add(it) }
             entry.entries.forEach { collect(it) }
         }

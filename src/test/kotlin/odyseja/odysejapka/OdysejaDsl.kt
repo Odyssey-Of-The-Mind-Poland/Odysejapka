@@ -1,10 +1,12 @@
 package odyseja.odysejapka
 
 import odyseja.odysejapka.city.CityController
-import odyseja.odysejapka.form.CalcType
+import odyseja.odysejapka.city.CreateCityRequest
 import odyseja.odysejapka.form.FormController
-import odyseja.odysejapka.form.FormEntry
+import odyseja.odysejapka.form.LongTermFormEntry
+import odyseja.odysejapka.form.PerformanceResultsRequest
 import odyseja.odysejapka.form.ProblemForm
+import odyseja.odysejapka.timetable.Performance
 import odyseja.odysejapka.timetable.TimeTableController
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import ovh.snet.grzybek.controller.client.core.ControllerClientFactory
+import java.time.LocalDate
 
 @SpringBootTest
 @Import(TestcontainersConfiguration::class)
@@ -40,9 +43,9 @@ class OdysejaDsl {
     val PROBLEM_ID = 1
 
     fun setForm(
-        dt: List<FormEntry>,
-        style: List<FormEntry>,
-        penalty: List<FormEntry>
+        dt: List<LongTermFormEntry>,
+        style: List<LongTermFormEntry>,
+        penalty: List<LongTermFormEntry>
     ) {
         formClient.setProblemForm(PROBLEM_ID, ProblemForm(dt, style, penalty))
     }
@@ -50,36 +53,77 @@ class OdysejaDsl {
     fun form() = formClient.getProblemForm(PROBLEM_ID)
 
     fun seedDefault(): Unit = setForm(
-        dt = listOf(FormEntry(
-            null, "DT", FormEntry.EntryType.SCORING,
-            scoring = FormEntry.ScoringData(
-                scoringType = FormEntry.ScoringType.SUBJECTIVE,
+        dt = listOf(LongTermFormEntry(
+            null, "DT", LongTermFormEntry.EntryType.SCORING,
+            scoring = LongTermFormEntry.ScoringData(
+                scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
                 pointsMin = 0,
                 pointsMax = 100,
-                judges = FormEntry.JudgeType.A,
+                judges = LongTermFormEntry.JudgeType.A,
                 noElement = false
             )
         )),
-        style = listOf(FormEntry(
-            null, "Style", FormEntry.EntryType.SCORING,
-            scoring = FormEntry.ScoringData(
-                scoringType = FormEntry.ScoringType.SUBJECTIVE,
+        style = listOf(LongTermFormEntry(
+            null, "Style", LongTermFormEntry.EntryType.SCORING,
+            scoring = LongTermFormEntry.ScoringData(
+                scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
                 pointsMin = 0,
                 pointsMax = 50,
-                judges = FormEntry.JudgeType.B,
+                judges = LongTermFormEntry.JudgeType.B,
                 noElement = false
             )
         )),
-        penalty = listOf(FormEntry(
-            null, "Penalty", FormEntry.EntryType.SCORING,
-            scoring = FormEntry.ScoringData(
-                scoringType = FormEntry.ScoringType.OBJECTIVE,
+        penalty = listOf(LongTermFormEntry(
+            null, "Penalty", LongTermFormEntry.EntryType.SCORING,
+            scoring = LongTermFormEntry.ScoringData(
+                scoringType = LongTermFormEntry.ScoringType.OBJECTIVE,
                 pointsMin = 0,
                 pointsMax = 10,
-                judges = FormEntry.JudgeType.A,
+                judges = LongTermFormEntry.JudgeType.A,
                 noElement = false
             )
         ))
     )
+
+    fun seedDefaultFormWithIds(): Triple<Long, Long, Long> {
+        seedDefault()
+        val entries = form()
+        val dtId = entries.dtEntries.first().id!!
+        val styleId = entries.styleEntries.first().id!!
+        val penaltyId = entries.penaltyEntries.first().id!!
+        return Triple(dtId, styleId, penaltyId)
+    }
+
+    fun createCity(name: String) = cityClient.saveCity(CreateCityRequest(name))
+
+    fun createPerformance(cityId: Int): Int {
+        val cityName = cityClient.getCities().firstOrNull { it?.id == cityId }?.name ?: "Unknown"
+        val performance = Performance(
+            city = cityName, team = "Sample Team",
+            id = 0,
+            problem = 1,
+            age = 1,
+            stage = 1,
+            performance = "",
+            spontan = "",
+            part = 1,
+            performanceDay = "",
+            spontanDay = "",
+            league = "",
+            zspRow = 1,
+            zspSheet = "",
+            performanceDate = LocalDate.now(),
+        )
+        return timeTableClient.addPerformance(performance).id
+    }
+
+    fun getTeamResults(performanceId: Int) = formClient.getTeamResults(performanceId)
+
+    fun setTeamResults(performanceId: Int, results: List<PerformanceResultsRequest.PerformanceResult>) {
+        formClient.setTeamResults(performanceId, PerformanceResultsRequest(results))
+    }
+
+    fun performanceResult(entryId: Long, result: Long, judge: Int = 1) =
+        PerformanceResultsRequest.PerformanceResult(entryId = entryId, result = result, judge = judge)
 
 }

@@ -1,9 +1,9 @@
 package odyseja.odysejapka.form
 
 data class ProblemForm(
-    val dtEntries: List<FormEntry>,
-    val styleEntries: List<FormEntry>,
-    val penaltyEntries: List<FormEntry>
+    val dtEntries: List<LongTermFormEntry>,
+    val styleEntries: List<LongTermFormEntry>,
+    val penaltyEntries: List<LongTermFormEntry>
 ) {
 
 }

@@ -16,9 +16,9 @@ class FormTest : OdysejaDsl() {
         val entries = form()
         Assertions.assertThat(entries.dtEntries).hasSize(1)
         val dtEntry = entries.dtEntries[0]
-        Assertions.assertThat(dtEntry.type).isEqualTo(FormEntry.EntryType.SCORING)
+        Assertions.assertThat(dtEntry.type).isEqualTo(LongTermFormEntry.EntryType.SCORING)
         Assertions.assertThat(dtEntry.scoring).isNotNull
-        Assertions.assertThat(dtEntry.scoring?.scoringType).isEqualTo(FormEntry.ScoringType.SUBJECTIVE)
+        Assertions.assertThat(dtEntry.scoring?.scoringType).isEqualTo(LongTermFormEntry.ScoringType.SUBJECTIVE)
         val styleEntry = entries.styleEntries[0]
         Assertions.assertThat(styleEntry.name).isEqualTo("Style")
     }
@@ -33,33 +33,33 @@ class FormTest : OdysejaDsl() {
         val penaltyId = existing.penaltyEntries.first().id
 
         setForm(
-            dt = listOf(FormEntry(
-                dtId, "DT new", FormEntry.EntryType.SCORING,
-                scoring = FormEntry.ScoringData(
-                    scoringType = FormEntry.ScoringType.OBJECTIVE,
+            dt = listOf(LongTermFormEntry(
+                dtId, "DT new", LongTermFormEntry.EntryType.SCORING,
+                scoring = LongTermFormEntry.ScoringData(
+                    scoringType = LongTermFormEntry.ScoringType.OBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 200,
-                    judges = FormEntry.JudgeType.B,
+                    judges = LongTermFormEntry.JudgeType.B,
                     noElement = true
                 )
             )),
-            style = listOf(FormEntry(
-                styleId, "Style", FormEntry.EntryType.SCORING,
-                scoring = FormEntry.ScoringData(
-                    scoringType = FormEntry.ScoringType.SUBJECTIVE,
+            style = listOf(LongTermFormEntry(
+                styleId, "Style", LongTermFormEntry.EntryType.SCORING,
+                scoring = LongTermFormEntry.ScoringData(
+                    scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 50,
-                    judges = FormEntry.JudgeType.B,
+                    judges = LongTermFormEntry.JudgeType.B,
                     noElement = false
                 )
             )),
-            penalty = listOf(FormEntry(
-                penaltyId, "Penalty", FormEntry.EntryType.SCORING,
-                scoring = FormEntry.ScoringData(
-                    scoringType = FormEntry.ScoringType.OBJECTIVE,
+            penalty = listOf(LongTermFormEntry(
+                penaltyId, "Penalty", LongTermFormEntry.EntryType.SCORING,
+                scoring = LongTermFormEntry.ScoringData(
+                    scoringType = LongTermFormEntry.ScoringType.OBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 10,
-                    judges = FormEntry.JudgeType.A,
+                    judges = LongTermFormEntry.JudgeType.A,
                     noElement = false
                 )
             ))
@@ -82,23 +82,23 @@ class FormTest : OdysejaDsl() {
 
         setForm(
             dt = emptyList(),
-            style = listOf(FormEntry(
-                styleId, "Style", FormEntry.EntryType.SCORING,
-                scoring = FormEntry.ScoringData(
-                    scoringType = FormEntry.ScoringType.SUBJECTIVE,
+            style = listOf(LongTermFormEntry(
+                styleId, "Style", LongTermFormEntry.EntryType.SCORING,
+                scoring = LongTermFormEntry.ScoringData(
+                    scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 50,
-                    judges = FormEntry.JudgeType.B,
+                    judges = LongTermFormEntry.JudgeType.B,
                     noElement = false
                 )
             )),
-            penalty = listOf(FormEntry(
-                penaltyId, "Penalty", FormEntry.EntryType.SCORING,
-                scoring = FormEntry.ScoringData(
-                    scoringType = FormEntry.ScoringType.OBJECTIVE,
+            penalty = listOf(LongTermFormEntry(
+                penaltyId, "Penalty", LongTermFormEntry.EntryType.SCORING,
+                scoring = LongTermFormEntry.ScoringData(
+                    scoringType = LongTermFormEntry.ScoringType.OBJECTIVE,
                     pointsMin = 0,
                     pointsMax = 10,
-                    judges = FormEntry.JudgeType.A,
+                    judges = LongTermFormEntry.JudgeType.A,
                     noElement = false
                 )
             ))
@@ -120,21 +120,21 @@ class FormTest : OdysejaDsl() {
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
-        val scoringData = FormEntry.ScoringData(
-            scoringType = FormEntry.ScoringType.SUBJECTIVE,
+        val scoringData = LongTermFormEntry.ScoringData(
+            scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
             pointsMin = 0,
             pointsMax = 100,
-            judges = FormEntry.JudgeType.A,
+            judges = LongTermFormEntry.JudgeType.A,
             noElement = false
         )
 
         setForm(
-            dt = listOf(FormEntry(dtId, "DT", FormEntry.EntryType.SCORING, scoring = scoringData)),
+            dt = listOf(LongTermFormEntry(dtId, "DT", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)),
             style = listOf(
-                FormEntry(styleId, "Style", FormEntry.EntryType.SCORING, scoring = scoringData),
-                FormEntry(null, "Style 2", FormEntry.EntryType.SCORING, scoring = scoringData)
+                LongTermFormEntry(styleId, "Style", LongTermFormEntry.EntryType.SCORING, scoring = scoringData),
+                LongTermFormEntry(null, "Style 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)
             ),
-            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.SCORING, scoring = scoringData))
+            penalty = listOf(LongTermFormEntry(penaltyId, "Penalty", LongTermFormEntry.EntryType.SCORING, scoring = scoringData))
         )
 
         val afterAdd = form()
@@ -173,21 +173,21 @@ class FormTest : OdysejaDsl() {
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
-        val scoringData = FormEntry.ScoringData(
-            scoringType = FormEntry.ScoringType.SUBJECTIVE,
+        val scoringData = LongTermFormEntry.ScoringData(
+            scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
             pointsMin = 0,
             pointsMax = 100,
-            judges = FormEntry.JudgeType.A,
+            judges = LongTermFormEntry.JudgeType.A,
             noElement = false
         )
 
         setForm(
-            dt = listOf(FormEntry(dtId, "DT", FormEntry.EntryType.SCORING, scoring = scoringData)),
+            dt = listOf(LongTermFormEntry(dtId, "DT", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)),
             style = listOf(
-                FormEntry(styleId, "Style", FormEntry.EntryType.SCORING, scoring = scoringData),
-                FormEntry(null, "Style 2", FormEntry.EntryType.SCORING, scoring = scoringData)
+                LongTermFormEntry(styleId, "Style", LongTermFormEntry.EntryType.SCORING, scoring = scoringData),
+                LongTermFormEntry(null, "Style 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)
             ),
-            penalty = listOf(FormEntry(penaltyId, "Penalty", FormEntry.EntryType.SCORING, scoring = scoringData))
+            penalty = listOf(LongTermFormEntry(penaltyId, "Penalty", LongTermFormEntry.EntryType.SCORING, scoring = scoringData))
         )
     }
 
@@ -197,23 +197,23 @@ class FormTest : OdysejaDsl() {
         val existing = form()
         val dtId = existing.dtEntries.first().id
 
-        val scoringData = FormEntry.ScoringData(
-            scoringType = FormEntry.ScoringType.SUBJECTIVE,
+        val scoringData = LongTermFormEntry.ScoringData(
+            scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
             pointsMin = 0,
             pointsMax = 100,
-            judges = FormEntry.JudgeType.A,
+            judges = LongTermFormEntry.JudgeType.A,
             noElement = false
         )
 
         setForm(
             dt = listOf(
-                FormEntry(
+                LongTermFormEntry(
                     dtId,
                     "DT Section",
-                    FormEntry.EntryType.SECTION,
+                    LongTermFormEntry.EntryType.SECTION,
                     entries = listOf(
-                        FormEntry(null, "Sub Entry 1", FormEntry.EntryType.SCORING, scoring = scoringData),
-                        FormEntry(null, "Sub Entry 2", FormEntry.EntryType.SCORING, scoring = scoringData)
+                        LongTermFormEntry(null, "Sub Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData),
+                        LongTermFormEntry(null, "Sub Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)
                     )
                 )
             ),
@@ -225,7 +225,7 @@ class FormTest : OdysejaDsl() {
         Assertions.assertThat(after.dtEntries).hasSize(1)
         val section = after.dtEntries[0]
         Assertions.assertThat(section.name).isEqualTo("DT Section")
-        Assertions.assertThat(section.type).isEqualTo(FormEntry.EntryType.SECTION)
+        Assertions.assertThat(section.type).isEqualTo(LongTermFormEntry.EntryType.SECTION)
         Assertions.assertThat(section.entries).hasSize(2)
         Assertions.assertThat(section.entries.map { it.name })
             .containsExactlyInAnyOrder("Sub Entry 1", "Sub Entry 2")
@@ -235,27 +235,27 @@ class FormTest : OdysejaDsl() {
     fun `should support scoring group entries`() {
         seedDefault()
 
-        val scoringData = FormEntry.ScoringData(
-            scoringType = FormEntry.ScoringType.SUBJECTIVE,
+        val scoringData = LongTermFormEntry.ScoringData(
+            scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
             pointsMin = 0,
             pointsMax = 100,
-            judges = FormEntry.JudgeType.A,
+            judges = LongTermFormEntry.JudgeType.A,
             noElement = false
         )
 
         setForm(
             dt = listOf(
-                FormEntry(
+                LongTermFormEntry(
                     null,
                     "DT Group",
-                    FormEntry.EntryType.SCORING_GROUP,
-                    scoringGroup = FormEntry.ScoringGroupData(
+                    LongTermFormEntry.EntryType.SCORING_GROUP,
+                    scoringGroup = LongTermFormEntry.ScoringGroupData(
                         pointsMin = 0,
                         pointsMax = 200
                     ),
                     entries = listOf(
-                        FormEntry(null, "Group Entry 1", FormEntry.EntryType.SCORING, scoring = scoringData),
-                        FormEntry(null, "Group Entry 2", FormEntry.EntryType.SCORING, scoring = scoringData)
+                        LongTermFormEntry(null, "Group Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData),
+                        LongTermFormEntry(null, "Group Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)
                     )
                 )
             ),
@@ -267,7 +267,7 @@ class FormTest : OdysejaDsl() {
         Assertions.assertThat(after.dtEntries).hasSize(1)
         val group = after.dtEntries[0]
         Assertions.assertThat(group.name).isEqualTo("DT Group")
-        Assertions.assertThat(group.type).isEqualTo(FormEntry.EntryType.SCORING_GROUP)
+        Assertions.assertThat(group.type).isEqualTo(LongTermFormEntry.EntryType.SCORING_GROUP)
         Assertions.assertThat(group.scoringGroup).isNotNull
         Assertions.assertThat(group.scoringGroup?.pointsMin).isEqualTo(0)
         Assertions.assertThat(group.scoringGroup?.pointsMax).isEqualTo(200)

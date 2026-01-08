@@ -1,12 +1,12 @@
 package odyseja.odysejapka.form
 
-data class FormEntry(
+data class LongTermFormEntry(
     val id: Long?,
     val name: String,
     val type: EntryType,
     val scoring: ScoringData? = null,
     val scoringGroup: ScoringGroupData? = null,
-    val entries: List<FormEntry> = emptyList()
+    val entries: List<LongTermFormEntry> = emptyList()
 ) {
     init {
         when (type) {

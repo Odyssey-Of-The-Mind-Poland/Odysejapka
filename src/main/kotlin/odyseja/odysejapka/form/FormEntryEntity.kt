@@ -33,7 +33,7 @@ class FormEntryEntity {
     // SCORING fields
     @Column(nullable = true)
     @Enumerated(EnumType.STRING)
-    var scoringType: FormEntry.ScoringType? = null
+    var scoringType: LongTermFormEntry.ScoringType? = null
 
     @Column(nullable = true)
     var pointsMin: Int? = null
@@ -43,7 +43,7 @@ class FormEntryEntity {
 
     @Column(nullable = true)
     @Enumerated(jakarta.persistence.EnumType.STRING)
-    var judges: FormEntry.JudgeType? = null
+    var judges: LongTermFormEntry.JudgeType? = null
 
     @Column(nullable = true)
     var noElement: Boolean? = null
@@ -57,25 +57,25 @@ class FormEntryEntity {
     }
 
 
-    fun toFormEntry(childrenByParent: Map<Long, List<FormEntryEntity>>): FormEntry {
+    fun toFormEntry(childrenByParent: Map<Long, List<FormEntryEntity>>): LongTermFormEntry {
         val children = childrenByParent[id] ?: listOf()
 
         val entryType = when (entryType) {
-            EntryType.SCORING -> FormEntry.EntryType.SCORING
-            EntryType.SECTION -> FormEntry.EntryType.SECTION
-            EntryType.SCORING_GROUP -> FormEntry.EntryType.SCORING_GROUP
-            EntryType.STYLE -> FormEntry.EntryType.STYLE
-            EntryType.PENALTY -> FormEntry.EntryType.PENALTY
+            EntryType.SCORING -> LongTermFormEntry.EntryType.SCORING
+            EntryType.SECTION -> LongTermFormEntry.EntryType.SECTION
+            EntryType.SCORING_GROUP -> LongTermFormEntry.EntryType.SCORING_GROUP
+            EntryType.STYLE -> LongTermFormEntry.EntryType.STYLE
+            EntryType.PENALTY -> LongTermFormEntry.EntryType.PENALTY
         }
 
         val scoring = when (entryType) {
-            FormEntry.EntryType.SCORING -> {
+            LongTermFormEntry.EntryType.SCORING -> {
                 scoringType?.let {
-                    FormEntry.ScoringData(
+                    LongTermFormEntry.ScoringData(
                         scoringType = it,
                         pointsMin = pointsMin ?: 0,
                         pointsMax = pointsMax ?: 0,
-                        judges = judges ?: FormEntry.JudgeType.A,
+                        judges = judges ?: LongTermFormEntry.JudgeType.A,
                         noElement = noElement ?: false
                     )
                 }
@@ -85,10 +85,10 @@ class FormEntryEntity {
         }
 
         val scoringGroup = when (entryType) {
-            FormEntry.EntryType.SCORING_GROUP -> {
+            LongTermFormEntry.EntryType.SCORING_GROUP -> {
                 pointsMin?.let { min ->
                     pointsMax?.let { max ->
-                        FormEntry.ScoringGroupData(
+                        LongTermFormEntry.ScoringGroupData(
                             pointsMin = min,
                             pointsMax = max
                         )
@@ -99,7 +99,7 @@ class FormEntryEntity {
             else -> null
         }
 
-        return FormEntry(
+        return LongTermFormEntry(
             id = id,
             name = name,
             type = entryType,
