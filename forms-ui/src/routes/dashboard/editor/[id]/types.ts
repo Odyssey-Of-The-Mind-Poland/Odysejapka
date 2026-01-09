@@ -11,6 +11,7 @@ export type FormEntryType = {
 	scoring?: ScoringData | null;
 	scoringGroup?: ScoringGroupData | null;
 	entries: FormEntryType[];
+	sortIndex: number;
 };
 
 export function defaultEntry(
@@ -21,6 +22,7 @@ export function defaultEntry(
 		name: '',
 		type,
 		entries: [],
+		sortIndex: 0,
 		...(type === 'SCORING'
 			? {
 					scoring: {

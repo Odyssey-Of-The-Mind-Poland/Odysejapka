@@ -4,7 +4,8 @@ data class PenaltyFormEntry(
     val id: Long?,
     val name: String,
     val type: EntryType,
-    val entries: List<PenaltyFormEntry> = emptyList()
+    val entries: List<PenaltyFormEntry> = emptyList(),
+    val sortIndex: Int = 0
 ) {
     init {
         when (type) {
@@ -34,7 +35,7 @@ data class PenaltyFormEntry(
             this.name = this@PenaltyFormEntry.name
             this.formCategory = category
             this.parent = parent
-            this.orderIndex = orderIndex
+            this.orderIndex = this@PenaltyFormEntry.sortIndex
             this.entryType = FormEntryEntity.EntryType.PENALTY
         }
         return entity

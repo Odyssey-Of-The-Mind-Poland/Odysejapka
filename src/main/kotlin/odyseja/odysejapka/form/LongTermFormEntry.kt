@@ -6,7 +6,8 @@ data class LongTermFormEntry(
     val type: EntryType,
     val scoring: ScoringData? = null,
     val scoringGroup: ScoringGroupData? = null,
-    val entries: List<LongTermFormEntry> = emptyList()
+    val entries: List<LongTermFormEntry> = emptyList(),
+    val sortIndex: Int = 0
 ) {
     init {
         when (type) {
@@ -73,7 +74,7 @@ data class LongTermFormEntry(
             this.name = this@LongTermFormEntry.name
             this.formCategory = category
             this.parent = parent
-            this.orderIndex = orderIndex
+            this.orderIndex = this@LongTermFormEntry.sortIndex
             this.entryType = when (this@LongTermFormEntry.type) {
                 EntryType.SCORING -> FormEntryEntity.EntryType.SCORING
                 EntryType.SECTION -> FormEntryEntity.EntryType.SECTION

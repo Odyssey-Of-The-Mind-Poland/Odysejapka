@@ -4,7 +4,8 @@ data class StyleFormEntry(
     val id: Long?,
     val name: String,
     val type: EntryType,
-    val entries: List<StyleFormEntry> = emptyList()
+    val entries: List<StyleFormEntry> = emptyList(),
+    val sortIndex: Int = 0
 ) {
     init {
         when (type) {
@@ -34,7 +35,7 @@ data class StyleFormEntry(
             this.name = this@StyleFormEntry.name
             this.formCategory = category
             this.parent = parent
-            this.orderIndex = orderIndex
+            this.orderIndex = this@StyleFormEntry.sortIndex
             this.entryType = FormEntryEntity.EntryType.STYLE
         }
         return entity

@@ -3,6 +3,7 @@
     import {Button} from '$lib/components/ui/button';
     import Trash2Icon from '@lucide/svelte/icons/trash-2';
     import type {FormEntryType} from "./types";
+    import {formatSortIndex} from "./sortIndexUtils";
     import ScoringTypeSelect from "./ScoringTypeSelect.svelte";
     import EntryNameInput from "./EntryNameInput.svelte";
     import SubjectiveRangeSelect from "./SubjectiveRangeSelect.svelte";
@@ -12,21 +13,20 @@
     interface Props {
         entry: FormEntryType;
         onRemove?: () => void;
+        parentIndex?: string;
     }
 
-    let {entry = $bindable(), onRemove}: Props = $props();
+    let {entry = $bindable(), onRemove, parentIndex}: Props = $props();
 
     let isSubjective = $derived(entry.scoring?.scoringType === 'SUBJECTIVE');
     let isObjective = $derived(entry.scoring?.scoringType === 'OBJECTIVE');
+    let displayIndex = $derived(formatSortIndex(entry, parentIndex));
 </script>
 
 <Card.Root>
     <div class="flex flex-col gap-4 p-2">
-        <div class="flex items-center gap-4">
-            {#if entry.scoring}
-                <ScoringTypeSelect bind:value={entry.scoring.scoringType} />
-            {/if}
-            <EntryNameInput bind:value={entry.name} id={entry.id} />
+        <div class="flex items-center justify-between">
+            <span class="font-semibold text-gray-700 min-w-[2rem]">{displayIndex}.</span>
             {#if onRemove}
                 <Button
                         variant="ghost"
@@ -38,6 +38,12 @@
                     <Trash2Icon class="h-4 w-4 text-destructive"/>
                 </Button>
             {/if}
+        </div>
+        <div class="flex items-center gap-4">
+            {#if entry.scoring}
+                <ScoringTypeSelect bind:value={entry.scoring.scoringType} />
+            {/if}
+            <EntryNameInput bind:value={entry.name} id={entry.id} />
         </div>
         {#if entry.scoring}
             <div class="flex items-center gap-4">

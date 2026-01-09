@@ -7,6 +7,7 @@
     import {toast} from "svelte-sonner";
     import * as Separator from "$lib/components/ui/separator/index.js";
     import {defaultEntry, type FormEntryType, type ProblemForm} from "./types";
+    import {recalculateSortIndexes} from "./sortIndexUtils";
     import ScoringCard from "./ScoringCard.svelte";
     import StyleCard from "./StyleCard.svelte";
     import PenaltyCard from "./PenaltyCard.svelte";
@@ -29,13 +30,13 @@
         const newEntry: FormEntryType = defaultEntry(type)
         form = {
             ...(form ?? {dtEntries: [], styleEntries: [], penaltyEntries: []}),
-            [category]: [...(form?.[category] ?? []), newEntry],
+            [category]: recalculateSortIndexes([...(form?.[category] ?? []), newEntry]),
         } as ProblemForm;
     }
 
     function removeEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', index: number) {
         if (form) {
-            form[category] = form[category].filter((_, i) => i !== index);
+            form[category] = recalculateSortIndexes(form[category].filter((_, i) => i !== index));
         }
     }
 

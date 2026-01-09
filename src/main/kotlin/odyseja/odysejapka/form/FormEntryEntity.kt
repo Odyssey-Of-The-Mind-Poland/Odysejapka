@@ -115,7 +115,8 @@ class FormEntryEntity {
             type = entryType,
             scoring = scoring,
             scoringGroup = scoringGroup,
-            entries = children.map { it.toLongTermFormEntry(childrenByParent) }
+            entries = children.map { it.toLongTermFormEntry(childrenByParent) },
+            sortIndex = orderIndex
         )
     }
 
@@ -126,7 +127,8 @@ class FormEntryEntity {
             id = id,
             name = name,
             type = StyleFormEntry.EntryType.STYLE,
-            entries = children.map { it.toStyleFormEntry(childrenByParent) }
+            entries = children.map { it.toStyleFormEntry(childrenByParent) },
+            sortIndex = orderIndex
         )
     }
 
@@ -137,7 +139,8 @@ class FormEntryEntity {
             id = id,
             name = name,
             type = PenaltyFormEntry.EntryType.PENALTY,
-            entries = children.map { it.toPenaltyFormEntry(childrenByParent) }
+            entries = children.map { it.toPenaltyFormEntry(childrenByParent) },
+            sortIndex = orderIndex
         )
     }
 }
