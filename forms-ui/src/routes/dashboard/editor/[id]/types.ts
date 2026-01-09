@@ -49,6 +49,7 @@ export type ScoringData = {
 	judges: 'A' | 'B' | 'A_PLUS_B';
 	noElement: boolean;
 	subjectiveRange?: string | null;
+	objectiveBucket?: string | null;
 };
 
 export type ScoringGroupData = {

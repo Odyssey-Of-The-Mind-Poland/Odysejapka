@@ -47,4 +47,9 @@ class FormController(private val formService: FormService?) {
     fun getSubjectiveRanges(): List<SubjectiveRangeDto> {
         return SubjectiveRanges.entries.map { it.toRangesResponse() }
     }
+
+    @GetMapping("/objective-buckets")
+    fun getObjectiveBuckets(): List<ObjectiveBucketDto> {
+        return ObjectiveBuckets.entries.map { it.toBucketsResponse() }
+    }
 }

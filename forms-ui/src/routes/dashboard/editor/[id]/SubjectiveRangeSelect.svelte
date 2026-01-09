@@ -28,17 +28,17 @@
 </script>
 
 {#if rangesQuery.data && scoring && scoring.subjectiveRange}
-    <div class="flex items-center gap-2">
-        <div class="group relative w-[180px]">
+    <div class="flex items-center gap-4">
+        <div class="group relative">
             <label
                     class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
                     for="range-select"
             >
                 <span class="inline-flex bg-background px-1">Zakres</span>
             </label>
-            <Select.Root 
-                type="single" 
-                bind:value={scoring.subjectiveRange}
+            <Select.Root
+                    type="single"
+                    bind:value={scoring.subjectiveRange}
             >
                 <Select.Trigger class="w-[180px] pt-5" id="range-select">
                     {selectedRange?.displayName || "Wybierz zakres"}
@@ -55,7 +55,7 @@
             </Select.Root>
         </div>
         {#if selectedRange}
-            <div class="group relative w-[200px]">
+            <div class="group relative">
                 <label
                         class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
                         for="fr-select"
@@ -68,7 +68,7 @@
                     </Select.Trigger>
                 </Select.Root>
             </div>
-            <div class="group relative w-[200px]">
+            <div class="group relative">
                 <label
                         class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
                         for="fo-select"

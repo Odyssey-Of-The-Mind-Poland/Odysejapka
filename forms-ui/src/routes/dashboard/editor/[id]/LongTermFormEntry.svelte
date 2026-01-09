@@ -6,6 +6,7 @@
     import ScoringTypeSelect from "./ScoringTypeSelect.svelte";
     import EntryNameInput from "./EntryNameInput.svelte";
     import SubjectiveRangeSelect from "./SubjectiveRangeSelect.svelte";
+    import ObjectiveBucketSelect from "./ObjectiveBucketSelect.svelte";
 
     interface Props {
         entry: FormEntryType;
@@ -15,11 +16,12 @@
     let {entry = $bindable(), onRemove}: Props = $props();
 
     let isSubjective = $derived(entry.scoring?.scoringType === 'SUBJECTIVE');
+    let isObjective = $derived(entry.scoring?.scoringType === 'OBJECTIVE');
 </script>
 
 <Card.Root>
-    <div class="flex flex-col gap-2 p-2">
-        <div class="flex items-center gap-2">
+    <div class="flex flex-col gap-4 p-2">
+        <div class="flex items-center gap-4">
             {#if entry.scoring}
                 <ScoringTypeSelect bind:value={entry.scoring.scoringType} />
             {/if}
@@ -38,6 +40,9 @@
         </div>
         {#if isSubjective && entry.scoring}
             <SubjectiveRangeSelect bind:scoring={entry.scoring} />
+        {/if}
+        {#if isObjective && entry.scoring}
+            <ObjectiveBucketSelect bind:scoring={entry.scoring} />
         {/if}
     </div>
 </Card.Root>
