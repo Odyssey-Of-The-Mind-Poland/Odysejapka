@@ -2,7 +2,7 @@
     import * as Select from "$lib/components/ui/select/index.js";
 
     interface Props {
-        value: 'SECTION' | 'SCORING_GROUP';
+        value: 'SECTION' | 'SCORING_GROUP' | string;
     }
 
     const typeLabels = {
