@@ -26,7 +26,7 @@
     });
 </script>
 
-{#if bucketsQuery.data && scoring && scoring.objectiveBucket}
+{#if bucketsQuery.data && scoring}
     <div class="flex items-center gap-4 w-full">
         <div class="group relative w-full">
             <label

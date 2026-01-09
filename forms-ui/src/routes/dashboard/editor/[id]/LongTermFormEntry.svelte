@@ -7,6 +7,7 @@
     import EntryNameInput from "./EntryNameInput.svelte";
     import SubjectiveRangeSelect from "./SubjectiveRangeSelect.svelte";
     import ObjectiveBucketSelect from "./ObjectiveBucketSelect.svelte";
+    import JudgesSelect from "./JudgesSelect.svelte";
 
     interface Props {
         entry: FormEntryType;
@@ -38,11 +39,16 @@
                 </Button>
             {/if}
         </div>
-        {#if isSubjective && entry.scoring}
-            <SubjectiveRangeSelect bind:scoring={entry.scoring} />
-        {/if}
-        {#if isObjective && entry.scoring}
-            <ObjectiveBucketSelect bind:scoring={entry.scoring} />
+        {#if entry.scoring}
+            <div class="flex items-center gap-4">
+                {#if isSubjective}
+                    <SubjectiveRangeSelect bind:scoring={entry.scoring} />
+                {/if}
+                {#if isObjective}
+                    <ObjectiveBucketSelect bind:scoring={entry.scoring} />
+                {/if}
+                <JudgesSelect bind:value={entry.scoring.judges} />
+            </div>
         {/if}
     </div>
 </Card.Root>

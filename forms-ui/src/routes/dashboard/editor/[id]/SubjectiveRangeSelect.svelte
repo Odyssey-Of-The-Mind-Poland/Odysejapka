@@ -27,9 +27,9 @@
     });
 </script>
 
-{#if rangesQuery.data && scoring && scoring.subjectiveRange}
-    <div class="flex items-center gap-4">
-        <div class="group relative">
+{#if rangesQuery.data && scoring}
+    <div class="flex items-center gap-4 w-full">
+        <div class="group relative w-full">
             <label
                     class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
                     for="range-select"
@@ -40,7 +40,7 @@
                     type="single"
                     bind:value={scoring.subjectiveRange}
             >
-                <Select.Trigger class="w-[180px] pt-5" id="range-select">
+                <Select.Trigger class="w-full pt-5" id="range-select">
                     {selectedRange?.displayName || "Wybierz zakres"}
                 </Select.Trigger>
                 <Select.Content>
@@ -55,7 +55,7 @@
             </Select.Root>
         </div>
         {#if selectedRange}
-            <div class="group relative">
+            <div class="group relative w-full">
                 <label
                         class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
                         for="fr-select"
@@ -63,12 +63,12 @@
                     <span class="inline-flex bg-background px-1">FR</span>
                 </label>
                 <Select.Root type="single" disabled={true}>
-                    <Select.Trigger class="w-[200px] pt-5" id="fr-select">
+                    <Select.Trigger class="w-full pt-5" id="fr-select">
                         {selectedRange.frDisplay}
                     </Select.Trigger>
                 </Select.Root>
             </div>
-            <div class="group relative">
+            <div class="group relative w-full">
                 <label
                         class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
                         for="fo-select"
@@ -76,7 +76,7 @@
                     <span class="inline-flex bg-background px-1">FO</span>
                 </label>
                 <Select.Root type="single" disabled>
-                    <Select.Trigger class="w-[200px] pt-5" id="fo-select">
+                    <Select.Trigger class="w-full pt-5" id="fo-select">
                         {selectedRange.foDisplay}
                     </Select.Trigger>
                 </Select.Root>
