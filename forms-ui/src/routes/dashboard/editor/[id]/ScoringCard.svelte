@@ -2,13 +2,14 @@
     import * as Card from '$lib/components/ui/card/index.js';
     import {Button} from "$lib/components/ui/button";
     import LongTermFormEntry from "./LongTermFormEntry.svelte";
+    import SectionFormEntry from "./SectionFormEntry.svelte";
     import type {FormEntryType, ProblemForm} from "./types";
 
     interface Props {
         title: string;
         entries: FormEntryType[];
         form: ProblemForm;
-        onAddEntry: (category: 'dtEntries', type: 'SCORING') => void;
+        onAddEntry: (category: 'dtEntries', type: 'SCORING' | 'SECTION') => void;
         onRemoveEntry: (category: 'dtEntries', index: number) => void;
     }
 
@@ -21,14 +22,24 @@
     </Card.Header>
     <Card.Content class="flex flex-col gap-4 p-2">
         {#each entries ?? [] as entry, index (entry.id ?? index)}
-            <LongTermFormEntry
-                    bind:entry={form.dtEntries[index]}
-                    onRemove={() => onRemoveEntry('dtEntries', index)}
-            />
+            {#if entry.type === 'SCORING'}
+                <LongTermFormEntry
+                        bind:entry={form.dtEntries[index]}
+                        onRemove={() => onRemoveEntry('dtEntries', index)}
+                />
+            {:else if entry.type === 'SECTION' || entry.type === 'SCORING_GROUP'}
+                <SectionFormEntry
+                        bind:entry={form.dtEntries[index]}
+                        onRemove={() => onRemoveEntry('dtEntries', index)}
+                />
+            {/if}
         {/each}
         <div class="flex gap-2 flex-wrap">
             <Button variant="outline" onclick={() => onAddEntry('dtEntries', 'SCORING')}>
                 Dodaj Kategorie
+            </Button>
+            <Button variant="outline" onclick={() => onAddEntry('dtEntries', 'SECTION')}>
+                Dodaj Sekcje
             </Button>
         </div>
     </Card.Content>
