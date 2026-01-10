@@ -3,8 +3,10 @@
     import * as Collapsible from '$lib/components/ui/collapsible/index.js';
     import {Button} from "$lib/components/ui/button";
     import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
+    import {dndzone} from 'svelte-dnd-action';
     import PenaltyFormEntry from "./PenaltyFormEntry.svelte";
     import type {FormEntryType, ProblemForm} from "./types";
+    import {recalculateSortIndexes} from "./sortIndexUtils";
 
     interface Props {
         title: string;
@@ -16,6 +18,16 @@
 
     let {title, entries, form = $bindable(), onAddEntry, onRemoveEntry}: Props = $props();
     let isOpen = $state(true);
+    let items = $state(entries ?? []);
+
+    $effect(() => {
+        items = entries ?? [];
+    });
+
+    function handleSort(e: CustomEvent) {
+        items = e.detail.items;
+        form.penaltyEntries = recalculateSortIndexes(items);
+    }
 </script>
 
 <Collapsible.Root bind:open={isOpen}>
@@ -30,12 +42,19 @@
         </Card.Header>
         <Collapsible.Content>
             <Card.Content class="flex flex-col gap-4 p-2">
-        {#each entries ?? [] as entry, index (entry.id ?? index)}
-            <PenaltyFormEntry
-                    bind:entry={form.penaltyEntries[index]}
-                    onRemove={() => onRemoveEntry('penaltyEntries', index)}
-            />
-        {/each}
+            <div
+                use:dndzone={{ items }}
+                onconsider={handleSort}
+                onfinalize={handleSort}
+                class="flex flex-col gap-4"
+            >
+                {#each items as item, index (item.id ?? item)}
+                    <PenaltyFormEntry
+                            bind:entry={items[index]}
+                            onRemove={() => onRemoveEntry('penaltyEntries', index)}
+                    />
+                {/each}
+            </div>
         <div class="flex gap-2 flex-wrap">
             <Button variant="outline" onclick={() => onAddEntry('penaltyEntries', 'PENALTY')}>
                 Dodaj Karne

@@ -3,9 +3,11 @@
     import * as Collapsible from '$lib/components/ui/collapsible/index.js';
     import {Button} from "$lib/components/ui/button";
     import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
+    import {dndzone} from 'svelte-dnd-action';
     import LongTermFormEntry from "./LongTermFormEntry.svelte";
     import SectionFormEntry from "./SectionFormEntry.svelte";
     import type {FormEntryType, ProblemForm} from "./types";
+    import {recalculateSortIndexes} from "./sortIndexUtils";
 
     interface Props {
         title: string;
@@ -17,6 +19,16 @@
 
     let {title, entries, form = $bindable(), onAddEntry, onRemoveEntry}: Props = $props();
     let isOpen = $state(true);
+    let items = $state(entries ?? []);
+
+    $effect(() => {
+        items = entries ?? [];
+    });
+
+    function handleSort(e: CustomEvent) {
+        items = e.detail.items;
+        form.dtEntries = recalculateSortIndexes(items);
+    }
 </script>
 
 <Collapsible.Root bind:open={isOpen}>
@@ -31,19 +43,26 @@
         </Card.Header>
         <Collapsible.Content>
             <Card.Content class="flex flex-col gap-4 p-2">
-        {#each entries ?? [] as entry, index (entry.id ?? index)}
-            {#if entry.type === 'SCORING'}
-                <LongTermFormEntry
-                        bind:entry={form.dtEntries[index]}
-                        onRemove={() => onRemoveEntry('dtEntries', index)}
-                />
-            {:else if entry.type === 'SECTION' || entry.type === 'SCORING_GROUP'}
-                <SectionFormEntry
-                        bind:entry={form.dtEntries[index]}
-                        onRemove={() => onRemoveEntry('dtEntries', index)}
-                />
-            {/if}
-        {/each}
+            <div
+                use:dndzone={{ items }}
+                onconsider={handleSort}
+                onfinalize={handleSort}
+                class="flex flex-col gap-4"
+            >
+                {#each items as item, index (item.id ?? item)}
+                    {#if item.type === 'SCORING'}
+                        <LongTermFormEntry
+                                bind:entry={items[index]}
+                                onRemove={() => onRemoveEntry('dtEntries', index)}
+                        />
+                    {:else if item.type === 'SECTION' || item.type === 'SCORING_GROUP'}
+                        <SectionFormEntry
+                                bind:entry={items[index]}
+                                onRemove={() => onRemoveEntry('dtEntries', index)}
+                        />
+                    {/if}
+                {/each}
+            </div>
         <div class="flex gap-2 flex-wrap">
             <Button variant="outline" onclick={() => onAddEntry('dtEntries', 'SCORING')}>
                 Dodaj Kategorie

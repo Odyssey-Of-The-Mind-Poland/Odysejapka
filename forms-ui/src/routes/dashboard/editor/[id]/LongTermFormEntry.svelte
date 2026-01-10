@@ -4,6 +4,7 @@
     import {Button} from '$lib/components/ui/button';
     import Trash2Icon from '@lucide/svelte/icons/trash-2';
     import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
+    import GripVerticalIcon from "@lucide/svelte/icons/grip-vertical";
     import type {FormEntryType} from "./types";
     import {formatSortIndex} from "./sortIndexUtils";
     import ScoringTypeSelect from "./ScoringTypeSelect.svelte";
@@ -29,7 +30,10 @@
 <Collapsible.Root bind:open={isOpen}>
     <Card.Root>
         <Collapsible.Trigger class="w-full flex items-center justify-between p-2 cursor-pointer">
-            <span class="font-semibold text-gray-700 min-w-[2rem]">{displayIndex}.</span>
+            <div class="flex items-center gap-2">
+                <GripVerticalIcon class="h-4 w-4 text-gray-400 cursor-grab active:cursor-grabbing" />
+                <span class="font-semibold text-gray-700 min-w-[2rem]">{displayIndex}.</span>
+            </div>
             <div class="flex items-center gap-2">
                 <ChevronDownIcon class="h-4 w-4 transition-transform duration-200 {isOpen ? 'rotate-180' : ''}" />
                 {#if onRemove}
