@@ -56,6 +56,10 @@ class FormEntryEntity {
     @Enumerated(EnumType.STRING)
     var objectiveBucket: ObjectiveBuckets? = null
 
+    @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
+    var styleType: StyleFormEntry.StyleType? = null
+
     enum class EntryType {
         SCORING, SECTION, SCORING_GROUP, STYLE, PENALTY
     }
@@ -126,6 +130,7 @@ class FormEntryEntity {
             id = id,
             name = name,
             type = StyleFormEntry.EntryType.STYLE,
+            styleType = styleType ?: StyleFormEntry.StyleType.PREDEFINED,
             entries = children.map { it.toStyleFormEntry(childrenByParent) },
             sortIndex = orderIndex
         )

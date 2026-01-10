@@ -10,6 +10,7 @@ export type FormEntryType = {
 	type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY';
 	scoring?: ScoringData | null;
 	scoringGroup?: ScoringGroupData | null;
+	styleType?: 'PREDEFINED' | 'FREE_TEAM_CHOICE';
 	entries: FormEntryType[];
 	sortIndex: number;
 };
@@ -40,7 +41,11 @@ export function defaultEntry(
 							pointsMax: 100
 						}
 					}
-				: {})
+				: type === 'STYLE'
+					? {
+							styleType: 'PREDEFINED'
+						}
+					: {})
 	};
 }
 

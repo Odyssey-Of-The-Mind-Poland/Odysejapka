@@ -4,6 +4,7 @@ data class StyleFormEntry(
     val id: Long?,
     val name: String,
     val type: EntryType,
+    val styleType: StyleType = StyleType.PREDEFINED,
     val entries: List<StyleFormEntry> = emptyList(),
     val sortIndex: Int = 0
 ) {
@@ -22,6 +23,10 @@ data class StyleFormEntry(
         STYLE
     }
 
+    enum class StyleType {
+        PREDEFINED, FREE_TEAM_CHOICE
+    }
+
     fun toEntity(
         problem: Int,
         category: FormEntryEntity.FormCategory,
@@ -37,6 +42,7 @@ data class StyleFormEntry(
             this.parent = parent
             this.orderIndex = this@StyleFormEntry.sortIndex
             this.entryType = FormEntryEntity.EntryType.STYLE
+            this.styleType = this@StyleFormEntry.styleType
         }
         return entity
     }
