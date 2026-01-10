@@ -2,6 +2,7 @@
     import * as Select from '$lib/components/ui/select/index.js';
     import {createOdysejaQuery} from "$lib/queries";
     import type {ScoringData} from "./types";
+    import SelectWithLabel from '$lib/components/form/SelectWithLabel.svelte';
 
     interface Props {
         scoring: ScoringData;
@@ -29,58 +30,47 @@
 
 {#if rangesQuery.data && scoring}
     <div class="flex items-center gap-4 w-full">
-        <div class="group relative w-full">
-            <label
-                    class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
-                    for="range-select"
-            >
-                <span class="inline-flex bg-background px-1">Zakres</span>
-            </label>
-            <Select.Root
-                    type="single"
-                    bind:value={scoring.subjectiveRange}
-            >
-                <Select.Trigger class="w-full pt-5" id="range-select">
-                    {selectedRange?.displayName || "Wybierz zakres"}
-                </Select.Trigger>
-                <Select.Content>
-                    <Select.Group>
-                        {#each rangesQuery.data as range}
-                            <Select.Item value={range.name} label={range.displayName}>
-                                {range.displayName}
-                            </Select.Item>
-                        {/each}
-                    </Select.Group>
-                </Select.Content>
-            </Select.Root>
-        </div>
+        <SelectWithLabel 
+            label="Zakres" 
+            bind:value={scoring.subjectiveRange} 
+            flexClass="w-full"
+            triggerContent={() => selectedRange?.displayName || "Wybierz zakres"}
+        >
+            <Select.Group>
+                {#each rangesQuery.data as range}
+                    <Select.Item value={range.name} label={range.displayName}>
+                        {range.displayName}
+                    </Select.Item>
+                {/each}
+            </Select.Group>
+        </SelectWithLabel>
         {#if selectedRange}
-            <div class="group relative w-full">
-                <label
-                        class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
-                        for="fr-select"
-                >
-                    <span class="inline-flex bg-background px-1">FR</span>
-                </label>
-                <Select.Root type="single" disabled={true}>
-                    <Select.Trigger class="w-full pt-5" id="fr-select">
+            <SelectWithLabel 
+                label="FR" 
+                value={selectedRange.frDisplay}
+                disabled={true}
+                flexClass="w-full"
+                triggerContent={() => selectedRange.frDisplay}
+            >
+                <Select.Group>
+                    <Select.Item value={selectedRange.frDisplay} label={selectedRange.frDisplay}>
                         {selectedRange.frDisplay}
-                    </Select.Trigger>
-                </Select.Root>
-            </div>
-            <div class="group relative w-full">
-                <label
-                        class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
-                        for="fo-select"
-                >
-                    <span class="inline-flex bg-background px-1">FO</span>
-                </label>
-                <Select.Root type="single" disabled>
-                    <Select.Trigger class="w-full pt-5" id="fo-select">
+                    </Select.Item>
+                </Select.Group>
+            </SelectWithLabel>
+            <SelectWithLabel 
+                label="FO" 
+                value={selectedRange.foDisplay}
+                disabled={true}
+                flexClass="w-full"
+                triggerContent={() => selectedRange.foDisplay}
+            >
+                <Select.Group>
+                    <Select.Item value={selectedRange.foDisplay} label={selectedRange.foDisplay}>
                         {selectedRange.foDisplay}
-                    </Select.Trigger>
-                </Select.Root>
-            </div>
+                    </Select.Item>
+                </Select.Group>
+            </SelectWithLabel>
         {/if}
     </div>
 {/if}

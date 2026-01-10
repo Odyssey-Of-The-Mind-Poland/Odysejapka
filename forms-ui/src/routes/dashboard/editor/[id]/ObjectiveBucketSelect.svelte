@@ -2,6 +2,7 @@
     import * as Select from '$lib/components/ui/select/index.js';
     import {createOdysejaQuery} from "$lib/queries";
     import type {ScoringData} from "./types";
+    import SelectWithLabel from '$lib/components/form/SelectWithLabel.svelte';
 
     interface Props {
         scoring: ScoringData;
@@ -28,31 +29,20 @@
 
 {#if bucketsQuery.data && scoring}
     <div class="flex items-center gap-4 w-full">
-        <div class="group relative w-full">
-            <label
-                    class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
-                    for="bucket-select"
-            >
-                <span class="inline-flex bg-background px-1">Możliwe wartości punktowe</span>
-            </label>
-            <Select.Root
-                    type="single"
-                    bind:value={scoring.objectiveBucket}
-            >
-                <Select.Trigger class="w-full pt-5" id="bucket-select">
-                    {selectedBucket?.displayName || "Wybierz buckety"}
-                </Select.Trigger>
-                <Select.Content>
-                    <Select.Group>
-                        {#each bucketsQuery.data as bucket}
-                            <Select.Item value={bucket.name} label={bucket.displayName}>
-                                {bucket.displayName}
-                            </Select.Item>
-                        {/each}
-                    </Select.Group>
-                </Select.Content>
-            </Select.Root>
-        </div>
+        <SelectWithLabel 
+            label="Możliwe wartości punktowe" 
+            bind:value={scoring.objectiveBucket} 
+            flexClass="w-full"
+            triggerContent={() => selectedBucket?.displayName || "Wybierz buckety"}
+        >
+            <Select.Group>
+                {#each bucketsQuery.data as bucket}
+                    <Select.Item value={bucket.name} label={bucket.displayName}>
+                        {bucket.displayName}
+                    </Select.Item>
+                {/each}
+            </Select.Group>
+        </SelectWithLabel>
     </div>
 {/if}
 

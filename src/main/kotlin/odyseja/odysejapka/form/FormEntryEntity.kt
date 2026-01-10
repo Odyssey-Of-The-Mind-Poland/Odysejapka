@@ -36,12 +36,6 @@ class FormEntryEntity {
     var scoringType: LongTermFormEntry.ScoringType? = null
 
     @Column(nullable = true)
-    var pointsMin: Int? = null
-
-    @Column(nullable = true)
-    var pointsMax: Int? = null
-
-    @Column(nullable = true)
     @Enumerated(EnumType.STRING)
     var judges: LongTermFormEntry.JudgeType? = null
 
@@ -84,8 +78,6 @@ class FormEntryEntity {
                 scoringType?.let {
                     LongTermFormEntry.ScoringData(
                         scoringType = it,
-                        pointsMin = pointsMin ?: 0,
-                        pointsMax = pointsMax ?: 0,
                         judges = judges ?: LongTermFormEntry.JudgeType.A,
                         noElementEnabled = noElementEnabled ?: false,
                         subjectiveRange = subjectiveRange,
@@ -97,27 +89,11 @@ class FormEntryEntity {
             else -> null
         }
 
-        val scoringGroup = when (entryType) {
-            LongTermFormEntry.EntryType.SCORING_GROUP -> {
-                pointsMin?.let { min ->
-                    pointsMax?.let { max ->
-                        LongTermFormEntry.ScoringGroupData(
-                            pointsMin = min,
-                            pointsMax = max
-                        )
-                    }
-                }
-            }
-
-            else -> null
-        }
-
         return LongTermFormEntry(
             id = id,
             name = name,
             type = entryType,
             scoring = scoring,
-            scoringGroup = scoringGroup,
             entries = children.map { it.toLongTermFormEntry(childrenByParent) },
             sortIndex = orderIndex
         )

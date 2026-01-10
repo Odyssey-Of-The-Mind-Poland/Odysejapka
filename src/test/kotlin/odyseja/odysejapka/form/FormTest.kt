@@ -38,8 +38,6 @@ class FormTest : OdysejaDsl() {
                 dtId, "DT new", LongTermFormEntry.EntryType.SCORING,
                 scoring = LongTermFormEntry.ScoringData(
                     scoringType = LongTermFormEntry.ScoringType.OBJECTIVE,
-                    pointsMin = 0,
-                    pointsMax = 200,
                     judges = LongTermFormEntry.JudgeType.B,
                     noElementEnabled = true
                 )
@@ -56,7 +54,6 @@ class FormTest : OdysejaDsl() {
         Assertions.assertThat(updated.dtEntries).hasSize(1)
         val updatedDt = updated.dtEntries[0]
         Assertions.assertThat(updatedDt.name).isEqualTo("DT new")
-        Assertions.assertThat(updatedDt.scoring?.pointsMax).isEqualTo(200)
         Assertions.assertThat(updatedDt.scoring?.noElementEnabled).isTrue
     }
 
@@ -95,8 +92,6 @@ class FormTest : OdysejaDsl() {
 
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            pointsMin = 0,
-            pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
@@ -148,8 +143,6 @@ class FormTest : OdysejaDsl() {
 
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            pointsMin = 0,
-            pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
@@ -172,8 +165,6 @@ class FormTest : OdysejaDsl() {
 
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            pointsMin = 0,
-            pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
@@ -210,8 +201,6 @@ class FormTest : OdysejaDsl() {
 
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            pointsMin = 0,
-            pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
@@ -222,10 +211,6 @@ class FormTest : OdysejaDsl() {
                     null,
                     "DT Group",
                     LongTermFormEntry.EntryType.SCORING_GROUP,
-                    scoringGroup = LongTermFormEntry.ScoringGroupData(
-                        pointsMin = 0,
-                        pointsMax = 200
-                    ),
                     entries = listOf(
                         LongTermFormEntry(null, "Group Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData),
                         LongTermFormEntry(null, "Group Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)
@@ -241,9 +226,6 @@ class FormTest : OdysejaDsl() {
         val group = after.dtEntries[0]
         Assertions.assertThat(group.name).isEqualTo("DT Group")
         Assertions.assertThat(group.type).isEqualTo(LongTermFormEntry.EntryType.SCORING_GROUP)
-        Assertions.assertThat(group.scoringGroup).isNotNull
-        Assertions.assertThat(group.scoringGroup?.pointsMin).isEqualTo(0)
-        Assertions.assertThat(group.scoringGroup?.pointsMax).isEqualTo(200)
         Assertions.assertThat(group.entries).hasSize(2)
         Assertions.assertThat(group.entries.map { it.name })
             .containsExactlyInAnyOrder("Group Entry 1", "Group Entry 2")

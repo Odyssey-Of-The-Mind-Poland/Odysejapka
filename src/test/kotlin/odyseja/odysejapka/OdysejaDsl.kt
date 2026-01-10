@@ -59,8 +59,6 @@ class OdysejaDsl {
             null, "DT", LongTermFormEntry.EntryType.SCORING,
             scoring = LongTermFormEntry.ScoringData(
                 scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-                pointsMin = 0,
-                pointsMax = 100,
                 judges = LongTermFormEntry.JudgeType.A,
                 noElementEnabled = false
             )

@@ -1,15 +1,16 @@
 <script lang="ts">
     import * as Card from '$lib/components/ui/card/index.js';
     import * as Collapsible from '$lib/components/ui/collapsible/index.js';
-    import * as Select from "$lib/components/ui/select/index.js";
     import {Button} from '$lib/components/ui/button';
     import Trash2Icon from '@lucide/svelte/icons/trash-2';
     import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
     import GripVerticalIcon from "@lucide/svelte/icons/grip-vertical";
-    import {Input} from '$lib/components/ui/input';
     import type {FormEntryType} from "./types";
     import {formatSortIndex} from "./sortIndexUtils";
     import StyleTypeSelect from "./StyleTypeSelect.svelte";
+    import InputWithLabel from '$lib/components/form/InputWithLabel.svelte';
+    import SelectWithLabel from '$lib/components/form/SelectWithLabel.svelte';
+    import * as Select from "$lib/components/ui/select/index.js";
 
     interface Props {
         entry: FormEntryType;
@@ -63,43 +64,35 @@
                     {/if}
                 </div>
                 {#if isPredefined}
-                    <div class="group relative flex-1 min-w-[200px]">
-                        <label
-                                class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
-                                for={`style-name-${entry.id ?? 0}`}
-                        >
-                            <span class="inline-flex bg-background px-1">Nazwa kategori</span>
-                        </label>
-                        <Input bind:value={entry.name} class="w-full dark:bg-background pt-5" placeholder=" "
-                               type="text" id={`style-name-${entry.id ?? 0}`}/>
-                    </div>
+                    <InputWithLabel 
+                        label="Nazwa kategori" 
+                        bind:value={entry.name} 
+                        id={entry.id} 
+                        flexClass="flex-1 min-w-[200px]"
+                    />
                 {/if}
-                <div class="group relative flex-1">
-                    <label
-                            class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
-                            for={`style-points-${entry.id ?? 0}`}
-                    >
-                        <span class="inline-flex bg-background px-1">Możliwe wartości punktowe</span>
-                    </label>
-                    <Select.Root type="single" value="1-10" disabled>
-                        <Select.Trigger class="pt-5 w-full" id={`style-points-${entry.id ?? 0}`}>
-                            1-10
-                        </Select.Trigger>
-                    </Select.Root>
-                </div>
-                <div class="group relative flex-1">
-                    <label
-                            class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
-                            for={`style-judges-${entry.id ?? 0}`}
-                    >
-                        <span class="inline-flex bg-background px-1">Dostęp do sędziów</span>
-                    </label>
-                    <Select.Root type="single" value="STYLE_JUDGES" disabled>
-                        <Select.Trigger class="pt-5 w-full" id={`style-judges-${entry.id ?? 0}`}>
-                            Sędziowie stylu
-                        </Select.Trigger>
-                    </Select.Root>
-                </div>
+                <SelectWithLabel 
+                    label="Możliwe wartości punktowe" 
+                    value="1-10" 
+                    disabled={true}
+                    id={entry.id}
+                    triggerContent={() => "1-10"}
+                >
+                    <Select.Group>
+                        <Select.Item value="1-10" label="1-10">1-10</Select.Item>
+                    </Select.Group>
+                </SelectWithLabel>
+                <SelectWithLabel 
+                    label="Dostęp do sędziów" 
+                    value="STYLE_JUDGES" 
+                    disabled={true}
+                    id={entry.id}
+                    triggerContent={() => "Sędziowie stylu"}
+                >
+                    <Select.Group>
+                        <Select.Item value="STYLE_JUDGES" label="Sędziowie stylu">Sędziowie stylu</Select.Item>
+                    </Select.Group>
+                </SelectWithLabel>
             </div>
         </Collapsible.Content>
     </Card.Root>
