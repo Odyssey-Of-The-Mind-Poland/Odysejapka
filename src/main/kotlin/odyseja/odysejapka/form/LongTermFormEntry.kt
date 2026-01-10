@@ -7,7 +7,7 @@ data class LongTermFormEntry(
     val scoring: ScoringData? = null,
     val scoringGroup: ScoringGroupData? = null,
     val entries: List<LongTermFormEntry> = emptyList(),
-    val sortIndex: Int = 0
+    val sortIndex: Int = 0,
 ) {
     init {
         when (type) {
@@ -35,7 +35,7 @@ data class LongTermFormEntry(
         val pointsMin: Int,
         val pointsMax: Int,
         val judges: JudgeType,
-        val noElement: Boolean,
+        val noElementEnabled: Boolean,
         val subjectiveRange: SubjectiveRanges? = null,
         val objectiveBucket: ObjectiveBuckets? = null
     )
@@ -78,7 +78,7 @@ data class LongTermFormEntry(
                     this.pointsMin = it.pointsMin
                     this.pointsMax = it.pointsMax
                     this.judges = it.judges
-                    this.noElement = it.noElement
+                    this.noElementEnabled = it.noElementEnabled
                     this.subjectiveRange = it.subjectiveRange
                     this.objectiveBucket = it.objectiveBucket
                 }

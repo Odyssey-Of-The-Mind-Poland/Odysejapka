@@ -46,7 +46,7 @@ class FormEntryEntity {
     var judges: LongTermFormEntry.JudgeType? = null
 
     @Column(nullable = true)
-    var noElement: Boolean? = null
+    var noElementEnabled: Boolean? = null
 
     @Column(nullable = true)
     @Enumerated(EnumType.STRING)
@@ -83,7 +83,7 @@ class FormEntryEntity {
                         pointsMin = pointsMin ?: 0,
                         pointsMax = pointsMax ?: 0,
                         judges = judges ?: LongTermFormEntry.JudgeType.A,
-                        noElement = noElement ?: false,
+                        noElementEnabled = noElementEnabled ?: false,
                         subjectiveRange = subjectiveRange,
                         objectiveBucket = objectiveBucket
                     )

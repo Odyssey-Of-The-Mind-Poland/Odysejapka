@@ -12,6 +12,7 @@
     import SubjectiveRangeSelect from "./SubjectiveRangeSelect.svelte";
     import ObjectiveBucketSelect from "./ObjectiveBucketSelect.svelte";
     import JudgesSelect from "./JudgesSelect.svelte";
+    import NoElementCheckbox from "./NoElementCheckbox.svelte";
 
     interface Props {
         entry: FormEntryType;
@@ -69,6 +70,7 @@
                     <ObjectiveBucketSelect bind:scoring={entry.scoring} />
                 {/if}
                 <JudgesSelect bind:value={entry.scoring.judges} />
+                <NoElementCheckbox bind:value={entry.scoring.noElementEnabled} />
             </div>
             {/if}
             </div>

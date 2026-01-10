@@ -15,7 +15,7 @@ class FormSortIndexTest : OdysejaDsl() {
             pointsMin = 0,
             pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
-            noElement = false
+            noElementEnabled = false
         )
 
         setForm(
@@ -45,7 +45,7 @@ class FormSortIndexTest : OdysejaDsl() {
             pointsMin = 0,
             pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
-            noElement = false
+            noElementEnabled = false
         )
 
         // Create initial entries
@@ -136,7 +136,7 @@ class FormSortIndexTest : OdysejaDsl() {
             pointsMin = 0,
             pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
-            noElement = false
+            noElementEnabled = false
         )
 
         // Create initial entries
@@ -179,7 +179,7 @@ class FormSortIndexTest : OdysejaDsl() {
             pointsMin = 0,
             pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
-            noElement = false
+            noElementEnabled = false
         )
 
         setForm(
@@ -219,7 +219,7 @@ class FormSortIndexTest : OdysejaDsl() {
             pointsMin = 0,
             pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
-            noElement = false
+            noElementEnabled = false
         )
 
         // Create initial nested entries
@@ -284,7 +284,7 @@ class FormSortIndexTest : OdysejaDsl() {
             pointsMin = 0,
             pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
-            noElement = false
+            noElementEnabled = false
         )
 
         // Create initial entries

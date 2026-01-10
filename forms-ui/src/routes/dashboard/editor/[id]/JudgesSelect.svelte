@@ -16,7 +16,7 @@
     let selectId = `judges-select-${Math.random().toString(36).substr(2, 9)}`;
 </script>
 
-<div class="group relative">
+<div class="group relative w-full">
     <label
             class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
             for={selectId}
@@ -24,7 +24,7 @@
         <span class="inline-flex bg-background px-1">Sędziowie</span>
     </label>
     <Select.Root type="single" bind:value={value}>
-        <Select.Trigger class="w-[180px] pt-5" id={selectId}>
+        <Select.Trigger class="w-full pt-5" id={selectId}>
             {judgeLabels[value] || " "}
         </Select.Trigger>
         <Select.Content>

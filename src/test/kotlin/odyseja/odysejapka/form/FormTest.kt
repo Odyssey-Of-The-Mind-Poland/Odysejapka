@@ -41,7 +41,7 @@ class FormTest : OdysejaDsl() {
                     pointsMin = 0,
                     pointsMax = 200,
                     judges = LongTermFormEntry.JudgeType.B,
-                    noElement = true
+                    noElementEnabled = true
                 )
             )),
             style = listOf(StyleFormEntry(
@@ -57,7 +57,7 @@ class FormTest : OdysejaDsl() {
         val updatedDt = updated.dtEntries[0]
         Assertions.assertThat(updatedDt.name).isEqualTo("DT new")
         Assertions.assertThat(updatedDt.scoring?.pointsMax).isEqualTo(200)
-        Assertions.assertThat(updatedDt.scoring?.noElement).isTrue
+        Assertions.assertThat(updatedDt.scoring?.noElementEnabled).isTrue
     }
 
     @Test
@@ -98,7 +98,7 @@ class FormTest : OdysejaDsl() {
             pointsMin = 0,
             pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
-            noElement = false
+            noElementEnabled = false
         )
 
         setForm(
@@ -151,7 +151,7 @@ class FormTest : OdysejaDsl() {
             pointsMin = 0,
             pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
-            noElement = false
+            noElementEnabled = false
         )
 
         setForm(
@@ -175,7 +175,7 @@ class FormTest : OdysejaDsl() {
             pointsMin = 0,
             pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
-            noElement = false
+            noElementEnabled = false
         )
 
         setForm(
@@ -213,7 +213,7 @@ class FormTest : OdysejaDsl() {
             pointsMin = 0,
             pointsMax = 100,
             judges = LongTermFormEntry.JudgeType.A,
-            noElement = false
+            noElementEnabled = false
         )
 
         setForm(

@@ -62,7 +62,7 @@ class OdysejaDsl {
                 pointsMin = 0,
                 pointsMax = 100,
                 judges = LongTermFormEntry.JudgeType.A,
-                noElement = false
+                noElementEnabled = false
             )
         )),
         style = listOf(StyleFormEntry(

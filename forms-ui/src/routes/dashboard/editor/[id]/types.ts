@@ -30,7 +30,7 @@ export function defaultEntry(
 						pointsMin: 0,
 						pointsMax: 100,
 						judges: 'A',
-						noElement: false
+						noElementEnabled: false
 					}
 				}
 			: type === 'SCORING_GROUP'
@@ -49,7 +49,7 @@ export type ScoringData = {
 	pointsMin: number;
 	pointsMax: number;
 	judges: 'A' | 'B' | 'A_PLUS_B';
-	noElement: boolean;
+	noElementEnabled: boolean;
 	subjectiveRange?: string | undefined;
 	objectiveBucket?: string | undefined;
 };
