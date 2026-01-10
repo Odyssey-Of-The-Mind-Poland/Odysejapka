@@ -23,19 +23,11 @@ data class LongTermFormEntry(
                 require(scoringGroup != null) { "ScoringGroup data is required for SCORING_GROUP type" }
                 require(scoring == null) { "Scoring data must be null for SCORING_GROUP type" }
             }
-            EntryType.STYLE -> {
-                require(scoring == null) { "Scoring data must be null for STYLE type" }
-                require(scoringGroup == null) { "ScoringGroup data must be null for STYLE type" }
-            }
-            EntryType.PENALTY -> {
-                require(scoring == null) { "Scoring data must be null for PENALTY type" }
-                require(scoringGroup == null) { "ScoringGroup data must be null for PENALTY type" }
-            }
         }
     }
 
     enum class EntryType {
-        SCORING, SECTION, SCORING_GROUP, STYLE, PENALTY
+        SCORING, SECTION, SCORING_GROUP,
     }
 
     data class ScoringData(
@@ -79,8 +71,6 @@ data class LongTermFormEntry(
                 EntryType.SCORING -> FormEntryEntity.EntryType.SCORING
                 EntryType.SECTION -> FormEntryEntity.EntryType.SECTION
                 EntryType.SCORING_GROUP -> FormEntryEntity.EntryType.SCORING_GROUP
-                EntryType.STYLE -> FormEntryEntity.EntryType.STYLE
-                EntryType.PENALTY -> FormEntryEntity.EntryType.PENALTY
             }
             when (this@LongTermFormEntry.type) {
                 EntryType.SCORING -> scoring?.let {

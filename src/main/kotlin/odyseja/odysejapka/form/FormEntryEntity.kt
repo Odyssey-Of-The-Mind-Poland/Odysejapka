@@ -72,8 +72,7 @@ class FormEntryEntity {
             EntryType.SCORING -> LongTermFormEntry.EntryType.SCORING
             EntryType.SECTION -> LongTermFormEntry.EntryType.SECTION
             EntryType.SCORING_GROUP -> LongTermFormEntry.EntryType.SCORING_GROUP
-            EntryType.STYLE -> LongTermFormEntry.EntryType.STYLE
-            EntryType.PENALTY -> LongTermFormEntry.EntryType.PENALTY
+            else -> LongTermFormEntry.EntryType.SCORING
         }
 
         val scoring = when (entryType) {
