@@ -1,6 +1,8 @@
 <script lang="ts">
     import * as Card from '$lib/components/ui/card/index.js';
+    import * as Collapsible from '$lib/components/ui/collapsible/index.js';
     import {Button} from "$lib/components/ui/button";
+    import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
     import PenaltyFormEntry from "./PenaltyFormEntry.svelte";
     import type {FormEntryType, ProblemForm} from "./types";
 
@@ -13,13 +15,21 @@
     }
 
     let {title, entries, form = $bindable(), onAddEntry, onRemoveEntry}: Props = $props();
+    let isOpen = $state(true);
 </script>
 
-<Card.Root>
-    <Card.Header>
-        <Card.Title>{title}</Card.Title>
-    </Card.Header>
-    <Card.Content class="flex flex-col gap-4 p-2">
+<Collapsible.Root bind:open={isOpen}>
+    <Card.Root>
+        <Card.Header>
+            <Collapsible.Trigger class="w-full cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <Card.Title>{title}</Card.Title>
+                    <ChevronDownIcon class="h-4 w-4 transition-transform duration-200 {isOpen ? 'rotate-180' : ''}" />
+                </div>
+            </Collapsible.Trigger>
+        </Card.Header>
+        <Collapsible.Content>
+            <Card.Content class="flex flex-col gap-4 p-2">
         {#each entries ?? [] as entry, index (entry.id ?? index)}
             <PenaltyFormEntry
                     bind:entry={form.penaltyEntries[index]}
@@ -30,7 +40,9 @@
             <Button variant="outline" onclick={() => onAddEntry('penaltyEntries', 'PENALTY')}>
                 Dodaj Karne
             </Button>
-        </div>
-    </Card.Content>
-</Card.Root>
+            </div>
+            </Card.Content>
+        </Collapsible.Content>
+    </Card.Root>
+</Collapsible.Root>
 
