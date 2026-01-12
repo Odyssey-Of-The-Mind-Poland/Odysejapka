@@ -2,7 +2,6 @@ package odyseja.odysejapka.form
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,12 +19,7 @@ class FormController(private val formService: FormService?) {
 
     @GetMapping("/{problem}")
     fun getProblemForm(@PathVariable problem: Int): ProblemForm {
-        return formService!!.getFormEntries(problem)
-    }
-
-    @PostMapping("/{problem}/judge-count")
-    fun setJudgesCount(@PathVariable problem: Int, @RequestBody request: SetJudgesRequest) {
-        formService!!.setJudgesCount(problem, request)
+        return formService!!.getProblemForm(problem)
     }
 
     @GetMapping("/{problem}/judge-count")

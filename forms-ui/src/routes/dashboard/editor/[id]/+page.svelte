@@ -68,7 +68,7 @@
 
         <Separator.Root/>
 
-        <JudgeCount/>
+        <JudgeCount {form}/>
 
         <Separator.Root/>
 

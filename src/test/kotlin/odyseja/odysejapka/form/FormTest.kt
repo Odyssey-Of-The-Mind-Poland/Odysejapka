@@ -131,13 +131,45 @@ class FormTest : OdysejaDsl() {
         val city1 = cityClient.saveCity(CreateCityRequest("City 1"))
         val city2 = cityClient.saveCity(CreateCityRequest("City 2"))
 
-        formClient.setJudgesCount(PROBLEM_ID, SetJudgesRequest(listOf(city1.id), listOf(city2.id)))
+        formClient.setProblemForm(
+            PROBLEM_ID,
+            ProblemForm(
+                dtEntries = emptyList(),
+                styleEntries = emptyList(),
+                penaltyEntries = emptyList(),
+                smallJudgesTeam = listOf(city1.id),
+                bigJudgesTeam = listOf(city2.id)
+            )
+        )
 
         val city1Judges = formClient.getJudgeCount(PROBLEM_ID, city1.id)
         val city2Judges = formClient.getJudgeCount(PROBLEM_ID, city2.id)
 
         Assertions.assertThat(city1Judges.judgeCount).isEqualTo(1)
         Assertions.assertThat(city2Judges.judgeCount).isEqualTo(2)
+    }
+
+    @Test
+    fun `should return judges count in getProblemForm`() {
+        val city1 = cityClient.saveCity(CreateCityRequest("City 1"))
+        val city2 = cityClient.saveCity(CreateCityRequest("City 2"))
+        val city3 = cityClient.saveCity(CreateCityRequest("City 3"))
+
+        seedDefault()
+        val existing = form()
+
+        formClient.setProblemForm(
+            PROBLEM_ID,
+            existing.copy(
+                smallJudgesTeam = listOf(city1.id, city2.id),
+                bigJudgesTeam = listOf(city3.id)
+            )
+        )
+
+        val retrievedForm = formClient.getProblemForm(PROBLEM_ID)
+
+        Assertions.assertThat(retrievedForm.smallJudgesTeam).containsExactlyInAnyOrder(city1.id, city2.id)
+        Assertions.assertThat(retrievedForm.bigJudgesTeam).containsExactly(city3.id)
     }
 
     @Test

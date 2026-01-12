@@ -68,11 +68,25 @@ class FormService(
         }
 
         formEntryRepository.saveAll(toPersist)
+
+        setJudgesCount(problem, form.smallJudgesTeam, form.bigJudgesTeam)
     }
 
 
-    fun getFormEntries(problem: Int): ProblemForm {
+    fun getProblemForm(problem: Int): ProblemForm {
         val entries = formEntryRepository.findByProblem(problem)
+        val problemEntities = formProblemRepository.findByProblem(problem)
+        
+        val smallJudgesTeam = problemEntities
+            .filter { it.judgeCount == 1 }
+            .mapNotNull { it.city?.id }
+            .ifEmpty { null }
+        
+        val bigJudgesTeam = problemEntities
+            .filter { it.judgeCount == 2 }
+            .mapNotNull { it.city?.id }
+            .ifEmpty { null }
+        
         return ProblemForm(
             FormEntryEntityConverter.reconstructLongTermFromEntities(
                 entries.filter { it.formCategory == FormEntryEntity.FormCategory.DT }
@@ -82,13 +96,15 @@ class FormService(
             ),
             FormEntryEntityConverter.reconstructPenaltyFromEntities(
                 entries.filter { it.formCategory == FormEntryEntity.FormCategory.PENALTY }
-            )
+            ),
+            smallJudgesTeam = smallJudgesTeam,
+            bigJudgesTeam = bigJudgesTeam
         )
     }
 
     @Transactional
-    fun setJudgesCount(problem: Int, request: SetJudgesRequest) {
-        request.smallJudgesTeam.forEach { cityId ->
+    fun setJudgesCount(problem: Int, smallJudgesTeam: List<Int>?, bigJudgesTeam: List<Int>?) {
+        smallJudgesTeam?.forEach { cityId ->
             val city = cityRepository.findFirstById(cityId)
             val problemEntity =
                 formProblemRepository.findByProblemAndCity(problem, city) ?: FormProblemEntity.create(problem, city)
@@ -96,7 +112,7 @@ class FormService(
             formProblemRepository.save(problemEntity)
         }
 
-        request.bigJudgesTeam.forEach { cityId ->
+        bigJudgesTeam?.forEach { cityId ->
             val city = cityRepository.findFirstById(cityId)
             val problemEntity =
                 formProblemRepository.findByProblemAndCity(problem, city) ?: FormProblemEntity.create(problem, city)

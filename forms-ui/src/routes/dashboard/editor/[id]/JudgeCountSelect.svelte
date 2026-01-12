@@ -12,29 +12,29 @@
         id,
         title,
         judgeCount,
-        selectedCities,
+        selectedCityIds,
         availableCities,
         onSelectionChange
     } = $props<{
         id: string;
         title: string;
         judgeCount: number;
-        selectedCities: string[];
+        selectedCityIds: number[];
         availableCities: City[];
-        onSelectionChange: (selected: string[]) => void;
+        onSelectionChange: (selected: number[]) => void;
     }>();
 
     let open = $state(false);
 
-    function toggleSelection(value: string) {
-        const newSelection = selectedCities.includes(value)
-            ? selectedCities.filter((v: string) => v !== value)
-            : [...selectedCities, value];
+    function toggleSelection(cityId: number) {
+        const newSelection = selectedCityIds.includes(cityId)
+            ? selectedCityIds.filter((id: number) => id !== cityId)
+            : [...selectedCityIds, cityId];
         onSelectionChange(newSelection);
     }
 
-    function removeSelection(value: string) {
-        const newSelection = selectedCities.filter((v: string) => v !== value);
+    function removeSelection(cityId: number) {
+        const newSelection = selectedCityIds.filter((id: number) => id !== cityId);
         onSelectionChange(newSelection);
     }
 
@@ -70,23 +70,25 @@
                                 class="h-auto min-h-8 w-full justify-between hover:bg-transparent"
                         >
                             <div class="flex flex-wrap items-center gap-1 pe-2.5">
-                                {#if selectedCities.length > 0}
-                                    {#each selectedCities as val (val)}
-                                        {@const city = availableCities.find((c: City) => c.name === val) || { name: val }}
-                                        <Badge variant="outline">
-                                            {city.name}
-                                            <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    class="size-4"
-                                                    onclick={(e: MouseEvent) => {
-                                                        e.stopPropagation();
-                                                        removeSelection(val);
-                                                    }}
-                                            >
-                                                <XIcon class="size-3"/>
-                                            </Button>
-                                        </Badge>
+                                {#if selectedCityIds.length > 0}
+                                    {#each selectedCityIds as cityId (cityId)}
+                                        {@const city = availableCities.find((c: City) => c.id === cityId)}
+                                        {#if city}
+                                            <Badge variant="outline">
+                                                {city.name}
+                                                <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        class="size-4"
+                                                        onclick={(e: MouseEvent) => {
+                                                            e.stopPropagation();
+                                                            removeSelection(cityId);
+                                                        }}
+                                                >
+                                                    <XIcon class="size-3"/>
+                                                </Button>
+                                            </Badge>
+                                        {/if}
                                     {/each}
                                 {:else}
                                     <span class="text-muted-foreground">Wybierz miasta</span>
@@ -105,13 +107,13 @@
                         <Command.List>
                             <Command.Empty>Nie znaleziono miasta.</Command.Empty>
                             <Command.Group>
-                                {#each availableCities as city (city.name)}
+                                {#each availableCities as city (city.id)}
                                     <Command.Item
                                             value={city.name}
-                                            onSelect={() => toggleSelection(city.name)}
+                                            onSelect={() => toggleSelection(city.id)}
                                     >
                                         <span class="truncate">{city.name}</span>
-                                        {#if selectedCities.includes(city.name)}
+                                        {#if selectedCityIds.includes(city.id)}
                                             <CheckIcon size={16} class="ml-auto"/>
                                         {/if}
                                     </Command.Item>

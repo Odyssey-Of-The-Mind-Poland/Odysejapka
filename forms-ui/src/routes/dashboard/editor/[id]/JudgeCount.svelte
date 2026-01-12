@@ -1,28 +1,37 @@
 <script lang="ts">
     import {createOdysejaQuery} from "$lib/queries";
-    import type {City} from "./types";
+    import type {City, ProblemForm} from "./types";
     import JudgeCountSelect from "./JudgeCountSelect.svelte";
     import {Spinner} from "$lib/components/ui/spinner";
+
+    const {form = $bindable()} = $props<{form: ProblemForm}>();
 
     let cityQuery = createOdysejaQuery<City[]>({
         queryKey: ['city'],
         path: `/api/v1/city`,
     });
 
-    let smallTeamCities = $state<string[]>([]);
-    let bigTeamCities = $state<string[]>([]);
+    let smallTeamCityIds = $state<number[]>(form.smallJudgesTeam ?? []);
+    let bigTeamCityIds = $state<number[]>(form.bigJudgesTeam ?? []);
 
-    function getAvailableCities(selectedInOther: string[]): City[] {
+    $effect(() => {
+        smallTeamCityIds = form.smallJudgesTeam ?? [];
+        bigTeamCityIds = form.bigJudgesTeam ?? [];
+    });
+
+    function getAvailableCities(selectedInOther: number[]): City[] {
         if (!cityQuery.data) return [];
-        return cityQuery.data.filter(city => !selectedInOther.includes(city.name));
+        return cityQuery.data.filter(city => !selectedInOther.includes(city.id));
     }
 
-    function handleSmallTeamChange(selected: string[]) {
-        smallTeamCities = selected;
+    function handleSmallTeamChange(selected: number[]) {
+        smallTeamCityIds = selected;
+        form.smallJudgesTeam = selected.length > 0 ? selected : null;
     }
 
-    function handleBigTeamChange(selected: string[]) {
-        bigTeamCities = selected;
+    function handleBigTeamChange(selected: number[]) {
+        bigTeamCityIds = selected;
+        form.bigJudgesTeam = selected.length > 0 ? selected : null;
     }
 </script>
 
@@ -36,16 +45,16 @@
             id="small" 
             title="Mały zespół"
             judgeCount={1}
-            selectedCities={smallTeamCities}
-            availableCities={getAvailableCities(bigTeamCities)}
+            selectedCityIds={smallTeamCityIds}
+            availableCities={getAvailableCities(bigTeamCityIds)}
             onSelectionChange={handleSmallTeamChange}
         />
         <JudgeCountSelect 
             id="big" 
             title="Duży zespół"
             judgeCount={2}
-            selectedCities={bigTeamCities}
-            availableCities={getAvailableCities(smallTeamCities)}
+            selectedCityIds={bigTeamCityIds}
+            availableCities={getAvailableCities(smallTeamCityIds)}
             onSelectionChange={handleBigTeamChange}
         />
     </div>
