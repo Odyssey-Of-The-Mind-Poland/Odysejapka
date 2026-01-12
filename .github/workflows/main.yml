@@ -12,6 +12,9 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
+      - name: Run tests
+        run: ./gradlew test
+
       - name: Deploy app
         uses: appleboy/ssh-action@master
         with:
