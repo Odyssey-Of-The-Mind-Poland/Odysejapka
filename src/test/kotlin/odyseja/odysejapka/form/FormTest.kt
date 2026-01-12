@@ -286,4 +286,159 @@ class FormTest : OdysejaDsl() {
         Assertions.assertThat(group.entries.map { it.name })
             .containsExactlyInAnyOrder("Group Entry 1", "Group Entry 2")
     }
+
+    @Test
+    fun `should define penalty entry with RANGE type`() {
+        setForm(
+            dt = emptyList(),
+            style = emptyList(),
+            penalty = listOf(
+                PenaltyFormEntry(
+                    null,
+                    "Range Penalty",
+                    PenaltyFormEntry.EntryType.PENALTY,
+                    penaltyRange = PenaltyFormEntry.RangeData(min = 0.0, max = 10.0)
+                )
+            )
+        )
+
+        val retrieved = form()
+        Assertions.assertThat(retrieved.penaltyEntries).hasSize(1)
+        val penalty = retrieved.penaltyEntries[0]
+        Assertions.assertThat(penalty.name).isEqualTo("Range Penalty")
+        Assertions.assertThat(penalty.penaltyRange).isNotNull
+        Assertions.assertThat(penalty.penaltyRange?.min).isEqualTo(0.0)
+        Assertions.assertThat(penalty.penaltyRange?.max).isEqualTo(10.0)
+    }
+
+    @Test
+    fun `should define penalty entry with DISCRETE type`() {
+        setForm(
+            dt = emptyList(),
+            style = emptyList(),
+            penalty = listOf(
+                PenaltyFormEntry(
+                    null,
+                    "Discrete Penalty",
+                    PenaltyFormEntry.EntryType.PENALTY,
+                    penaltyDiscrete = PenaltyFormEntry.DiscreteData(values = listOf(5.0, 10.0, 15.0, 20.0))
+                )
+            )
+        )
+
+        val retrieved = form()
+        Assertions.assertThat(retrieved.penaltyEntries).hasSize(1)
+        val penalty = retrieved.penaltyEntries[0]
+        Assertions.assertThat(penalty.name).isEqualTo("Discrete Penalty")
+        Assertions.assertThat(penalty.penaltyDiscrete).isNotNull
+        Assertions.assertThat(penalty.penaltyDiscrete?.values).containsExactly(5.0, 10.0, 15.0, 20.0)
+    }
+
+    @Test
+    fun `should define penalty entry with SINGLE type`() {
+        setForm(
+            dt = emptyList(),
+            style = emptyList(),
+            penalty = listOf(
+                PenaltyFormEntry(
+                    null,
+                    "Single Penalty",
+                    PenaltyFormEntry.EntryType.PENALTY,
+                    penaltySingle = PenaltyFormEntry.SingleData(value = 25.5)
+                )
+            )
+        )
+
+        val retrieved = form()
+        Assertions.assertThat(retrieved.penaltyEntries).hasSize(1)
+        val penalty = retrieved.penaltyEntries[0]
+        Assertions.assertThat(penalty.name).isEqualTo("Single Penalty")
+        Assertions.assertThat(penalty.penaltySingle).isNotNull
+        Assertions.assertThat(penalty.penaltySingle?.value).isEqualTo(25.5)
+    }
+
+    @Test
+    fun `should define multiple penalty entries with different types`() {
+        setForm(
+            dt = emptyList(),
+            style = emptyList(),
+            penalty = listOf(
+                PenaltyFormEntry(
+                    null,
+                    "Range Penalty",
+                    PenaltyFormEntry.EntryType.PENALTY,
+                    penaltyRange = PenaltyFormEntry.RangeData(min = 0.0, max = 100.0)
+                ),
+                PenaltyFormEntry(
+                    null,
+                    "Discrete Penalty",
+                    PenaltyFormEntry.EntryType.PENALTY,
+                    penaltyDiscrete = PenaltyFormEntry.DiscreteData(values = listOf(1.0, 2.0, 3.0))
+                ),
+                PenaltyFormEntry(
+                    null,
+                    "Single Penalty",
+                    PenaltyFormEntry.EntryType.PENALTY,
+                    penaltySingle = PenaltyFormEntry.SingleData(value = 50.0)
+                )
+            )
+        )
+
+        val retrieved = form()
+        Assertions.assertThat(retrieved.penaltyEntries).hasSize(3)
+        
+        val rangePenalty = retrieved.penaltyEntries.first { it.name == "Range Penalty" }
+        Assertions.assertThat(rangePenalty.penaltyRange).isNotNull
+        Assertions.assertThat(rangePenalty.penaltyRange?.min).isEqualTo(0.0)
+        Assertions.assertThat(rangePenalty.penaltyRange?.max).isEqualTo(100.0)
+
+        val discretePenalty = retrieved.penaltyEntries.first { it.name == "Discrete Penalty" }
+        Assertions.assertThat(discretePenalty.penaltyDiscrete).isNotNull
+        Assertions.assertThat(discretePenalty.penaltyDiscrete?.values).containsExactly(1.0, 2.0, 3.0)
+
+        val singlePenalty = retrieved.penaltyEntries.first { it.name == "Single Penalty" }
+        Assertions.assertThat(singlePenalty.penaltySingle).isNotNull
+        Assertions.assertThat(singlePenalty.penaltySingle?.value).isEqualTo(50.0)
+    }
+
+    @Test
+    fun `should update penalty entry with different type`() {
+        // Create initial penalty with RANGE type
+        setForm(
+            dt = emptyList(),
+            style = emptyList(),
+            penalty = listOf(
+                PenaltyFormEntry(
+                    null,
+                    "Penalty",
+                    PenaltyFormEntry.EntryType.PENALTY,
+                    penaltyRange = PenaltyFormEntry.RangeData(min = 0.0, max = 10.0)
+                )
+            )
+        )
+
+        val existing = form()
+        val penaltyId = existing.penaltyEntries.first().id
+
+        // Update to DISCRETE type
+        setForm(
+            dt = emptyList(),
+            style = emptyList(),
+            penalty = listOf(
+                PenaltyFormEntry(
+                    penaltyId,
+                    "Penalty",
+                    PenaltyFormEntry.EntryType.PENALTY,
+                    penaltyDiscrete = PenaltyFormEntry.DiscreteData(values = listOf(5.0, 10.0))
+                )
+            )
+        )
+
+        val updated = form()
+        Assertions.assertThat(updated.penaltyEntries).hasSize(1)
+        val penalty = updated.penaltyEntries[0]
+        Assertions.assertThat(penalty.id).isEqualTo(penaltyId)
+        Assertions.assertThat(penalty.penaltyDiscrete).isNotNull
+        Assertions.assertThat(penalty.penaltyDiscrete?.values).containsExactly(5.0, 10.0)
+    }
 }

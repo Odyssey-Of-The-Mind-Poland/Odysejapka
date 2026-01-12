@@ -13,6 +13,9 @@ export type FormEntryType = {
 	scoring?: ScoringData | null;
 	scoringGroup?: ScoringGroupData | null;
 	styleType?: 'PREDEFINED' | 'FREE_TEAM_CHOICE';
+	penaltyRange?: RangeData | null;
+	penaltyDiscrete?: DiscreteData | null;
+	penaltySingle?: SingleData | null;
 	entries: FormEntryType[];
 	sortIndex: number;
 };
@@ -43,9 +46,15 @@ export function defaultEntry(
 							pointsMax: 100
 						}
 					}
-				: type === 'STYLE'
+			: type === 'STYLE'
+				? {
+						styleType: 'PREDEFINED'
+					}
+				: type === 'PENALTY'
 					? {
-							styleType: 'PREDEFINED'
+							penaltySingle: {
+								value: 0
+							}
 						}
 					: {})
 	};
@@ -65,6 +74,20 @@ export type ScoringGroupData = {
 	pointsMin: number;
 	pointsMax: number;
 };
+
+export type RangeData = {
+	min: number;
+	max: number;
+};
+
+export type DiscreteData = {
+	values: number[];
+};
+
+export type SingleData = {
+	value: number;
+};
+
 export type City = {
 	id: number;
 	name: string;

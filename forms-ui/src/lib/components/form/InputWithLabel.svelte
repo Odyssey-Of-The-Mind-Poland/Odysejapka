@@ -8,11 +8,13 @@
         id?: string | number | null;
         class?: string;
         flexClass?: string;
+        onInput?: (e: Event & { currentTarget: HTMLInputElement }) => void;
     }
 
-    let {label, value = $bindable(), id, class: className = '', flexClass = 'flex-1', ...inputProps}: Props = $props();
+    let {label, value = $bindable(), id, class: className = '', flexClass = 'flex-1', onInput, type, ...inputProps}: Props = $props();
     
     let inputId = id?.toString() || `input-${Math.random().toString(36).substr(2, 9)}`;
+    let inputType = type ?? 'text';
 </script>
 
 <div class="group relative {flexClass}">
@@ -26,9 +28,10 @@
         bind:value={value} 
         class="w-full dark:bg-background pt-5 {className}" 
         placeholder=" "
-        type="text" 
+        type={inputType}
         id={inputId}
-        {...inputProps}
+        oninput={onInput}
+        {...(inputProps as any)}
     />
 </div>
 

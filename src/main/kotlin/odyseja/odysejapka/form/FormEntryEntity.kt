@@ -50,8 +50,30 @@ class FormEntryEntity {
     @Enumerated(EnumType.STRING)
     var styleType: StyleFormEntry.StyleType? = null
 
+    @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
+    var penaltyValueType: PenaltyValueType? = null
+
+    @Column(nullable = true)
+    var penaltyMin: Double? = null
+
+    @Column(nullable = true)
+    var penaltyMax: Double? = null
+
+    @Column(nullable = true)
+    var penaltySingleValue: Double? = null
+
+    @ElementCollection
+    @CollectionTable(name = "form_entry_penalty_discrete_values", joinColumns = [JoinColumn(name = "form_entry_id")])
+    @Column(name = "value")
+    var penaltyDiscreteValues: List<Double>? = null
+
     enum class EntryType {
         SCORING, SECTION, SCORING_GROUP, STYLE, PENALTY
+    }
+
+    enum class PenaltyValueType {
+        RANGE, DISCRETE, SINGLE
     }
 
     enum class FormCategory {
@@ -110,12 +132,34 @@ class FormEntryEntity {
     fun toPenaltyFormEntry(childrenByParent: Map<Long, List<FormEntryEntity>>): PenaltyFormEntry {
         val children = childrenByParent[id] ?: listOf()
 
+        val penaltyRange = toRangePenaltyData()
+        val penaltyDiscrete = toDiscretePenaltyData()
+        val penaltySingle = toSinglePenaltyData()
+
         return PenaltyFormEntry(
             id = id,
             name = name,
             type = PenaltyFormEntry.EntryType.PENALTY,
+            penaltyRange = penaltyRange,
+            penaltyDiscrete = penaltyDiscrete,
+            penaltySingle = penaltySingle,
             entries = children.map { it.toPenaltyFormEntry(childrenByParent) },
             sortIndex = orderIndex
         )
+    }
+
+    private fun toRangePenaltyData(): PenaltyFormEntry.RangeData? {
+        val min = penaltyMin ?: return null
+        val max = penaltyMax ?: return null
+        return PenaltyFormEntry.RangeData(min, max)
+    }
+
+    private fun toDiscretePenaltyData(): PenaltyFormEntry.DiscreteData? {
+        val values = penaltyDiscreteValues ?: return null
+        return values.takeIf { it.isNotEmpty() }?.let { PenaltyFormEntry.DiscreteData(it) }
+    }
+
+    private fun toSinglePenaltyData(): PenaltyFormEntry.SingleData? {
+        return penaltySingleValue?.let { PenaltyFormEntry.SingleData(it) }
     }
 }

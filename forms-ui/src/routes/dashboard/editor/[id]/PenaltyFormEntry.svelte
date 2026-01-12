@@ -5,9 +5,13 @@
     import Trash2Icon from '@lucide/svelte/icons/trash-2';
     import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
     import GripVerticalIcon from "@lucide/svelte/icons/grip-vertical";
-    import type {FormEntryType} from "./types";
+    import type {FormEntryType, RangeData, DiscreteData, SingleData} from "./types";
     import {formatSortIndex} from "./sortIndexUtils";
     import EntryNameInput from "./EntryNameInput.svelte";
+    import PenaltyTypeSelect from "./PenaltyTypeSelect.svelte";
+    import PenaltyRangeEditor from "./PenaltyRangeEditor.svelte";
+    import PenaltyDiscreteEditor from "./PenaltyDiscreteEditor.svelte";
+    import PenaltySingleEditor from "./PenaltySingleEditor.svelte";
 
     interface Props {
         entry: FormEntryType;
@@ -19,6 +23,59 @@
 
     let displayIndex = $derived(formatSortIndex(entry, parentIndex));
     let isOpen = $state(true);
+
+    function getCurrentType(): 'RANGE' | 'DISCRETE' | 'SINGLE' {
+        if (entry.penaltyRange) return 'RANGE';
+        if (entry.penaltyDiscrete) return 'DISCRETE';
+        return 'SINGLE';
+    }
+
+    let currentType = $state(getCurrentType());
+    let previousCurrentType = $state(currentType);
+    let lastSyncedEntryType = $state(getCurrentType());
+
+    $effect(() => {
+        const entryType = getCurrentType();
+        if (entryType !== lastSyncedEntryType) {
+            currentType = entryType;
+            previousCurrentType = entryType;
+            lastSyncedEntryType = entryType;
+        }
+    });
+
+    $effect(() => {
+        const entryType = getCurrentType();
+        if (currentType !== previousCurrentType && currentType !== entryType) {
+            previousCurrentType = currentType;
+            entry.penaltyRange = null;
+            entry.penaltyDiscrete = null;
+            entry.penaltySingle = null;
+            
+            switch (currentType) {
+                case 'RANGE':
+                    entry.penaltyRange = { min: 0, max: 10 };
+                    break;
+                case 'DISCRETE':
+                    entry.penaltyDiscrete = { values: [0] };
+                    break;
+                case 'SINGLE':
+                    entry.penaltySingle = { value: 0 };
+                    break;
+            }
+        }
+    });
+
+    function handleRangeChange(data: RangeData) {
+        entry.penaltyRange = data;
+    }
+
+    function handleDiscreteChange(data: DiscreteData) {
+        entry.penaltyDiscrete = data;
+    }
+
+    function handleSingleChange(data: SingleData) {
+        entry.penaltySingle = data;
+    }
 </script>
 
 <Collapsible.Root bind:open={isOpen}>
@@ -47,9 +104,31 @@
             </div>
         </Collapsible.Trigger>
         <Collapsible.Content>
-            <div class="flex flex-col gap-4 p-2">
-        <div class="flex items-center gap-2">
-            <EntryNameInput bind:value={entry.name} id={entry.id} />
+            <div class="flex gap-4 p-2">
+                <div class="flex items-center gap-2 w-200">
+                    <EntryNameInput bind:value={entry.name} id={entry.id} />
+                </div>
+                <div class="flex items-center gap-2">
+                    <PenaltyTypeSelect 
+                        bind:value={currentType}
+                    />
+                </div>
+                {#if entry.penaltyRange}
+                    <PenaltyRangeEditor 
+                        value={entry.penaltyRange} 
+                        onValueChange={handleRangeChange}
+                    />
+                {:else if entry.penaltyDiscrete}
+                    <PenaltyDiscreteEditor 
+                        value={entry.penaltyDiscrete} 
+                        onValueChange={handleDiscreteChange}
+                    />
+                {:else if entry.penaltySingle}
+                    <PenaltySingleEditor 
+                        value={entry.penaltySingle} 
+                        onValueChange={handleSingleChange}
+                    />
+                {/if}
             </div>
         </Collapsible.Content>
     </Card.Root>
