@@ -15,7 +15,6 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
                 null, "DT", LongTermFormEntry.EntryType.SCORING,
                 scoring = LongTermFormEntry.ScoringData(
                     scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-                    judges = LongTermFormEntry.JudgeType.A,
                     noElementEnabled = false
                 )
             )),
@@ -47,7 +46,6 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
                 null, "DT", LongTermFormEntry.EntryType.SCORING,
                 scoring = LongTermFormEntry.ScoringData(
                     scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-                    judges = LongTermFormEntry.JudgeType.A,
                     noElementEnabled = false
                 )
             )),
@@ -87,7 +85,6 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
                 null, "DT", LongTermFormEntry.EntryType.SCORING,
                 scoring = LongTermFormEntry.ScoringData(
                     scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-                    judges = LongTermFormEntry.JudgeType.A,
                     noElementEnabled = false
                 )
             )),

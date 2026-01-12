@@ -14,17 +14,18 @@ class FormTeamResultsIsolationTest : OdysejaDsl() {
         val cityA = createCity("Warszawa")
         val cityB = createCity("Kraków")
 
-        formClient.setJudgesCount(PROBLEM_ID, cityA.id, 3)
-        formClient.setJudgesCount(PROBLEM_ID, cityB.id, 5)
+        formClient.setJudgesCount(PROBLEM_ID, SetJudgesRequest(listOf(cityA.id), listOf(cityB.id)))
 
         val perfA = createPerformance(cityA.id)
         val perfB = createPerformance(cityB.id)
 
         setTeamResults(perfA, listOf(performanceResult(dtId, 11)))
-        setTeamResults(perfB, listOf(
-            performanceResult(dtId, 22),
-            performanceResult(dtId, 33, judge = 2)
-        ))
+        setTeamResults(
+            perfB, listOf(
+                performanceResult(dtId, 22),
+                performanceResult(dtId, 33, judge = 2)
+            )
+        )
 
         val a = getTeamResults(perfA).entries
         val b = getTeamResults(perfB).entries
@@ -38,9 +39,6 @@ class FormTeamResultsIsolationTest : OdysejaDsl() {
         Assertions.assertThat(dtEntryB.judgeResults.keys).containsExactlyInAnyOrder(1, 2)
         Assertions.assertThat(dtEntryB.judgeResults).containsEntry(1, 22L)
         Assertions.assertThat(dtEntryB.judgeResults).containsEntry(2, 33L)
-
-        Assertions.assertThat(formClient.getJudgeCount(PROBLEM_ID, cityA.id)).isEqualTo(3)
-        Assertions.assertThat(formClient.getJudgeCount(PROBLEM_ID, cityB.id)).isEqualTo(5)
     }
 }
 

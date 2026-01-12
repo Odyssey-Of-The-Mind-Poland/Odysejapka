@@ -34,20 +34,25 @@ class FormTest : OdysejaDsl() {
         val penaltyId = existing.penaltyEntries.first().id
 
         setForm(
-            dt = listOf(LongTermFormEntry(
-                dtId, "DT new", LongTermFormEntry.EntryType.SCORING,
-                scoring = LongTermFormEntry.ScoringData(
-                    scoringType = LongTermFormEntry.ScoringType.OBJECTIVE,
-                    judges = LongTermFormEntry.JudgeType.B,
-                    noElementEnabled = true
+            dt = listOf(
+                LongTermFormEntry(
+                    dtId, "DT new", LongTermFormEntry.EntryType.SCORING,
+                    scoring = LongTermFormEntry.ScoringData(
+                        scoringType = LongTermFormEntry.ScoringType.OBJECTIVE,
+                        noElementEnabled = true
+                    )
                 )
-            )),
-            style = listOf(StyleFormEntry(
-                styleId, "Style", StyleFormEntry.EntryType.STYLE
-            )),
-            penalty = listOf(PenaltyFormEntry(
-                penaltyId, "Penalty", PenaltyFormEntry.EntryType.PENALTY
-            ))
+            ),
+            style = listOf(
+                StyleFormEntry(
+                    styleId, "Style", StyleFormEntry.EntryType.STYLE
+                )
+            ),
+            penalty = listOf(
+                PenaltyFormEntry(
+                    penaltyId, "Penalty", PenaltyFormEntry.EntryType.PENALTY
+                )
+            )
         )
 
         val updated = form()
@@ -66,12 +71,16 @@ class FormTest : OdysejaDsl() {
 
         setForm(
             dt = emptyList(),
-            style = listOf(StyleFormEntry(
-                styleId, "Style", StyleFormEntry.EntryType.STYLE
-            )),
-            penalty = listOf(PenaltyFormEntry(
-                penaltyId, "Penalty", PenaltyFormEntry.EntryType.PENALTY
-            ))
+            style = listOf(
+                StyleFormEntry(
+                    styleId, "Style", StyleFormEntry.EntryType.STYLE
+                )
+            ),
+            penalty = listOf(
+                PenaltyFormEntry(
+                    penaltyId, "Penalty", PenaltyFormEntry.EntryType.PENALTY
+                )
+            )
         )
 
         val afterDelete = form()
@@ -92,7 +101,6 @@ class FormTest : OdysejaDsl() {
 
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
 
@@ -123,14 +131,13 @@ class FormTest : OdysejaDsl() {
         val city1 = cityClient.saveCity(CreateCityRequest("City 1"))
         val city2 = cityClient.saveCity(CreateCityRequest("City 2"))
 
-        formClient.setJudgesCount(PROBLEM_ID, city1.id, 5)
-        formClient.setJudgesCount(PROBLEM_ID, city2.id, 3)
+        formClient.setJudgesCount(PROBLEM_ID, SetJudgesRequest(listOf(city1.id), listOf(city2.id)))
 
         val city1Judges = formClient.getJudgeCount(PROBLEM_ID, city1.id)
         val city2Judges = formClient.getJudgeCount(PROBLEM_ID, city2.id)
 
-        Assertions.assertThat(city1Judges).isEqualTo(5)
-        Assertions.assertThat(city2Judges).isEqualTo(3)
+        Assertions.assertThat(city1Judges.judgeCount).isEqualTo(1)
+        Assertions.assertThat(city2Judges.judgeCount).isEqualTo(2)
     }
 
     @Test
@@ -143,7 +150,6 @@ class FormTest : OdysejaDsl() {
 
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
 
@@ -165,7 +171,6 @@ class FormTest : OdysejaDsl() {
 
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
 
@@ -176,8 +181,18 @@ class FormTest : OdysejaDsl() {
                     "DT Section",
                     LongTermFormEntry.EntryType.SECTION,
                     entries = listOf(
-                        LongTermFormEntry(null, "Sub Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData),
-                        LongTermFormEntry(null, "Sub Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)
+                        LongTermFormEntry(
+                            null,
+                            "Sub Entry 1",
+                            LongTermFormEntry.EntryType.SCORING,
+                            scoring = scoringData
+                        ),
+                        LongTermFormEntry(
+                            null,
+                            "Sub Entry 2",
+                            LongTermFormEntry.EntryType.SCORING,
+                            scoring = scoringData
+                        )
                     )
                 )
             ),
@@ -201,7 +216,6 @@ class FormTest : OdysejaDsl() {
 
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
 
@@ -212,8 +226,18 @@ class FormTest : OdysejaDsl() {
                     "DT Group",
                     LongTermFormEntry.EntryType.SCORING_GROUP,
                     entries = listOf(
-                        LongTermFormEntry(null, "Group Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData),
-                        LongTermFormEntry(null, "Group Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)
+                        LongTermFormEntry(
+                            null,
+                            "Group Entry 1",
+                            LongTermFormEntry.EntryType.SCORING,
+                            scoring = scoringData
+                        ),
+                        LongTermFormEntry(
+                            null,
+                            "Group Entry 2",
+                            LongTermFormEntry.EntryType.SCORING,
+                            scoring = scoringData
+                        )
                     )
                 )
             ),

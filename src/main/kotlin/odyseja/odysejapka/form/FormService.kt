@@ -1,5 +1,6 @@
 package odyseja.odysejapka.form
 
+import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.city.CityRepository
 import odyseja.odysejapka.timetable.PerformanceRepository
 import org.springframework.stereotype.Service
@@ -40,9 +41,30 @@ class FormService(
         purgeMissing(penaltyIds, FormEntryEntity.FormCategory.PENALTY)
 
         val toPersist = buildList {
-            addAll(FormEntryEntityConverter.flattenLongTermToEntities(problem, form.dtEntries, FormEntryEntity.FormCategory.DT, existingById))
-            addAll(FormEntryEntityConverter.flattenStyleToEntities(problem, form.styleEntries, FormEntryEntity.FormCategory.STYLE, existingById))
-            addAll(FormEntryEntityConverter.flattenPenaltyToEntities(problem, form.penaltyEntries, FormEntryEntity.FormCategory.PENALTY, existingById))
+            addAll(
+                FormEntryEntityConverter.flattenLongTermToEntities(
+                    problem,
+                    form.dtEntries,
+                    FormEntryEntity.FormCategory.DT,
+                    existingById
+                )
+            )
+            addAll(
+                FormEntryEntityConverter.flattenStyleToEntities(
+                    problem,
+                    form.styleEntries,
+                    FormEntryEntity.FormCategory.STYLE,
+                    existingById
+                )
+            )
+            addAll(
+                FormEntryEntityConverter.flattenPenaltyToEntities(
+                    problem,
+                    form.penaltyEntries,
+                    FormEntryEntity.FormCategory.PENALTY,
+                    existingById
+                )
+            )
         }
 
         formEntryRepository.saveAll(toPersist)
@@ -65,20 +87,31 @@ class FormService(
     }
 
     @Transactional
-    fun setJudgeCount(problem: Int, cityId: Int, count: Int): Int {
-        val city = cityRepository.findFirstById(cityId)
-        val problemEntity = formProblemRepository.findByProblemAndCity(problem, city) ?: FormProblemEntity().apply {
-            this.problem = problem
-            this.city = city
+    fun setJudgesCount(problem: Int, request: SetJudgesRequest) {
+        request.smallJudgesTeam.forEach { cityId ->
+            val city = cityRepository.findFirstById(cityId)
+            val problemEntity =
+                formProblemRepository.findByProblemAndCity(problem, city) ?: FormProblemEntity.create(problem, city)
+            problemEntity.judgeCount = 1
+            formProblemRepository.save(problemEntity)
         }
-        problemEntity.judgeCount = count
-        formProblemRepository.save(problemEntity)
-        return count
+
+        request.bigJudgesTeam.forEach { cityId ->
+            val city = cityRepository.findFirstById(cityId)
+            val problemEntity =
+                formProblemRepository.findByProblemAndCity(problem, city) ?: FormProblemEntity.create(problem, city)
+            problemEntity.judgeCount = 2
+            formProblemRepository.save(problemEntity)
+        }
     }
 
-    fun getJudgeCount(problem: Int, cityId: Int): Int {
+    fun getJudgeCount(problem: Int, cityId: Int): JudgeCountResponse {
         val city = cityRepository.findFirstById(cityId)
-        return formProblemRepository.findByProblemAndCity(problem, city)?.judgeCount ?: 0
+        val problemEntity = formProblemRepository.findByProblemAndCity(problem, city)
+            ?: throw EntityNotFoundException("No judge count set for problem $problem and city $cityId")
+        return JudgeCountResponse(
+            judgeCount = problemEntity.judgeCount
+        )
     }
 
     @Transactional

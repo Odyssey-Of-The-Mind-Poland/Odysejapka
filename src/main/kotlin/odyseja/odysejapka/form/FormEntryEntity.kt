@@ -36,10 +36,6 @@ class FormEntryEntity {
     var scoringType: LongTermFormEntry.ScoringType? = null
 
     @Column(nullable = true)
-    @Enumerated(EnumType.STRING)
-    var judges: LongTermFormEntry.JudgeType? = null
-
-    @Column(nullable = true)
     var noElementEnabled: Boolean? = null
 
     @Column(nullable = true)
@@ -78,7 +74,6 @@ class FormEntryEntity {
                 scoringType?.let {
                     LongTermFormEntry.ScoringData(
                         scoringType = it,
-                        judges = judges ?: LongTermFormEntry.JudgeType.A,
                         noElementEnabled = noElementEnabled ?: false,
                         subjectiveRange = subjectiveRange,
                         objectiveBucket = objectiveBucket

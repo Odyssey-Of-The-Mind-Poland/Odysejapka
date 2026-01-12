@@ -12,7 +12,6 @@ class FormSortIndexTest : OdysejaDsl() {
     fun `should assign sequential sort indexes to DT entries`() {
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
 
@@ -40,7 +39,6 @@ class FormSortIndexTest : OdysejaDsl() {
     fun `should update sort indexes when entries are reordered`() {
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
 
@@ -129,7 +127,6 @@ class FormSortIndexTest : OdysejaDsl() {
     fun `should recalculate sort indexes when entry is removed`() {
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
 
@@ -170,7 +167,6 @@ class FormSortIndexTest : OdysejaDsl() {
     fun `should assign sequential sort indexes to nested entries`() {
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
 
@@ -208,7 +204,6 @@ class FormSortIndexTest : OdysejaDsl() {
     fun `should update sort indexes when nested entries are reordered`() {
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
 
@@ -271,7 +266,6 @@ class FormSortIndexTest : OdysejaDsl() {
     fun `should maintain sort indexes when entry is added in the middle`() {
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
-            judges = LongTermFormEntry.JudgeType.A,
             noElementEnabled = false
         )
 

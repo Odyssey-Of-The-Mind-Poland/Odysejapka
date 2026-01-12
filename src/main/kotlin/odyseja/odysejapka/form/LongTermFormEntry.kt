@@ -28,7 +28,6 @@ data class LongTermFormEntry(
 
     data class ScoringData(
         val scoringType: ScoringType,
-        val judges: JudgeType,
         val noElementEnabled: Boolean,
         val subjectiveRange: SubjectiveRanges? = null,
         val objectiveBucket: ObjectiveBuckets? = null
@@ -36,10 +35,6 @@ data class LongTermFormEntry(
 
     enum class ScoringType {
         SUBJECTIVE, OBJECTIVE
-    }
-
-    enum class JudgeType {
-        A, B, A_PLUS_B
     }
 
     fun toEntity(
@@ -64,7 +59,6 @@ data class LongTermFormEntry(
             when (this@LongTermFormEntry.type) {
                 EntryType.SCORING -> scoring?.let {
                     this.scoringType = it.scoringType
-                    this.judges = it.judges
                     this.noElementEnabled = it.noElementEnabled
                     this.subjectiveRange = it.subjectiveRange
                     this.objectiveBucket = it.objectiveBucket

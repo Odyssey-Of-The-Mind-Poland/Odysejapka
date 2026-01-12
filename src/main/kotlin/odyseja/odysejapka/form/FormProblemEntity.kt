@@ -15,7 +15,8 @@ import odyseja.odysejapka.city.CityEntity
 @Table(name = "form_problems")
 class FormProblemEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0;
 
     @Column
@@ -26,4 +27,13 @@ class FormProblemEntity {
 
     @ManyToOne(cascade = [CascadeType.ALL])
     var city: CityEntity? = null
+
+    companion object {
+        fun create(problem: Int, city: CityEntity): FormProblemEntity {
+            val entity = FormProblemEntity()
+            entity.problem = problem
+            entity.city = city
+            return entity
+        }
+    }
 }

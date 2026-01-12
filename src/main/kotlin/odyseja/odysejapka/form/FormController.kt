@@ -24,12 +24,12 @@ class FormController(private val formService: FormService?) {
     }
 
     @PostMapping("/{problem}/judge-count")
-    fun setJudgesCount(@PathVariable problem: Int, @RequestParam cityId: Int, @RequestBody count: Int): Int {
-        return formService!!.setJudgeCount(problem, cityId, count)
+    fun setJudgesCount(@PathVariable problem: Int, @RequestBody request: SetJudgesRequest) {
+        formService!!.setJudgesCount(problem, request)
     }
 
     @GetMapping("/{problem}/judge-count")
-    fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): Int {
+    fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCountResponse {
         return formService!!.getJudgeCount(problem, cityId)
     }
 

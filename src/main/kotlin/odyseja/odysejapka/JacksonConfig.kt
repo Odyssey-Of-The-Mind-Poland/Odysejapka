@@ -14,8 +14,12 @@ class JacksonConfig {
 
     @Bean
     @Primary
-    fun objectMapper(builder: Jackson2ObjectMapperBuilder): ObjectMapper {
-        val objectMapper = builder.build<ObjectMapper>()
+    fun objectMapper(builder: Jackson2ObjectMapperBuilder?): ObjectMapper {
+        val objectMapper = if (builder != null) {
+            builder.build<ObjectMapper>()
+        } else {
+            ObjectMapper()
+        }
         
         objectMapper.coercionConfigFor(LogicalType.Enum)
             .setCoercion(CoercionInputShape.EmptyString, CoercionAction.AsNull)
