@@ -9,6 +9,7 @@
         disabled?: boolean;
         placeholder?: string;
         class?: string;
+        onValueChange?: (value: string | undefined) => void;
         triggerContent: import('svelte').Snippet | (() => string);
         children: import('svelte').Snippet;
     }
@@ -21,6 +22,7 @@
         disabled = false,
         placeholder = ' ',
         class: className = '',
+        onValueChange,
         triggerContent,
         children
     }: Props = $props();
@@ -48,7 +50,12 @@
     >
         <span class="inline-flex bg-background px-1">{label}</span>
     </label>
-    <Select.Root type="single" bind:value={selectValue} disabled={disabled}>
+    <Select.Root
+        type="single"
+        bind:value={selectValue}
+        disabled={disabled}
+        onValueChange={onValueChange}
+    >
         <Select.Trigger class="pt-5 w-full {className}" id={selectId} disabled={disabled}>
             {#if isFunction}
                 {triggerText}

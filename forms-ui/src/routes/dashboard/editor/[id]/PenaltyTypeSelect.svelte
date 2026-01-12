@@ -4,9 +4,10 @@
 
     interface Props {
         value: 'RANGE' | 'DISCRETE' | 'SINGLE';
+        onValueChange?: (value: 'RANGE' | 'DISCRETE' | 'SINGLE') => void;
     }
 
-    let {value = $bindable()}: Props = $props();
+    let {value = $bindable(), onValueChange}: Props = $props();
 
     const typeLabels = {
         SINGLE: 'Pojedyncza wartość',
@@ -20,6 +21,7 @@
     bind:value={value}
     flexClass="flex-1"
     triggerContent={() => typeLabels[value] || " "}
+    onValueChange={(v) => onValueChange?.(v as 'RANGE' | 'DISCRETE' | 'SINGLE')}
 >
     <Select.Group>
         <Select.Item value="SINGLE" label={typeLabels['SINGLE']}>

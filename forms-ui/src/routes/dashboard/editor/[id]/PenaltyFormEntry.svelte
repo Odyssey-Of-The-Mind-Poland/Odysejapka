@@ -24,46 +24,37 @@
     let displayIndex = $derived(formatSortIndex(entry, parentIndex));
     let isOpen = $state(true);
 
+    if (!entry.penaltyRange && !entry.penaltyDiscrete && !entry.penaltySingle) {
+        entry.penaltySingle = { value: 0 };
+    }
+
     function getCurrentType(): 'RANGE' | 'DISCRETE' | 'SINGLE' {
         if (entry.penaltyRange) return 'RANGE';
         if (entry.penaltyDiscrete) return 'DISCRETE';
         return 'SINGLE';
     }
 
-    let currentType = $state(getCurrentType());
-    let previousCurrentType = $state(currentType);
-    let lastSyncedEntryType = $state(getCurrentType());
+    let currentType = $derived(getCurrentType());
 
-    $effect(() => {
-        const entryType = getCurrentType();
-        if (entryType !== lastSyncedEntryType) {
-            currentType = entryType;
-            previousCurrentType = entryType;
-            lastSyncedEntryType = entryType;
-        }
-    });
+    function setPenaltyType(nextType: 'RANGE' | 'DISCRETE' | 'SINGLE') {
+        if (nextType === getCurrentType()) return;
 
-    $effect(() => {
-        const entryType = getCurrentType();
-        if (currentType !== previousCurrentType && currentType !== entryType) {
-            previousCurrentType = currentType;
-            entry.penaltyRange = null;
-            entry.penaltyDiscrete = null;
-            entry.penaltySingle = null;
-            
-            switch (currentType) {
-                case 'RANGE':
-                    entry.penaltyRange = { min: 0, max: 10 };
-                    break;
-                case 'DISCRETE':
-                    entry.penaltyDiscrete = { values: [0] };
-                    break;
-                case 'SINGLE':
-                    entry.penaltySingle = { value: 0 };
-                    break;
-            }
+        entry.penaltyRange = null;
+        entry.penaltyDiscrete = null;
+        entry.penaltySingle = null;
+
+        switch (nextType) {
+            case 'RANGE':
+                entry.penaltyRange = { min: 0, max: 10 };
+                break;
+            case 'DISCRETE':
+                entry.penaltyDiscrete = { values: [0] };
+                break;
+            case 'SINGLE':
+                entry.penaltySingle = { value: 0 };
+                break;
         }
-    });
+    }
 
     function handleRangeChange(data: RangeData) {
         entry.penaltyRange = data;
@@ -110,7 +101,8 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <PenaltyTypeSelect 
-                        bind:value={currentType}
+                        value={currentType}
+                        onValueChange={setPenaltyType}
                     />
                 </div>
                 {#if entry.penaltyRange}
