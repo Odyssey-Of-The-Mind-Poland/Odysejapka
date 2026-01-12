@@ -63,3 +63,7 @@ export type ScoringGroupData = {
 	pointsMin: number;
 	pointsMax: number;
 };
+export type City = {
+	id: number;
+	name: string;
+};

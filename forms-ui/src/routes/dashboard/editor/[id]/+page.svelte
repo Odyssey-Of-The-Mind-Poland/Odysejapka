@@ -11,6 +11,7 @@
     import ScoringCard from "./ScoringCard.svelte";
     import StyleCard from "./StyleCard.svelte";
     import PenaltyCard from "./PenaltyCard.svelte";
+    import JudgeCount from "./JudgeCount.svelte";
 
     let problem = $derived(page.params.id);
     let formQuery = createOdysejaQuery<ProblemForm>({
@@ -64,6 +65,10 @@
             <h1 class="text-2xl font-bold">Edytor Formularza - Problem {problem}</h1>
             <Button onclick={save}>Zapisz</Button>
         </div>
+
+        <Separator.Root/>
+
+        <JudgeCount/>
 
         <Separator.Root/>
 

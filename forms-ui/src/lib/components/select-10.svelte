@@ -16,7 +16,7 @@
     const triggerContent = $derived(fruits.find((f) => f.value === value)?.label ?? 'Select a fruit');
 </script>
 
-<div class="w-full max-w-xs space-y-2">
+<div class="w-full space-y-2">
     <Label for={id}>Default select</Label>
     <Select.Root bind:value type="single">
         <Select.Trigger class="w-full" {id}>
