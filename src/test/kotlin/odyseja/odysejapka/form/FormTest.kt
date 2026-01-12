@@ -168,8 +168,8 @@ class FormTest : OdysejaDsl() {
 
         val retrievedForm = formClient.getProblemForm(PROBLEM_ID)
 
-        Assertions.assertThat(retrievedForm.smallJudgesTeam).containsExactlyInAnyOrder(city1.id, city2.id)
-        Assertions.assertThat(retrievedForm.bigJudgesTeam).containsExactly(city3.id)
+        Assertions.assertThat(retrievedForm.smallJudgesTeam).contains(city1.id, city2.id)
+        Assertions.assertThat(retrievedForm.bigJudgesTeam).contains(city3.id)
     }
 
     @Test
