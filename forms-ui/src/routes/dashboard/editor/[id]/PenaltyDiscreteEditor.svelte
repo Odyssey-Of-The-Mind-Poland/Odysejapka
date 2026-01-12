@@ -1,8 +1,9 @@
 <script lang="ts">
-    import InputWithLabel from "$lib/components/form/InputWithLabel.svelte";
+    import {CheckIcon, ChevronsUpDownIcon, XIcon} from '@lucide/svelte';
+    import {Badge} from '$lib/components/ui/badge';
     import {Button} from "$lib/components/ui/button";
-    import PlusIcon from "@lucide/svelte/icons/plus";
-    import XIcon from "@lucide/svelte/icons/x";
+    import * as Command from '$lib/components/ui/command/index.js';
+    import * as Popover from '$lib/components/ui/popover/index.js';
     import type {DiscreteData} from "./types";
 
     interface Props {
@@ -12,73 +13,91 @@
 
     let {value, onValueChange}: Props = $props();
 
-    let values = $state<string[]>(value?.values.map(v => v.toString()) ?? ['0']);
+    const availableNumbers = $derived(Array.from({length: 100}, (_, i) => i + 1));
+    let open = $state(false);
 
-    $effect(() => {
-        if (value) {
-            values = value.values.map(v => v.toString());
-        }
-    });
+    function emit(values: number[]) {
+        const normalized = [...new Set(values)]
+            .filter((v) => Number.isFinite(v))
+            .sort((a, b) => a - b);
 
-    function updateValue() {
-        const numValues = values.map(v => parseFloat(v) || 0);
-        onValueChange({
-            values: numValues
-        });
+        onValueChange({ values: normalized.length ? normalized : [1] });
     }
 
-    function addValue() {
-        values = [...values, '0'];
-        updateValue();
+    function toggleSelection(n: number) {
+        const current = value?.values?.length ? value.values : [1];
+        const next = current.includes(n) ? current.filter((x) => x !== n) : [...current, n];
+        emit(next);
     }
 
-    function removeValue(index: number) {
-        if (values.length > 1) {
-            values = values.filter((_, i) => i !== index);
-            updateValue();
-        }
-    }
-
-    function updateValueAtIndex(index: number, newValue: string) {
-        values[index] = newValue;
-        updateValue();
+    function removeSelection(n: number) {
+        const current = value?.values?.length ? value.values : [1];
+        emit(current.filter((x) => x !== n));
     }
 </script>
 
-<div class="flex flex-col gap-2">
-    <div class="text-sm font-medium text-gray-700">Wartości:</div>
-    <div class="flex flex-col gap-2">
-        {#each values as valueStr, index}
-            <div class="flex gap-2 items-center">
-                <InputWithLabel
-                    label="Wartość {index + 1}"
-                    value={valueStr}
-                    onInput={(e) => updateValueAtIndex(index, e.currentTarget.value)}
-                    type="number"
-                    step="0.1"
-                    flexClass="flex-1"
-                />
-                {#if values.length > 1}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onclick={() => removeValue(index)}
-                        class="shrink-0 mt-5"
-                        title="Usuń wartość"
-                    >
-                        <XIcon class="h-4 w-4 text-destructive"/>
-                    </Button>
-                {/if}
-            </div>
-        {/each}
-    </div>
-    <Button
-        variant="outline"
-        onclick={addValue}
-        class="w-fit"
-    >
-        <PlusIcon class="h-4 w-4 mr-2"/>
-        Dodaj wartość
-    </Button>
+<div class="flex flex-col gap-2 min-w-[16rem]">
+    <Popover.Root bind:open>
+        <Popover.Trigger>
+            {#snippet child({props})}
+                <Button
+                    {...props}
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    class="h-auto min-h-8 w-full justify-between hover:bg-transparent"
+                >
+                    <div class="flex flex-wrap items-center gap-1 pe-2.5">
+                        {#if (value?.values?.length ?? 0) > 0}
+                            {#each value!.values as n (n)}
+                                <Badge variant="outline">
+                                    {n}
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        class="size-4"
+                                        onclick={(e: MouseEvent) => {
+                                            e.stopPropagation();
+                                            removeSelection(n);
+                                        }}
+                                        title="Usuń wartość"
+                                    >
+                                        <XIcon class="size-3"/>
+                                    </Button>
+                                </Badge>
+                            {/each}
+                        {:else}
+                            <span class="text-muted-foreground">Wybierz wartości</span>
+                        {/if}
+                    </div>
+                    <ChevronsUpDownIcon
+                        size={16}
+                        class="shrink-0 text-muted-foreground/80"
+                        aria-hidden="true"
+                    />
+                </Button>
+            {/snippet}
+        </Popover.Trigger>
+        <Popover.Content class="w-(--radix-popper-anchor-width) p-0">
+            <Command.Root>
+                <Command.List>
+                    <Command.Empty>Brak wyników.</Command.Empty>
+                    <Command.Group>
+                        {#each availableNumbers as n (n)}
+                            <Command.Item
+                                value={n.toString()}
+                                onSelect={() => toggleSelection(n)}
+                            >
+                                <span class="truncate">{n}</span>
+                                {#if value?.values?.includes(n)}
+                                    <CheckIcon size={16} class="ml-auto"/>
+                                {/if}
+                            </Command.Item>
+                        {/each}
+                    </Command.Group>
+                </Command.List>
+            </Command.Root>
+        </Popover.Content>
+    </Popover.Root>
 </div>
 
