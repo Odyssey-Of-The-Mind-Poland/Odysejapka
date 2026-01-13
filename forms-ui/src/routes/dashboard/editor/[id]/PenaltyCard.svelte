@@ -8,7 +8,7 @@
         title: string;
         entries: FormEntryType[];
         form: ProblemForm;
-        onAddEntry: (category: 'penaltyEntries', type: 'PENALTY') => void;
+        onAddEntry: (category: 'penaltyEntries', type: 'PENALTY', penaltyType?: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA') => void;
         onRemoveEntry: (category: 'penaltyEntries', index: number) => void;
     }
 
@@ -25,6 +25,9 @@
     {#snippet addButtons()}
         <Button variant="outline" onclick={() => onAddEntry('penaltyEntries', 'PENALTY')}>
             Dodaj Karne
+        </Button>
+        <Button variant="outline" onclick={() => onAddEntry('penaltyEntries', 'PENALTY', 'ZERO_BALSA')}>
+            Dodaj Zero punktów za balse
         </Button>
     {/snippet}
 </FormCard>

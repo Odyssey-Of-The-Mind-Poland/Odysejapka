@@ -13,6 +13,7 @@ export type FormEntryType = {
 	scoring?: ScoringData | null;
 	scoringGroup?: ScoringGroupData | null;
 	styleType?: 'PREDEFINED' | 'FREE_TEAM_CHOICE';
+	penaltyType?: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA' | null;
 	penaltyRange?: RangeData | null;
 	penaltyDiscrete?: DiscreteData | null;
 	penaltySingle?: SingleData | null;
@@ -21,7 +22,8 @@ export type FormEntryType = {
 };
 
 export function defaultEntry(
-	type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY'
+	type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY',
+	penaltyType?: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA'
 ): FormEntryType {
 	return {
 		id: null,
@@ -51,11 +53,24 @@ export function defaultEntry(
 						styleType: 'PREDEFINED'
 					}
 				: type === 'PENALTY'
-					? {
-							penaltySingle: {
-								value: 0
+					? penaltyType === 'ZERO_BALSA'
+						? {
+								penaltyType: 'ZERO_BALSA'
 							}
-						}
+						: penaltyType === 'RANGE'
+							? {
+									penaltyType: 'RANGE',
+									penaltyRange: { min: 0, max: 10 }
+								}
+							: penaltyType === 'DISCRETE'
+								? {
+										penaltyType: 'DISCRETE',
+										penaltyDiscrete: { values: [0] }
+									}
+								: {
+										penaltyType: 'SINGLE',
+										penaltySingle: { value: 0 }
+									}
 					: {})
 	};
 }

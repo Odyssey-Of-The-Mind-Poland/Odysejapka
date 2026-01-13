@@ -24,11 +24,13 @@
     let displayIndex = $derived(formatSortIndex(entry, parentIndex));
     let isOpen = $state(true);
 
-    if (!entry.penaltyRange && !entry.penaltyDiscrete && !entry.penaltySingle) {
+    if (entry.type === 'PENALTY' && !entry.penaltyType && !entry.penaltyRange && !entry.penaltyDiscrete && !entry.penaltySingle) {
+        entry.penaltyType = 'SINGLE';
         entry.penaltySingle = { value: 0 };
     }
 
-    function getCurrentType(): 'RANGE' | 'DISCRETE' | 'SINGLE' {
+    function getCurrentType(): 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA' {
+        if (entry.penaltyType) return entry.penaltyType;
         if (entry.penaltyRange) return 'RANGE';
         if (entry.penaltyDiscrete) return 'DISCRETE';
         return 'SINGLE';
@@ -36,12 +38,13 @@
 
     let currentType = $derived(getCurrentType());
 
-    function setPenaltyType(nextType: 'RANGE' | 'DISCRETE' | 'SINGLE') {
+    function setPenaltyType(nextType: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA') {
         if (nextType === getCurrentType()) return;
 
         entry.penaltyRange = null;
         entry.penaltyDiscrete = null;
         entry.penaltySingle = null;
+        entry.penaltyType = nextType;
 
         switch (nextType) {
             case 'RANGE':
@@ -52,6 +55,8 @@
                 break;
             case 'SINGLE':
                 entry.penaltySingle = { value: 0 };
+                break;
+            case 'ZERO_BALSA':
                 break;
         }
     }
@@ -105,7 +110,9 @@
                         onValueChange={setPenaltyType}
                     />
                 </div>
-                {#if entry.penaltyRange}
+                {#if entry.penaltyType === 'ZERO_BALSA'}
+                    <!-- Zero punktów za balse - no additional data needed -->
+                {:else if entry.penaltyRange}
                     <PenaltyRangeEditor 
                         value={entry.penaltyRange} 
                         onValueChange={handleRangeChange}

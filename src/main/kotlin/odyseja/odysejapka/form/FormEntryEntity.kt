@@ -73,7 +73,7 @@ class FormEntryEntity {
     }
 
     enum class PenaltyValueType {
-        RANGE, DISCRETE, SINGLE
+        RANGE, DISCRETE, SINGLE, ZERO_BALSA
     }
 
     enum class FormCategory {
@@ -132,6 +132,14 @@ class FormEntryEntity {
     fun toPenaltyFormEntry(childrenByParent: Map<Long, List<FormEntryEntity>>): PenaltyFormEntry {
         val children = childrenByParent[id] ?: listOf()
 
+        val penaltyType = when (penaltyValueType) {
+            PenaltyValueType.RANGE -> PenaltyFormEntry.PenaltyType.RANGE
+            PenaltyValueType.DISCRETE -> PenaltyFormEntry.PenaltyType.DISCRETE
+            PenaltyValueType.SINGLE -> PenaltyFormEntry.PenaltyType.SINGLE
+            PenaltyValueType.ZERO_BALSA -> PenaltyFormEntry.PenaltyType.ZERO_BALSA
+            null -> null
+        }
+
         val penaltyRange = toRangePenaltyData()
         val penaltyDiscrete = toDiscretePenaltyData()
         val penaltySingle = toSinglePenaltyData()
@@ -140,6 +148,7 @@ class FormEntryEntity {
             id = id,
             name = name,
             type = PenaltyFormEntry.EntryType.PENALTY,
+            penaltyType = penaltyType,
             penaltyRange = penaltyRange,
             penaltyDiscrete = penaltyDiscrete,
             penaltySingle = penaltySingle,

@@ -27,8 +27,8 @@
         form = formQuery.data;
     })
 
-    function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY') {
-        const newEntry: FormEntryType = defaultEntry(type)
+    function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY', penaltyType?: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA') {
+        const newEntry: FormEntryType = defaultEntry(type, penaltyType)
         form = {
             ...(form ?? {dtEntries: [], styleEntries: [], penaltyEntries: []}),
             [category]: recalculateSortIndexes([...(form?.[category] ?? []), newEntry]),
