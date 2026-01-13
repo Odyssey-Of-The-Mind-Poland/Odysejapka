@@ -73,7 +73,14 @@ data class PenaltyFormEntry(
             this.orderIndex = this@PenaltyFormEntry.sortIndex
             this.entryType = FormEntryEntity.EntryType.PENALTY
             
-            when (this@PenaltyFormEntry.penaltyType) {
+            val inferredPenaltyType = this@PenaltyFormEntry.penaltyType ?: when {
+                penaltyRange != null -> PenaltyType.RANGE
+                penaltyDiscrete != null -> PenaltyType.DISCRETE
+                penaltySingle != null -> PenaltyType.SINGLE
+                else -> null
+            }
+            
+            when (inferredPenaltyType) {
                 PenaltyType.RANGE -> {
                     this.penaltyValueType = FormEntryEntity.PenaltyValueType.RANGE
                     this.penaltyMin = penaltyRange?.min
