@@ -9,13 +9,18 @@ class TeamFormService(
     private val teamResultEntryRepository: TeamResultEntryRepository,
     private val performanceRepository: PerformanceRepository,
     private val formEntryRepository: FormEntryRepository,
+    private val formProblemRepository: FormProblemRepository,
 ) {
 
     @Transactional
     fun getTeamForm(performanceId: Int): TeamForm {
-        val problem = performanceRepository.findById(performanceId)
-        val template = formEntryRepository.findByProblem(problem.get().problemEntity.id)
+        val performance = performanceRepository.findById(performanceId).get()
+        val problem = performance.problemEntity.id
+        val city = performance.cityEntity
+        val template = formEntryRepository.findByProblem(problem)
         val results = teamResultEntryRepository.findByPerformanceEntityId(performanceId)
+        
+        val judgeCount = formProblemRepository.findByProblemAndCity(problem, city)?.judgeCount ?: 1
         
         val dtEntities = template
             .filter { it.formCategory == FormEntryEntity.FormCategory.DT && it.parent == null }
@@ -29,9 +34,9 @@ class TeamFormService(
         
         val childrenByParent = buildChildrenMap(template)
         
-        val dtEntries = getDtResults(dtEntities, results, childrenByParent)
-        val styleEntries = getStyleResults(styleEntities, results, childrenByParent)
-        val penaltyEntries = getPenaltyResults(penaltyEntities, results, childrenByParent)
+        val dtEntries = getDtResults(dtEntities, results, childrenByParent, judgeCount)
+        val styleEntries = getStyleResults(styleEntities, results, childrenByParent, judgeCount)
+        val penaltyEntries = getPenaltyResults(penaltyEntities, results, childrenByParent, judgeCount)
         
         return TeamForm(performanceId, dtEntries, styleEntries, penaltyEntries)
     }
@@ -42,53 +47,72 @@ class TeamFormService(
             .mapValues { (_, children) -> children.sortedBy { it.orderIndex } }
     }
 
-    private fun <T> getResults(
-        templateEntries: List<FormEntryEntity>,
+    private fun createJudgeMap(
+        judgeCount: Int,
         resultEntries: List<TeamResultEntryEntity>,
-        childrenByParent: Map<Long, List<FormEntryEntity>>,
-        convertEntry: (FormEntryEntity, Map<Long, List<FormEntryEntity>>) -> T
-    ): List<TeamForm.TeamFormEntry<T>> {
-        return templateEntries.map { templateEntry ->
-            val entry = convertEntry(templateEntry, childrenByParent)
-            val judgeResults = resultEntries
-                .filter { it.formEntryEntity?.id == templateEntry.id }
-                .groupBy { it.judge }
-                .mapValues { (_, entries) -> entries.sumOf { it.result } }
-
-            TeamForm.TeamFormEntry(
-                entry = entry,
-                judgeResults = judgeResults
-            )
+        entryId: Long,
+        judgeOffset: Int = 0
+    ): Map<Int, Long?> {
+        val resultMap = resultEntries
+            .filter { it.formEntryEntity?.id == entryId }
+            .groupBy { it.judge }
+            .mapValues { (_, entries) -> entries.sumOf { it.result } }
+        
+        return (1..judgeCount).associateWith { judgeIndex ->
+            resultMap[judgeIndex + judgeOffset]
         }
     }
 
     private fun getDtResults(
         templateEntries: List<FormEntryEntity>,
         resultEntries: List<TeamResultEntryEntity>,
-        childrenByParent: Map<Long, List<FormEntryEntity>>
-    ): List<TeamForm.TeamFormEntry<LongTermFormEntry>> {
-        return getResults(templateEntries, resultEntries, childrenByParent) { entry, children ->
-            entry.toLongTermFormEntry(children)
+        childrenByParent: Map<Long, List<FormEntryEntity>>,
+        judgeCount: Int
+    ): List<TeamForm.DtTeamFormEntry> {
+        return templateEntries.map { templateEntry ->
+            val entry = templateEntry.toLongTermFormEntry(childrenByParent)
+            val judgesA = createJudgeMap(judgeCount, resultEntries, templateEntry.id, judgeOffset = 0)
+            val judgesB = createJudgeMap(judgeCount, resultEntries, templateEntry.id, judgeOffset = judgeCount)
+
+            TeamForm.DtTeamFormEntry(
+                entry = entry,
+                judgesA = judgesA,
+                judgesB = judgesB
+            )
         }
     }
 
     private fun getStyleResults(
         templateEntries: List<FormEntryEntity>,
         resultEntries: List<TeamResultEntryEntity>,
-        childrenByParent: Map<Long, List<FormEntryEntity>>
-    ): List<TeamForm.TeamFormEntry<StyleFormEntry>> {
-        return getResults(templateEntries, resultEntries, childrenByParent) { entry, children ->
-            entry.toStyleFormEntry(children)
+        childrenByParent: Map<Long, List<FormEntryEntity>>,
+        judgeCount: Int
+    ): List<TeamForm.StyleTeamFormEntry> {
+        return templateEntries.map { templateEntry ->
+            val entry = templateEntry.toStyleFormEntry(childrenByParent)
+            val styleJudge = createJudgeMap(judgeCount, resultEntries, templateEntry.id)
+
+            TeamForm.StyleTeamFormEntry(
+                entry = entry,
+                styleJudge = styleJudge
+            )
         }
     }
 
     private fun getPenaltyResults(
         templateEntries: List<FormEntryEntity>,
         resultEntries: List<TeamResultEntryEntity>,
-        childrenByParent: Map<Long, List<FormEntryEntity>>
-    ): List<TeamForm.TeamFormEntry<PenaltyFormEntry>> {
-        return getResults(templateEntries, resultEntries, childrenByParent) { entry, children ->
-            entry.toPenaltyFormEntry(children)
+        childrenByParent: Map<Long, List<FormEntryEntity>>,
+        judgeCount: Int
+    ): List<TeamForm.PenaltyTeamFormEntry> {
+        return templateEntries.map { templateEntry ->
+            val entry = templateEntry.toPenaltyFormEntry(childrenByParent)
+            val penalty = createJudgeMap(judgeCount, resultEntries, templateEntry.id)
+
+            TeamForm.PenaltyTeamFormEntry(
+                entry = entry,
+                penalty = penalty
+            )
         }
     }
 }

@@ -1,0 +1,61 @@
+<script lang="ts">
+    import * as Table from "$lib/components/ui/table/index.js";
+    import type { TeamForm } from "./types";
+
+    const { entries } = $props<{ entries: TeamForm['dtEntries'] }>();
+
+    function formatJudgeValue(value: number | null | undefined): string {
+        return value != null ? String(value) : '-';
+    }
+
+    function getJudgeKeys(judgesA: Record<number, number | null>, judgesB: Record<number, number | null>): number[] {
+        const allKeys = new Set([...Object.keys(judgesA).map(Number), ...Object.keys(judgesB).map(Number)]);
+        return Array.from(allKeys).sort((a, b) => a - b);
+    }
+</script>
+
+{#if entries.length > 0}
+    <div class="flex flex-col gap-2">
+        <h2 class="text-xl font-semibold">DT Entries</h2>
+        <div class="rounded-md border">
+            <Table.Root>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.Head>Entry</Table.Head>
+                        <Table.Head>Type</Table.Head>
+                        <Table.Head>Judges A</Table.Head>
+                        <Table.Head>Judges B</Table.Head>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {#each entries as dtEntry (dtEntry.entry.id)}
+                        {@const judgeKeys = getJudgeKeys(dtEntry.judgesA, dtEntry.judgesB)}
+                        <Table.Row>
+                            <Table.Cell class="font-medium">{dtEntry.entry.name}</Table.Cell>
+                            <Table.Cell>{dtEntry.entry.type}</Table.Cell>
+                            <Table.Cell>
+                                <div class="flex flex-col gap-1">
+                                    {#each judgeKeys as judgeKey}
+                                        <div class="text-sm">
+                                            <span class="font-medium">Judge {judgeKey}:</span> {formatJudgeValue(dtEntry.judgesA[judgeKey])}
+                                        </div>
+                                    {/each}
+                                </div>
+                            </Table.Cell>
+                            <Table.Cell>
+                                <div class="flex flex-col gap-1">
+                                    {#each judgeKeys as judgeKey}
+                                        <div class="text-sm">
+                                            <span class="font-medium">Judge {judgeKey}:</span> {formatJudgeValue(dtEntry.judgesB[judgeKey])}
+                                        </div>
+                                    {/each}
+                                </div>
+                            </Table.Cell>
+                        </Table.Row>
+                    {/each}
+                </Table.Body>
+            </Table.Root>
+        </div>
+    </div>
+{/if}
+

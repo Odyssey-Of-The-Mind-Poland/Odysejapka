@@ -36,18 +36,18 @@ class FormTeamResultsIsolationTest : OdysejaDsl() {
 
         val a = getTeamResults(perfA)
         val b = getTeamResults(perfB)
-        val aAll = a.dtEntries + a.styleEntries + a.penaltyEntries
-        val bAll = b.dtEntries + b.styleEntries + b.penaltyEntries
+        val aAll = a.dtEntries.size + a.styleEntries.size + a.penaltyEntries.size
+        val bAll = b.dtEntries.size + b.styleEntries.size + b.penaltyEntries.size
 
-        Assertions.assertThat(aAll).hasSize(3) // All form entries (dt, style, penalty)
+        Assertions.assertThat(aAll).isEqualTo(3) // All form entries (dt, style, penalty)
         val dtEntryA = a.dtEntries.first { it.entry.id == dtId }
-        Assertions.assertThat(dtEntryA.judgeResults).containsEntry(1, 11L)
+        Assertions.assertThat(dtEntryA.judgesA).containsEntry(1, 11L)
 
-        Assertions.assertThat(bAll).hasSize(3) // All form entries (dt, style, penalty)
+        Assertions.assertThat(bAll).isEqualTo(3) // All form entries (dt, style, penalty)
         val dtEntryB = b.dtEntries.first { it.entry.id == dtId }
-        Assertions.assertThat(dtEntryB.judgeResults.keys).containsExactlyInAnyOrder(1, 2)
-        Assertions.assertThat(dtEntryB.judgeResults).containsEntry(1, 22L)
-        Assertions.assertThat(dtEntryB.judgeResults).containsEntry(2, 33L)
+        Assertions.assertThat(dtEntryB.judgesA.keys).containsExactlyInAnyOrder(1, 2)
+        Assertions.assertThat(dtEntryB.judgesA).containsEntry(1, 22L)
+        Assertions.assertThat(dtEntryB.judgesA).containsEntry(2, 33L)
     }
 }
 

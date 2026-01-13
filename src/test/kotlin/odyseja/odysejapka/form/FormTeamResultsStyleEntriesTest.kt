@@ -73,10 +73,10 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
         ))
 
         val saved = getTeamResults(perfId)
-        val allEntries = saved.dtEntries + saved.styleEntries + saved.penaltyEntries
-        Assertions.assertThat(allEntries).hasSize(3) // dt, style, penalty
+        val allEntries = saved.dtEntries.size + saved.styleEntries.size + saved.penaltyEntries.size
+        Assertions.assertThat(allEntries).isEqualTo(3) // dt, style, penalty
         val styleEntry = saved.styleEntries.first { it.entry.id == styleId }
-        Assertions.assertThat(styleEntry.judgeResults).isEmpty() // STYLE entries don't accept results
+        Assertions.assertThat(styleEntry.styleJudge.values.all { it == null }).isTrue() // STYLE entries don't accept results
     }
 
     @Test
@@ -114,12 +114,12 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
         val perfId = createPerformance(city.id)
 
         val saved = getTeamResults(perfId)
-        val allEntries = saved.dtEntries + saved.styleEntries + saved.penaltyEntries
-        Assertions.assertThat(allEntries).hasSize(3) // dt, 2 style entries, 0 penalty
+        val allEntries = saved.dtEntries.size + saved.styleEntries.size + saved.penaltyEntries.size
+        Assertions.assertThat(allEntries).isEqualTo(3) // dt, 2 style entries, 0 penalty
         val style1Entry = saved.styleEntries.first { it.entry.id == style1Id }
         val style2Entry = saved.styleEntries.first { it.entry.id == style2Id }
-        Assertions.assertThat(style1Entry.judgeResults).isEmpty() // STYLE entries don't accept results
-        Assertions.assertThat(style2Entry.judgeResults).isEmpty()
+        Assertions.assertThat(style1Entry.styleJudge.values.all { it == null }).isTrue() // STYLE entries don't accept results
+        Assertions.assertThat(style2Entry.styleJudge.values.all { it == null }).isTrue()
     }
 }
 
