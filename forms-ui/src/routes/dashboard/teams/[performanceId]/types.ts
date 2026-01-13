@@ -37,16 +37,26 @@ export type TeamForm = {
     performanceId: number;
     dtEntries: Array<{
         entry: LongTermFormEntry;
-        judgesA: Record<number, number | null>;
-        judgesB: Record<number, number | null>;
+        judgesA: Record<number, number | string | null>;
+        judgesB: Record<number, number | string | null>;
     }>;
     styleEntries: Array<{
         entry: StyleFormEntry;
-        styleJudge: Record<number, number | null>;
+        styleJudge: Record<number, number | string | null>;
     }>;
     penaltyEntries: Array<{
         entry: PenaltyFormEntry;
-        penalty: Record<number, number | null>;
+        penalty: Record<number, number | string | null>;
     }>;
+};
+
+export type PerformanceResult = {
+    entryId: number;
+    judge: number;
+    result: number;
+};
+
+export type PerformanceResultsRequest = {
+    results: PerformanceResult[];
 };
 

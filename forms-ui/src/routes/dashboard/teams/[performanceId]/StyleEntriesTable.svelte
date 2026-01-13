@@ -1,12 +1,11 @@
 <script lang="ts">
     import * as Table from "$lib/components/ui/table/index.js";
+    import * as Input from "$lib/components/ui/input/index.js";
     import type { TeamForm } from "./types";
 
-    const { entries } = $props<{ entries: TeamForm['styleEntries'] }>();
-
-    function formatJudgeValue(value: number | null | undefined): string {
-        return value != null ? String(value) : '-';
-    }
+    const { entries = $bindable() } = $props<{ 
+        entries: TeamForm['styleEntries'];
+    }>();
 
     function getJudgeKeys(styleJudge: Record<number, number | null>): number[] {
         return Object.keys(styleJudge)
@@ -34,10 +33,16 @@
                             <Table.Cell class="font-medium">{styleEntry.entry.name}</Table.Cell>
                             <Table.Cell>{styleEntry.entry.styleType}</Table.Cell>
                             <Table.Cell>
-                                <div class="flex flex-col gap-1">
+                                <div class="flex flex-col gap-2">
                                     {#each judgeKeys as judgeKey}
-                                        <div class="text-sm">
-                                            <span class="font-medium">Judge {judgeKey}:</span> {formatJudgeValue(styleEntry.styleJudge[judgeKey])}
+                                        <div class="flex items-center gap-2">
+                                            <label for="style-judge-{styleEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Judge {judgeKey}:</label>
+                                            <Input.Input
+                                                id="style-judge-{styleEntry.entry.id}-{judgeKey}"
+                                                type="number"
+                                                bind:value={styleEntry.styleJudge[judgeKey]}
+                                                class="w-24"
+                                            />
                                         </div>
                                     {/each}
                                 </div>

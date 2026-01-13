@@ -1,12 +1,11 @@
 <script lang="ts">
     import * as Table from "$lib/components/ui/table/index.js";
+    import * as Input from "$lib/components/ui/input/index.js";
     import type { TeamForm } from "./types";
 
-    const { entries } = $props<{ entries: TeamForm['dtEntries'] }>();
-
-    function formatJudgeValue(value: number | null | undefined): string {
-        return value != null ? String(value) : '-';
-    }
+    const { entries = $bindable() } = $props<{ 
+        entries: TeamForm['dtEntries'];
+    }>();
 
     function getJudgeKeys(judgesA: Record<number, number | null>, judgesB: Record<number, number | null>): number[] {
         const allKeys = new Set([...Object.keys(judgesA).map(Number), ...Object.keys(judgesB).map(Number)]);
@@ -34,19 +33,31 @@
                             <Table.Cell class="font-medium">{dtEntry.entry.name}</Table.Cell>
                             <Table.Cell>{dtEntry.entry.type}</Table.Cell>
                             <Table.Cell>
-                                <div class="flex flex-col gap-1">
+                                <div class="flex flex-col gap-2">
                                     {#each judgeKeys as judgeKey}
-                                        <div class="text-sm">
-                                            <span class="font-medium">Judge {judgeKey}:</span> {formatJudgeValue(dtEntry.judgesA[judgeKey])}
+                                        <div class="flex items-center gap-2">
+                                            <label for="judge-a-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Judge {judgeKey}:</label>
+                                            <Input.Input
+                                                id="judge-a-{dtEntry.entry.id}-{judgeKey}"
+                                                type="number"
+                                                bind:value={dtEntry.judgesA[judgeKey]}
+                                                class="w-24"
+                                            />
                                         </div>
                                     {/each}
                                 </div>
                             </Table.Cell>
                             <Table.Cell>
-                                <div class="flex flex-col gap-1">
+                                <div class="flex flex-col gap-2">
                                     {#each judgeKeys as judgeKey}
-                                        <div class="text-sm">
-                                            <span class="font-medium">Judge {judgeKey}:</span> {formatJudgeValue(dtEntry.judgesB[judgeKey])}
+                                        <div class="flex items-center gap-2">
+                                            <label for="judge-b-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Judge {judgeKey}:</label>
+                                            <Input.Input
+                                                id="judge-b-{dtEntry.entry.id}-{judgeKey}"
+                                                type="number"
+                                                bind:value={dtEntry.judgesB[judgeKey]}
+                                                class="w-24"
+                                            />
                                         </div>
                                     {/each}
                                 </div>
