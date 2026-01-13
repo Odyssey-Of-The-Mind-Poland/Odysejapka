@@ -1,4 +1,5 @@
 import UsersIcon from "@tabler/icons-svelte/icons/users";
+import UsersGroupIcon from "@tabler/icons-svelte/icons/users-group";
 
 export const routes = {
     user: {
@@ -16,6 +17,11 @@ export const routes = {
             title: "Edytor",
             url: "/dashboard/editor",
             icon: UsersIcon,
+        },
+        {
+            title: "Teams",
+            url: "/dashboard/teams",
+            icon: UsersGroupIcon,
         },
     ],
 };
