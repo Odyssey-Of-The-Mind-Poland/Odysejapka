@@ -69,7 +69,3 @@ data class LongTermFormEntry(
         return entity
     }
 }
-
-enum class CalcType {
-    SUM, AVERAGE
-}

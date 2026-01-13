@@ -4,6 +4,7 @@
     import {setBreadcrumbs} from "$lib/breadcrumbs";
     import * as Table from "$lib/components/ui/table/index.js";
     import {onMount} from "svelte";
+    import {goto} from "$app/navigation";
 
     type PerformanceGroup = {
         group: {
@@ -40,6 +41,7 @@
         age: number;
         stage: number;
         league: string;
+        performanceId: number;
     };
 
     let performanceGroupsQuery = createOdysejaQuery<PerformanceGroup[]>({
@@ -50,25 +52,23 @@
     let teams = $derived.by(() => {
         if (!performanceGroupsQuery.data) return [];
         
-        const teamMap = new Map<string, TeamInfo>();
+        const teamList: TeamInfo[] = [];
         
         performanceGroupsQuery.data.forEach((group) => {
             group.performances.forEach((performance) => {
-                const key = `${performance.team}-${performance.city}`;
-                if (!teamMap.has(key)) {
-                    teamMap.set(key, {
-                        team: performance.team,
-                        city: performance.city,
-                        problem: performance.problem,
-                        age: performance.age,
-                        stage: performance.stage,
-                        league: performance.league,
-                    });
-                }
+                teamList.push({
+                    team: performance.team,
+                    city: performance.city,
+                    problem: performance.problem,
+                    age: performance.age,
+                    stage: performance.stage,
+                    league: performance.league,
+                    performanceId: performance.id,
+                });
             });
         });
         
-        return Array.from(teamMap.values()).sort((a, b) => {
+        return teamList.sort((a, b) => {
             if (a.city !== b.city) return a.city.localeCompare(b.city);
             return a.team.localeCompare(b.team);
         });
@@ -110,8 +110,11 @@
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {#each teams as team (team.team + team.city)}
-                        <Table.Row>
+                    {#each teams as team (team.performanceId)}
+                        <Table.Row 
+                            class="cursor-pointer hover:bg-muted/50"
+                            onclick={() => goto(`/dashboard/teams/${team.performanceId}`)}
+                        >
                             <Table.Cell class="font-medium">{team.team}</Table.Cell>
                             <Table.Cell>{team.city}</Table.Cell>
                             <Table.Cell>{team.problem}</Table.Cell>

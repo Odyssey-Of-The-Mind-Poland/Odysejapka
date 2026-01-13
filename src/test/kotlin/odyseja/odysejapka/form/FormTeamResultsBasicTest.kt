@@ -20,9 +20,10 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
         ))
 
         val saved = getTeamResults(perfId)
-        Assertions.assertThat(saved.entries).hasSize(3) // All form entries (dt, style, penalty)
-        val dtEntry = saved.entries.first { it.entryId == dtId }
-        val styleEntry = saved.entries.first { it.entryId == styleId }
+        val allEntries = saved.dtEntries + saved.styleEntries + saved.penaltyEntries
+        Assertions.assertThat(allEntries).hasSize(3) // All form entries (dt, style, penalty)
+        val dtEntry = saved.dtEntries.first { it.entry.id == dtId }
+        val styleEntry = saved.styleEntries.first { it.entry.id == styleId }
         Assertions.assertThat(dtEntry.judgeResults).containsEntry(1, 50L)
         Assertions.assertThat(styleEntry.judgeResults).containsEntry(1, 30L)
     }
@@ -43,11 +44,12 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
             performanceResult(styleId, 22, judge = 2)
         ))
 
-        val after = getTeamResults(perfId).entries
+        val after = getTeamResults(perfId)
+        val allEntries = after.dtEntries + after.styleEntries + after.penaltyEntries
 
-        Assertions.assertThat(after).hasSize(3) // All form entries (dt, style, penalty)
-        val dtEntry = after.first { it.entryId == dtId }
-        val styleEntry = after.first { it.entryId == styleId }
+        Assertions.assertThat(allEntries).hasSize(3) // All form entries (dt, style, penalty)
+        val dtEntry = after.dtEntries.first { it.entry.id == dtId }
+        val styleEntry = after.styleEntries.first { it.entry.id == styleId }
         Assertions.assertThat(dtEntry.judgeResults).containsEntry(1, 15L)
         Assertions.assertThat(styleEntry.judgeResults).containsEntry(1, 20L)
         Assertions.assertThat(styleEntry.judgeResults).containsEntry(2, 22L)
@@ -65,14 +67,16 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
         )
 
         setTeamResults(perfId, payload)
-        val first = getTeamResults(perfId).entries
-        Assertions.assertThat(first).hasSize(3) // All form entries (dt, style, penalty)
+        val first = getTeamResults(perfId)
+        val firstAll = first.dtEntries + first.styleEntries + first.penaltyEntries
+        Assertions.assertThat(firstAll).hasSize(3) // All form entries (dt, style, penalty)
 
         setTeamResults(perfId, payload)
-        val second = getTeamResults(perfId).entries
-        Assertions.assertThat(second).hasSize(3)
-        val dtEntry = second.first { it.entryId == dtId }
-        val styleEntry = second.first { it.entryId == styleId }
+        val second = getTeamResults(perfId)
+        val secondAll = second.dtEntries + second.styleEntries + second.penaltyEntries
+        Assertions.assertThat(secondAll).hasSize(3)
+        val dtEntry = second.dtEntries.first { it.entry.id == dtId }
+        val styleEntry = second.styleEntries.first { it.entry.id == styleId }
         Assertions.assertThat(dtEntry.judgeResults).containsEntry(1, 44L)
         Assertions.assertThat(styleEntry.judgeResults).containsEntry(1, 66L)
     }
@@ -85,9 +89,10 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
 
         setTeamResults(perfId, emptyList())
 
-        val after = getTeamResults(perfId).entries
-        Assertions.assertThat(after).hasSize(3) // All form entries (dt, style, penalty) but with empty judgeResults
-        Assertions.assertThat(after.all { it.judgeResults.isEmpty() }).isTrue()
+        val after = getTeamResults(perfId)
+        val allEntries = after.dtEntries + after.styleEntries + after.penaltyEntries
+        Assertions.assertThat(allEntries).hasSize(3) // All form entries (dt, style, penalty) but with empty judgeResults
+        Assertions.assertThat(allEntries.all { it.judgeResults.isEmpty() }).isTrue()
     }
 }
 
