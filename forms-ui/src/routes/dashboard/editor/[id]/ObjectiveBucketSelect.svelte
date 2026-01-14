@@ -12,6 +12,7 @@
         name: string;
         displayName: string;
         bucketsDisplay: string;
+        buckets: number[];
     };
 
     let {scoring = $bindable()}: Props = $props();

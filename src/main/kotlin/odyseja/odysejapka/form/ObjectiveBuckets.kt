@@ -22,13 +22,15 @@ fun ObjectiveBuckets.toBucketsResponse(): ObjectiveBucketDto {
     return ObjectiveBucketDto(
         name = this.name,
         displayName = this.displayName,
-        bucketsDisplay = buckets.joinToString(", ")
+        bucketsDisplay = buckets.joinToString(", "),
+        buckets = buckets
     )
 }
 
 data class ObjectiveBucketDto(
     val name: String,
     val displayName: String,
-    val bucketsDisplay: String
+    val bucketsDisplay: String,
+    val buckets: List<Int>
 )
 

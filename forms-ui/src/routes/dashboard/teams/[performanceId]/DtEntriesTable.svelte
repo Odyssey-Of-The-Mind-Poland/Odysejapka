@@ -2,6 +2,7 @@
     import * as Table from "$lib/components/ui/table/index.js";
     import * as Input from "$lib/components/ui/input/index.js";
     import type { TeamForm, JudgeType } from "$lib/utils/form-results";
+    import ObjectiveJudgeInput from "./ObjectiveJudgeInput.svelte";
 
     const { entries = $bindable() } = $props<{ 
         entries: TeamForm['dtEntries'];
@@ -62,17 +63,26 @@
                 </Table.Header>
                 <Table.Body>
                     {#each entries as dtEntry (dtEntry.entry.id)}
+                        {@const objectiveBucket = dtEntry.entry.scoring?.objectiveBucket}
+                        {@const isObjective = dtEntry.entry.scoring?.scoringType === 'OBJECTIVE' && objectiveBucket}
                         <Table.Row>
                             <Table.Cell class="font-medium">{dtEntry.entry.name}</Table.Cell>
                             <Table.Cell>{dtEntry.entry.type}</Table.Cell>
                             {#each allColumns as column}
                                 <Table.Cell>
-                                    <Input.Input
-                                        id="judge-{column.type}-{dtEntry.entry.id}-{column.judge}"
-                                        type="number"
-                                        bind:value={dtEntry.results[column.type][column.judge]}
-                                        class="w-24"
-                                    />
+                                    {#if isObjective && objectiveBucket}
+                                        <ObjectiveJudgeInput
+                                            objectiveBucketName={objectiveBucket}
+                                            bind:value={dtEntry.results[column.type][column.judge]}
+                                        />
+                                    {:else}
+                                        <Input.Input
+                                            id="judge-{column.type}-{dtEntry.entry.id}-{column.judge}"
+                                            type="number"
+                                            bind:value={dtEntry.results[column.type][column.judge]}
+                                            class="w-24"
+                                        />
+                                    {/if}
                                 </Table.Cell>
                             {/each}
                         </Table.Row>

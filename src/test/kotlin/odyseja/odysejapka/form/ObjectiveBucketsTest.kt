@@ -42,6 +42,7 @@ class ObjectiveBucketsTest {
         assertThat(dto.name).isEqualTo("ZERO_THREE")
         assertThat(dto.displayName).isEqualTo("0, 3")
         assertThat(dto.bucketsDisplay).isEqualTo("0, 3")
+        assertThat(dto.buckets).containsExactly(0, 3)
     }
 
     @Test
@@ -52,6 +53,7 @@ class ObjectiveBucketsTest {
         assertThat(dto.name).isEqualTo("ZERO_FIVE")
         assertThat(dto.displayName).isEqualTo("0, 5")
         assertThat(dto.bucketsDisplay).isEqualTo("0, 5")
+        assertThat(dto.buckets).containsExactly(0, 5)
     }
 
     @Test
@@ -62,6 +64,7 @@ class ObjectiveBucketsTest {
         assertThat(dto.name).isEqualTo("ZERO_FIVE_TEN_FIFTEEN")
         assertThat(dto.displayName).isEqualTo("0, 5, 10, 15")
         assertThat(dto.bucketsDisplay).isEqualTo("0, 5, 10, 15")
+        assertThat(dto.buckets).containsExactly(0, 5, 10, 15)
     }
 }
 
