@@ -29,9 +29,14 @@ data class LongTermFormEntry(
     data class ScoringData(
         val scoringType: ScoringType,
         val noElementEnabled: Boolean,
+        val judges: JudgesType = JudgesType.A,
         val subjectiveRange: SubjectiveRanges? = null,
         val objectiveBucket: ObjectiveBuckets? = null
     )
+
+    enum class JudgesType {
+        A, B, A_PLUS_B
+    }
 
     enum class ScoringType {
         SUBJECTIVE, OBJECTIVE
@@ -41,7 +46,6 @@ data class LongTermFormEntry(
         problem: Int,
         category: FormEntryEntity.FormCategory,
         parent: FormEntryEntity?,
-        orderIndex: Int,
         existing: FormEntryEntity? = null
     ): FormEntryEntity {
         val entity = existing ?: FormEntryEntity()
@@ -60,6 +64,7 @@ data class LongTermFormEntry(
                 EntryType.SCORING -> scoring?.let {
                     this.scoringType = it.scoringType
                     this.noElementEnabled = it.noElementEnabled
+                    this.judges = it.judges
                     this.subjectiveRange = it.subjectiveRange
                     this.objectiveBucket = it.objectiveBucket
                 }

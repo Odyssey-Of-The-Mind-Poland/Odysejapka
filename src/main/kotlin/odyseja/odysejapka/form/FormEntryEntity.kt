@@ -48,6 +48,10 @@ class FormEntryEntity {
 
     @Column(nullable = true)
     @Enumerated(EnumType.STRING)
+    var judges: LongTermFormEntry.JudgesType? = null
+
+    @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
     var styleType: StyleFormEntry.StyleType? = null
 
     @Column(nullable = true)
@@ -97,6 +101,7 @@ class FormEntryEntity {
                     LongTermFormEntry.ScoringData(
                         scoringType = it,
                         noElementEnabled = noElementEnabled ?: false,
+                        judges = judges ?: LongTermFormEntry.JudgesType.A,
                         subjectiveRange = subjectiveRange,
                         objectiveBucket = objectiveBucket
                     )

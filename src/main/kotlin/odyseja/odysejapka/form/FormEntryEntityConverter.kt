@@ -10,8 +10,8 @@ object FormEntryEntityConverter {
     ): List<FormEntryEntity> {
         return flattenToEntities(
             entries,
-            toEntity = { entry, parent, idx ->
-                entry.toEntity(problem, category, parent, idx, entry.id?.let { existingById[it] })
+            toEntity = { entry, parent, _ ->
+                entry.toEntity(problem, category, parent, entry.id?.let { existingById[it] })
             },
             getChildren = { it.entries }
         )

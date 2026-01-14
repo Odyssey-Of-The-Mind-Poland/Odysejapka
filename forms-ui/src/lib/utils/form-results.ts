@@ -5,6 +5,7 @@ export type LongTermFormEntry = {
     scoring?: {
         scoringType: 'SUBJECTIVE' | 'OBJECTIVE';
         noElementEnabled: boolean;
+        judges: 'A' | 'B' | 'A_PLUS_B';
         subjectiveRange?: string;
         objectiveBucket?: string;
     } | null;
