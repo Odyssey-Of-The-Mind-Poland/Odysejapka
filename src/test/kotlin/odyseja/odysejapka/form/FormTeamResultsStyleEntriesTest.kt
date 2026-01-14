@@ -69,14 +69,14 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
 
         setTeamResults(perfId, listOf(
             performanceResult(dtId, 75),
-            performanceResult(penaltyId, 5)
+            performanceResult(penaltyId, 5, judgeType = JudgeType.STYLE)
         ))
 
         val saved = getTeamResults(perfId)
         val allEntries = saved.dtEntries.size + saved.styleEntries.size + saved.penaltyEntries.size
         Assertions.assertThat(allEntries).isEqualTo(3) // dt, style, penalty
         val styleEntry = saved.styleEntries.first { it.entry.id == styleId }
-        Assertions.assertThat(styleEntry.styleJudge.values.all { it == null }).isTrue() // STYLE entries don't accept results
+        Assertions.assertThat(styleEntry.results[JudgeType.STYLE]?.values?.all { it == null } == true).isTrue() // STYLE entries don't accept results
     }
 
     @Test
@@ -118,8 +118,8 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
         Assertions.assertThat(allEntries).isEqualTo(3) // dt, 2 style entries, 0 penalty
         val style1Entry = saved.styleEntries.first { it.entry.id == style1Id }
         val style2Entry = saved.styleEntries.first { it.entry.id == style2Id }
-        Assertions.assertThat(style1Entry.styleJudge.values.all { it == null }).isTrue() // STYLE entries don't accept results
-        Assertions.assertThat(style2Entry.styleJudge.values.all { it == null }).isTrue()
+        Assertions.assertThat(style1Entry.results[JudgeType.STYLE]?.values?.all { it == null } == true).isTrue() // STYLE entries don't accept results
+        Assertions.assertThat(style2Entry.results[JudgeType.STYLE]?.values?.all { it == null } == true).isTrue()
     }
 }
 

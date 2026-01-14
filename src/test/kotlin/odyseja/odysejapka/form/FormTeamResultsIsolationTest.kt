@@ -41,13 +41,13 @@ class FormTeamResultsIsolationTest : OdysejaDsl() {
 
         Assertions.assertThat(aAll).isEqualTo(3) // All form entries (dt, style, penalty)
         val dtEntryA = a.dtEntries.first { it.entry.id == dtId }
-        Assertions.assertThat(dtEntryA.judgesA).containsEntry(1, 11L)
+        Assertions.assertThat(dtEntryA.results[JudgeType.DT_A]).containsEntry(1, 11L)
 
         Assertions.assertThat(bAll).isEqualTo(3) // All form entries (dt, style, penalty)
         val dtEntryB = b.dtEntries.first { it.entry.id == dtId }
-        Assertions.assertThat(dtEntryB.judgesA.keys).containsExactlyInAnyOrder(1, 2)
-        Assertions.assertThat(dtEntryB.judgesA).containsEntry(1, 22L)
-        Assertions.assertThat(dtEntryB.judgesA).containsEntry(2, 33L)
+        Assertions.assertThat(dtEntryB.results[JudgeType.DT_A]?.keys).containsExactlyInAnyOrder(1, 2)
+        Assertions.assertThat(dtEntryB.results[JudgeType.DT_A]).containsEntry(1, 22L)
+        Assertions.assertThat(dtEntryB.results[JudgeType.DT_A]).containsEntry(2, 33L)
     }
 }
 

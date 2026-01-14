@@ -16,7 +16,7 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
 
         setTeamResults(perfId, listOf(
             performanceResult(dtId, 50),
-            performanceResult(styleId, 30)
+            performanceResult(styleId, 30, judgeType = JudgeType.STYLE)
         ))
 
         val saved = getTeamResults(perfId)
@@ -24,8 +24,8 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
         Assertions.assertThat(allEntries).isEqualTo(3) // All form entries (dt, style, penalty)
         val dtEntry = saved.dtEntries.first { it.entry.id == dtId }
         val styleEntry = saved.styleEntries.first { it.entry.id == styleId }
-        Assertions.assertThat(dtEntry.judgesA).containsEntry(1, 50L)
-        Assertions.assertThat(styleEntry.styleJudge).containsEntry(1, 30L)
+        Assertions.assertThat(dtEntry.results[JudgeType.DT_A]).containsEntry(1, 50L)
+        Assertions.assertThat(styleEntry.results[JudgeType.STYLE]).containsEntry(1, 30L)
     }
 
     @Test
@@ -45,12 +45,12 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
 
         setTeamResults(perfId, listOf(
             performanceResult(dtId, 10),
-            performanceResult(styleId, 20)
+            performanceResult(styleId, 20, judgeType = JudgeType.STYLE)
         ))
 
         setTeamResults(perfId, listOf(
             performanceResult(dtId, 15),
-            performanceResult(styleId, 22, judge = 2)
+            performanceResult(styleId, 22, judge = 2, judgeType = JudgeType.STYLE)
         ))
 
         val after = getTeamResults(perfId)
@@ -59,11 +59,11 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
         Assertions.assertThat(allEntries).isEqualTo(3) // All form entries (dt, style, penalty)
         val dtEntry = after.dtEntries.first { it.entry.id == dtId }
         val styleEntry = after.styleEntries.first { it.entry.id == styleId }
-        Assertions.assertThat(dtEntry.judgesA.keys).containsExactlyInAnyOrder(1, 2)
-        Assertions.assertThat(dtEntry.judgesA).containsEntry(1, 15L)
-        Assertions.assertThat(styleEntry.styleJudge.keys).containsExactlyInAnyOrder(1, 2)
-        Assertions.assertThat(styleEntry.styleJudge).containsEntry(1, 20L)
-        Assertions.assertThat(styleEntry.styleJudge).containsEntry(2, 22L)
+        Assertions.assertThat(dtEntry.results[JudgeType.DT_A]?.keys).containsExactlyInAnyOrder(1, 2)
+        Assertions.assertThat(dtEntry.results[JudgeType.DT_A]).containsEntry(1, 15L)
+        Assertions.assertThat(styleEntry.results[JudgeType.STYLE]?.keys).containsExactlyInAnyOrder(1, 2)
+        Assertions.assertThat(styleEntry.results[JudgeType.STYLE]).containsEntry(1, 20L)
+        Assertions.assertThat(styleEntry.results[JudgeType.STYLE]).containsEntry(2, 22L)
     }
 
     @Test
@@ -74,7 +74,7 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
 
         val payload = listOf(
             performanceResult(dtId, 44),
-            performanceResult(styleId, 66)
+            performanceResult(styleId, 66, judgeType = JudgeType.STYLE)
         )
 
         setTeamResults(perfId, payload)
@@ -88,8 +88,8 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
         Assertions.assertThat(secondAll).isEqualTo(3)
         val dtEntry = second.dtEntries.first { it.entry.id == dtId }
         val styleEntry = second.styleEntries.first { it.entry.id == styleId }
-        Assertions.assertThat(dtEntry.judgesA).containsEntry(1, 44L)
-        Assertions.assertThat(styleEntry.styleJudge).containsEntry(1, 66L)
+        Assertions.assertThat(dtEntry.results[JudgeType.DT_A]).containsEntry(1, 44L)
+        Assertions.assertThat(styleEntry.results[JudgeType.STYLE]).containsEntry(1, 66L)
     }
 
     @Test
@@ -103,9 +103,12 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
         val after = getTeamResults(perfId)
         val allEntries = after.dtEntries.size + after.styleEntries.size + after.penaltyEntries.size
         Assertions.assertThat(allEntries).isEqualTo(3) // All form entries (dt, style, penalty) but with null judge results
-        Assertions.assertThat(after.dtEntries.all { it.judgesA.values.all { it == null } && it.judgesB.values.all { it == null } }).isTrue()
-        Assertions.assertThat(after.styleEntries.all { it.styleJudge.values.all { it == null } }).isTrue()
-        Assertions.assertThat(after.penaltyEntries.all { it.penalty.values.all { it == null } }).isTrue()
+        Assertions.assertThat(after.dtEntries.all { 
+            it.results[JudgeType.DT_A]?.values?.all { it == null } == true && 
+            it.results[JudgeType.DT_B]?.values?.all { it == null } == true 
+        }).isTrue()
+        Assertions.assertThat(after.styleEntries.all { it.results[JudgeType.STYLE]?.values?.all { it == null } == true }).isTrue()
+        Assertions.assertThat(after.penaltyEntries.all { it.results[JudgeType.STYLE]?.values?.all { it == null } == true }).isTrue()
     }
 }
 

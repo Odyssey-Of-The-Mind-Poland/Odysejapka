@@ -3,9 +3,10 @@ package odyseja.odysejapka.form
 import org.springframework.data.repository.CrudRepository
 
 interface TeamResultEntryRepository : CrudRepository<TeamResultEntryEntity, Long> {
-    fun findByPerformanceEntityIdAndFormEntryEntityIdAndJudge(
+    fun findByPerformanceEntityIdAndFormEntryEntityIdAndJudgeTypeAndJudge(
         performanceEntityId: Int,
         formEntryEntityId: Long,
+        judgeType: JudgeType,
         judge: Int
     ): TeamResultEntryEntity?
 

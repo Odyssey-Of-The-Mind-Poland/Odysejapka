@@ -148,7 +148,7 @@ class FormService(
         val toSave = mutableListOf<TeamResultEntryEntity>()
         request.results.forEach { r ->
             val existing = teamResultEntryRepository
-                .findByPerformanceEntityIdAndFormEntryEntityIdAndJudge(performanceId, r.entryId, r.judge)
+                .findByPerformanceEntityIdAndFormEntryEntityIdAndJudgeTypeAndJudge(performanceId, r.entryId, r.judgeType, r.judge)
 
             if (existing != null) {
                 if (existing.result != r.result) {
@@ -159,6 +159,7 @@ class FormService(
                 val entity = TeamResultEntryEntity().apply {
                     performanceEntity = performance
                     formEntryEntity = formEntryById.getValue(r.entryId)
+                    judgeType = r.judgeType
                     judge = r.judge
                     result = r.result
                 }

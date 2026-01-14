@@ -6,7 +6,7 @@
     import {page} from "$app/state";
     import {onMount} from "svelte";
     import {toast} from "svelte-sonner";
-    import type { TeamForm, PerformanceResultsRequest, PerformanceResult } from "./types";
+    import {buildResults, type TeamForm, type PerformanceResultsRequest} from "$lib/utils/form-results";
     import DtEntriesTable from "./DtEntriesTable.svelte";
     import StyleEntriesTable from "./StyleEntriesTable.svelte";
     import PenaltyEntriesTable from "./PenaltyEntriesTable.svelte";
@@ -35,93 +35,10 @@
         }
     }));
 
-    function buildResults(): PerformanceResult[] {
-        if (!formData) return [];
-        
-        const results: PerformanceResult[] = [];
-        
-        // Helper to convert value to number or null
-        const toNumberOrNull = (value: number | string | null | undefined): number | null => {
-            if (value === null || value === undefined || value === '') return null;
-            const num = typeof value === 'string' ? Number(value) : value;
-            return isNaN(num) ? null : num;
-        };
-        
-        // Get judge count from the data structure
-        const getJudgeCount = () => {
-            if (formData!.dtEntries.length > 0) {
-                const judgeKeys = Object.keys(formData!.dtEntries[0].judgesA).map(Number);
-                return Math.max(...judgeKeys, 0);
-            }
-            if (formData!.styleEntries.length > 0) {
-                const judgeKeys = Object.keys(formData!.styleEntries[0].styleJudge).map(Number);
-                return Math.max(...judgeKeys, 0);
-            }
-            return 0;
-        };
-        
-        const judgeCount = getJudgeCount();
-        
-        // DT entries - judgesA and judgesB
-        formData.dtEntries.forEach(dtEntry => {
-            Object.entries(dtEntry.judgesA).forEach(([judge, value]) => {
-                const numValue = toNumberOrNull(value);
-                if (numValue != null) {
-                    results.push({
-                        entryId: dtEntry.entry.id!,
-                        judge: Number(judge),
-                        result: numValue
-                    });
-                }
-            });
-            Object.entries(dtEntry.judgesB).forEach(([judge, value]) => {
-                const numValue = toNumberOrNull(value);
-                if (numValue != null) {
-                    // For judgesB, offset by judgeCount: judgesB judge 1 maps to actual judge (judgeCount + 1)
-                    results.push({
-                        entryId: dtEntry.entry.id!,
-                        judge: judgeCount + Number(judge),
-                        result: numValue
-                    });
-                }
-            });
-        });
-        
-        // Style entries
-        formData.styleEntries.forEach(styleEntry => {
-            Object.entries(styleEntry.styleJudge).forEach(([judge, value]) => {
-                const numValue = toNumberOrNull(value);
-                if (numValue != null) {
-                    results.push({
-                        entryId: styleEntry.entry.id!,
-                        judge: Number(judge),
-                        result: numValue
-                    });
-                }
-            });
-        });
-        
-        // Penalty entries
-        formData.penaltyEntries.forEach(penaltyEntry => {
-            Object.entries(penaltyEntry.penalty).forEach(([judge, value]) => {
-                const numValue = toNumberOrNull(value);
-                if (numValue != null) {
-                    results.push({
-                        entryId: penaltyEntry.entry.id!,
-                        judge: Number(judge),
-                        result: numValue
-                    });
-                }
-            });
-        });
-        
-        return results;
-    }
-
     function handleSave() {
         if (!formData) return;
         
-        const results = buildResults();
+        const results = buildResults(formData);
         const request: PerformanceResultsRequest = { results };
         
         saveMutation.mutate(request);

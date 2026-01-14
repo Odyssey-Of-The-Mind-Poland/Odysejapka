@@ -3,6 +3,7 @@ package odyseja.odysejapka
 import odyseja.odysejapka.city.CityController
 import odyseja.odysejapka.city.CreateCityRequest
 import odyseja.odysejapka.form.FormController
+import odyseja.odysejapka.form.JudgeType
 import odyseja.odysejapka.form.LongTermFormEntry
 import odyseja.odysejapka.form.StyleFormEntry
 import odyseja.odysejapka.form.PenaltyFormEntry
@@ -108,7 +109,7 @@ class OdysejaDsl {
         formClient.setTeamResults(performanceId, PerformanceResultsRequest(results))
     }
 
-    fun performanceResult(entryId: Long, result: Long, judge: Int = 1) =
-        PerformanceResultsRequest.PerformanceResult(entryId = entryId, result = result, judge = judge)
+    fun performanceResult(entryId: Long, result: Long, judge: Int = 1, judgeType: JudgeType = JudgeType.DT_A) =
+        PerformanceResultsRequest.PerformanceResult(entryId = entryId, judgeType = judgeType, judge = judge, result = result)
 
 }

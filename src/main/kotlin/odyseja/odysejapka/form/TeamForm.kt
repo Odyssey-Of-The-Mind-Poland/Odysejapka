@@ -8,17 +8,16 @@ data class TeamForm(
 ) {
     data class DtTeamFormEntry(
         val entry: LongTermFormEntry,
-        val judgesA: Map<Int, Long?>,
-        val judgesB: Map<Int, Long?>
+        val results: Map<JudgeType, Map<Int, Long?>>
     )
     
     data class StyleTeamFormEntry(
         val entry: StyleFormEntry,
-        val styleJudge: Map<Int, Long?>
+        val results: Map<JudgeType, Map<Int, Long?>>
     )
     
     data class PenaltyTeamFormEntry(
         val entry: PenaltyFormEntry,
-        val penalty: Map<Int, Long?>
+        val results: Map<JudgeType, Map<Int, Long?>>
     )
 }

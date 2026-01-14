@@ -1,14 +1,17 @@
 <script lang="ts">
     import * as Table from "$lib/components/ui/table/index.js";
     import * as Input from "$lib/components/ui/input/index.js";
-    import type { TeamForm } from "./types";
+    import type { TeamForm, JudgeType } from "$lib/utils/form-results";
 
     const { entries = $bindable() } = $props<{ 
         entries: TeamForm['dtEntries'];
     }>();
 
-    function getJudgeKeys(judgesA: Record<number, number | null>, judgesB: Record<number, number | null>): number[] {
-        const allKeys = new Set([...Object.keys(judgesA).map(Number), ...Object.keys(judgesB).map(Number)]);
+    function getJudgeKeys(results: Record<JudgeType, Record<number, number | string | null>>): number[] {
+        const allKeys = new Set<number>();
+        Object.values(results).forEach(judgeMap => {
+            Object.keys(judgeMap).forEach(key => allKeys.add(Number(key)));
+        });
         return Array.from(allKeys).sort((a, b) => a - b);
     }
 </script>
@@ -22,13 +25,13 @@
                     <Table.Row>
                         <Table.Head>Entry</Table.Head>
                         <Table.Head>Type</Table.Head>
-                        <Table.Head>Judges A</Table.Head>
-                        <Table.Head>Judges B</Table.Head>
+                        <Table.Head>DT_A</Table.Head>
+                        <Table.Head>DT_B</Table.Head>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
                     {#each entries as dtEntry (dtEntry.entry.id)}
-                        {@const judgeKeys = getJudgeKeys(dtEntry.judgesA, dtEntry.judgesB)}
+                        {@const judgeKeys = getJudgeKeys(dtEntry.results)}
                         <Table.Row>
                             <Table.Cell class="font-medium">{dtEntry.entry.name}</Table.Cell>
                             <Table.Cell>{dtEntry.entry.type}</Table.Cell>
@@ -36,11 +39,11 @@
                                 <div class="flex flex-col gap-2">
                                     {#each judgeKeys as judgeKey}
                                         <div class="flex items-center gap-2">
-                                            <label for="judge-a-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Judge {judgeKey}:</label>
+                                            <label for="judge-dt-a-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Judge {judgeKey}:</label>
                                             <Input.Input
-                                                id="judge-a-{dtEntry.entry.id}-{judgeKey}"
+                                                id="judge-dt-a-{dtEntry.entry.id}-{judgeKey}"
                                                 type="number"
-                                                bind:value={dtEntry.judgesA[judgeKey]}
+                                                bind:value={dtEntry.results.DT_A[judgeKey]}
                                                 class="w-24"
                                             />
                                         </div>
@@ -51,11 +54,11 @@
                                 <div class="flex flex-col gap-2">
                                     {#each judgeKeys as judgeKey}
                                         <div class="flex items-center gap-2">
-                                            <label for="judge-b-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Judge {judgeKey}:</label>
+                                            <label for="judge-dt-b-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Judge {judgeKey}:</label>
                                             <Input.Input
-                                                id="judge-b-{dtEntry.entry.id}-{judgeKey}"
+                                                id="judge-dt-b-{dtEntry.entry.id}-{judgeKey}"
                                                 type="number"
-                                                bind:value={dtEntry.judgesB[judgeKey]}
+                                                bind:value={dtEntry.results.DT_B[judgeKey]}
                                                 class="w-24"
                                             />
                                         </div>

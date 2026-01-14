@@ -5,9 +5,10 @@
 
     type CalcType = 'SUM' | 'AVERAGE';
     type FormCategory = 'DT' | 'STYLE' | 'PENALTY';
+    type JudgeType = 'DT_A' | 'DT_B' | 'STYLE';
     // entries from backend always have an id + category here
     type FormEntry = { id: number; name: string; calcType: CalcType; category: FormCategory };
-    type FormResult = { entryId: number; judge: number; result: number };
+    type FormResult = { entryId: number; judgeType: JudgeType; judge: number; result: number };
     type Performance = {
         id: number;
         team: string;
@@ -31,11 +32,11 @@
     let entries: FormEntry[] = [];
     let judgeCount = 0;
 
-    // results map: key `${entryId}:${judge}` -> number
+    // results map: key `${entryId}:${judgeType}:${judge}` -> number
     let valueMap: Record<string, number> = {};
 
-    function keyOf(entryId: number, judge: number) {
-        return `${entryId}:${judge}`;
+    function keyOf(entryId: number, judgeType: JudgeType, judge: number) {
+        return `${entryId}:${judgeType}:${judge}`;
     }
 
     async function loadAll() {
@@ -56,23 +57,90 @@
             judgeCount = await get(`/api/v1/form/${problem}/judge-count`);
             if (!Number.isFinite(judgeCount) || judgeCount < 0) judgeCount = 0;
 
-            // 4) existing results for performance
-            const existing: FormResult[] = await get(`/api/v1/form/${performanceId}/result`);
+            // 4) existing results for performance (now returns TeamForm)
+            const teamForm: any = await get(`/api/v1/form/${performanceId}/result`);
+
+            // Extract results from TeamForm structure
+            const existingResults: FormResult[] = [];
+            
+            // DT entries - DT_A and DT_B
+            if (teamForm?.dtEntries) {
+                for (const dtEntry of teamForm.dtEntries) {
+                    const entryId = dtEntry.entry?.id;
+                    if (entryId) {
+                        for (const [judgeType, judgeMap] of Object.entries(dtEntry.results || {})) {
+                            for (const [judge, value] of Object.entries(judgeMap as Record<number, any>)) {
+                                if (value != null && value !== '') {
+                                    existingResults.push({
+                                        entryId,
+                                        judgeType: judgeType as JudgeType,
+                                        judge: Number(judge),
+                                        result: Number(value)
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Style entries - STYLE
+            if (teamForm?.styleEntries) {
+                for (const styleEntry of teamForm.styleEntries) {
+                    const entryId = styleEntry.entry?.id;
+                    if (entryId) {
+                        for (const [judgeType, judgeMap] of Object.entries(styleEntry.results || {})) {
+                            for (const [judge, value] of Object.entries(judgeMap as Record<number, any>)) {
+                                if (value != null && value !== '') {
+                                    existingResults.push({
+                                        entryId,
+                                        judgeType: judgeType as JudgeType,
+                                        judge: Number(judge),
+                                        result: Number(value)
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Penalty entries - STYLE
+            if (teamForm?.penaltyEntries) {
+                for (const penaltyEntry of teamForm.penaltyEntries) {
+                    const entryId = penaltyEntry.entry?.id;
+                    if (entryId) {
+                        for (const [judgeType, judgeMap] of Object.entries(penaltyEntry.results || {})) {
+                            for (const [judge, value] of Object.entries(judgeMap as Record<number, any>)) {
+                                if (value != null && value !== '') {
+                                    existingResults.push({
+                                        entryId,
+                                        judgeType: judgeType as JudgeType,
+                                        judge: Number(judge),
+                                        result: Number(value)
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             // seed valueMap with existing values
-            for (const r of existing ?? []) {
-                if (r && typeof r.entryId === 'number' && typeof r.judge === 'number') {
-                    const k = keyOf(r.entryId, r.judge);
-                    const v = Number(r.result ?? 0);
-                    if (Number.isFinite(v)) valueMap[k] = v;
-                }
+            for (const r of existingResults) {
+                const k = keyOf(r.entryId, r.judgeType, r.judge);
+                const v = Number(r.result ?? 0);
+                if (Number.isFinite(v)) valueMap[k] = v;
             }
 
             // ensure we at least have zeros for visible inputs (optional)
             for (const e of entries) {
-                for (let j = 0; j < judgeCount; j++) {
-                    const k = keyOf(e.id, j);
-                    if (!(k in valueMap)) valueMap[k] = 0;
+                const judgeTypes: JudgeType[] = e.category === 'DT' ? ['DT_A', 'DT_B'] : ['STYLE'];
+                for (const judgeType of judgeTypes) {
+                    for (let j = 1; j <= judgeCount; j++) {
+                        const k = keyOf(e.id, judgeType, j);
+                        if (!(k in valueMap)) valueMap[k] = 0;
+                    }
                 }
             }
         } catch (e: any) {
@@ -86,18 +154,21 @@
 
     onMount(loadAll);
 
-    function setCell(entryId: number, judge: number, value: string) {
+    function setCell(entryId: number, judgeType: JudgeType, judge: number, value: string) {
         const n = Number(value);
         if (Number.isFinite(n)) {
-            valueMap[keyOf(entryId, judge)] = n;
+            valueMap[keyOf(entryId, judgeType, judge)] = n;
         }
     }
 
     function aggregate(entry: FormEntry): number {
         const vals: number[] = [];
-        for (let j = 0; j < judgeCount; j++) {
-            const n = valueMap[keyOf(entry.id, j)];
-            if (Number.isFinite(n)) vals.push(n);
+        const judgeTypes: JudgeType[] = entry.category === 'DT' ? ['DT_A', 'DT_B'] : ['STYLE'];
+        for (const judgeType of judgeTypes) {
+            for (let j = 1; j <= judgeCount; j++) {
+                const n = valueMap[keyOf(entry.id, judgeType, j)];
+                if (Number.isFinite(n)) vals.push(n);
+            }
         }
         if (vals.length === 0) return 0;
         const sum = vals.reduce((a, b) => a + b, 0);
@@ -127,14 +198,22 @@
         try {
             // build payload: only include finite numbers
             const payload = {
-                results: [] as { entryId: number; judge: number; result: number }[],
+                results: [] as { entryId: number; judgeType: JudgeType; judge: number; result: number }[],
             };
 
             for (const e of entries) {
-                for (let j = 0; j < judgeCount; j++) {
-                    const v = valueMap[keyOf(e.id, j)];
-                    if (Number.isFinite(v)) {
-                        payload.results.push({ entryId: e.id, judge: j, result: Number(v) });
+                const judgeTypes: JudgeType[] = e.category === 'DT' ? ['DT_A', 'DT_B'] : ['STYLE'];
+                for (const judgeType of judgeTypes) {
+                    for (let j = 1; j <= judgeCount; j++) {
+                        const v = valueMap[keyOf(e.id, judgeType, j)];
+                        if (Number.isFinite(v)) {
+                            payload.results.push({ 
+                                entryId: e.id, 
+                                judgeType: judgeType, 
+                                judge: j, 
+                                result: Number(v) 
+                            });
+                        }
                     }
                 }
             }
@@ -177,6 +256,8 @@
 
     {#if !loading && entries.length > 0}
         {#each categories as c (c.key)}
+            {@const judgeTypes: JudgeType[] = c.key === 'DT' ? ['DT_A', 'DT_B'] : ['STYLE']}
+            {@const colCount = judgeTypes.length * judgeCount}
             <section class="space-y-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-lg font-semibold">{c.title}</h2>
@@ -184,10 +265,12 @@
 
                 <!-- Header row -->
                 <div class="grid gap-2 items-center"
-                     style="grid-template-columns: minmax(200px,1fr) repeat({Math.max(judgeCount,1)}, 120px) 160px;">
+                     style="grid-template-columns: minmax(200px,1fr) repeat({Math.max(colCount,1)}, 120px) 160px;">
                     <div class="px-2 text-sm opacity-70">Entry</div>
-                    {#each Array(judgeCount) as _, j}
-                        <div class="px-2 text-sm opacity-70">Judge {j + 1}</div>
+                    {#each judgeTypes as judgeType}
+                        {#each Array(judgeCount) as _, j}
+                            <div class="px-2 text-sm opacity-70">{judgeType} {j + 1}</div>
+                        {/each}
                     {/each}
                     <div class="px-2 text-sm opacity-70">Aggregate</div>
                 </div>
@@ -196,21 +279,24 @@
                 <div class="space-y-2">
                     {#each entriesFor(c.key) as e (e.id)}
                         <div class="grid gap-2 items-center"
-                             style="grid-template-columns: minmax(200px,1fr) repeat({Math.max(judgeCount,1)}, 120px) 160px;">
+                             style="grid-template-columns: minmax(200px,1fr) repeat({Math.max(colCount,1)}, 120px) 160px;">
                             <div class="px-2">
                                 <div>{e.name}</div>
                                 <div class="text-xs opacity-60">({e.calcType})</div>
                             </div>
 
-                            {#each Array(judgeCount) as _, j}
-                                <input
-                                        class="input w-full"
-                                        type="number"
-                                        min="0"
-                                        step="1"
-                                        bind:value={valueMap[`${e.id}:${j}`]}
-                                        on:input={(ev) => setCell(e.id, j, (ev.currentTarget).value)}
-                                        aria-label={`Result for ${e.name}, judge ${j+1}`} />
+                            {#each judgeTypes as judgeType}
+                                {#each Array(judgeCount) as _, j}
+                                    {@const judgeNum = j + 1}
+                                    <input
+                                            class="input w-full"
+                                            type="number"
+                                            min="0"
+                                            step="1"
+                                            bind:value={valueMap[keyOf(e.id, judgeType, judgeNum)]}
+                                            on:input={(ev) => setCell(e.id, judgeType, judgeNum, (ev.currentTarget).value)}
+                                            aria-label={`Result for ${e.name}, ${judgeType} judge ${judgeNum}`} />
+                                {/each}
                             {/each}
 
                             <div class="px-2 font-medium tabular-nums">
@@ -222,9 +308,9 @@
 
                 <!-- Subtotal row -->
                 <div class="grid gap-2 items-center font-semibold"
-                     style="grid-template-columns: minmax(200px,1fr) repeat({Math.max(judgeCount,1)}, 120px) 160px;">
+                     style="grid-template-columns: minmax(200px,1fr) repeat({Math.max(colCount,1)}, 120px) 160px;">
                     <div class="px-2">Subtotal ({c.key})</div>
-                    {#each Array(judgeCount) as judge}<div></div>{/each}
+                    {#each Array(colCount) as _}<div></div>{/each}
                     <div class="px-2 tabular-nums text-green-300">{categoryTotal(c.key).toFixed(2)}</div>
                 </div>
             </section>

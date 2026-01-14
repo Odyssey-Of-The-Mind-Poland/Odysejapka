@@ -51,15 +51,15 @@ class TeamFormService(
         judgeCount: Int,
         resultEntries: List<TeamResultEntryEntity>,
         entryId: Long,
-        judgeOffset: Int = 0
+        judgeType: JudgeType
     ): Map<Int, Long?> {
         val resultMap = resultEntries
-            .filter { it.formEntryEntity?.id == entryId }
+            .filter { it.formEntryEntity?.id == entryId && it.judgeType == judgeType }
             .groupBy { it.judge }
             .mapValues { (_, entries) -> entries.sumOf { it.result } }
         
         return (1..judgeCount).associateWith { judgeIndex ->
-            resultMap[judgeIndex + judgeOffset]
+            resultMap[judgeIndex]
         }
     }
 
@@ -71,13 +71,15 @@ class TeamFormService(
     ): List<TeamForm.DtTeamFormEntry> {
         return templateEntries.map { templateEntry ->
             val entry = templateEntry.toLongTermFormEntry(childrenByParent)
-            val judgesA = createJudgeMap(judgeCount, resultEntries, templateEntry.id, judgeOffset = 0)
-            val judgesB = createJudgeMap(judgeCount, resultEntries, templateEntry.id, judgeOffset = judgeCount)
+            val judgesA = createJudgeMap(judgeCount, resultEntries, templateEntry.id, JudgeType.DT_A)
+            val judgesB = createJudgeMap(judgeCount, resultEntries, templateEntry.id, JudgeType.DT_B)
 
             TeamForm.DtTeamFormEntry(
                 entry = entry,
-                judgesA = judgesA,
-                judgesB = judgesB
+                results = mapOf(
+                    JudgeType.DT_A to judgesA,
+                    JudgeType.DT_B to judgesB
+                )
             )
         }
     }
@@ -90,11 +92,11 @@ class TeamFormService(
     ): List<TeamForm.StyleTeamFormEntry> {
         return templateEntries.map { templateEntry ->
             val entry = templateEntry.toStyleFormEntry(childrenByParent)
-            val styleJudge = createJudgeMap(judgeCount, resultEntries, templateEntry.id)
+            val styleJudge = createJudgeMap(judgeCount, resultEntries, templateEntry.id, JudgeType.STYLE)
 
             TeamForm.StyleTeamFormEntry(
                 entry = entry,
-                styleJudge = styleJudge
+                results = mapOf(JudgeType.STYLE to styleJudge)
             )
         }
     }
@@ -107,11 +109,13 @@ class TeamFormService(
     ): List<TeamForm.PenaltyTeamFormEntry> {
         return templateEntries.map { templateEntry ->
             val entry = templateEntry.toPenaltyFormEntry(childrenByParent)
-            val penalty = createJudgeMap(judgeCount, resultEntries, templateEntry.id)
+            // Penalty doesn't have a specific judge type, but we'll use STYLE for consistency
+            // Actually, penalty might not need judgeType, but let's keep it simple and use STYLE
+            val penalty = createJudgeMap(judgeCount, resultEntries, templateEntry.id, JudgeType.STYLE)
 
             TeamForm.PenaltyTeamFormEntry(
                 entry = entry,
-                penalty = penalty
+                results = mapOf(JudgeType.STYLE to penalty)
             )
         }
     }
