@@ -108,7 +108,7 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
             it.results[JudgeType.DT_B]?.values?.all { it == null } == true 
         }).isTrue()
         Assertions.assertThat(after.styleEntries.all { it.results[JudgeType.STYLE]?.values?.all { it == null } == true }).isTrue()
-        Assertions.assertThat(after.penaltyEntries.all { it.results[JudgeType.STYLE]?.values?.all { it == null } == true }).isTrue()
+        Assertions.assertThat(after.penaltyEntries.all { it.result == null }).isTrue()
     }
 }
 

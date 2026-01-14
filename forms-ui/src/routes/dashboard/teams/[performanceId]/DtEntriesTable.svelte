@@ -14,9 +14,39 @@
         });
         return Array.from(allKeys).sort((a, b) => a - b);
     }
+
+    function getAllJudgeColumns(entries: TeamForm['dtEntries']): Array<{ type: 'DT_A' | 'DT_B', judge: number }> {
+        const columnSet = new Set<string>();
+        
+        entries.forEach(entry => {
+            const judgeKeys = getJudgeKeys(entry.results);
+            judgeKeys.forEach(judgeKey => {
+                if (entry.results.DT_A && entry.results.DT_A[judgeKey] !== undefined) {
+                    columnSet.add(`DT_A-${judgeKey}`);
+                }
+                if (entry.results.DT_B && entry.results.DT_B[judgeKey] !== undefined) {
+                    columnSet.add(`DT_B-${judgeKey}`);
+                }
+            });
+        });
+        
+        const columns: Array<{ type: 'DT_A' | 'DT_B', judge: number }> = [];
+        Array.from(columnSet).sort().forEach(key => {
+            const [type, judge] = key.split('-');
+            columns.push({ type: type as 'DT_A' | 'DT_B', judge: Number(judge) });
+        });
+        
+        return columns;
+    }
+
+    function getColumnLabel(type: 'DT_A' | 'DT_B', judge: number): string {
+        const prefix = type === 'DT_A' ? 'A' : 'B';
+        return `${prefix}${judge}`;
+    }
 </script>
 
 {#if entries.length > 0}
+    {@const allColumns = getAllJudgeColumns(entries)}
     <div class="flex flex-col gap-2">
         <h2 class="text-xl font-semibold">Wpisy DT</h2>
         <div class="rounded-md border">
@@ -25,46 +55,26 @@
                     <Table.Row>
                         <Table.Head>Wpis</Table.Head>
                         <Table.Head>Typ</Table.Head>
-                        <Table.Head>DT_A</Table.Head>
-                        <Table.Head>DT_B</Table.Head>
+                        {#each allColumns as column}
+                            <Table.Head>{getColumnLabel(column.type, column.judge)}</Table.Head>
+                        {/each}
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
                     {#each entries as dtEntry (dtEntry.entry.id)}
-                        {@const judgeKeys = getJudgeKeys(dtEntry.results)}
                         <Table.Row>
                             <Table.Cell class="font-medium">{dtEntry.entry.name}</Table.Cell>
                             <Table.Cell>{dtEntry.entry.type}</Table.Cell>
-                            <Table.Cell>
-                                <div class="flex flex-col gap-2">
-                                    {#each judgeKeys as judgeKey}
-                                        <div class="flex items-center gap-2">
-                                            <label for="judge-dt-a-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Sędzia {judgeKey}:</label>
-                                            <Input.Input
-                                                id="judge-dt-a-{dtEntry.entry.id}-{judgeKey}"
-                                                type="number"
-                                                bind:value={dtEntry.results.DT_A[judgeKey]}
-                                                class="w-24"
-                                            />
-                                        </div>
-                                    {/each}
-                                </div>
-                            </Table.Cell>
-                            <Table.Cell>
-                                <div class="flex flex-col gap-2">
-                                    {#each judgeKeys as judgeKey}
-                                        <div class="flex items-center gap-2">
-                                            <label for="judge-dt-b-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Sędzia {judgeKey}:</label>
-                                            <Input.Input
-                                                id="judge-dt-b-{dtEntry.entry.id}-{judgeKey}"
-                                                type="number"
-                                                bind:value={dtEntry.results.DT_B[judgeKey]}
-                                                class="w-24"
-                                            />
-                                        </div>
-                                    {/each}
-                                </div>
-                            </Table.Cell>
+                            {#each allColumns as column}
+                                <Table.Cell>
+                                    <Input.Input
+                                        id="judge-{column.type}-{dtEntry.entry.id}-{column.judge}"
+                                        type="number"
+                                        bind:value={dtEntry.results[column.type][column.judge]}
+                                        class="w-24"
+                                    />
+                                </Table.Cell>
+                            {/each}
                         </Table.Row>
                     {/each}
                 </Table.Body>
