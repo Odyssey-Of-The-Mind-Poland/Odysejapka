@@ -18,13 +18,13 @@
 
 {#if entries.length > 0}
     <div class="flex flex-col gap-2">
-        <h2 class="text-xl font-semibold">DT Entries</h2>
+        <h2 class="text-xl font-semibold">Wpisy DT</h2>
         <div class="rounded-md border">
             <Table.Root>
                 <Table.Header>
                     <Table.Row>
-                        <Table.Head>Entry</Table.Head>
-                        <Table.Head>Type</Table.Head>
+                        <Table.Head>Wpis</Table.Head>
+                        <Table.Head>Typ</Table.Head>
                         <Table.Head>DT_A</Table.Head>
                         <Table.Head>DT_B</Table.Head>
                     </Table.Row>
@@ -39,7 +39,7 @@
                                 <div class="flex flex-col gap-2">
                                     {#each judgeKeys as judgeKey}
                                         <div class="flex items-center gap-2">
-                                            <label for="judge-dt-a-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Judge {judgeKey}:</label>
+                                            <label for="judge-dt-a-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Sędzia {judgeKey}:</label>
                                             <Input.Input
                                                 id="judge-dt-a-{dtEntry.entry.id}-{judgeKey}"
                                                 type="number"
@@ -54,7 +54,7 @@
                                 <div class="flex flex-col gap-2">
                                     {#each judgeKeys as judgeKey}
                                         <div class="flex items-center gap-2">
-                                            <label for="judge-dt-b-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Judge {judgeKey}:</label>
+                                            <label for="judge-dt-b-{dtEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Sędzia {judgeKey}:</label>
                                             <Input.Input
                                                 id="judge-dt-b-{dtEntry.entry.id}-{judgeKey}"
                                                 type="number"

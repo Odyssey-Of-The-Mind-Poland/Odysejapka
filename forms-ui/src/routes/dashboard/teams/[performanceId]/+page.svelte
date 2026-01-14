@@ -31,7 +31,7 @@
         path: () => `/api/v1/form/${performanceIdParam}/result`,
         queryKey: ['teamForm', performanceIdParam],
         onSuccess: () => {
-            toast.success('Team results saved successfully');
+            toast.success('Wyniki drużyny zostały zapisane pomyślnie');
         }
     }));
 
@@ -46,20 +46,29 @@
 
     onMount(() => {
         setBreadcrumbs([
-            {name: 'Teams', href: '/dashboard/teams'},
-            {name: `Team ${performanceId}`, href: `/dashboard/teams/${performanceId}`}
+            {name: 'Drużyny', href: '/dashboard/teams'},
+            {name: `Drużyna ${performanceId}`, href: `/dashboard/teams/${performanceId}`}
         ]);
     });
 </script>
 
 <div class="flex flex-col gap-6">
     <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Team Form - Performance {performanceId}</h1>
+        <div class="flex flex-col gap-2">
+            {#if formData}
+                <h1 class="text-2xl font-bold">Formularz drużyny - Występ {formData.teamName}</h1>
+                <div class="flex gap-4 text-sm text-gray-600">
+                    <div><span class="font-medium">Miasto:</span> {formData.cityName}</div>
+                    <div><span class="font-medium">Problem:</span> {formData.problem}</div>
+                    <div><span class="font-medium">Wiek:</span> {formData.age}</div>
+                </div>
+            {/if}
+        </div>
         <Button 
             onclick={handleSave}
             disabled={saveMutation.isPending || !formData}
         >
-            {saveMutation.isPending ? 'Saving...' : 'Save Results'}
+            {saveMutation.isPending ? 'Zapisywanie...' : 'Zapisz wyniki'}
         </Button>
     </div>
 
@@ -69,7 +78,7 @@
         </div>
     {:else if teamFormQuery.error}
         <div class="text-red-500">
-            Error loading team form: {String(teamFormQuery.error)}
+            Błąd ładowania formularza drużyny: {String(teamFormQuery.error)}
         </div>
     {:else if formData}
         <DtEntriesTable bind:entries={formData.dtEntries} />
@@ -77,7 +86,7 @@
         <PenaltyEntriesTable bind:entries={formData.penaltyEntries} />
 
         {#if formData.dtEntries.length === 0 && formData.styleEntries.length === 0 && formData.penaltyEntries.length === 0}
-            <div class="text-gray-500">No entries found for this team.</div>
+            <div class="text-gray-500">Nie znaleziono wpisów dla tej drużyny.</div>
         {/if}
     {/if}
 </div>

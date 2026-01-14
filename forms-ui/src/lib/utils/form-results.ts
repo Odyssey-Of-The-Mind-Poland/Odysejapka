@@ -37,6 +37,10 @@ export type JudgeType = 'DT_A' | 'DT_B' | 'STYLE';
 
 export type TeamForm = {
     performanceId: number;
+    teamName: string;
+    cityName: string;
+    problem: number;
+    age: number;
     dtEntries: Array<{
         entry: LongTermFormEntry;
         results: Record<JudgeType, Record<number, number | string | null>>;
@@ -47,7 +51,7 @@ export type TeamForm = {
     }>;
     penaltyEntries: Array<{
         entry: PenaltyFormEntry;
-        results: Record<JudgeType, Record<number, number | string | null>>;
+        result: number | string | null;
     }>;
 };
 
@@ -126,16 +130,26 @@ function processStyleEntries(
 
 /**
  * Processes penalty entries and returns an array of results
+ * Uses default values: STYLE judge type and judge 1
  */
 function processPenaltyEntries(
     penaltyEntries: TeamForm['penaltyEntries']
 ): PerformanceResult[] {
-    return penaltyEntries.flatMap(penaltyEntry => {
-        if (penaltyEntry.entry.id != null) {
-            return processEntryResults(penaltyEntry.entry.id, penaltyEntry.results);
-        }
-        return [];
-    });
+    return penaltyEntries
+        .filter(penaltyEntry => penaltyEntry.entry.id != null && penaltyEntry.result != null)
+        .map(penaltyEntry => {
+            const numValue = toNumberOrNull(penaltyEntry.result);
+            if (numValue != null) {
+                return {
+                    entryId: penaltyEntry.entry.id!,
+                    judgeType: 'STYLE' as JudgeType,
+                    judge: 1,
+                    result: numValue
+                };
+            }
+            return null;
+        })
+        .filter((result): result is PerformanceResult => result !== null);
 }
 
 /**

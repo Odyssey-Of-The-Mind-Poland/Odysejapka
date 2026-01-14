@@ -38,7 +38,16 @@ class TeamFormService(
         val styleEntries = getStyleResults(styleEntities, results, childrenByParent, judgeCount)
         val penaltyEntries = getPenaltyResults(penaltyEntities, results, childrenByParent, judgeCount)
         
-        return TeamForm(performanceId, dtEntries, styleEntries, penaltyEntries)
+        return TeamForm(
+            performanceId = performanceId,
+            teamName = performance.team,
+            cityName = city.name,
+            problem = problem,
+            age = performance.ageEntity.id,
+            dtEntries = dtEntries,
+            styleEntries = styleEntries,
+            penaltyEntries = penaltyEntries
+        )
     }
 
     private fun buildChildrenMap(entities: List<FormEntryEntity>): Map<Long, List<FormEntryEntity>> {
@@ -109,13 +118,15 @@ class TeamFormService(
     ): List<TeamForm.PenaltyTeamFormEntry> {
         return templateEntries.map { templateEntry ->
             val entry = templateEntry.toPenaltyFormEntry(childrenByParent)
-            // Penalty doesn't have a specific judge type, but we'll use STYLE for consistency
-            // Actually, penalty might not need judgeType, but let's keep it simple and use STYLE
-            val penalty = createJudgeMap(judgeCount, resultEntries, templateEntry.id, JudgeType.STYLE)
+            
+            val penaltyResult = resultEntries
+                .firstOrNull { it.formEntryEntity?.id == templateEntry.id }
+            
+            val result = penaltyResult?.result
 
             TeamForm.PenaltyTeamFormEntry(
                 entry = entry,
-                results = mapOf(JudgeType.STYLE to penalty)
+                result = result
             )
         }
     }

@@ -18,14 +18,14 @@
 
 {#if entries.length > 0}
     <div class="flex flex-col gap-2">
-        <h2 class="text-xl font-semibold">Style Entries</h2>
+        <h2 class="text-xl font-semibold">Wpisy stylu</h2>
         <div class="rounded-md border">
             <Table.Root>
                 <Table.Header>
                     <Table.Row>
-                        <Table.Head>Entry</Table.Head>
-                        <Table.Head>Type</Table.Head>
-                        <Table.Head>STYLE</Table.Head>
+                        <Table.Head>Wpis</Table.Head>
+                        <Table.Head>Typ</Table.Head>
+                        <Table.Head>STYL</Table.Head>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -38,7 +38,7 @@
                                 <div class="flex flex-col gap-2">
                                     {#each judgeKeys as judgeKey}
                                         <div class="flex items-center gap-2">
-                                            <label for="style-judge-{styleEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Judge {judgeKey}:</label>
+                                            <label for="style-judge-{styleEntry.entry.id}-{judgeKey}" class="text-sm font-medium w-20">Sędzia {judgeKey}:</label>
                                             <Input.Input
                                                 id="style-judge-{styleEntry.entry.id}-{judgeKey}"
                                                 type="number"

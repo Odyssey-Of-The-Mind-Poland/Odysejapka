@@ -2,6 +2,10 @@ package odyseja.odysejapka.form
 
 data class TeamForm(
     val performanceId: Int,
+    val teamName: String,
+    val cityName: String,
+    val problem: Int,
+    val age: Int,
     val dtEntries: List<DtTeamFormEntry>,
     val styleEntries: List<StyleTeamFormEntry>,
     val penaltyEntries: List<PenaltyTeamFormEntry>
@@ -18,6 +22,6 @@ data class TeamForm(
     
     data class PenaltyTeamFormEntry(
         val entry: PenaltyFormEntry,
-        val results: Map<JudgeType, Map<Int, Long?>>
+        val result: Long?
     )
 }
