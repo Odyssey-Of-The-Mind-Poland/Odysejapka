@@ -59,6 +59,7 @@ export type TeamForm = {
     penaltyEntries: Array<{
         entry: PenaltyFormEntry;
         result: number | string | null;
+        zeroBalsa?: boolean;
     }>;
 };
 
@@ -69,6 +70,7 @@ export type PerformanceResult = {
     result: number;
     noElement?: boolean;
     styleName?: string | null;
+    zeroBalsa?: boolean;
 };
 
 export type PerformanceResultsRequest = {
@@ -172,8 +174,24 @@ function processPenaltyEntries(
     penaltyEntries: TeamForm['penaltyEntries']
 ): PerformanceResult[] {
     return penaltyEntries
-        .filter(penaltyEntry => penaltyEntry.entry.id != null && penaltyEntry.result != null)
+        .filter(penaltyEntry => {
+            // For ZERO_BALSA, include if zeroBalsa is true
+            if (penaltyEntry.entry.penaltyType === 'ZERO_BALSA') {
+                return penaltyEntry.entry.id != null && penaltyEntry.zeroBalsa === true;
+            }
+            // For other types, include if result is not null
+            return penaltyEntry.entry.id != null && penaltyEntry.result != null;
+        })
         .map(penaltyEntry => {
+            if (penaltyEntry.entry.penaltyType === 'ZERO_BALSA') {
+                return {
+                    entryId: penaltyEntry.entry.id!,
+                    judgeType: 'STYLE' as JudgeType,
+                    judge: 1,
+                    result: 0,
+                    zeroBalsa: true
+                };
+            }
             const numValue = toNumberOrNull(penaltyEntry.result);
             if (numValue != null) {
                 return {

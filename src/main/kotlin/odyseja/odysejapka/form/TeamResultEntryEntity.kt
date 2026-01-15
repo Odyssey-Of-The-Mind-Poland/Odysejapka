@@ -49,4 +49,7 @@ class TeamResultEntryEntity {
 
     @Column(name = "style_name")
     var styleName: String? = null
+
+    @Column(name = "zero_balsa")
+    var zeroBalsa: Boolean? = null
 }

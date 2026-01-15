@@ -156,10 +156,12 @@ class TeamFormService(
                 .firstOrNull { it.formEntryEntity?.id == templateEntry.id }
 
             val result = penaltyResult?.result
+            val zeroBalsa = penaltyResult?.zeroBalsa
 
             TeamForm.PenaltyTeamFormEntry(
                 entry = entry,
-                result = result
+                result = result,
+                zeroBalsa = zeroBalsa
             )
         }
     }

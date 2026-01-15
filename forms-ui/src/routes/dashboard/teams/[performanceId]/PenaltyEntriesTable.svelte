@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as Table from "$lib/components/ui/table/index.js";
-    import * as Input from "$lib/components/ui/input/index.js";
     import type { TeamForm } from "$lib/utils/form-results";
+    import PenaltyEntryRow from "./PenaltyEntryRow.svelte";
 
     const { entries = $bindable() } = $props<{ 
         entries: TeamForm['penaltyEntries'];
@@ -21,19 +21,10 @@
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {#each entries as penaltyEntry (penaltyEntry.entry.id)}
-                        <Table.Row>
-                            <Table.Cell class="font-medium">{penaltyEntry.entry.name}</Table.Cell>
-                            <Table.Cell>{penaltyEntry.entry.penaltyType || 'N/A'}</Table.Cell>
-                            <Table.Cell>
-                                <Input.Input
-                                    id="penalty-value-{penaltyEntry.entry.id}"
-                                    type="number"
-                                    bind:value={penaltyEntry.result}
-                                    class="w-24"
-                                />
-                            </Table.Cell>
-                        </Table.Row>
+                    {#each entries as penaltyEntry, i (penaltyEntry.entry.id)}
+                        <PenaltyEntryRow
+                            bind:penaltyEntry={entries[i]}
+                        />
                     {/each}
                 </Table.Body>
             </Table.Root>

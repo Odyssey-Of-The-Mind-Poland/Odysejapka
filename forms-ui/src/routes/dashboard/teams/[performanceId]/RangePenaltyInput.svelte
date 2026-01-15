@@ -1,12 +1,16 @@
 <script lang="ts">
     import * as Select from "$lib/components/ui/select/index.js";
 
-    let {value = $bindable(), disabled = false} = $props<{
+    let {value = $bindable(), min, max, disabled = false} = $props<{
         value?: number | string | null;
+        min: number;
+        max: number;
         disabled?: boolean;
     }>();
 
-    const options = Array.from({ length: 10 }, (_, i) => i + 1);
+    const options = $derived(
+        Array.from({ length: Math.floor(max - min) + 1 }, (_, i) => min + i)
+    );
 
     let stringValue = $derived(
         value !== null && value !== undefined ? String(value) : undefined

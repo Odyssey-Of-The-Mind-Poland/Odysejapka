@@ -1,12 +1,11 @@
 <script lang="ts">
     import * as Select from "$lib/components/ui/select/index.js";
 
-    let {value = $bindable(), disabled = false} = $props<{
+    let {value = $bindable(), values, disabled = false} = $props<{
         value?: number | string | null;
+        values: number[];
         disabled?: boolean;
     }>();
-
-    const options = Array.from({ length: 10 }, (_, i) => i + 1);
 
     let stringValue = $derived(
         value !== null && value !== undefined ? String(value) : undefined
@@ -28,7 +27,7 @@
     </Select.Trigger>
     <Select.Content>
         <Select.Group>
-            {#each options as optionValue}
+            {#each values as optionValue}
                 <Select.Item value={String(optionValue)} label={String(optionValue)}>
                     {optionValue}
                 </Select.Item>

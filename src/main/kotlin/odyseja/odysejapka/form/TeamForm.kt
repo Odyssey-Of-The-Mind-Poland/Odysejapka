@@ -26,6 +26,7 @@ data class TeamForm(
     
     data class PenaltyTeamFormEntry(
         val entry: PenaltyFormEntry,
-        val result: Long?
+        val result: Long?,
+        val zeroBalsa: Boolean? = null
     )
 }
