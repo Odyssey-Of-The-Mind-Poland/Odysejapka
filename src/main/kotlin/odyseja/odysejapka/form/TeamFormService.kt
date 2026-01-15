@@ -85,13 +85,20 @@ class TeamFormService(
             val entry = templateEntry.toLongTermFormEntry(childrenByParent)
             val judgesA = createJudgeMap(judgeCount, resultEntries, templateEntry.id, JudgeType.DT_A)
             val judgesB = createJudgeMap(judgeCount, resultEntries, templateEntry.id, JudgeType.DT_B)
+            
+            // Get noElement from any result entry for this form entry (it's the same for all judges)
+            val noElement = resultEntries
+                .firstOrNull { it.formEntryEntity?.id == templateEntry.id }
+                ?.noElement
+                ?: false
 
             TeamForm.DtTeamFormEntry(
                 entry = entry,
                 results = mapOf(
                     JudgeType.DT_A to judgesA,
                     JudgeType.DT_B to judgesB
-                )
+                ),
+                noElement = noElement
             )
         }
     }

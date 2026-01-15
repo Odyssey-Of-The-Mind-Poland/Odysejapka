@@ -145,14 +145,28 @@ class FormService(
             throw IllegalArgumentException("Unknown form entry id(s): $missing")
         }
 
+        // Group results by entryId to extract noElement per entry
+        val noElementByEntryId = request.results
+            .groupBy { it.entryId }
+            .mapValues { (_, results) -> results.firstOrNull()?.noElement ?: false }
+        
         val toSave = mutableListOf<TeamResultEntryEntity>()
         request.results.forEach { r ->
             val existing = teamResultEntryRepository
                 .findByPerformanceEntityIdAndFormEntryEntityIdAndJudgeTypeAndJudge(performanceId, r.entryId, r.judgeType, r.judge)
 
             if (existing != null) {
+                var needsUpdate = false
                 if (existing.result != r.result) {
                     existing.result = r.result
+                    needsUpdate = true
+                }
+                val noElement = noElementByEntryId[r.entryId] ?: false
+                if (existing.noElement != noElement) {
+                    existing.noElement = noElement
+                    needsUpdate = true
+                }
+                if (needsUpdate) {
                     toSave += existing
                 }
             } else {
@@ -162,8 +176,24 @@ class FormService(
                     judgeType = r.judgeType
                     judge = r.judge
                     result = r.result
+                    noElement = noElementByEntryId[r.entryId] ?: false
                 }
                 toSave += entity
+            }
+        }
+        
+        // Update noElement on all existing result entries for entries in the request
+        // This ensures all judge results for an entry have the same noElement flag
+        noElementByEntryId.forEach { (entryId, noElement) ->
+            val allEntriesForFormEntry = teamResultEntryRepository
+                .findByPerformanceEntityIdAndFormEntryEntityId(performanceId, entryId)
+            allEntriesForFormEntry.forEach { entry ->
+                if (entry.noElement != noElement) {
+                    entry.noElement = noElement
+                    if (entry !in toSave) {
+                        toSave += entry
+                    }
+                }
             }
         }
 

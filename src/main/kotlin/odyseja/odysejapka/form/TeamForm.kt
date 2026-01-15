@@ -13,7 +13,8 @@ data class TeamForm(
 ) {
     data class DtTeamFormEntry(
         val entry: LongTermFormEntry,
-        val results: Map<JudgeType, Map<Int, Long?>>
+        val results: Map<JudgeType, Map<Int, Long?>>,
+        val noElement: Boolean = false
     )
     
     data class StyleTeamFormEntry(

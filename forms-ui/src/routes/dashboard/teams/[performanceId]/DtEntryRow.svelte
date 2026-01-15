@@ -18,8 +18,7 @@
         isFo: boolean;
     }>();
 
-    let noElementChecked = $state(false);
-    let previousChecked = $state(false);
+    let previousNoElement = $state(dtEntry.noElement);
 
     function isColumnEnabled(
         column: { type: 'DT_A' | 'DT_B', judge: number }
@@ -47,7 +46,7 @@
     }
 
     $effect(() => {
-        if (noElementChecked && !previousChecked) {
+        if (dtEntry.noElement && !previousNoElement) {
             Object.keys(dtEntry.results).forEach((judgeType) => {
                 const judgeMap = dtEntry.results[judgeType as JudgeType];
                 Object.keys(judgeMap).forEach((judge) => {
@@ -55,7 +54,7 @@
                 });
             });
         }
-        previousChecked = noElementChecked;
+        previousNoElement = dtEntry.noElement;
     });
 
 
@@ -83,14 +82,14 @@
                 <ObjectiveJudgeInput
                         objectiveBucketName={objectiveBucket}
                         bind:value={dtEntry.results[column.type][column.judge]}
-                        disabled={!isEnabled || noElementChecked}
+                        disabled={!isEnabled || dtEntry.noElement}
                 />
             {:else if isSubjective && subjectiveRange}
                 <SubjectiveJudgeInput
                         subjectiveRangeName={subjectiveRange}
                         isFo={isFo}
                         bind:value={dtEntry.results[column.type][column.judge]}
-                        disabled={!isEnabled || noElementChecked}
+                        disabled={!isEnabled || dtEntry.noElement}
                 />
             {:else}
                 <Input.Input
@@ -98,7 +97,7 @@
                         type="number"
                         bind:value={dtEntry.results[column.type][column.judge]}
                         class="w-24"
-                        disabled={!isEnabled || noElementChecked}
+                        disabled={!isEnabled || dtEntry.noElement}
                 />
             {/if}
         </Table.Cell>
@@ -108,7 +107,7 @@
             {@const entryId = dtEntry.entry.id ?? 0}
             <Checkbox 
                 id="no-element-{entryId}"
-                bind:checked={noElementChecked}
+                bind:checked={dtEntry.noElement}
             />
         {/if}
     </Table.Cell>

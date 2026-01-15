@@ -43,4 +43,7 @@ class TeamResultEntryEntity {
 
     @Column
     var result: Long = 0
+
+    @Column(name = "no_element")
+    var noElement: Boolean? = null
 }

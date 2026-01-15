@@ -46,6 +46,7 @@ export type TeamForm = {
     dtEntries: Array<{
         entry: LongTermFormEntry;
         results: Record<JudgeType, Record<number, number | string | null>>;
+        noElement: boolean;
     }>;
     styleEntries: Array<{
         entry: StyleFormEntry;
@@ -62,6 +63,7 @@ export type PerformanceResult = {
     judgeType: JudgeType;
     judge: number;
     result: number;
+    noElement?: boolean;
 };
 
 export type PerformanceResultsRequest = {
@@ -82,7 +84,8 @@ function toNumberOrNull(value: number | string | null | undefined): number | nul
  */
 function processEntryResults(
     entryId: number,
-    results: Record<JudgeType, Record<number, number | string | null>>
+    results: Record<JudgeType, Record<number, number | string | null>>,
+    noElement: boolean = false
 ): PerformanceResult[] {
     return Object.entries(results).flatMap(([judgeType, judgeMap]) => {
         return Object.entries(judgeMap)
@@ -93,7 +96,8 @@ function processEntryResults(
                         entryId,
                         judgeType: judgeType as JudgeType,
                         judge: Number(judge),
-                        result: numValue
+                        result: numValue,
+                        ...(noElement ? { noElement: true } : {})
                     };
                 }
                 return null;
@@ -110,7 +114,7 @@ function processDtEntries(
 ): PerformanceResult[] {
     return dtEntries.flatMap(dtEntry => {
         if (dtEntry.entry.id != null) {
-            return processEntryResults(dtEntry.entry.id, dtEntry.results);
+            return processEntryResults(dtEntry.entry.id, dtEntry.results, dtEntry.noElement);
         }
         return [];
     });
