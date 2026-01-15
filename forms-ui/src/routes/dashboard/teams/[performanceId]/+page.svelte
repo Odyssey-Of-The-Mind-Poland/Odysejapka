@@ -81,7 +81,7 @@
             Błąd ładowania formularza drużyny: {String(teamFormQuery.error)}
         </div>
     {:else if formData}
-        <DtEntriesTable bind:entries={formData.dtEntries} />
+        <DtEntriesTable bind:entries={formData.dtEntries} isFo={formData.isFo} />
         <StyleEntriesTable bind:entries={formData.styleEntries} />
         <PenaltyEntriesTable bind:entries={formData.penaltyEntries} />
 

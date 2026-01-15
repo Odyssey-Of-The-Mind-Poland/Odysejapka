@@ -56,7 +56,9 @@ fun SubjectiveRanges.toRangesResponse(): SubjectiveRangeDto {
         name = this.name,
         displayName = this.displayName,
         foDisplay = "${foRanges.min}-${foRanges.max}",
-        frDisplay = frValues.values.joinToString(", ")
+        frDisplay = frValues.values.joinToString(", "),
+        foRanges = foRanges,
+        frValues = frValues
     )
 }
 
@@ -64,5 +66,7 @@ data class SubjectiveRangeDto(
     val name: String,
     val displayName: String,
     val foDisplay: String,
-    val frDisplay: String
+    val frDisplay: String,
+    val foRanges: FoRanges,
+    val frValues: FrValues
 )

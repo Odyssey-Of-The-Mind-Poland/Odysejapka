@@ -38,12 +38,15 @@ class TeamFormService(
         val styleEntries = getStyleResults(styleEntities, results, childrenByParent, judgeCount)
         val penaltyEntries = getPenaltyResults(penaltyEntities, results, childrenByParent, judgeCount)
         
+        val isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final")
+        
         return TeamForm(
             performanceId = performanceId,
             teamName = performance.team,
             cityName = city.name,
             problem = problem,
             age = performance.ageEntity.id,
+            isFo = isFo,
             dtEntries = dtEntries,
             styleEntries = styleEntries,
             penaltyEntries = penaltyEntries

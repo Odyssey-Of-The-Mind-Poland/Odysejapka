@@ -3,9 +3,11 @@
     import * as Input from "$lib/components/ui/input/index.js";
     import type {TeamForm, JudgeType} from "$lib/utils/form-results";
     import ObjectiveJudgeInput from "./ObjectiveJudgeInput.svelte";
+    import SubjectiveJudgeInput from "./SubjectiveJudgeInput.svelte";
 
-    const {entries = $bindable()} = $props<{
+    const {entries = $bindable(), isFo = false} = $props<{
         entries: TeamForm['dtEntries'];
+        isFo: boolean;
     }>();
 
     function getJudgeKeys(results: Record<JudgeType, Record<number, number | string | null>>): number[] {
@@ -106,7 +108,9 @@
                 <Table.Body>
                     {#each entries as dtEntry (dtEntry.entry.id)}
                         {@const objectiveBucket = dtEntry.entry.scoring?.objectiveBucket}
+                        {@const subjectiveRange = dtEntry.entry.scoring?.subjectiveRange}
                         {@const isObjective = dtEntry.entry.scoring?.scoringType === 'OBJECTIVE' && objectiveBucket}
+                        {@const isSubjective = dtEntry.entry.scoring?.scoringType === 'SUBJECTIVE' && subjectiveRange}
                         <Table.Row>
                             <Table.Cell>
                                 <div class="flex flex-col">
@@ -124,6 +128,13 @@
                                     {#if isObjective && objectiveBucket}
                                         <ObjectiveJudgeInput
                                                 objectiveBucketName={objectiveBucket}
+                                                bind:value={dtEntry.results[column.type][column.judge]}
+                                                disabled={!isEnabled}
+                                        />
+                                    {:else if isSubjective && subjectiveRange}
+                                        <SubjectiveJudgeInput
+                                                subjectiveRangeName={subjectiveRange}
+                                                isFo={isFo}
                                                 bind:value={dtEntry.results[column.type][column.judge]}
                                                 disabled={!isEnabled}
                                         />

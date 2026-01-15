@@ -42,6 +42,7 @@ export type TeamForm = {
     cityName: string;
     problem: number;
     age: number;
+    isFo: boolean;
     dtEntries: Array<{
         entry: LongTermFormEntry;
         results: Record<JudgeType, Record<number, number | string | null>>;
