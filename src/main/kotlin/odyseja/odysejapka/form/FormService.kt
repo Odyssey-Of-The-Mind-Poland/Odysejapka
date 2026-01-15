@@ -1,8 +1,5 @@
 package odyseja.odysejapka.form
 
-import jakarta.persistence.EntityNotFoundException
-import odyseja.odysejapka.city.CityRepository
-import odyseja.odysejapka.timetable.PerformanceRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -11,9 +8,9 @@ class FormService(
     private val formEntryRepository: FormEntryRepository,
     private val formProblemRepository: FormProblemRepository,
     private val teamResultEntryRepository: TeamResultEntryRepository,
-    private val performanceRepository: PerformanceRepository,
-    private val cityRepository: CityRepository,
     private val teamFormService: TeamFormService,
+    private val judgeCountService: JudgeCountService,
+    private val teamResultService: TeamResultService,
 ) {
 
     @Transactional
@@ -22,210 +19,119 @@ class FormService(
         val existingById = existing.associateBy { it.id }
         val existingByCategory = existing.groupBy { it.formCategory }
 
-        fun purgeMissing(ids: Set<Long>, category: FormEntryEntity.FormCategory) {
-            val toDelete = existingByCategory[category].orEmpty()
-                .filter { it.id !in ids }
+        purgeMissingEntries(existingByCategory, form)
+        val toPersist = buildEntitiesToPersist(problem, form, existingById)
+        formEntryRepository.saveAll(toPersist)
+        judgeCountService.setJudgesCount(problem, form.smallJudgesTeam, form.bigJudgesTeam)
+    }
 
-            if (toDelete.isNotEmpty()) {
-                toDelete.forEach { teamResultEntryRepository.deleteAllByFormEntryEntity(it) }
-                formEntryRepository.deleteAll(toDelete)
-            }
-        }
-
+    private fun purgeMissingEntries(
+        existingByCategory: Map<FormEntryEntity.FormCategory, List<FormEntryEntity>>,
+        form: ProblemForm
+    ) {
         val dtIds = FormEntryEntityConverter.collectAllIds(form.dtEntries)
         val styleIds = FormEntryEntityConverter.collectStyleIds(form.styleEntries)
         val penaltyIds = FormEntryEntityConverter.collectPenaltyIds(form.penaltyEntries)
 
-        purgeMissing(dtIds, FormEntryEntity.FormCategory.DT)
-        purgeMissing(styleIds, FormEntryEntity.FormCategory.STYLE)
-        purgeMissing(penaltyIds, FormEntryEntity.FormCategory.PENALTY)
-
-        val toPersist = buildList {
-            addAll(
-                FormEntryEntityConverter.flattenLongTermToEntities(
-                    problem,
-                    form.dtEntries,
-                    FormEntryEntity.FormCategory.DT,
-                    existingById
-                )
-            )
-            addAll(
-                FormEntryEntityConverter.flattenStyleToEntities(
-                    problem,
-                    form.styleEntries,
-                    FormEntryEntity.FormCategory.STYLE,
-                    existingById
-                )
-            )
-            addAll(
-                FormEntryEntityConverter.flattenPenaltyToEntities(
-                    problem,
-                    form.penaltyEntries,
-                    FormEntryEntity.FormCategory.PENALTY,
-                    existingById
-                )
-            )
-        }
-
-        formEntryRepository.saveAll(toPersist)
-
-        setJudgesCount(problem, form.smallJudgesTeam, form.bigJudgesTeam)
+        purgeMissing(dtIds, FormEntryEntity.FormCategory.DT, existingByCategory)
+        purgeMissing(styleIds, FormEntryEntity.FormCategory.STYLE, existingByCategory)
+        purgeMissing(penaltyIds, FormEntryEntity.FormCategory.PENALTY, existingByCategory)
     }
+
+    private fun purgeMissing(
+        ids: Set<Long>,
+        category: FormEntryEntity.FormCategory,
+        existingByCategory: Map<FormEntryEntity.FormCategory, List<FormEntryEntity>>
+    ) {
+        val toDelete = existingByCategory[category].orEmpty()
+            .filter { it.id !in ids }
+        if (toDelete.isEmpty()) return
+
+        toDelete.forEach { teamResultEntryRepository.deleteAllByFormEntryEntity(it) }
+        formEntryRepository.deleteAll(toDelete)
+    }
+
+    private fun buildEntitiesToPersist(
+        problem: Int,
+        form: ProblemForm,
+        existingById: Map<Long, FormEntryEntity>
+    ): List<FormEntryEntity> {
+        return buildList {
+            addAll(buildDtEntities(problem, form, existingById))
+            addAll(buildStyleEntities(problem, form, existingById))
+            addAll(buildPenaltyEntities(problem, form, existingById))
+        }
+    }
+
+    private fun buildDtEntities(
+        problem: Int,
+        form: ProblemForm,
+        existingById: Map<Long, FormEntryEntity>
+    ) = FormEntryEntityConverter.flattenLongTermToEntities(
+        problem, form.dtEntries, FormEntryEntity.FormCategory.DT, existingById
+    )
+
+    private fun buildStyleEntities(
+        problem: Int,
+        form: ProblemForm,
+        existingById: Map<Long, FormEntryEntity>
+    ) = FormEntryEntityConverter.flattenStyleToEntities(
+        problem, form.styleEntries, FormEntryEntity.FormCategory.STYLE, existingById
+    )
+
+    private fun buildPenaltyEntities(
+        problem: Int,
+        form: ProblemForm,
+        existingById: Map<Long, FormEntryEntity>
+    ) = FormEntryEntityConverter.flattenPenaltyToEntities(
+        problem, form.penaltyEntries, FormEntryEntity.FormCategory.PENALTY, existingById
+    )
 
 
     fun getProblemForm(problem: Int): ProblemForm {
         val entries = formEntryRepository.findByProblem(problem)
         val problemEntities = formProblemRepository.findByProblem(problem)
-        
-        val smallJudgesTeam = problemEntities
-            .filter { it.judgeCount == 1 }
-            .mapNotNull { it.city?.id }
-            .ifEmpty { null }
-        
-        val bigJudgesTeam = problemEntities
-            .filter { it.judgeCount == 2 }
-            .mapNotNull { it.city?.id }
-            .ifEmpty { null }
-        
+        val smallJudgesTeam = extractJudgeTeamIds(problemEntities, 1)
+        val bigJudgesTeam = extractJudgeTeamIds(problemEntities, 2)
+
         return ProblemForm(
-            FormEntryEntityConverter.reconstructLongTermFromEntities(
-                entries.filter { it.formCategory == FormEntryEntity.FormCategory.DT }
-            ),
-            FormEntryEntityConverter.reconstructStyleFromEntities(
-                entries.filter { it.formCategory == FormEntryEntity.FormCategory.STYLE }
-            ),
-            FormEntryEntityConverter.reconstructPenaltyFromEntities(
-                entries.filter { it.formCategory == FormEntryEntity.FormCategory.PENALTY }
-            ),
+            dtEntries = reconstructDtEntries(entries),
+            styleEntries = reconstructStyleEntries(entries),
+            penaltyEntries = reconstructPenaltyEntries(entries),
             smallJudgesTeam = smallJudgesTeam,
             bigJudgesTeam = bigJudgesTeam
         )
     }
 
-    @Transactional
-    fun setJudgesCount(problem: Int, smallJudgesTeam: List<Int>?, bigJudgesTeam: List<Int>?) {
-        smallJudgesTeam?.forEach { cityId ->
-            val city = cityRepository.findFirstById(cityId)
-            val problemEntity =
-                formProblemRepository.findByProblemAndCity(problem, city) ?: FormProblemEntity.create(problem, city)
-            problemEntity.judgeCount = 1
-            formProblemRepository.save(problemEntity)
-        }
-
-        bigJudgesTeam?.forEach { cityId ->
-            val city = cityRepository.findFirstById(cityId)
-            val problemEntity =
-                formProblemRepository.findByProblemAndCity(problem, city) ?: FormProblemEntity.create(problem, city)
-            problemEntity.judgeCount = 2
-            formProblemRepository.save(problemEntity)
-        }
+    private fun extractJudgeTeamIds(problemEntities: List<FormProblemEntity>, judgeCount: Int): List<Int>? {
+        val ids = problemEntities
+            .filter { it.judgeCount == judgeCount }
+            .mapNotNull { it.city?.id }
+        return ids.ifEmpty { null }
     }
 
-    fun getJudgeCount(problem: Int, cityId: Int): JudgeCountResponse {
-        val city = cityRepository.findFirstById(cityId)
-        val problemEntity = formProblemRepository.findByProblemAndCity(problem, city)
-            ?: throw EntityNotFoundException("No judge count set for problem $problem and city $cityId")
-        return JudgeCountResponse(
-            judgeCount = problemEntity.judgeCount
+    private fun reconstructDtEntries(entries: List<FormEntryEntity>) =
+        FormEntryEntityConverter.reconstructLongTermFromEntities(
+            entries.filter { it.formCategory == FormEntryEntity.FormCategory.DT }
         )
+
+    private fun reconstructStyleEntries(entries: List<FormEntryEntity>) =
+        FormEntryEntityConverter.reconstructStyleFromEntities(
+            entries.filter { it.formCategory == FormEntryEntity.FormCategory.STYLE }
+        )
+
+    private fun reconstructPenaltyEntries(entries: List<FormEntryEntity>) =
+        FormEntryEntityConverter.reconstructPenaltyFromEntities(
+            entries.filter { it.formCategory == FormEntryEntity.FormCategory.PENALTY }
+        )
+
+    fun getJudgeCount(problem: Int, cityId: Int): JudgeCountResponse {
+        return judgeCountService.getJudgeCount(problem, cityId)
     }
 
     @Transactional
     fun setTeamResults(performanceId: Int, request: PerformanceResultsRequest) {
-        val performance = performanceRepository.findById(performanceId)
-            .orElseThrow { IllegalArgumentException("Performance $performanceId not found") }
-
-        if (request.results.isEmpty()) return
-
-        val entryIds = request.results.map { it.entryId }.toSet()
-        val formEntries = formEntryRepository.findAllById(entryIds)
-        val formEntryById = formEntries.associateBy { it.id }
-        val missing = entryIds - formEntryById.keys
-        if (missing.isNotEmpty()) {
-            throw IllegalArgumentException("Unknown form entry id(s): $missing")
-        }
-
-        val noElementByEntryId = request.results
-            .groupBy { it.entryId }
-            .mapValues { (_, results) -> results.firstOrNull()?.noElement ?: false }
-        
-        val styleNameByEntryId = request.results
-            .filter { it.judgeType == JudgeType.STYLE }
-            .groupBy { it.entryId }
-            .mapValues { (_, results) -> results.firstOrNull()?.styleName }
-        
-        val toSave = mutableListOf<TeamResultEntryEntity>()
-        request.results.forEach { r ->
-            val existing = teamResultEntryRepository
-                .findByPerformanceEntityIdAndFormEntryEntityIdAndJudgeTypeAndJudge(performanceId, r.entryId, r.judgeType, r.judge)
-
-            if (existing != null) {
-                var needsUpdate = false
-                if (existing.result != r.result) {
-                    existing.result = r.result
-                    needsUpdate = true
-                }
-                val noElement = noElementByEntryId[r.entryId] ?: false
-                if (existing.noElement != noElement) {
-                    existing.noElement = noElement
-                    needsUpdate = true
-                }
-                if (r.judgeType == JudgeType.STYLE) {
-                    val styleName = styleNameByEntryId[r.entryId]
-                    if (existing.styleName != styleName) {
-                        existing.styleName = styleName
-                        needsUpdate = true
-                    }
-                }
-                if (needsUpdate) {
-                    toSave += existing
-                }
-            } else {
-                val entity = TeamResultEntryEntity().apply {
-                    performanceEntity = performance
-                    formEntryEntity = formEntryById.getValue(r.entryId)
-                    judgeType = r.judgeType
-                    judge = r.judge
-                    result = r.result
-                    noElement = noElementByEntryId[r.entryId] ?: false
-                    if (r.judgeType == JudgeType.STYLE) {
-                        styleName = styleNameByEntryId[r.entryId]
-                    }
-                }
-                toSave += entity
-            }
-        }
-        
-        noElementByEntryId.forEach { (entryId, noElement) ->
-            val allEntriesForFormEntry = teamResultEntryRepository
-                .findByPerformanceEntityIdAndFormEntryEntityId(performanceId, entryId)
-            allEntriesForFormEntry.forEach { entry ->
-                if (entry.noElement != noElement) {
-                    entry.noElement = noElement
-                    if (entry !in toSave) {
-                        toSave += entry
-                    }
-                }
-            }
-        }
-        
-        styleNameByEntryId.forEach { (entryId, styleName) ->
-            val allStyleEntriesForFormEntry = teamResultEntryRepository
-                .findByPerformanceEntityIdAndFormEntryEntityId(performanceId, entryId)
-                .filter { it.judgeType == JudgeType.STYLE }
-            allStyleEntriesForFormEntry.forEach { entry ->
-                if (entry.styleName != styleName) {
-                    entry.styleName = styleName
-                    if (entry !in toSave) {
-                        toSave += entry
-                    }
-                }
-            }
-        }
-
-        if (toSave.isNotEmpty()) {
-            teamResultEntryRepository.saveAll(toSave)
-        }
+        teamResultService.setTeamResults(performanceId, request)
     }
 
     fun getTeamForm(performanceId: Int): TeamForm {
