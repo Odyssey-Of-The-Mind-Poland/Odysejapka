@@ -3,9 +3,10 @@
     import type {TeamForm, JudgeType} from "$lib/utils/form-results";
     import DtEntryRow from "./DtEntryRow.svelte";
 
-    const {entries = $bindable(), isFo = false} = $props<{
+    const {entries = $bindable(), isFo = false, showHeader = true} = $props<{
         entries: TeamForm['dtEntries'];
         isFo: boolean;
+        showHeader?: boolean;
     }>();
 
     function getJudgeKeys(results: Record<JudgeType, Record<number, number | string | null>>): number[] {
@@ -65,20 +66,24 @@
     {@const allColumns = getAllJudgeColumns(entries)}
     {@const maxJudgeCount = getMaxJudgeCount(entries)}
     <div class="flex flex-col gap-2">
-        <h2 class="text-xl font-semibold">Wpisy DT</h2>
+        {#if showHeader}
+            <h2 class="text-xl font-semibold">Wpisy DT</h2>
+        {/if}
         <div class="rounded-md border">
             <Table.Root>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.Head>Nazwa</Table.Head>
-                        {#each allColumns as column}
-                            <Table.Head>{getColumnLabel(column.type, column.judge)}</Table.Head>
-                        {/each}
-                        <Table.Head>
-                            Brak elementu
-                        </Table.Head>
-                    </Table.Row>
-                </Table.Header>
+                {#if showHeader}
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.Head>Nazwa</Table.Head>
+                            {#each allColumns as column}
+                                <Table.Head>{getColumnLabel(column.type, column.judge)}</Table.Head>
+                            {/each}
+                            <Table.Head>
+                                Brak elementu
+                            </Table.Head>
+                        </Table.Row>
+                    </Table.Header>
+                {/if}
                 <Table.Body>
                     {#each entries as dtEntry, i (dtEntry.entry.id)}
                         <DtEntryRow

@@ -36,6 +36,13 @@ export type PenaltyFormEntry = {
 
 export type JudgeType = 'DT_A' | 'DT_B' | 'STYLE';
 
+export type DtTeamFormEntry = {
+    entry: LongTermFormEntry;
+    results: Record<JudgeType, Record<number, number | string | null>>;
+    noElement: boolean;
+    nestedEntries?: DtTeamFormEntry[];
+};
+
 export type TeamForm = {
     performanceId: number;
     teamName: string;
@@ -43,11 +50,7 @@ export type TeamForm = {
     problem: number;
     age: number;
     isFo: boolean;
-    dtEntries: Array<{
-        entry: LongTermFormEntry;
-        results: Record<JudgeType, Record<number, number | string | null>>;
-        noElement: boolean;
-    }>;
+    dtEntries: DtTeamFormEntry[];
     styleEntries: Array<{
         entry: StyleFormEntry;
         results: Record<JudgeType, Record<number, number | string | null>>;
@@ -113,10 +116,16 @@ function processDtEntries(
     dtEntries: TeamForm['dtEntries']
 ): PerformanceResult[] {
     return dtEntries.flatMap(dtEntry => {
+        const results: PerformanceResult[] = [];
+        // Process main entry
         if (dtEntry.entry.id != null) {
-            return processEntryResults(dtEntry.entry.id, dtEntry.results, dtEntry.noElement);
+            results.push(...processEntryResults(dtEntry.entry.id, dtEntry.results, dtEntry.noElement));
         }
-        return [];
+        // Process nested entries recursively
+        if (dtEntry.nestedEntries && dtEntry.nestedEntries.length > 0) {
+            results.push(...processDtEntries(dtEntry.nestedEntries));
+        }
+        return results;
     });
 }
 

@@ -1,21 +1,24 @@
 <script lang="ts">
     import * as Table from "$lib/components/ui/table/index.js";
     import * as Input from "$lib/components/ui/input/index.js";
-    import type {TeamForm, JudgeType} from "$lib/utils/form-results";
+    import type {TeamForm, JudgeType, DtTeamFormEntry} from "$lib/utils/form-results";
     import ObjectiveJudgeInput from "./ObjectiveJudgeInput.svelte";
     import SubjectiveJudgeInput from "./SubjectiveJudgeInput.svelte";
     import {Checkbox} from "$lib/components/ui/checkbox";
+    import DtEntriesTable from "./DtEntriesTable.svelte";
 
     const {
         dtEntry = $bindable(),
         allColumns,
         maxJudgeCount,
-        isFo = false
+        isFo = false,
+        showNested = true
     } = $props<{
-        dtEntry: TeamForm['dtEntries'][0];
+        dtEntry: DtTeamFormEntry;
         allColumns: Array<{ type: 'DT_A' | 'DT_B', judge: number }>;
         maxJudgeCount: number;
         isFo: boolean;
+        showNested?: boolean;
     }>();
 
     let previousNoElement = $state(dtEntry.noElement);
@@ -91,19 +94,11 @@
                         bind:value={dtEntry.results[column.type][column.judge]}
                         disabled={!isEnabled || dtEntry.noElement}
                 />
-            {:else}
-                <Input.Input
-                        id="judge-{column.type}-{dtEntry.entry.id}-{column.judge}"
-                        type="number"
-                        bind:value={dtEntry.results[column.type][column.judge]}
-                        class="w-24"
-                        disabled={!isEnabled || dtEntry.noElement}
-                />
             {/if}
         </Table.Cell>
     {/each}
     <Table.Cell>
-        {#if dtEntry.entry.scoring.noElementEnabled}
+        {#if dtEntry.entry.scoring?.noElementEnabled}
             {@const entryId = dtEntry.entry.id ?? 0}
             <Checkbox 
                 id="no-element-{entryId}"
@@ -112,4 +107,18 @@
         {/if}
     </Table.Cell>
 </Table.Row>
+{#if showNested && dtEntry.nestedEntries && dtEntry.nestedEntries.length > 0 && 
+    (dtEntry.entry.type === 'SCORING_GROUP' || dtEntry.entry.type === 'SECTION')}
+    <Table.Row>
+        <Table.Cell colspan={allColumns.length + 2} class="p-0">
+            <div class="pl-8 pr-4 py-4">
+                <DtEntriesTable 
+                    entries={dtEntry.nestedEntries}
+                    isFo={isFo}
+                    showHeader={false}
+                />
+            </div>
+        </Table.Cell>
+    </Table.Row>
+{/if}
 

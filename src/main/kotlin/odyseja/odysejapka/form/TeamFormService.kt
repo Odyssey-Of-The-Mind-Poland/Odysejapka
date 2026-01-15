@@ -19,9 +19,9 @@ class TeamFormService(
         val city = performance.cityEntity
         val template = formEntryRepository.findByProblem(problem)
         val results = teamResultEntryRepository.findByPerformanceEntityId(performanceId)
-        
+
         val judgeCount = formProblemRepository.findByProblemAndCity(problem, city)?.judgeCount ?: 1
-        
+
         val dtEntities = template
             .filter { it.formCategory == FormEntryEntity.FormCategory.DT && it.parent == null }
             .sortedBy { it.orderIndex }
@@ -31,15 +31,15 @@ class TeamFormService(
         val penaltyEntities = template
             .filter { it.formCategory == FormEntryEntity.FormCategory.PENALTY && it.parent == null }
             .sortedBy { it.orderIndex }
-        
+
         val childrenByParent = buildChildrenMap(template)
-        
+
         val dtEntries = getDtResults(dtEntities, results, childrenByParent, judgeCount)
         val styleEntries = getStyleResults(styleEntities, results, childrenByParent, judgeCount)
         val penaltyEntries = getPenaltyResults(penaltyEntities, results, childrenByParent, judgeCount)
-        
+
         val isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final")
-        
+
         return TeamForm(
             performanceId = performanceId,
             teamName = performance.team,
@@ -69,7 +69,7 @@ class TeamFormService(
             .filter { it.formEntryEntity?.id == entryId && it.judgeType == judgeType }
             .groupBy { it.judge }
             .mapValues { (_, entries) -> entries.sumOf { it.result } }
-        
+
         return (1..judgeCount).associateWith { judgeIndex ->
             resultMap[judgeIndex]
         }
@@ -85,12 +85,13 @@ class TeamFormService(
             val entry = templateEntry.toLongTermFormEntry(childrenByParent)
             val judgesA = createJudgeMap(judgeCount, resultEntries, templateEntry.id, JudgeType.DT_A)
             val judgesB = createJudgeMap(judgeCount, resultEntries, templateEntry.id, JudgeType.DT_B)
-            
-            // Get noElement from any result entry for this form entry (it's the same for all judges)
+
             val noElement = resultEntries
                 .firstOrNull { it.formEntryEntity?.id == templateEntry.id }
                 ?.noElement
                 ?: false
+
+            val nestedEntries = getNestedEntries(entry, childrenByParent, templateEntry, resultEntries, judgeCount)
 
             TeamForm.DtTeamFormEntry(
                 entry = entry,
@@ -98,9 +99,26 @@ class TeamFormService(
                     JudgeType.DT_A to judgesA,
                     JudgeType.DT_B to judgesB
                 ),
-                noElement = noElement
+                noElement = noElement,
+                nestedEntries = nestedEntries
             )
         }
+    }
+
+    private fun getNestedEntries(
+        entry: LongTermFormEntry,
+        childrenByParent: Map<Long, List<FormEntryEntity>>,
+        templateEntry: FormEntryEntity,
+        resultEntries: List<TeamResultEntryEntity>,
+        judgeCount: Int
+    ): List<TeamForm.DtTeamFormEntry> = if (entry.entries.isNotEmpty() &&
+        (entry.type == LongTermFormEntry.EntryType.SCORING_GROUP ||
+                entry.type == LongTermFormEntry.EntryType.SECTION)
+    ) {
+        val nestedTemplateEntries = childrenByParent[templateEntry.id] ?: emptyList()
+        getDtResults(nestedTemplateEntries, resultEntries, childrenByParent, judgeCount)
+    } else {
+        emptyList()
     }
 
     private fun getStyleResults(
@@ -128,10 +146,10 @@ class TeamFormService(
     ): List<TeamForm.PenaltyTeamFormEntry> {
         return templateEntries.map { templateEntry ->
             val entry = templateEntry.toPenaltyFormEntry(childrenByParent)
-            
+
             val penaltyResult = resultEntries
                 .firstOrNull { it.formEntryEntity?.id == templateEntry.id }
-            
+
             val result = penaltyResult?.result
 
             TeamForm.PenaltyTeamFormEntry(

@@ -14,7 +14,8 @@ data class TeamForm(
     data class DtTeamFormEntry(
         val entry: LongTermFormEntry,
         val results: Map<JudgeType, Map<Int, Long?>>,
-        val noElement: Boolean = false
+        val noElement: Boolean = false,
+        val nestedEntries: List<DtTeamFormEntry> = emptyList()
     )
     
     data class StyleTeamFormEntry(
