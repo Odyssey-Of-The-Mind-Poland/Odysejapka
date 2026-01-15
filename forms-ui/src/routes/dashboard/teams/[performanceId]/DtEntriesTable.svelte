@@ -1,9 +1,7 @@
 <script lang="ts">
     import * as Table from "$lib/components/ui/table/index.js";
-    import * as Input from "$lib/components/ui/input/index.js";
     import type {TeamForm, JudgeType} from "$lib/utils/form-results";
-    import ObjectiveJudgeInput from "./ObjectiveJudgeInput.svelte";
-    import SubjectiveJudgeInput from "./SubjectiveJudgeInput.svelte";
+    import DtEntryRow from "./DtEntryRow.svelte";
 
     const {entries = $bindable(), isFo = false} = $props<{
         entries: TeamForm['dtEntries'];
@@ -61,33 +59,6 @@
         });
         return maxJudge || 1;
     }
-
-    function isColumnEnabled(
-        column: { type: 'DT_A' | 'DT_B', judge: number },
-        entry: TeamForm['dtEntries'][0],
-        maxJudgeCount: number
-    ): boolean {
-        if (column.judge > maxJudgeCount) {
-            return false;
-        }
-
-        const judgesConfig = entry.entry.scoring?.judges;
-        if (!judgesConfig) {
-            return true;
-        }
-
-        if (judgesConfig === 'A') {
-            return column.type === 'DT_A';
-        }
-        if (judgesConfig === 'B') {
-            return column.type === 'DT_B';
-        }
-        if (judgesConfig === 'A_PLUS_B') {
-            return true;
-        }
-
-        return true;
-    }
 </script>
 
 {#if entries.length > 0}
@@ -103,53 +74,19 @@
                         {#each allColumns as column}
                             <Table.Head>{getColumnLabel(column.type, column.judge)}</Table.Head>
                         {/each}
+                        <Table.Head>
+                            Brak elementu
+                        </Table.Head>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {#each entries as dtEntry (dtEntry.entry.id)}
-                        {@const objectiveBucket = dtEntry.entry.scoring?.objectiveBucket}
-                        {@const subjectiveRange = dtEntry.entry.scoring?.subjectiveRange}
-                        {@const isObjective = dtEntry.entry.scoring?.scoringType === 'OBJECTIVE' && objectiveBucket}
-                        {@const isSubjective = dtEntry.entry.scoring?.scoringType === 'SUBJECTIVE' && subjectiveRange}
-                        <Table.Row>
-                            <Table.Cell>
-                                <div class="flex flex-col">
-                                    <div class="font-extralight text-sm">
-                                        {dtEntry.entry.sortIndex}
-                                    </div>
-                                    <div class="font-medium">
-                                        {dtEntry.entry.name}
-                                    </div>
-                                </div>
-                            </Table.Cell>
-                            {#each allColumns as column}
-                                {@const isEnabled = isColumnEnabled(column, dtEntry, maxJudgeCount)}
-                                <Table.Cell>
-                                    {#if isObjective && objectiveBucket}
-                                        <ObjectiveJudgeInput
-                                                objectiveBucketName={objectiveBucket}
-                                                bind:value={dtEntry.results[column.type][column.judge]}
-                                                disabled={!isEnabled}
-                                        />
-                                    {:else if isSubjective && subjectiveRange}
-                                        <SubjectiveJudgeInput
-                                                subjectiveRangeName={subjectiveRange}
-                                                isFo={isFo}
-                                                bind:value={dtEntry.results[column.type][column.judge]}
-                                                disabled={!isEnabled}
-                                        />
-                                    {:else}
-                                        <Input.Input
-                                                id="judge-{column.type}-{dtEntry.entry.id}-{column.judge}"
-                                                type="number"
-                                                bind:value={dtEntry.results[column.type][column.judge]}
-                                                class="w-24"
-                                                disabled={!isEnabled}
-                                        />
-                                    {/if}
-                                </Table.Cell>
-                            {/each}
-                        </Table.Row>
+                    {#each entries as dtEntry, i (dtEntry.entry.id)}
+                        <DtEntryRow
+                            bind:dtEntry={entries[i]}
+                            allColumns={allColumns}
+                            maxJudgeCount={maxJudgeCount}
+                            isFo={isFo}
+                        />
                     {/each}
                 </Table.Body>
             </Table.Root>
