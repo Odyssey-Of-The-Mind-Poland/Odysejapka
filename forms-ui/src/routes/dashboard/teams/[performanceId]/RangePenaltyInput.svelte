@@ -8,9 +8,12 @@
         disabled?: boolean;
     }>();
 
-    const options = $derived(
-        Array.from({ length: Math.floor(max - min) + 1 }, (_, i) => min + i)
-    );
+    const options = $derived.by(() => {
+        const rangeOptions = Array.from({ length: Math.floor(max - min) + 1 }, (_, i) => min + i);
+        // Always include 0, remove duplicates and sort
+        const allOptions = [...new Set([0, ...rangeOptions])].sort((a, b) => a - b);
+        return allOptions;
+    });
 
     let stringValue = $derived(
         value !== null && value !== undefined ? String(value) : undefined

@@ -7,6 +7,11 @@
         disabled?: boolean;
     }>();
 
+    // Always include 0, remove duplicates and sort
+    const allValues = $derived.by(() => {
+        return [...new Set([0, ...values])].sort((a, b) => a - b);
+    });
+
     let stringValue = $derived(
         value !== null && value !== undefined ? String(value) : undefined
     );
@@ -27,7 +32,7 @@
     </Select.Trigger>
     <Select.Content>
         <Select.Group>
-            {#each values as optionValue}
+            {#each allValues as optionValue}
                 <Select.Item value={String(optionValue)} label={String(optionValue)}>
                     {optionValue}
                 </Select.Item>

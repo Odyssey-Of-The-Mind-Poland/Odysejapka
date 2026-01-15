@@ -16,7 +16,6 @@
                 <Table.Header>
                     <Table.Row>
                         <Table.Head>Wpis</Table.Head>
-                        <Table.Head>Typ kary</Table.Head>
                         <Table.Head>Wartość</Table.Head>
                     </Table.Row>
                 </Table.Header>

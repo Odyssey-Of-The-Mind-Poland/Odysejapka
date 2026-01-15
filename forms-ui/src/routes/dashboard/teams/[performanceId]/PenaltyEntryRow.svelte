@@ -24,7 +24,6 @@
             </div>
         </div>
     </Table.Cell>
-    <Table.Cell>{penaltyEntry.entry.penaltyType || 'N/A'}</Table.Cell>
     <Table.Cell>
         {#if penaltyEntry.entry.penaltyType === 'RANGE' && penaltyEntry.entry.penaltyRange}
             <RangePenaltyInput
