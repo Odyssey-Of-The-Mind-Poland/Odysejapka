@@ -22,6 +22,9 @@
             : (penaltyEntry.result ? Number(penaltyEntry.result) : 0);
         return numValue > 0;
     });
+
+    const commentLength = $derived(penaltyEntry.comment?.length ?? 0);
+    const maxCommentLength = 100;
 </script>
 
 <Table.Row>
@@ -59,13 +62,21 @@
         {/if}
     </Table.Cell>
     <Table.Cell>
-        <Input.Input
-            type="text"
-            bind:value={penaltyEntry.comment}
-            class="w-full"
-            disabled={!isCommentEnabled}
-            placeholder={isCommentEnabled ? "Komentarz" : ""}
-        />
+        <div class="flex flex-col gap-1">
+            <Input.Input
+                type="text"
+                bind:value={penaltyEntry.comment}
+                class="w-full"
+                disabled={!isCommentEnabled}
+                placeholder={isCommentEnabled ? "Komentarz" : ""}
+                maxlength={maxCommentLength}
+            />
+            {#if isCommentEnabled}
+                <div class="text-xs text-muted-foreground text-right">
+                    {commentLength}/{maxCommentLength}
+                </div>
+            {/if}
+        </div>
     </Table.Cell>
 </Table.Row>
 
