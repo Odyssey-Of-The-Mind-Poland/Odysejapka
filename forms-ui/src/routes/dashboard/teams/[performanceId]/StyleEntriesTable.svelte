@@ -31,7 +31,7 @@
 {#if entries.length > 0}
     {@const allJudgeColumns = getAllJudgeColumns(entries)}
     <div class="flex flex-col gap-2">
-        <h2 class="text-xl font-semibold">Wpisy stylu</h2>
+        <h2 class="text-xl font-semibold">Styl</h2>
         <div class="rounded-md border">
             <Table.Root>
                 <Table.Header>

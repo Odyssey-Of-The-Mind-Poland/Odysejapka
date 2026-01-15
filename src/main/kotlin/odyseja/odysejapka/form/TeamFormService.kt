@@ -36,7 +36,7 @@ class TeamFormService(
 
         val dtEntries = getDtResults(dtEntities, results, childrenByParent, judgeCount)
         val styleEntries = getStyleResults(styleEntities, results, childrenByParent, judgeCount)
-        val penaltyEntries = getPenaltyResults(penaltyEntities, results, childrenByParent, judgeCount)
+        val penaltyEntries = getPenaltyResults(penaltyEntities, results, childrenByParent)
 
         val isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final")
 
@@ -147,7 +147,6 @@ class TeamFormService(
         templateEntries: List<FormEntryEntity>,
         resultEntries: List<TeamResultEntryEntity>,
         childrenByParent: Map<Long, List<FormEntryEntity>>,
-        judgeCount: Int
     ): List<TeamForm.PenaltyTeamFormEntry> {
         return templateEntries.map { templateEntry ->
             val entry = templateEntry.toPenaltyFormEntry(childrenByParent)
@@ -157,11 +156,13 @@ class TeamFormService(
 
             val result = penaltyResult?.result
             val zeroBalsa = penaltyResult?.zeroBalsa
+            val comment = penaltyResult?.comment
 
             TeamForm.PenaltyTeamFormEntry(
                 entry = entry,
                 result = result,
-                zeroBalsa = zeroBalsa
+                zeroBalsa = zeroBalsa,
+                comment = comment
             )
         }
     }

@@ -10,13 +10,14 @@
 
 {#if entries.length > 0}
     <div class="flex flex-col gap-2">
-        <h2 class="text-xl font-semibold">Wpisy kar</h2>
+        <h2 class="text-xl font-semibold">Karne</h2>
         <div class="rounded-md border">
             <Table.Root>
                 <Table.Header>
                     <Table.Row>
                         <Table.Head>Wpis</Table.Head>
                         <Table.Head>Wartość</Table.Head>
+                        <Table.Head>Komentarz</Table.Head>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>

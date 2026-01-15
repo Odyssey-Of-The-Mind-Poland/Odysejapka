@@ -1,5 +1,6 @@
 <script lang="ts">
     import * as Table from "$lib/components/ui/table/index.js";
+    import * as Input from "$lib/components/ui/input/index.js";
     import type {TeamForm} from "$lib/utils/form-results";
     import RangePenaltyInput from "./RangePenaltyInput.svelte";
     import DiscretePenaltyInput from "./DiscretePenaltyInput.svelte";
@@ -11,6 +12,16 @@
     } = $props<{
         penaltyEntry: TeamForm['penaltyEntries'][0];
     }>();
+
+    const isCommentEnabled = $derived.by(() => {
+        if (penaltyEntry.entry.penaltyType === 'ZERO_BALSA') {
+            return penaltyEntry.zeroBalsa === true;
+        }
+        const numValue = typeof penaltyEntry.result === 'number' 
+            ? penaltyEntry.result 
+            : (penaltyEntry.result ? Number(penaltyEntry.result) : 0);
+        return numValue > 0;
+    });
 </script>
 
 <Table.Row>
@@ -46,6 +57,15 @@
                 bind:checked={penaltyEntry.zeroBalsa}
             />
         {/if}
+    </Table.Cell>
+    <Table.Cell>
+        <Input.Input
+            type="text"
+            bind:value={penaltyEntry.comment}
+            class="w-full"
+            disabled={!isCommentEnabled}
+            placeholder={isCommentEnabled ? "Komentarz" : ""}
+        />
     </Table.Cell>
 </Table.Row>
 

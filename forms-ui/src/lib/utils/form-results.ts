@@ -60,6 +60,7 @@ export type TeamForm = {
         entry: PenaltyFormEntry;
         result: number | string | null;
         zeroBalsa?: boolean;
+        comment?: string | null;
     }>;
 };
 
@@ -71,6 +72,7 @@ export type PerformanceResult = {
     noElement?: boolean;
     styleName?: string | null;
     zeroBalsa?: boolean;
+    comment?: string | null;
 };
 
 export type PerformanceResultsRequest = {
@@ -183,23 +185,28 @@ function processPenaltyEntries(
             return penaltyEntry.entry.id != null && penaltyEntry.result != null;
         })
         .map(penaltyEntry => {
+            const comment = penaltyEntry.comment ?? null;
             if (penaltyEntry.entry.penaltyType === 'ZERO_BALSA') {
-                return {
+                const result: PerformanceResult = {
                     entryId: penaltyEntry.entry.id!,
                     judgeType: 'STYLE' as JudgeType,
                     judge: 1,
                     result: 0,
-                    zeroBalsa: true
+                    zeroBalsa: true,
+                    ...(comment !== null ? { comment } : {})
                 };
+                return result;
             }
             const numValue = toNumberOrNull(penaltyEntry.result);
             if (numValue != null) {
-                return {
+                const result: PerformanceResult = {
                     entryId: penaltyEntry.entry.id!,
                     judgeType: 'STYLE' as JudgeType,
                     judge: 1,
-                    result: numValue
+                    result: numValue,
+                    ...(comment !== null ? { comment } : {})
                 };
+                return result;
             }
             return null;
         })

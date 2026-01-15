@@ -21,6 +21,7 @@ class TeamResultService(
         val noElementByEntryId = extractNoElementByEntryId(request.results)
         val styleNameByEntryId = extractStyleNameByEntryId(request.results)
         val zeroBalsaByEntryId = extractZeroBalsaByEntryId(request.results)
+        val commentByEntryId = extractCommentByEntryId(request.results)
 
         val resultEntries = processResults(
             performanceId,
@@ -29,13 +30,15 @@ class TeamResultService(
             noElementByEntryId,
             styleNameByEntryId,
             zeroBalsaByEntryId,
+            commentByEntryId,
             performance!!
         )
         val noElementUpdates = getNoElementUpdates(performanceId, noElementByEntryId)
         val styleNameUpdates = getStyleNameUpdates(performanceId, styleNameByEntryId)
         val zeroBalsaUpdates = getZeroBalsaUpdates(performanceId, zeroBalsaByEntryId)
+        val commentUpdates = getCommentUpdates(performanceId, commentByEntryId)
 
-        val toSave = combineResults(resultEntries, noElementUpdates, styleNameUpdates, zeroBalsaUpdates)
+        val toSave = combineResults(resultEntries, noElementUpdates, styleNameUpdates, zeroBalsaUpdates, commentUpdates)
         if (toSave.isNotEmpty()) {
             teamResultEntryRepository.saveAll(toSave)
         }
@@ -45,9 +48,10 @@ class TeamResultService(
         resultEntries: List<TeamResultEntryEntity>,
         noElementUpdates: List<TeamResultEntryEntity>,
         styleNameUpdates: List<TeamResultEntryEntity>,
-        zeroBalsaUpdates: List<TeamResultEntryEntity>
+        zeroBalsaUpdates: List<TeamResultEntryEntity>,
+        commentUpdates: List<TeamResultEntryEntity>
     ): List<TeamResultEntryEntity> {
-        val allEntries = resultEntries + noElementUpdates + styleNameUpdates + zeroBalsaUpdates
+        val allEntries = resultEntries + noElementUpdates + styleNameUpdates + zeroBalsaUpdates + commentUpdates
         return allEntries.distinct()
     }
 
@@ -79,6 +83,10 @@ class TeamResultService(
         results.groupBy { it.entryId }
             .mapValues { (_, results) -> results.firstOrNull()?.zeroBalsa ?: false }
 
+    private fun extractCommentByEntryId(results: List<PerformanceResultsRequest.PerformanceResult>) =
+        results.groupBy { it.entryId }
+            .mapValues { (_, results) -> results.firstOrNull()?.comment }
+
     private fun processResults(
         performanceId: Int,
         results: List<PerformanceResultsRequest.PerformanceResult>,
@@ -86,14 +94,15 @@ class TeamResultService(
         noElementByEntryId: Map<Long, Boolean>,
         styleNameByEntryId: Map<Long, String?>,
         zeroBalsaByEntryId: Map<Long, Boolean>,
+        commentByEntryId: Map<Long, String?>,
         performance: PerformanceEntity
     ): List<TeamResultEntryEntity> {
         return results.mapNotNull { r ->
             val existing = findExistingEntry(performanceId, r)
             if (existing != null) {
-                getUpdatedEntry(existing, r, noElementByEntryId, styleNameByEntryId, zeroBalsaByEntryId)
+                getUpdatedEntry(existing, r, noElementByEntryId, styleNameByEntryId, zeroBalsaByEntryId, commentByEntryId)
             } else {
-                createNewEntry(r, formEntryById, noElementByEntryId, styleNameByEntryId, zeroBalsaByEntryId, performance)
+                createNewEntry(r, formEntryById, noElementByEntryId, styleNameByEntryId, zeroBalsaByEntryId, commentByEntryId, performance)
             }
         }
     }
@@ -110,7 +119,8 @@ class TeamResultService(
         result: PerformanceResultsRequest.PerformanceResult,
         noElementByEntryId: Map<Long, Boolean>,
         styleNameByEntryId: Map<Long, String?>,
-        zeroBalsaByEntryId: Map<Long, Boolean>
+        zeroBalsaByEntryId: Map<Long, Boolean>,
+        commentByEntryId: Map<Long, String?>
     ): TeamResultEntryEntity? {
         val needsResultUpdate = existing.result != result.result
         val noElement = noElementByEntryId[result.entryId] ?: false
@@ -119,8 +129,10 @@ class TeamResultService(
         val needsStyleNameUpdate = result.judgeType == JudgeType.STYLE && existing.styleName != styleName
         val zeroBalsa = zeroBalsaByEntryId[result.entryId] ?: false
         val needsZeroBalsaUpdate = existing.zeroBalsa != zeroBalsa
+        val comment = commentByEntryId[result.entryId]
+        val needsCommentUpdate = existing.comment != comment
 
-        if (!needsResultUpdate && !needsNoElementUpdate && !needsStyleNameUpdate && !needsZeroBalsaUpdate) {
+        if (!needsResultUpdate && !needsNoElementUpdate && !needsStyleNameUpdate && !needsZeroBalsaUpdate && !needsCommentUpdate) {
             return null
         }
 
@@ -128,6 +140,7 @@ class TeamResultService(
         if (needsNoElementUpdate) existing.noElement = noElement
         if (needsStyleNameUpdate) existing.styleName = styleName
         if (needsZeroBalsaUpdate) existing.zeroBalsa = zeroBalsa
+        if (needsCommentUpdate) existing.comment = comment
         return existing
     }
 
@@ -137,6 +150,7 @@ class TeamResultService(
         noElementByEntryId: Map<Long, Boolean>,
         styleNameByEntryId: Map<Long, String?>,
         zeroBalsaByEntryId: Map<Long, Boolean>,
+        commentByEntryId: Map<Long, String?>,
         performance: PerformanceEntity
     ): TeamResultEntryEntity {
         return TeamResultEntryEntity().apply {
@@ -147,6 +161,7 @@ class TeamResultService(
             this.result = result.result
             noElement = noElementByEntryId[result.entryId] ?: false
             zeroBalsa = zeroBalsaByEntryId[result.entryId] ?: false
+            comment = commentByEntryId[result.entryId]
             if (result.judgeType == JudgeType.STYLE) {
                 styleName = styleNameByEntryId[result.entryId]
             }
@@ -212,6 +227,26 @@ class TeamResultService(
             .findByPerformanceEntityIdAndFormEntryEntityId(performanceId, entryId)
         return allEntries.filter { it.zeroBalsa != zeroBalsa }
             .onEach { it.zeroBalsa = zeroBalsa }
+    }
+
+    private fun getCommentUpdates(
+        performanceId: Int,
+        commentByEntryId: Map<Long, String?>
+    ): List<TeamResultEntryEntity> {
+        return commentByEntryId.flatMap { (entryId, comment) ->
+            getCommentUpdatesForEntry(performanceId, entryId, comment)
+        }
+    }
+
+    private fun getCommentUpdatesForEntry(
+        performanceId: Int,
+        entryId: Long,
+        comment: String?
+    ): List<TeamResultEntryEntity> {
+        val allEntries = teamResultEntryRepository
+            .findByPerformanceEntityIdAndFormEntryEntityId(performanceId, entryId)
+        return allEntries.filter { it.comment != comment }
+            .onEach { it.comment = comment }
     }
 }
 

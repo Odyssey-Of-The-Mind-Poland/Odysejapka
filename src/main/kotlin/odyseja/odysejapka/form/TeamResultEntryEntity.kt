@@ -52,4 +52,7 @@ class TeamResultEntryEntity {
 
     @Column(name = "zero_balsa")
     var zeroBalsa: Boolean? = null
+
+    @Column(name = "comment")
+    var comment: String? = null
 }
