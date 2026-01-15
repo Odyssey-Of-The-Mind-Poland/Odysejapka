@@ -12,9 +12,10 @@
     interface Props {
         objectiveBucketName: string;
         value?: number | string | null;
+        disabled?: boolean;
     }
 
-    let { objectiveBucketName, value = $bindable() }: Props = $props();
+    let { objectiveBucketName, value = $bindable(), disabled = false }: Props = $props();
 
     let bucketsQuery = createOdysejaQuery<ObjectiveBucket[]>({
         queryKey: ['objective-buckets'],
@@ -40,8 +41,9 @@
     type="single"
     value={stringValue}
     onValueChange={handleValueChange}
+    disabled={disabled}
 >
-    <Select.Trigger class="w-24">
+    <Select.Trigger class="w-24" disabled={disabled}>
         {stringValue ?? 'Wybierz'}
     </Select.Trigger>
     <Select.Content>
