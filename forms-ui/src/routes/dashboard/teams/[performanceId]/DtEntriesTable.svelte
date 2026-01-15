@@ -97,8 +97,7 @@
             <Table.Root>
                 <Table.Header>
                     <Table.Row>
-                        <Table.Head>Wpis</Table.Head>
-                        <Table.Head>Typ</Table.Head>
+                        <Table.Head>Nazwa</Table.Head>
                         {#each allColumns as column}
                             <Table.Head>{getColumnLabel(column.type, column.judge)}</Table.Head>
                         {/each}
@@ -109,8 +108,16 @@
                         {@const objectiveBucket = dtEntry.entry.scoring?.objectiveBucket}
                         {@const isObjective = dtEntry.entry.scoring?.scoringType === 'OBJECTIVE' && objectiveBucket}
                         <Table.Row>
-                            <Table.Cell class="font-medium">{dtEntry.entry.name}</Table.Cell>
-                            <Table.Cell>{dtEntry.entry.type}</Table.Cell>
+                            <Table.Cell>
+                                <div class="flex flex-col">
+                                    <div class="font-extralight text-sm">
+                                        {dtEntry.entry.sortIndex}
+                                    </div>
+                                    <div class="font-medium">
+                                        {dtEntry.entry.name}
+                                    </div>
+                                </div>
+                            </Table.Cell>
                             {#each allColumns as column}
                                 {@const isEnabled = isColumnEnabled(column, dtEntry, maxJudgeCount)}
                                 <Table.Cell>
