@@ -20,7 +20,8 @@ data class TeamForm(
     
     data class StyleTeamFormEntry(
         val entry: StyleFormEntry,
-        val results: Map<JudgeType, Map<Int, Long?>>
+        val results: Map<JudgeType, Map<Int, Long?>>,
+        val styleName: String? = null
     )
     
     data class PenaltyTeamFormEntry(

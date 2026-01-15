@@ -46,4 +46,7 @@ class TeamResultEntryEntity {
 
     @Column(name = "no_element")
     var noElement: Boolean? = null
+
+    @Column(name = "style_name")
+    var styleName: String? = null
 }

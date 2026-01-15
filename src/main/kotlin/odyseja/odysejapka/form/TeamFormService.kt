@@ -130,10 +130,15 @@ class TeamFormService(
         return templateEntries.map { templateEntry ->
             val entry = templateEntry.toStyleFormEntry(childrenByParent)
             val styleJudge = createJudgeMap(judgeCount, resultEntries, templateEntry.id, JudgeType.STYLE)
+            
+            val styleName = resultEntries
+                .firstOrNull { it.formEntryEntity?.id == templateEntry.id && it.judgeType == JudgeType.STYLE }
+                ?.styleName
 
             TeamForm.StyleTeamFormEntry(
                 entry = entry,
-                results = mapOf(JudgeType.STYLE to styleJudge)
+                results = mapOf(JudgeType.STYLE to styleJudge),
+                styleName = styleName
             )
         }
     }

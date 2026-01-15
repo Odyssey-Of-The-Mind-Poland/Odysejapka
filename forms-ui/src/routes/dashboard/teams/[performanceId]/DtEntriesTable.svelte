@@ -67,7 +67,7 @@
     {@const maxJudgeCount = getMaxJudgeCount(entries)}
     <div class="flex flex-col gap-2">
         {#if showHeader}
-            <h2 class="text-xl font-semibold">Wpisy DT</h2>
+            <h2 class="text-xl font-semibold">Punktacja Długoterminowa</h2>
         {/if}
         <div class="rounded-md border">
             <Table.Root>

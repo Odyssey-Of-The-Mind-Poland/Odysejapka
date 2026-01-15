@@ -145,10 +145,14 @@ class FormService(
             throw IllegalArgumentException("Unknown form entry id(s): $missing")
         }
 
-        // Group results by entryId to extract noElement per entry
         val noElementByEntryId = request.results
             .groupBy { it.entryId }
             .mapValues { (_, results) -> results.firstOrNull()?.noElement ?: false }
+        
+        val styleNameByEntryId = request.results
+            .filter { it.judgeType == JudgeType.STYLE }
+            .groupBy { it.entryId }
+            .mapValues { (_, results) -> results.firstOrNull()?.styleName }
         
         val toSave = mutableListOf<TeamResultEntryEntity>()
         request.results.forEach { r ->
@@ -166,6 +170,13 @@ class FormService(
                     existing.noElement = noElement
                     needsUpdate = true
                 }
+                if (r.judgeType == JudgeType.STYLE) {
+                    val styleName = styleNameByEntryId[r.entryId]
+                    if (existing.styleName != styleName) {
+                        existing.styleName = styleName
+                        needsUpdate = true
+                    }
+                }
                 if (needsUpdate) {
                     toSave += existing
                 }
@@ -177,19 +188,34 @@ class FormService(
                     judge = r.judge
                     result = r.result
                     noElement = noElementByEntryId[r.entryId] ?: false
+                    if (r.judgeType == JudgeType.STYLE) {
+                        styleName = styleNameByEntryId[r.entryId]
+                    }
                 }
                 toSave += entity
             }
         }
         
-        // Update noElement on all existing result entries for entries in the request
-        // This ensures all judge results for an entry have the same noElement flag
         noElementByEntryId.forEach { (entryId, noElement) ->
             val allEntriesForFormEntry = teamResultEntryRepository
                 .findByPerformanceEntityIdAndFormEntryEntityId(performanceId, entryId)
             allEntriesForFormEntry.forEach { entry ->
                 if (entry.noElement != noElement) {
                     entry.noElement = noElement
+                    if (entry !in toSave) {
+                        toSave += entry
+                    }
+                }
+            }
+        }
+        
+        styleNameByEntryId.forEach { (entryId, styleName) ->
+            val allStyleEntriesForFormEntry = teamResultEntryRepository
+                .findByPerformanceEntityIdAndFormEntryEntityId(performanceId, entryId)
+                .filter { it.judgeType == JudgeType.STYLE }
+            allStyleEntriesForFormEntry.forEach { entry ->
+                if (entry.styleName != styleName) {
+                    entry.styleName = styleName
                     if (entry !in toSave) {
                         toSave += entry
                     }

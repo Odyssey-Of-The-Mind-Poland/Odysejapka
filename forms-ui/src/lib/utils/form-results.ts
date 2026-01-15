@@ -54,6 +54,7 @@ export type TeamForm = {
     styleEntries: Array<{
         entry: StyleFormEntry;
         results: Record<JudgeType, Record<number, number | string | null>>;
+        styleName?: string | null;
     }>;
     penaltyEntries: Array<{
         entry: PenaltyFormEntry;
@@ -67,6 +68,7 @@ export type PerformanceResult = {
     judge: number;
     result: number;
     noElement?: boolean;
+    styleName?: string | null;
 };
 
 export type PerformanceResultsRequest = {
@@ -137,7 +139,26 @@ function processStyleEntries(
 ): PerformanceResult[] {
     return styleEntries.flatMap(styleEntry => {
         if (styleEntry.entry.id != null) {
-            return processEntryResults(styleEntry.entry.id, styleEntry.results);
+            return Object.entries(styleEntry.results).flatMap(([judgeType, judgeMap]) => {
+                return Object.entries(judgeMap)
+                    .map(([judge, value]) => {
+                        const numValue = toNumberOrNull(value);
+                        if (numValue != null) {
+                            const result: PerformanceResult = {
+                                entryId: styleEntry.entry.id!,
+                                judgeType: judgeType as JudgeType,
+                                judge: Number(judge),
+                                result: numValue
+                            };
+                            if (styleEntry.styleName != null) {
+                                result.styleName = styleEntry.styleName;
+                            }
+                            return result;
+                        }
+                        return null;
+                    })
+                    .filter((result): result is PerformanceResult => result !== null);
+            });
         }
         return [];
     });
