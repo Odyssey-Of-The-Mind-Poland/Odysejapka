@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets
 class ImportCsvService(
     private val timeTableService: TimeTableService
 ) {
-    fun uploadCsvFile(file: MultipartFile): List<PerformanceEntity> {
+    fun uploadCsvFile(file: MultipartFile, city: String): List<PerformanceEntity> {
         throwIfFileEmpty(file)
 
         return BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8)).use { reader ->
@@ -25,7 +25,7 @@ class ImportCsvService(
                 println("First parsed row: ${parsed[0]}")
             }
 
-            timeTableService.addPerformance(parsed)
+            timeTableService.addPerformance(parsed, city)
         }
     }
 
