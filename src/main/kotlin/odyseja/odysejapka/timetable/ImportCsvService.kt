@@ -7,11 +7,29 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 
 @Service
 class ImportCsvService(
     private val timeTableService: TimeTableService
 ) {
+    fun uploadCsvFile(file: MultipartFile): List<PerformanceEntity> {
+        throwIfFileEmpty(file)
+
+        return BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8)).use { reader ->
+            val csvToBean = createCSVToBean(reader)
+            val parsed = csvToBean.parse()
+
+            println("OpenCSV Exceptions: ${csvToBean.capturedExceptions}")
+
+            if (parsed.isNotEmpty()) {
+                println("First parsed row: ${parsed[0]}")
+            }
+
+            timeTableService.addPerformance(parsed)
+        }
+    }
+
     private fun throwIfFileEmpty(file: MultipartFile) {
         if (file.isEmpty)
             throw RuntimeException("Empty file")
@@ -21,32 +39,7 @@ class ImportCsvService(
         return CsvToBeanBuilder<Performance>(fileReader)
             .withType(Performance::class.java)
             .withIgnoreLeadingWhiteSpace(true)
-            .withSkipLines(1)
+            .withSkipLines(0)
             .build()
-    }
-
-    private fun closeFileReader(fileReader: BufferedReader?) {
-        try {
-            fileReader!!.close()
-        } catch (ex: IOException) {
-            throw RuntimeException("Error during csv import: ${ex.message}.")
-        }
-    }
-
-    fun uploadCsvFile(file: MultipartFile): List<PerformanceEntity> {
-        throwIfFileEmpty(file)
-        var fileReader: BufferedReader? = null
-
-        try {
-            print("File received")
-            fileReader = BufferedReader(InputStreamReader(file.inputStream))
-            val csvToBean = createCSVToBean(fileReader)
-
-            return timeTableService.addPerformance(csvToBean.parse())
-        } catch (ex: Exception) {
-            throw RuntimeException("Error during csv import: ${ex}.")
-        } finally {
-            closeFileReader(fileReader)
-        }
     }
 }
