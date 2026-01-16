@@ -27,9 +27,9 @@ class TimeTableController(
     @PostMapping("/csv")
     fun importPerformances(
         @RequestParam("file") file: MultipartFile,
-    ): ResponseEntity<List<PerformanceEntity>> {
+    ): ResponseEntity<String> {
         val importedPerformances = importCsvService.uploadCsvFile(file)
-        return ResponseEntity.ok(importedPerformances)
+        return ResponseEntity.ok("Liczba zaimportowanych występów: ${importedPerformances.count()}")
     }
 
     @Secured("ROLE_ADMINISTRATOR")
