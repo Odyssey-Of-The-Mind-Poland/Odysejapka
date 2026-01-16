@@ -27,20 +27,10 @@ class TimeTableController(
     @PostMapping("/csv")
     fun importPerformances(
         @RequestParam("file") file: MultipartFile,
-        @RequestParam("city") city: String,
+        @RequestParam("cityId") cityId: Int,
     ): ResponseEntity<String> {
-        val importedPerformances = importCsvService.uploadCsvFile(file, city)
+        val importedPerformances = importCsvService.uploadCsvFile(file, cityId)
         return ResponseEntity.ok("Liczba zaimportowanych występów: ${importedPerformances.count()}")
-    }
-
-    @Secured("ROLE_ADMINISTRATOR")
-    @PostMapping("/load")
-    @ResponseBody
-    fun addPerformance(
-        @RequestParam("performances") performances: List<Performance>,
-        @RequestParam("city") city: String
-        ): List<PerformanceEntity> {
-        return timeTableService.addPerformance(performances, city)
     }
 
     @Secured("ROLE_ADMINISTRATOR")
