@@ -26,25 +26,5 @@ data class StyleFormEntry(
     enum class StyleType {
         PREDEFINED, FREE_TEAM_CHOICE
     }
-
-    fun toEntity(
-        problem: Int,
-        category: FormEntryEntity.FormCategory,
-        parent: FormEntryEntity?,
-        orderIndex: Int,
-        existing: FormEntryEntity? = null
-    ): FormEntryEntity {
-        val entity = existing ?: FormEntryEntity()
-        entity.apply {
-            this.problem = problem
-            this.name = this@StyleFormEntry.name
-            this.formCategory = category
-            this.parent = parent
-            this.orderIndex = this@StyleFormEntry.sortIndex
-            this.entryType = FormEntryEntity.EntryType.STYLE
-            this.styleType = this@StyleFormEntry.styleType
-        }
-        return entity
-    }
 }
 

@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class JudgeCountService(
-    private val formProblemRepository: FormProblemRepository,
+    private val cityFormJudgesRepository: CityFormJudgesRepository,
     private val cityRepository: CityRepository,
 ) {
 
@@ -19,17 +19,17 @@ class JudgeCountService(
 
     private fun setJudgeCountForCity(problem: Int, cityId: Int, judgeCount: Int) {
         val city = cityRepository.findFirstById(cityId)
-        val problemEntity = formProblemRepository.findByProblemAndCity(problem, city)
-            ?: FormProblemEntity.create(problem, city)
-        problemEntity.judgeCount = judgeCount
-        formProblemRepository.save(problemEntity)
+        val judgeEntity = cityFormJudgesRepository.findByProblemAndCity(problem, city)
+            ?: CityFormJudgesEntity.create(problem, city)
+        judgeEntity.judgeCount = judgeCount
+        cityFormJudgesRepository.save(judgeEntity)
     }
 
     fun getJudgeCount(problem: Int, cityId: Int): JudgeCountResponse {
         val city = cityRepository.findFirstById(cityId)
-        val problemEntity = formProblemRepository.findByProblemAndCity(problem, city)
+        val judgeEntity = cityFormJudgesRepository.findByProblemAndCity(problem, city)
             ?: throw EntityNotFoundException("No judge count set for problem $problem and city $cityId")
-        return JudgeCountResponse(judgeCount = problemEntity.judgeCount)
+        return JudgeCountResponse(judgeCount = judgeEntity.judgeCount)
     }
 }
 

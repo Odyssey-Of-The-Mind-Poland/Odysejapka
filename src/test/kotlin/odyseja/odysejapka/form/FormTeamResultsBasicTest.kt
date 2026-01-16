@@ -50,7 +50,8 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
 
         setTeamResults(perfId, listOf(
             performanceResult(dtId, 15),
-            performanceResult(styleId, 22, judge = 2, judgeType = JudgeType.STYLE)
+            performanceResult(styleId, 22, judge = 2, judgeType = JudgeType.STYLE),
+            performanceResult(styleId, 20, judgeType = JudgeType.STYLE)
         ))
 
         val after = getTeamResults(perfId)

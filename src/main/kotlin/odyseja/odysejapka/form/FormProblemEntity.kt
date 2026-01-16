@@ -1,39 +1,22 @@
 package odyseja.odysejapka.form
 
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
-import odyseja.odysejapka.city.CityEntity
+import jakarta.persistence.*
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 
 @Entity
-@Table(name = "form_problems")
+@Table(name = "form_problem_json")
 class FormProblemEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0;
+    val id: Long = 0
 
-    @Column
+    @Column(unique = true, nullable = false)
     var problem: Int = 0
 
-    @Column
-    var judgeCount: Int = 0
-
-    @ManyToOne(cascade = [CascadeType.ALL])
-    var city: CityEntity? = null
-
-    companion object {
-        fun create(problem: Int, city: CityEntity): FormProblemEntity {
-            val entity = FormProblemEntity()
-            entity.problem = problem
-            entity.city = city
-            return entity
-        }
-    }
+    @Column(name = "form_data", columnDefinition = "jsonb", nullable = true)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = ProblemFormConverter::class)
+    var form: ProblemForm? = null
 }

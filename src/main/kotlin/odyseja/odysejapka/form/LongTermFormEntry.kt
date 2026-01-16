@@ -41,36 +41,4 @@ data class LongTermFormEntry(
     enum class ScoringType {
         SUBJECTIVE, OBJECTIVE
     }
-
-    fun toEntity(
-        problem: Int,
-        category: FormEntryEntity.FormCategory,
-        parent: FormEntryEntity?,
-        existing: FormEntryEntity? = null
-    ): FormEntryEntity {
-        val entity = existing ?: FormEntryEntity()
-        entity.apply {
-            this.problem = problem
-            this.name = this@LongTermFormEntry.name
-            this.formCategory = category
-            this.parent = parent
-            this.orderIndex = this@LongTermFormEntry.sortIndex
-            this.entryType = when (this@LongTermFormEntry.type) {
-                EntryType.SCORING -> FormEntryEntity.EntryType.SCORING
-                EntryType.SECTION -> FormEntryEntity.EntryType.SECTION
-                EntryType.SCORING_GROUP -> FormEntryEntity.EntryType.SCORING_GROUP
-            }
-            when (this@LongTermFormEntry.type) {
-                EntryType.SCORING -> scoring?.let {
-                    this.scoringType = it.scoringType
-                    this.noElementEnabled = it.noElementEnabled
-                    this.judges = it.judges
-                    this.subjectiveRange = it.subjectiveRange
-                    this.objectiveBucket = it.objectiveBucket
-                }
-                else -> {}
-            }
-        }
-        return entity
-    }
 }
