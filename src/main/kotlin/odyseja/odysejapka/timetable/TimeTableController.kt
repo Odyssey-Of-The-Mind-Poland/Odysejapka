@@ -1,14 +1,17 @@
 package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.Progress
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
-@RestController()
+@RestController
 @RequestMapping("/timeTable")
 class TimeTableController(
     private val timeTableService: TimeTableService,
-    private val importTimetableService: ImportTimetableService
+    private val importTimetableService: ImportTimetableService,
+    private val importCsvService: ImportCsvService
 ) {
 
     @GetMapping
@@ -21,15 +24,17 @@ class TimeTableController(
         return timeTableService.getPerformance(performanceId)
     }
 
-    @Secured("ROLE_ADMINISTRATOR")
-    @PostMapping("/load")
-    @ResponseBody
-    fun addPerformance(@RequestBody performances: List<Performance>): List<PerformanceEntity> {
-        return timeTableService.addPerformance(performances)
+    @PostMapping("/csv")
+    fun importPerformances(
+        @RequestParam("file") file: MultipartFile,
+        @RequestParam("cityId") cityId: Int,
+    ): ResponseEntity<String> {
+        val importedPerformances = importCsvService.uploadCsvFile(file, cityId)
+        return ResponseEntity.ok("Liczba zaimportowanych występów: ${importedPerformances.count()}")
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @PostMapping()
+    @PostMapping
     @ResponseBody
     fun addPerformance(@RequestBody performance: Performance): PerformanceEntity {
         return timeTableService.addPerformance(performance)
