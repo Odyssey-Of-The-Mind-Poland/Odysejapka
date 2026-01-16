@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .header-info {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .entry-name {
+            font-weight: 500;
+        }
+
+        .score {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .sum-row {
+            background-color: #e8f4f8;
+            font-weight: bold;
+        }
+
+        .total-row {
+            background-color: #d4edda;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .no-element {
+            color: #999;
+            font-style: italic;
+        }
+
+        .section-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Formularz Wyników Drużyny</h1>
+        <div class="header-info">
+            <div><strong>Drużyna:</strong> <span th:text="${data.teamName}"></span></div>
+            <div><strong>Miasto:</strong> <span th:text="${data.cityName}"></span></div>
+            <div><strong>Problem:</strong> <span th:text="${data.problem}"></span> | <strong>Wiek:</strong> <span th:text="${data.age}"></span></div>
+        </div>
+    </div>
+
+    <div class="section-header">Długoterminowe (DT)</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Wpis</th>
+                <th class="score">Średnia Wyników</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="entry : ${data.dtEntries}">
+                <td class="entry-name" th:classappend="${entry.noElement} ? 'no-element'" th:text="${entry.name}"></td>
+                <td class="score" th:text="${entry.averageScore != null ? #numbers.formatDecimal(entry.averageScore, 1, 2) : '-'}"></td>
+            </tr>
+            <tr class="sum-row">
+                <td><strong>Suma DT</strong></td>
+                <td class="score"><strong th:text="${#numbers.formatDecimal(data.dtSum, 1, 2)}"></strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-header">Styl</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Wpis</th>
+                <th class="score">Średnia Wyników</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="entry : ${data.styleEntries}">
+                <td class="entry-name" th:text="${entry.name}"></td>
+                <td class="score" th:text="${entry.averageScore != null ? #numbers.formatDecimal(entry.averageScore, 1, 2) : '-'}"></td>
+            </tr>
+            <tr class="sum-row">
+                <td><strong>Suma Styl</strong></td>
+                <td class="score"><strong th:text="${#numbers.formatDecimal(data.styleSum, 1, 2)}"></strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-header">Kary</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Wpis</th>
+                <th class="score">Wynik</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="entry : ${data.penaltyEntries}">
+                <td class="entry-name" th:text="${entry.name}"></td>
+                <td class="score" th:text="${entry.averageScore != null ? #numbers.formatDecimal(entry.averageScore, 1, 2) : '-'}"></td>
+            </tr>
+            <tr class="sum-row">
+                <td><strong>Suma Kar</strong></td>
+                <td class="score"><strong th:text="${#numbers.formatDecimal(data.penaltySum, 1, 2)}"></strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table>
+        <tbody>
+            <tr class="total-row">
+                <td><strong>SUMA CAŁKOWITA</strong></td>
+                <td class="score"><strong th:text="${#numbers.formatDecimal(data.totalSum, 1, 2)}"></strong></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+

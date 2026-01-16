@@ -53,7 +53,7 @@
     <AppSidebar variant="sidebar"/>
     <Sidebar.Inset>
         <SiteHeader/>
-        <div class="p-4">
+        <div class="p-4 h-full">
             <slot/>
         </div>
     </Sidebar.Inset>

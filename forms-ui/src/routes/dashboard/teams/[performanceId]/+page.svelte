@@ -64,12 +64,20 @@
                 </div>
             {/if}
         </div>
-        <Button 
-            onclick={handleSave}
-            disabled={saveMutation.isPending || !formData}
-        >
-            {saveMutation.isPending ? 'Zapisywanie...' : 'Zapisz wyniki'}
-        </Button>
+        <div class="flex gap-2">
+            <Button 
+                variant="outline"
+                onclick={() => window.location.href = `/dashboard/teams/${performanceIdParam}/preview`}
+            >
+                Podgląd PDF
+            </Button>
+            <Button 
+                onclick={handleSave}
+                disabled={saveMutation.isPending || !formData}
+            >
+                {saveMutation.isPending ? 'Zapisywanie...' : 'Zapisz wyniki'}
+            </Button>
+        </div>
     </div>
 
     {#if teamFormQuery.isPending}

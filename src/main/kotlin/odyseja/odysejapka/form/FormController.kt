@@ -1,5 +1,8 @@
 package odyseja.odysejapka.form
 
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -10,7 +13,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/form")
-class FormController(private val formService: FormService?) {
+class FormController(
+    private val formService: FormService?,
+    private val teamFormHtmlGeneratorService: TeamFormHtmlGeneratorService?,
+    private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService?
+) {
 
     @PutMapping("/{problem}")
     fun setProblemForm(@PathVariable problem: Int, @RequestBody problemForm: ProblemForm) {
@@ -45,5 +52,31 @@ class FormController(private val formService: FormService?) {
     @GetMapping("/objective-buckets")
     fun getObjectiveBuckets(): List<ObjectiveBucketDto> {
         return ObjectiveBuckets.entries.map { it.toBucketsResponse() }
+    }
+
+    @GetMapping("/{performanceId}/preview")
+    fun getTeamFormPreview(@PathVariable performanceId: Int): ResponseEntity<String> {
+        val html = teamFormHtmlGeneratorService!!.generateHtml(performanceId)
+        return ResponseEntity.ok()
+            .contentType(MediaType.TEXT_HTML)
+            .body(html)
+    }
+
+    @GetMapping("/{performanceId}/preview/pdf")
+    fun getTeamFormPdf(@PathVariable performanceId: Int): ResponseEntity<ByteArray> {
+        val pdfBytes = teamFormPdfGeneratorService!!.generatePdf(performanceId)
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"team-form-${performanceId}.pdf\"")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdfBytes)
+    }
+
+    @GetMapping("/{performanceId}/preview/pdf/download")
+    fun downloadTeamFormPdf(@PathVariable performanceId: Int): ResponseEntity<ByteArray> {
+        val pdfBytes = teamFormPdfGeneratorService!!.generatePdf(performanceId)
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"team-form-${performanceId}.pdf\"")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdfBytes)
     }
 }
