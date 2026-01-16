@@ -10,5 +10,9 @@ class InfoCategoryEntity(
   val id: Int,
   @Column()
   val name: String
-)
+) {
+  fun toInfoCategory(): InfoCategory {
+    return InfoCategory(id, name)
+  }
+}
 

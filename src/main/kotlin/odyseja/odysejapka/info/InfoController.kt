@@ -28,6 +28,17 @@ class InfoController(
     return infoService.getInfoCategory()
   }
 
+  @GetMapping("/v2")
+  @ResponseBody
+  fun getInfoV2(@RequestParam(required = false) cityId: Int?): Map<String, Any> {
+    val infos = cityId?.let { infoService.getInfo(cityId) } ?: infoService.getInfo(0)
+    val categories = infoService.getInfoCategory()
+    return mapOf(
+      "infos" to (infos?.toList() ?: emptyList()),
+      "categories" to categories.map { it.toInfoCategory() }
+    )
+  }
+
   @Secured("ROLE_ADMINISTRATOR")
   @PostMapping
   @ResponseBody
@@ -47,4 +58,5 @@ class InfoController(
   fun deleteInfo(@PathVariable id: Int) {
     infoService.deleteInfo(id)
   }
+
 }

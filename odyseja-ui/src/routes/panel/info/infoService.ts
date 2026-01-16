@@ -1,5 +1,5 @@
 import type {Info, InfoCategory, Infos} from "$lib/types";
-import {get, del, post} from "$lib/apiService";
+import {get, del, post, put} from "$lib/apiService";
 
 export async function fetchInfo(): Promise<Infos> {
     const data = await get('/info');

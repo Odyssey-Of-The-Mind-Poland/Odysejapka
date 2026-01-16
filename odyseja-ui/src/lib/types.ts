@@ -100,7 +100,9 @@ export type Info = {
     city: number,
     category: number,
     sortNumber: number,
-    categoryName: string
+    categoryName: string,
+    icon?: string,
+    color?: string,
 }
 
 export type InfoCategory = {

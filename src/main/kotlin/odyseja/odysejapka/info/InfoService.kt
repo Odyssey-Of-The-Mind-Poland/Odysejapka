@@ -25,7 +25,6 @@ class InfoService(
     return infoCategoryRepository.findAll()
   }
 
-
   fun addInfo(info: Info): Info {
     val savedInfo = infoRepository.save(
       InfoEntity(
@@ -34,7 +33,9 @@ class InfoService(
         info.infoText,
         cityRepository.findFirstById(info.city),
         infoCategoryRepository.findFirstById(info.category),
-        info.sortNumber
+        info.sortNumber,
+        info.icon,
+        info.color
       )
     )
 
@@ -47,6 +48,8 @@ class InfoService(
     val infoEntity = infoRepository.findById(info.id).get()
     infoEntity.infoText = info.infoText
     infoEntity.sortNumber = info.sortNumber
+    infoEntity.icon = info.icon
+    infoEntity.color = info.color
     infoRepository.save(infoEntity)
 
     changeService.updateVersion()
