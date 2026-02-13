@@ -19,7 +19,7 @@ class TimeTableController(
         return cityId?.let { timeTableService.getByCity(cityId) } ?: timeTableService.getFinals()
     }
 
-    @GetMapping("{performanceId}")
+    @GetMapping("/{performanceId}")
     fun getPerformance(@PathVariable performanceId: Int): Performance {
         return timeTableService.getPerformance(performanceId)
     }
@@ -28,9 +28,8 @@ class TimeTableController(
     fun importPerformances(
         @RequestParam("file") file: MultipartFile,
         @RequestParam("cityId") cityId: Int,
-    ): ResponseEntity<String> {
-        val importedPerformances = importCsvService.uploadCsvFile(file, cityId)
-        return ResponseEntity.ok("Liczba zaimportowanych występów: ${importedPerformances.count()}")
+    ) {
+        importCsvService.uploadCsvFile(file, cityId)
     }
 
     @Secured("ROLE_ADMINISTRATOR")
@@ -47,7 +46,7 @@ class TimeTableController(
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @DeleteMapping("{performanceId}")
+    @DeleteMapping("/{performanceId}")
     fun delPerformance(@PathVariable performanceId: Int) {
         timeTableService.delPerformance(performanceId)
     }

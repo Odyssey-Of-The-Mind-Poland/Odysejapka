@@ -15,7 +15,7 @@ class ImportCsvService(
     private val timeTableService: TimeTableService,
     private val cityRepository: CityRepository
 ) {
-    fun uploadCsvFile(file: MultipartFile, cityId: Int): List<PerformanceEntity> {
+    fun uploadCsvFile(file: MultipartFile, cityId: Int) {
         throwIfFileEmpty(file)
 
         val city: CityEntity
@@ -25,7 +25,7 @@ class ImportCsvService(
             throw IllegalArgumentException("Nie ma konkursu o ID ${cityId}.")
         }
 
-        return BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8)).use { reader ->
+        BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8)).use { reader ->
             val csvToBean = createCSVToBean(reader)
             val parsed = csvToBean.parse()
             timeTableService.addPerformance(parsed, city)
