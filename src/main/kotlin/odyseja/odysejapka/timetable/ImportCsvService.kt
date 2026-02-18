@@ -26,9 +26,15 @@ class ImportCsvService(
         }
 
         BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8)).use { reader ->
-            val csvToBean = createCSVToBean(reader)
-            val parsed = csvToBean.parse()
-            timeTableService.addPerformance(parsed, city)
+            val beans = createCSVToBean(reader)
+            val parsed = beans.parse()
+
+            parsed.forEach {
+                it.standardize()
+                it.validate()
+            }
+
+            timeTableService.addPerformances(parsed, city)
         }
     }
 
@@ -42,6 +48,7 @@ class ImportCsvService(
             .withType(Performance::class.java)
             .withIgnoreLeadingWhiteSpace(true)
             .withSkipLines(0)
+            .withThrowExceptions(false)
             .build()
     }
 }
