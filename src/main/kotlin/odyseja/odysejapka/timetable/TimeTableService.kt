@@ -27,7 +27,7 @@ class TimeTableService(
         return timeTableRepository.findAllByCityEntity_Id(0).map { it.toPerformance() }
     }
 
-    fun addPerformance(performances: List<Performance>, cityEntity: CityEntity): List<PerformanceEntity> {
+    fun addPerformances(performances: List<Performance>, cityEntity: CityEntity): List<PerformanceEntity> {
         timeTableRepository.deleteByCityEntity(cityEntity)
         val per: List<PerformanceEntity> = performances.map {
             PerformanceEntity(
