@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import ovh.snet.grzybek.controller.client.core.ControllerClientFactory
 import java.time.LocalDate
@@ -111,5 +112,28 @@ class OdysejaDsl {
 
     fun performanceResult(entryId: Long, result: Long, judge: Int = 1) =
         PerformanceResultsRequest.PerformanceResult(entryId = entryId, result = result, judge = judge)
+
+    fun mockCsv(
+        performanceDay: String = "sobota",
+        spontanDay: String = "niedziela",
+        problem: Int = 1,
+        age: Int = 1,
+        performance: String = "8:45",
+        spontan: String = "10:00",
+        name: String = "Szkoła Podstawowa nr 0 - Gdańsk"
+    ): MockMultipartFile {
+        val content = """
+            Konkurs,Scena,Dzień występu,Dzień spontana,Problem,Grupa wiekowa,Liga,Część,Godzina występu,Godzina spontana,Kod drużyny,Numer członkowstwa,Drużyna,Miejscowość
+            finał,1,$performanceDay,$spontanDay,$problem,$age,,,$performance,$spontan,P1G1_1,11111,$name,Miejscowość
+        """.trimIndent()
+
+        val csvFile = MockMultipartFile(
+            "file",
+            "fo2025.csv",
+            "text/csv",
+            content.toByteArray())
+
+        return csvFile
+    }
 
 }
