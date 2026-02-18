@@ -110,7 +110,7 @@ class ZspSheetsAdapter(
                 styleScore = getNumericalValue(row, 11),
                 penaltyScore = getNumericalValue(row, 12),
                 weightHeld = getNumericalValue(row, 13),
-                spontaneousScore = getNumericalValue(row, 18),
+                spontaneousScore = getNumericalValue(row, 19),
                 ranatra = getRanatra(row)
             )
 
@@ -124,10 +124,10 @@ class ZspSheetsAdapter(
     }
 
     private fun getRanatra(row: MutableList<String>): Boolean {
-        if (row.size <= 20) {
+        if (row.size <= 21) {
             return false
         }
-        return row[20] == "PRAWDA" || row[20] == "TRUE"
+        return row[21] == "PRAWDA" || row[21] == "TRUE"
     }
 
     private fun isJudge(judge: String): Boolean {

@@ -6,7 +6,7 @@ import odyseja.odysejapka.timetable.Performance
 data class SpontanGroups(val group: Group, val performances: List<Team>) {
 
     fun groupCode(): String {
-        val league = if (group.league.isNotEmpty()) group.league else " "
+        val league = group.league.ifEmpty { "" }
         return "P${group.problem}G${group.age}${league}"
     }
 

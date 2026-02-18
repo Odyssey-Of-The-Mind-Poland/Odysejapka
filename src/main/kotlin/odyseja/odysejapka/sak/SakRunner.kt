@@ -2,6 +2,7 @@ package odyseja.odysejapka.sak
 
 import Team
 import com.google.api.services.drive.model.File
+import com.google.api.services.sheets.v4.model.Sheet
 import odyseja.odysejapka.async.AsyncLogger
 import odyseja.odysejapka.async.Log
 import odyseja.odysejapka.async.Runner
@@ -19,6 +20,7 @@ internal class SakRunner(
 ) : Runner {
 
     private val templates = getTemplates()
+    private val sheetMap: Map<String, Pair<Sheet, String>> = buildSheetMap()
     private var totalTeamsCount = 0
     private var processedTeamsCount = AtomicInteger(0)
     private val logger = AsyncLogger()
@@ -43,17 +45,18 @@ internal class SakRunner(
     }
 
     private fun processGroup(group: SpontanGroups) {
-        val sheetFiles = templates.filter { it.name.startsWith(group.groupCode()) }
-        if (sheetFiles.isEmpty()) {
+        val groupCode = group.groupCode()
+        val sheetEntry = sheetMap.entries.find { it.key == groupCode }?.value
+        if (sheetEntry == null) {
             processedTeamsCount.addAndGet(group.performances.size)
             return
         }
-        val sheetFile = sheetFiles[0]
-        val sheetName = sheetsAdapter.getSheet(sheetFile.id)!!.get(0).properties.title
-        val values = sheetsAdapter.getValue(sheetFile.id, sheetName, "A1:X20")
+        val (sheet, fileId) = sheetEntry
+        val sheetName = sheet.properties.title
+        val values = sheetsAdapter.getValue(fileId, sheetName, "A1:X20")
 
         var teamStartCell = findCell(values, "Drużyna")
-        var pointsCell = findCell(values, "suma punktów")
+        var pointsCell = findCell(values, "Ostateczny wynik").copy(second = teamStartCell.second)
         val teams = group.performances.sortedBy { it.spontanSort() }
         for (team in teams) {
 
@@ -63,7 +66,7 @@ internal class SakRunner(
 
             teamStartCell = Pair(teamStartCell.first, teamStartCell.second + 1)
             pointsCell = Pair(pointsCell.first, pointsCell.second + 1)
-            processTeam(team, sheetName, sheetFile.id, teamStartCell, pointsCell)
+            processTeam(team, sheetName, fileId, teamStartCell, pointsCell)
             Thread.sleep(5000)
         }
     }
@@ -100,7 +103,18 @@ internal class SakRunner(
     private fun getTemplates(): List<File> {
         return driveAdapter
             .listFiles(templatesFolderId)
-            .filter { it.name.startsWith("P") }
+    }
+
+    private fun buildSheetMap(): Map<String, Pair<Sheet, String>> {
+        val map = mutableMapOf<String, Pair<Sheet, String>>()
+        for (templateFile in templates) {
+            val sheets = sheetsAdapter.getSheet(templateFile.id)
+            sheets?.forEach { sheet ->
+                val sheetName = sheet.properties.title
+                map[sheetName] = Pair(sheet, templateFile.id)
+            }
+        }
+        return map
     }
 
     private fun findCell(values: List<List<String>>, cellValue: String): Pair<String, Int> {
