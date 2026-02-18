@@ -9,9 +9,9 @@ import org.thymeleaf.context.Context
 @Service
 class HtmlGeneratorService(private val templateEngine: TemplateEngine, private val problemService: ProblemService) {
 
-    fun generateShortResults(teams: List<Team>): String {
+    fun generateShortResults(teams: List<Team>, isRegion: Boolean = false): String {
         val initialGroups: List<FinalScoreGroup> =
-            RakCalculator().calculateScores(teams).sortedWith(compareBy({ it.problem }, { it.division }))
+            RakCalculator().calculateScores(teams, isRegion).sortedWith(compareBy({ it.problem }, { it.division }))
         val filteredGroups = initialGroups.map { group ->
             group.copy(
                 teamScores = group.teamScores.filter { it.place <= 4 }
@@ -26,9 +26,9 @@ class HtmlGeneratorService(private val templateEngine: TemplateEngine, private v
         return templateEngine.process("short-results.html", context)
     }
 
-    fun generateHtmlResults(teams: List<Team>): String {
+    fun generateHtmlResults(teams: List<Team>, isRegion: Boolean = false): String {
         val initialGroups: List<FinalScoreGroup> =
-            RakCalculator().calculateScores(teams).sortedWith(compareBy({ it.problem }, { it.division }))
+            RakCalculator().calculateScores(teams, isRegion).sortedWith(compareBy({ it.problem }, { it.division }))
         val splitGroups = initialGroups.flatMap { splitLargeGroup(it) }
         val context = Context().apply {
             setVariable("groups", splitGroups)

@@ -146,7 +146,7 @@
         <tr th:each="score : ${group.teamScores}">
             <!-- PLACE -->
             <td>
-        <span th:class="${score.place <= 2 or score.team.ranatra ? 'top-place' : ''}"
+        <span th:class="${score.isWinner ? 'top-place' : ''}"
               th:text="${score.place}"></span>
                 <br></br>
                 <span style="color: #ff6500;" th:if="${score.team.ranatra}">[RF]</span>
@@ -156,11 +156,11 @@
             <!-- TEAM (compact) -->
             <td class="team-cell">
             <span class="team-name"
-                  th:classappend="${score.place <= 2 or score.team.ranatra ? ' top-place' : ''}"
+                  th:classappend="${score.isWinner ? ' top-place' : ''}"
                   th:text="${score.team.shortTeamName}"></span>
 
                 <span class="team-city"
-                      th:classappend="${score.place <= 2 or score.team.ranatra ? ' top-place' : ' gray'}"
+                      th:classappend="${score.isWinner ? ' top-place' : ' gray'}"
                       th:text="${score.team.city}"></span>
             </td>
 

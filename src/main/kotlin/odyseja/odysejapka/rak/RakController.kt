@@ -50,11 +50,12 @@ class RakController(
     @PostMapping("/download-html")
     fun downloadHtmlResults(
         @RequestBody request: ZspIdRequest,
-        @RequestParam(required = false) cityId: Int?
+        @RequestParam(required = false) cityId: Int?,
+        @RequestParam(required = false, defaultValue = "false") isRegion: Boolean
     ): ResponseEntity<String> {
         rakCommandService.saveCommand(request.zspId, cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
-        val renderedHtml = htmlGeneratorService.generateHtmlResults(sheetsAdapter.getAllTeams())
+        val renderedHtml = htmlGeneratorService.generateHtmlResults(sheetsAdapter.getAllTeams(), isRegion)
 
         return ResponseEntity.ok()
             .contentType(MediaType.TEXT_HTML)
@@ -64,11 +65,12 @@ class RakController(
     @PostMapping("/download-pdf")
     fun downloadPdf(
         @RequestBody request: ZspIdRequest,
-        @RequestParam(required = false) cityId: Int?
+        @RequestParam(required = false) cityId: Int?,
+        @RequestParam(required = false, defaultValue = "false") isRegion: Boolean
     ): ResponseEntity<ByteArray> {
         rakCommandService.saveCommand(request.zspId, cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
-        val pdfBytes = pdfGeneratorService.generatePdf(sheetsAdapter.getAllTeams())
+        val pdfBytes = pdfGeneratorService.generatePdf(sheetsAdapter.getAllTeams(), isRegion)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)
@@ -78,11 +80,12 @@ class RakController(
     @PostMapping("/download-short-pdf")
     fun downloadShortPdf(
         @RequestBody request: ZspIdRequest,
-        @RequestParam(required = false) cityId: Int?
+        @RequestParam(required = false) cityId: Int?,
+        @RequestParam(required = false, defaultValue = "false") isRegion: Boolean
     ): ResponseEntity<ByteArray> {
         rakCommandService.saveCommand(request.zspId, cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
-        val pdfBytes = pdfGeneratorService.generateShortPdf(sheetsAdapter.getAllTeams())
+        val pdfBytes = pdfGeneratorService.generateShortPdf(sheetsAdapter.getAllTeams(), isRegion)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results-short.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)

@@ -9,16 +9,17 @@
     export let data: ZspIdRequest;
 
     let zspId = data.zspId;
+    let isRegion = false;
     let isLoading = false;
 
     async function downloadFile(
-        generateFn: (zspId: string) => Promise<string | ArrayBuffer>,
+        generateFn: (zspId: string, isRegion: boolean) => Promise<string | ArrayBuffer>,
         fileType: string,
         extension: string
     ) {
         try {
             isLoading = true;
-            const content = await generateFn(zspId);
+            const content = await generateFn(zspId, isRegion);
             const blob = new Blob([content], {type: fileType});
             const url = URL.createObjectURL(blob);
 
@@ -46,6 +47,10 @@
     <div class="flex flex-col gap-3">
         <input bind:value={zspId} class="input" placeholder="ZSP ID"
                type="text"/>
+        <label class="flex items-center gap-2">
+            <input type="checkbox" bind:checked={isRegion} class="checkbox" />
+            <span>Region (FR)</span>
+        </label>
         <div class="flex gap-3 items-center">
             <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadPdfResults} disabled={isLoading}>
                 Generuj pdf results

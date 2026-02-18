@@ -5,8 +5,10 @@ import type {City} from "$lib/types";
 let currentCity: City = {id: 0, name: ''};
 city.subscribe((c) => currentCity = c);
 
-export async function generatePdfResults(zspIdRequest: string) {
-    const response = await fetch(BASE_URL + '/api/v1/rak/download-pdf?cityId=' + currentCity.id, {
+export async function generatePdfResults(zspIdRequest: string, isRegion: boolean = false) {
+    const params = new URLSearchParams({ cityId: String(currentCity.id) });
+    if (isRegion) params.set('isRegion', 'true');
+    const response = await fetch(BASE_URL + '/api/v1/rak/download-pdf?' + params.toString(), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -23,8 +25,10 @@ export async function generatePdfResults(zspIdRequest: string) {
     return response.arrayBuffer();
 }
 
-export async function generateShortPdfResults(zspIdRequest: string) {
-    const response = await fetch(BASE_URL + '/api/v1/rak/download-short-pdf?cityId=' + currentCity.id, {
+export async function generateShortPdfResults(zspIdRequest: string, isRegion: boolean = false) {
+    const params = new URLSearchParams({ cityId: String(currentCity.id) });
+    if (isRegion) params.set('isRegion', 'true');
+    const response = await fetch(BASE_URL + '/api/v1/rak/download-short-pdf?' + params.toString(), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -37,6 +41,6 @@ export async function generateShortPdfResults(zspIdRequest: string) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    showHappyToast('P{df generated')
+    showHappyToast('Pdf generated')
     return response.arrayBuffer();
 }

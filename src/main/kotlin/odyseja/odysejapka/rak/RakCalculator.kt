@@ -6,14 +6,15 @@ import odyseja.odysejapka.gad.TeamsGroups
 
 class RakCalculator {
 
-    fun calculateScores(teams: List<Team>): List<FinalScoreGroup> {
+    fun calculateScores(teams: List<Team>, isRegion: Boolean = false): List<FinalScoreGroup> {
         if (teams.isEmpty()) return emptyList()
         val tournamentGroups = TeamsGroups.fromTeams(teams).groups
-        return tournamentGroups.map { scoreGroup(it) }
+        return tournamentGroups.map { scoreGroup(it, isRegion) }
     }
 
     private fun scoreGroup(
         teamsGroup: TeamsGroup,
+        isRegion: Boolean = false
     ): FinalScoreGroup {
         val (group, groupTeams) = teamsGroup
         val maxLT = groupTeams.maxOfOrNull { it.longTermScore ?: 0f } ?: 0f
@@ -29,7 +30,7 @@ class RakCalculator {
             problem = group.problem,
             division = group.age,
             league = group.league,
-            teamScores = PlaceAssigment(scaledScores).assignPlaces()
+            teamScores = PlaceAssigment(scaledScores).assignPlaces(isRegion)
         )
     }
 }
@@ -44,6 +45,7 @@ data class FinalScoreGroup(
 data class FinalTeamScore(
     val team: Team,
     val place: Int,
+    val isWinner: Boolean,
     val longTermScore: Double,
     val balsaScore: Double,
     val spontaneousScore: Double,

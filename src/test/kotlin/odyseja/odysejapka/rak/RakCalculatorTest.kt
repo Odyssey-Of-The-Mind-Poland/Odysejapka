@@ -30,6 +30,7 @@ class RakCalculatorTest {
                 teamScores = listOf(
                     FinalTeamScore(
                         place = 1,
+                        isWinner = true,
                         teamName = "Solo",
                         longTermScore = 200.0,
                         spontaneousScore = 100.0,
@@ -70,6 +71,7 @@ class RakCalculatorTest {
                 teamScores = listOf(
                     FinalTeamScore(
                         place = 1,
+                        isWinner = true,
                         teamName = "Solo",
                         longTermScore = 200.0,
                         spontaneousScore = 100.0,
@@ -114,6 +116,7 @@ class RakCalculatorTest {
                 teamScores = listOf(
                     FinalTeamScore(
                         place = 1,
+                        isWinner = true,
                         teamName = "Team A",
                         longTermScore = 200.0,
                         spontaneousScore = 100.0,
@@ -125,6 +128,7 @@ class RakCalculatorTest {
                     ),
                     FinalTeamScore(
                         place = 2,
+                        isWinner = true,
                         teamName = "Team B",
                         longTermScore = 160.0,
                         spontaneousScore = 98.5,
@@ -328,6 +332,113 @@ class RakCalculatorTest {
         assertEquals(257.11, team2.total, 0.01)
     }
 
+    @Test
+    fun `isWinner is true for place 1 and 2 false for place 3`() {
+        val teams = listOf(
+            createTeam(longTermScore = 150f, spontaneousScore = 70f, styleScore = 35f, teamName = "First"),
+            createTeam(longTermScore = 140f, spontaneousScore = 65f, styleScore = 30f, teamName = "Second"),
+            createTeam(longTermScore = 130f, spontaneousScore = 60f, styleScore = 25f, teamName = "Third")
+        )
+
+        val result = rakCalculator.calculateScores(teams)
+
+        val scores = result[0].teamScores.sortedBy { it.place }
+        assertTrue(scores[0].isWinner, "Place 1 should be winner")
+        assertTrue(scores[1].isWinner, "Place 2 should be winner")
+        assertFalse(scores[2].isWinner, "Place 3 should not be winner")
+    }
+
+    @Test
+    fun `isWinner is true when ranatra is true regardless of place`() {
+        val teams = listOf(
+            createTeam(longTermScore = 150f, spontaneousScore = 70f, styleScore = 35f, teamName = "First"),
+            createTeam(longTermScore = 140f, spontaneousScore = 65f, styleScore = 30f, teamName = "Second"),
+            createTeam(longTermScore = 130f, spontaneousScore = 60f, styleScore = 25f, teamName = "Ranatra", ranatra = true)
+        )
+
+        val result = rakCalculator.calculateScores(teams)
+
+        val ranatraScore = result[0].teamScores.first { it.teamName == "Ranatra" }
+        assertEquals(3, ranatraScore.place)
+        assertTrue(ranatraScore.isWinner, "Ranatra team should be winner even in 3rd place")
+    }
+
+    @Test
+    fun `region 1 team highlights 1`() {
+        val teams = listOf(createTeam(longTermScore = 100f, spontaneousScore = 50f, styleScore = 25f, teamName = "Solo"))
+        val result = rakCalculator.calculateScores(teams, isRegion = true)
+        assertEquals(1, result[0].teamScores.size)
+        assertTrue(result[0].teamScores[0].isWinner)
+    }
+
+    @Test
+    fun `region 2 teams highlight 2`() {
+        val teams = listOf(
+            createTeam(longTermScore = 150f, spontaneousScore = 70f, styleScore = 35f, teamName = "First"),
+            createTeam(longTermScore = 140f, spontaneousScore = 65f, styleScore = 30f, teamName = "Second")
+        )
+        val result = rakCalculator.calculateScores(teams, isRegion = true)
+        val scores = result[0].teamScores.sortedBy { it.place }
+        assertTrue(scores[0].isWinner)
+        assertTrue(scores[1].isWinner)
+    }
+
+    @Test
+    fun `region 3 teams highlight 2`() {
+        val teams = listOf(
+            createTeam(longTermScore = 150f, spontaneousScore = 70f, styleScore = 35f, teamName = "First"),
+            createTeam(longTermScore = 140f, spontaneousScore = 65f, styleScore = 30f, teamName = "Second"),
+            createTeam(longTermScore = 130f, spontaneousScore = 60f, styleScore = 25f, teamName = "Third")
+        )
+        val result = rakCalculator.calculateScores(teams, isRegion = true)
+        val scores = result[0].teamScores.sortedBy { it.place }
+        assertTrue(scores[0].isWinner)
+        assertTrue(scores[1].isWinner)
+        assertFalse(scores[2].isWinner)
+    }
+
+    @Test
+    fun `region 4 teams no tie highlight 2`() {
+        val teams = listOf(
+            createTeam(longTermScore = 160f, spontaneousScore = 70f, styleScore = 35f, teamName = "A"),
+            createTeam(longTermScore = 150f, spontaneousScore = 68f, styleScore = 34f, teamName = "B"),
+            createTeam(longTermScore = 140f, spontaneousScore = 65f, styleScore = 30f, teamName = "C"),
+            createTeam(longTermScore = 130f, spontaneousScore = 60f, styleScore = 25f, teamName = "D")
+        )
+        val result = rakCalculator.calculateScores(teams, isRegion = true)
+        val scores = result[0].teamScores.sortedByDescending { it.total }
+        assertTrue(scores[0].isWinner)
+        assertTrue(scores[1].isWinner)
+        assertFalse(scores[2].isWinner)
+        assertFalse(scores[3].isWinner)
+    }
+
+    @Test
+    fun `region 4 teams tie on second-to-last only last drops`() {
+        val teams = listOf(
+            createTeam(longTermScore = 160f, spontaneousScore = 70f, styleScore = 35f, teamName = "A"),
+            createTeam(longTermScore = 150f, spontaneousScore = 68f, styleScore = 34f, teamName = "B"),
+            createTeam(longTermScore = 140f, spontaneousScore = 65f, styleScore = 30f, teamName = "C"),
+            createTeam(longTermScore = 140f, spontaneousScore = 65f, styleScore = 30f, teamName = "D")
+        )
+        val result = rakCalculator.calculateScores(teams, isRegion = true)
+        assertEquals(3, result[0].teamScores.count { it.isWinner }, "tie on second-to-last: only last one drops")
+        assertEquals(1, result[0].teamScores.count { !it.isWinner })
+    }
+
+    @Test
+    fun `region 5 teams tie on last only last one drops`() {
+        val teams = listOf(
+            createTeam(longTermScore = 170f, spontaneousScore = 70f, styleScore = 35f, teamName = "A"),
+            createTeam(longTermScore = 160f, spontaneousScore = 68f, styleScore = 34f, teamName = "B"),
+            createTeam(longTermScore = 150f, spontaneousScore = 65f, styleScore = 30f, teamName = "C"),
+            createTeam(longTermScore = 140f, spontaneousScore = 62f, styleScore = 28f, teamName = "D"),
+            createTeam(longTermScore = 140f, spontaneousScore = 62f, styleScore = 28f, teamName = "E")
+        )
+        val result = rakCalculator.calculateScores(teams, isRegion = true)
+        assertEquals(4, result[0].teamScores.count { it.isWinner }, "tie on last: only last one drops")
+        assertEquals(1, result[0].teamScores.count { !it.isWinner })
+    }
 
     private fun createTeam(
         longTermScore: Float? = null,
@@ -339,6 +450,7 @@ class RakCalculatorTest {
         division: Int = 1,
         league: String = "0",
         weightHeld: Float = 0.0f,
+        ranatra: Boolean = false,
     ): Team {
         return Team(
             performanceHour = "1000",
@@ -359,8 +471,7 @@ class RakCalculatorTest {
             styleScore = styleScore ?: 0.0f,
             penaltyScore = penalty ?: 0.0f,
             weightHeld = weightHeld,
-            ranatra = false
-
+            ranatra = ranatra
         )
     }
 }
