@@ -5,6 +5,7 @@ import com.opencsv.bean.CsvToBeanBuilder
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -15,6 +16,7 @@ class ImportCsvService(
     private val timeTableService: TimeTableService,
     private val cityRepository: CityRepository
 ) {
+    @Transactional
     fun uploadCsvFile(file: MultipartFile, cityId: Int) {
         throwIfFileEmpty(file)
 
