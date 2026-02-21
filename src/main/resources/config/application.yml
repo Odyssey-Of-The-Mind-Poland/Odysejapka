@@ -39,6 +39,11 @@ clsi:
   timeout-sec: 60
   project-id: 1
 
+# Texapi – LaTeX to PDF compilation (https://texapi.ovh/docs)
+texapi:
+  base-url: https://texapi.ovh
+  api-key: ${TEXAPI_API_KEY:}
+
 #-------------------------------------------------------------------------------------------------
 # ZSP Configuration
 #-------------------------------------------------------------------------------------------------

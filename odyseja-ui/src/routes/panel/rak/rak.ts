@@ -44,3 +44,22 @@ export async function generateShortPdfResults(zspIdRequest: string, isRegion: bo
     showHappyToast('Pdf generated')
     return response.arrayBuffer();
 }
+
+export async function generateLatexPdfResults(zspIdRequest: string, isRegion: boolean = false, contestName?: string) {
+    const params = new URLSearchParams({ cityId: String(currentCity.id) });
+    if (isRegion) params.set('isRegion', 'true');
+    const response = await fetch(BASE_URL + '/api/v1/rak/download-latex-pdf?' + params.toString(), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: getBearer(),
+        },
+        body: JSON.stringify({ zspId: zspIdRequest, contestName: contestName ?? null })
+    });
+    if (!response.ok) {
+        showSadToast('Coś poszło nie tak :c');
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    showHappyToast('Pdf (LaTeX) wygenerowany');
+    return response.arrayBuffer();
+}

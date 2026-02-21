@@ -19,6 +19,7 @@ class RakController(
     private val csvService: CsvService,
     private val htmlGeneratorService: HtmlGeneratorService,
     private val pdfGeneratorService: PdfGeneratorService,
+    private val latexGeneratorService: LatexGeneratorService,
     private val mockedPdfService: MockedPdfService,
     private val rakCommandService: RakCommandService
 ) {
@@ -89,6 +90,21 @@ class RakController(
         val pdfBytes = pdfGeneratorService.generateShortPdf(sheetsAdapter.getAllTeams(), isRegion, request.contestName)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results-short.pdf\"")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdfBytes)
+    }
+
+    @PostMapping("/download-latex-pdf")
+    fun downloadLatexPdf(
+        @RequestBody request: ZspIdRequest,
+        @RequestParam(required = false) cityId: Int?,
+        @RequestParam(required = false, defaultValue = "false") isRegion: Boolean
+    ): ResponseEntity<ByteArray> {
+        rakCommandService.saveCommand(request.zspId, cityId)
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
+        val pdfBytes = latexGeneratorService.generatePdf(sheetsAdapter.getAllTeams(), isRegion, request.contestName)
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results-latex.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)
             .body(pdfBytes)
     }

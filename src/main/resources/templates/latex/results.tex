@@ -1,0 +1,48 @@
+\documentclass[9pt, a4paper]{article}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage[table]{xcolor}
+\usepackage{fontspec}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage[none]{hyphenat}
+
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand\tabularxcolumn[1]{m{#1}}
+
+\setmainfont{Ubuntu-Regular.ttf}[
+  BoldFont = Ubuntu-Bold.ttf,
+  ItalicFont = Ubuntu-Italic.ttf,
+  BoldItalicFont = Ubuntu-BoldItalic.ttf
+]
+
+\newgeometry{
+    top=30mm,
+    bottom=25mm,
+    outer=12mm,
+    inner=12mm
+}
+
+\setstretch{1}
+
+\pagestyle{fancy}
+\fancyhf{}
+\newcommand{\footfont}{9}
+\fancyfoot[L]{\fontsize{\footfont}{11}\selectfont\textcolor{gray}{@@CONTEST_NAME@@}}
+\fancyfoot[C]{\fontsize{\footfont}{11}\selectfont\textcolor{gray}{str. \thepage}}
+\fancyfoot[R]{\fontsize{\footfont}{11}\selectfont\textcolor{gray}{WYNIKI}}
+
+\raggedbottom
+
+\begin{document}
+\sloppy
+\microtypesetup{protrusion=true, expansion=true}
+
+@@BODY@@
+
+\end{document}

@@ -1,0 +1,267 @@
+\documentclass[9pt, a4paper]{article}
+\usepackage[polish]{babel}
+\usepackage{microtype}
+\usepackage[table]{xcolor}
+\usepackage{titlesec}
+\usepackage{fontspec}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage[siunitx]{circuitikz}
+\usepackage[none]{hyphenat}
+
+% Nagłówki problemów i grup wiekowych 
+\renewcommand{\headrulewidth}{0pt}
+
+\newcommand{\problemname}[1]{%
+  \IfEqCase{#1}{%
+    {1}{AAA}% Nazwa problemu 1.
+    {2}{BBB}% Nazwa problemu 2.
+    {3}{CCC}% Nazwa problemu 3.
+    {4}{DDD}% Nazwa problemu 4.
+    {5}{EEE}% Nazwa problemu 5.
+  }[{\color{red}\bfseries Wprowadź wartość z przedziału 1-5}]%
+}
+
+\newcommand{\currentProblem}{}
+\newcommand{\currentGroup}{}
+
+\newcommand{\setproblem}[2]{%
+  \newpage
+  \renewcommand{\currentProblem}{#1}%
+  \renewcommand{\currentGroup}{#2}%
+  \fancyhead{}%
+  \fancyhead[C]{%
+    \fontsize{16}{18}\selectfont%\bfseries
+    Problem #1: \problemname{#1} \hspace{2mm} | \hspace{2mm} Grupa wiekowa #2%
+  }%
+}
+
+% Komendy X w tabelach tabularx - tekst w pionie wyrównany do środka
+\renewcommand\tabularxcolumn[1]{m{#1}}
+
+% Marginesy
+\newgeometry{
+    top=30mm,
+    bottom=25mm,
+    outer=12mm,
+    inner=12mm
+}
+
+% Czcionka
+\fontspec{Ubuntu}
+\setmainfont{Ubuntu-Regular.ttf}[
+  BoldFont = Ubuntu-Bold.ttf,
+  ItalicFont = Ubuntu-Italic.ttf,
+  BoldItalicFont = Ubuntu-BoldItalic.ttf
+]
+
+%  Interlinia
+\setstretch{1}
+
+\pagestyle{fancy}
+\fancyhf{}
+\newcommand{\footfont}{9}
+\fancyfoot[L]{\fontsize{\footfont}{11}\selectfont\textcolor{gray}{35. Ogólnopolski Finał Odysei Umysłu}}
+\fancyfoot[C]{\fontsize{\footfont}{11}\selectfont\textcolor{gray}{str. \thepage}}
+\fancyfoot[R]{\fontsize{\footfont}{11}\selectfont\textcolor{gray}{WYNIKI}}
+
+\raggedbottom
+
+\begin{document}
+
+\sloppy
+\microtypesetup{protrusion=true, expansion=true}
+
+\setproblem{1}{1}
+
+\begin{table}[H]
+    \centering
+    \setlength{\extrarowheight}{2pt}
+    \begin{tabularx}{\linewidth}{
+    m{2em} X m{5.5em} m{4em} m{3em} m{4em} m{5.5em}}
+        M-ce &
+        Placówka &
+        &
+        Problem &
+        Styl &
+        Spontan &
+        Suma/Karne \\[2pt]
+        
+        \multirow{2}{*}{\color{blue}\bfseries 1} &
+        {\color{blue}\bfseries Centrum Niewidomych i Slabowidzacych} &
+        Przeliczone: &
+        200.00 &
+        50.00 &
+        00.00 &
+        246.00 \\
+        & 
+        {\color{blue}\bfseries Krakow} &
+        \textcolor{gray}{Surowe:} &
+        \textcolor{gray}{108.00} &
+        \textcolor{gray}{35.00} &
+        \textcolor{gray}{00.00} &
+        \textcolor{red}{4} \\[4pt]
+            
+        \multirow{2}{*}{\color{blue}\bfseries 2} &
+        {\color{blue}\bfseries Spoleczna Szkola Podstawowa nr 7 STO} &
+        Przeliczone: &
+        150.93 &
+        32.86 &
+        00.00 &
+        183.79 \\
+        &
+        {\color{blue}\bfseries Krakow} &
+        \textcolor{gray}{Surowe:} &
+        \textcolor{gray}{81.50} &
+        \textcolor{gray}{23.00} &
+        \textcolor{gray}{00.00} &
+        \textcolor{gray}{0} \\[4pt]
+    \end{tabularx}
+\end{table}
+
+
+
+\setproblem{5}{2}
+\begin{table}[H]
+    \centering
+    \setlength{\extrarowheight}{2pt}
+    \begin{tabularx}{\linewidth}{
+    m{2em} X m{5.5em} m{4em} m{3em} m{4em} m{5.5em}}
+        M-ce &
+        Placówka &
+        &
+        Problem &
+        Styl &
+        Spontan &
+        Suma/Karne \\[2pt]
+        
+        \multirow{2}{*}{\color{blue}\bfseries 1} &
+        {\color{blue}\bfseries Spoleczna Szkola Podstawowa nr 3 STO} &
+        Przeliczone: &
+        200.00 &
+        50.00 &
+        00.00 &
+        250.00 \\
+        & 
+        {\color{blue}\bfseries Krakow} &
+        \textcolor{gray}{Surowe:} &
+        \textcolor{gray}{157.50} &
+        \textcolor{gray}{43.00} &
+        \textcolor{gray}{00.00} &
+        \textcolor{gray}{0} \\[4pt]
+            
+        \multirow{2}{*}{\color{blue}\bfseries 2} &
+        {\color{blue}\bfseries Spoleczna Szkola Podstawowa nr 7 STO} &
+        Przeliczone: &
+        185.40 &
+        38.37 &
+        00.00 &
+        223.77 \\
+        &
+        {\color{blue}\bfseries Krakow} &
+        \textcolor{gray}{Surowe:} &
+        \textcolor{gray}{146.00} &
+        \textcolor{gray}{33.00} &
+        \textcolor{gray}{00.00} &
+        \textcolor{gray}{0} \\[4pt]
+
+        \multirow{2}{*}{3} &
+        Zespol Placowek Oswiatowych SCHERZO &
+        Przeliczone: &
+        179.05 &
+        38.37 &
+        00.00 &
+        204.42 \\
+        &
+        {\color{gray} Krakow} &
+        \textcolor{gray}{Surowe:} &
+        \textcolor{gray}{141.00} &
+        \textcolor{gray}{33.00} &
+        \textcolor{gray}{00.00} &
+        \textcolor{red}{13} \\[4pt]
+
+        \multirow{2}{*}{4} &
+        Szkola Podstawowa nr 68 &
+        Przeliczone: &
+        161.90 &
+        36.05 &
+        00.00 &
+        192.95 \\
+        &
+        {\color{gray} Krakow} &
+        \textcolor{gray}{Surowe:} &
+        \textcolor{gray}{127.50} &
+        \textcolor{gray}{31.00} &
+        \textcolor{gray}{00.00} &
+        \textcolor{red}{5} \\[4pt]
+    \end{tabularx}
+\end{table}
+
+
+
+\setproblem{0}{0} % Numer problemu, numer grupy wiekowej 
+\begin{table}[H]
+    \centering
+    \setlength{\extrarowheight}{2pt}
+    \begin{tabularx}{\linewidth}{
+    m{2em} X m{5.5em} m{4em} m{3em} m{4em} m{5.5em}}
+        M-ce &
+        Placówka &
+        &
+        Problem &
+        Styl &
+        Spontan &
+        Suma/Karne \\[2pt]
+        
+        \multirow{2}{*}{\color{blue}\bfseries 1} &
+        {\color{blue}\bfseries Nazwa placówki} &
+        Przeliczone: &
+        x.xx &
+        x.xx &
+        x.xx &
+        x.xx \\
+        & 
+        {\color{blue}\bfseries Miejscowość} &
+        \textcolor{gray}{Surowe:} &
+        \textcolor{gray}{x.xx} &
+        \textcolor{gray}{x.xx} &
+        \textcolor{gray}{x.xx} &
+        \textcolor{red}{x} \\[4pt]
+            
+        \multirow{2}{*}{\color{blue}\bfseries 2} &
+        {\color{blue}\bfseries Nazwa placówki} &
+        Przeliczone: &
+        x.xx &
+        x.xx &
+        x.xx &
+        x.xx \\
+        &
+        {\color{blue}\bfseries Miejscowość} &
+        \textcolor{gray}{Surowe:} &
+        \textcolor{gray}{x.xx} &
+        \textcolor{gray}{x.xx} &
+        \textcolor{gray}{x.xx} &
+        \textcolor{red}{x} \\[4pt]
+
+        \multirow{2}{*}{3} &
+        Nazwa placówki &
+        Przeliczone: &
+        x.xx &
+        x.xx &
+        x.xx &
+        x.xx \\
+        &
+        {\color{gray} Miejscowość} &
+        \textcolor{gray}{Surowe:} &
+        \textcolor{gray}{x.xx} &
+        \textcolor{gray}{x.xx} &
+        \textcolor{gray}{x.xx} &
+        \textcolor{red}{x} \\[4pt]
+    \end{tabularx}
+\end{table}
+
+\end{document}

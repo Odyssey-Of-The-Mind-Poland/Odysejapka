@@ -1,7 +1,8 @@
 <script lang="ts">
     import {
         generatePdfResults,
-        generateShortPdfResults
+        generateShortPdfResults,
+        generateLatexPdfResults
     } from './rak';
     import {ProgressRadial} from '@skeletonlabs/skeleton';
     import type { ZspIdRequest } from '$lib/types';
@@ -40,6 +41,7 @@
 
     const downloadPdfResults = () => downloadFile(generatePdfResults, 'application/pdf', 'pdf');
     const downloadShortPdfResults = () => downloadFile(generateShortPdfResults, 'application/pdf', 'pdf');
+    const downloadLatexPdfResults = () => downloadFile(generateLatexPdfResults, 'application/pdf', 'pdf');
 </script>
 
 <div class="flex flex-col gap-5">
@@ -60,6 +62,9 @@
             </button>
             <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadShortPdfResults} disabled={isLoading}>
                 Generuj skrócony pdf
+            </button>
+            <button class="btn btn-md variant-filled-secondary h-10" on:click={downloadLatexPdfResults} disabled={isLoading}>
+                Generuj pdf (LaTeX)
             </button>
             {#if isLoading}
                 <ProgressRadial width="w-6" />
