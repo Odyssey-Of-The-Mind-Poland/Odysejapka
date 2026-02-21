@@ -9,7 +9,7 @@ import org.thymeleaf.context.Context
 @Service
 class HtmlGeneratorService(private val templateEngine: TemplateEngine, private val problemService: ProblemService) {
 
-    fun generateShortResults(teams: List<Team>, isRegion: Boolean = false): String {
+    fun generateShortResults(teams: List<Team>, isRegion: Boolean = false, contestName: String? = null): String {
         val initialGroups: List<FinalScoreGroup> =
             RakCalculator().calculateScores(teams, isRegion).sortedWith(compareBy({ it.problem }, { it.division }))
         val filteredGroups = initialGroups.map { group ->
@@ -21,18 +21,20 @@ class HtmlGeneratorService(private val templateEngine: TemplateEngine, private v
         val context = Context().apply {
             setVariable("groups", splitGroups)
             setVariable("problems", problemService.getProblems())
+            setVariable("contestName", contestName?.takeIf { it.isNotBlank() } ?: "34. Ogólnopolski Finał Odysei Umysłu")
         }
 
         return templateEngine.process("short-results.html", context)
     }
 
-    fun generateHtmlResults(teams: List<Team>, isRegion: Boolean = false): String {
+    fun generateHtmlResults(teams: List<Team>, isRegion: Boolean = false, contestName: String? = null): String {
         val initialGroups: List<FinalScoreGroup> =
             RakCalculator().calculateScores(teams, isRegion).sortedWith(compareBy({ it.problem }, { it.division }))
         val splitGroups = initialGroups.flatMap { splitLargeGroup(it) }
         val context = Context().apply {
             setVariable("groups", splitGroups)
             setVariable("problems", problemService.getProblems())
+            setVariable("contestName", contestName?.takeIf { it.isNotBlank() } ?: "34. Ogólnopolski Finał Odysei Umysłu")
         }
 
         return templateEngine.process("results.html", context)

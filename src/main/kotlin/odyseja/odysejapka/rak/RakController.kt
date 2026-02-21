@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*
 
 
 data class ZspIdRequest(
-    val zspId: String
+    val zspId: String,
+    val contestName: String? = null
 )
 
 @RestController
@@ -55,7 +56,7 @@ class RakController(
     ): ResponseEntity<String> {
         rakCommandService.saveCommand(request.zspId, cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
-        val renderedHtml = htmlGeneratorService.generateHtmlResults(sheetsAdapter.getAllTeams(), isRegion)
+        val renderedHtml = htmlGeneratorService.generateHtmlResults(sheetsAdapter.getAllTeams(), isRegion, request.contestName)
 
         return ResponseEntity.ok()
             .contentType(MediaType.TEXT_HTML)
@@ -70,7 +71,7 @@ class RakController(
     ): ResponseEntity<ByteArray> {
         rakCommandService.saveCommand(request.zspId, cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
-        val pdfBytes = pdfGeneratorService.generatePdf(sheetsAdapter.getAllTeams(), isRegion)
+        val pdfBytes = pdfGeneratorService.generatePdf(sheetsAdapter.getAllTeams(), isRegion, request.contestName)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)
@@ -85,7 +86,7 @@ class RakController(
     ): ResponseEntity<ByteArray> {
         rakCommandService.saveCommand(request.zspId, cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
-        val pdfBytes = pdfGeneratorService.generateShortPdf(sheetsAdapter.getAllTeams(), isRegion)
+        val pdfBytes = pdfGeneratorService.generateShortPdf(sheetsAdapter.getAllTeams(), isRegion, request.contestName)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results-short.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)

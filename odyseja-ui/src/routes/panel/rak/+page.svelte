@@ -9,17 +9,18 @@
     export let data: ZspIdRequest;
 
     let zspId = data.zspId;
+    let contestName = data.contestName ?? '';
     let isRegion = false;
     let isLoading = false;
 
     async function downloadFile(
-        generateFn: (zspId: string, isRegion: boolean) => Promise<string | ArrayBuffer>,
+        generateFn: (zspId: string, isRegion: boolean, contestName?: string) => Promise<string | ArrayBuffer>,
         fileType: string,
         extension: string
     ) {
         try {
             isLoading = true;
-            const content = await generateFn(zspId, isRegion);
+            const content = await generateFn(zspId, isRegion, contestName || undefined);
             const blob = new Blob([content], {type: fileType});
             const url = URL.createObjectURL(blob);
 
@@ -46,6 +47,8 @@
 
     <div class="flex flex-col gap-3">
         <input bind:value={zspId} class="input" placeholder="ZSP ID"
+               type="text"/>
+        <input bind:value={contestName} class="input" placeholder="Nazwa konkursu"
                type="text"/>
         <label class="flex items-center gap-2">
             <input type="checkbox" bind:checked={isRegion} class="checkbox" />

@@ -11,13 +11,13 @@ class PdfGeneratorService(
     private val htmlGeneratorService: HtmlGeneratorService
 ) {
 
-    fun generateShortPdf(teams: List<Team>, isRegion: Boolean = false): ByteArray {
-        val html = htmlGeneratorService.generateShortResults(teams, isRegion)
+    fun generateShortPdf(teams: List<Team>, isRegion: Boolean = false, contestName: String? = null): ByteArray {
+        val html = htmlGeneratorService.generateShortResults(teams, isRegion, contestName)
         return convertHtmlToPdf(html)
     }
 
-    fun generatePdf(teams: List<Team>, isRegion: Boolean = false): ByteArray {
-        val html = htmlGeneratorService.generateHtmlResults(teams, isRegion)
+    fun generatePdf(teams: List<Team>, isRegion: Boolean = false, contestName: String? = null): ByteArray {
+        val html = htmlGeneratorService.generateHtmlResults(teams, isRegion, contestName)
         return convertHtmlToPdf(html)
     }
 

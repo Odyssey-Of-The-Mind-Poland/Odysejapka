@@ -173,7 +173,8 @@ export enum Status {
 }
 
 export type ZspIdRequest = {
-    zspId: String
+    zspId: string;
+    contestName?: string;
 }
 
 // ZSP Team types
