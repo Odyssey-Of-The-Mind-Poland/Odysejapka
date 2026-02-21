@@ -33,7 +33,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \newcommand{\footfont}{9}
-\fancyfoot[L]{\fontsize{\footfont}{11}\selectfont\textcolor{gray}{@@CONTEST_NAME@@}}
+\fancyfoot[L]{\fontsize{\footfont}{11}\selectfont\textcolor{gray}{<%contestName%>}}
 \fancyfoot[C]{\fontsize{\footfont}{11}\selectfont\textcolor{gray}{str. \thepage}}
 \fancyfoot[R]{\fontsize{\footfont}{11}\selectfont\textcolor{gray}{WYNIKI}}
 
@@ -43,6 +43,41 @@
 \sloppy
 \microtypesetup{protrusion=true, expansion=true}
 
-@@BODY@@
+<%#groups%>
+\newpage
+\fancyhead{}%
+\fancyhead[C]{\fontsize{16}{18}\selectfont Problem <%problem%>: <%problemName%> \hspace{2mm} | \hspace{2mm} Grupa wiekowa <%division%>}
+\begin{table}[H]
+    \centering
+    \setlength{\extrarowheight}{2pt}
+    \begin{tabularx}{\linewidth}{
+    m{2em} X m{5.5em} m{4em} m{3em} m{4em} m{5.5em}}
+        M-ce &
+        Placówka &
+        &
+        Problem &
+        Styl &
+        Spontan &
+        Suma/Karne \\[2pt]
+<%#teamScores%>
+        \multirow{2}{*}{<%placeStyle%>} &
+        <%teamStyle%> &
+        Przeliczone: &
+        <%longTermScore%> &
+        <%styleScore%> &
+        <%spontaneousScore%> &
+        <%total%> \\
+        &
+        <%cityStyle%> &
+        \textcolor{gray}{Surowe:} &
+        \textcolor{gray}{<%rawLongTerm%>} &
+        \textcolor{gray}{<%rawStyle%>} &
+        \textcolor{gray}{<%rawSpontaneous%>} &
+        <%penaltyStyle%> \\[4pt]
+<%/teamScores%>
+    \end{tabularx}
+\end{table}
+
+<%/groups%>
 
 \end{document}

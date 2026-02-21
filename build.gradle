@@ -42,6 +42,7 @@ dependencies {
     implementation("com.opencsv:opencsv:5.10")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
     implementation("com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10")
+    implementation("com.samskivert:jmustache:1.16")
 
     runtimeOnly 'org.postgresql:postgresql'
 
