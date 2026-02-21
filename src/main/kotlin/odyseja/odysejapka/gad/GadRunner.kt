@@ -78,11 +78,10 @@ internal class GadRunner(
                 getZspValue(file.id, cells.penalty),
                 getBalsaValue(file.id, cells.balsa),
                 getZspValueFromAOC(file.id, cells.anomaly),
-                getZspValueFromAOC(file.id, cells.anomalyVerify),
                 getZspValueFromAOC(file.id, cells.actualPerformanceStartTime),
                 "=JEŻELI(ORAZ(CZY.LICZBA(P${team.zspRow}); P5<>CZAS(0;0;0)); P${team.zspRow}-A${team.zspRow}; \"\")",
-                "", // Przyczyna obsuwy
-                "", // spontaneous
+                "", // spontaneou
+                "", // spontaneou
                 "https://docs.google.com/spreadsheets/d/${file.id}"
             )
             sheetsAdapter.writeZsp("K${team.zspRow}:T${team.zspRow}", values, sheetTitle)
