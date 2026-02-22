@@ -23,7 +23,7 @@ class ImportCsvService(
         val city: CityEntity
         try {
             city = cityRepository.findFirstById(cityId)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             throw IllegalArgumentException("Nie ma konkursu o ID ${cityId}.")
         }
 
