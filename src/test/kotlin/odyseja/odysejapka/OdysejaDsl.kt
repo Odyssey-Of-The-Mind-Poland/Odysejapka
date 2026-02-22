@@ -114,17 +114,18 @@ class OdysejaDsl {
         PerformanceResultsRequest.PerformanceResult(entryId = entryId, judgeType = judgeType, judge = judge, result = result)
 
     fun mockCsv(
-        performanceDay: String = "sobota",
-        spontanDay: String = "niedziela",
-        problem: Int = 1,
-        age: Int = 1,
-        performance: String = "8:45",
-        spontan: String = "10:00",
-        name: String = "Szkoła Podstawowa nr 0 - Gdańsk"
+        performanceDay: Any = "sobota",
+        spontanDay: Any = "niedziela",
+        problem: Any = 1,
+        age: Any = 1,
+        performance: Any = "8:45",
+        spontan: Any = "10:00",
+        name: Any = "Szkoła Podstawowa nr 0 - Gdańsk",
+        stage: Any = 1
     ): MockMultipartFile {
         val content = """
-            Konkurs,Scena,Dzień występu,Dzień spontana,Problem,Grupa wiekowa,Liga,Część,Godzina występu,Godzina spontana,Kod drużyny,Numer członkowstwa,Drużyna,Miejscowość
-            finał,1,$performanceDay,$spontanDay,$problem,$age,,,$performance,$spontan,P1G1_1,11111,$name,Miejscowość
+            Konkurs,Scena,Dzień występu,Dzień spontana,Problem,Grupa wiekowa,Liga,Część,Godzina występu,Godzina spontana,Kod drużyny,Numer członkostwa,Drużyna,Miejscowość
+            finał,$stage,$performanceDay,$spontanDay,$problem,$age,,,$performance,$spontan,P1G1_1,11111,$name,Miejscowość
         """.trimIndent()
 
         val csvFile = MockMultipartFile(
