@@ -2,6 +2,7 @@ package odyseja.odysejapka.timetable
 
 import com.opencsv.bean.CsvToBean
 import com.opencsv.bean.CsvToBeanBuilder
+import com.opencsv.enums.CSVReaderNullFieldIndicator
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityRepository
 import org.springframework.stereotype.Service
@@ -18,8 +19,6 @@ class ImportCsvService(
 ) {
     @Transactional
     fun uploadCsvFile(file: MultipartFile, cityId: Int) {
-        throwIfFileEmpty(file)
-
         val city: CityEntity
         try {
             city = cityRepository.findFirstById(cityId)
@@ -31,6 +30,8 @@ class ImportCsvService(
             val beans = createCSVToBean(reader)
             val parsed = beans.parse()
 
+            if (parsed.isEmpty()) throw IllegalArgumentException("Plik nie zawiera żadnych przedstawień.")
+
             parsed.forEach {
                 it.standardize()
                 it.validate()
@@ -40,17 +41,13 @@ class ImportCsvService(
         }
     }
 
-    private fun throwIfFileEmpty(file: MultipartFile) {
-        if (file.isEmpty)
-            throw RuntimeException("Empty file")
-    }
-
     private fun createCSVToBean(fileReader: BufferedReader?): CsvToBean<Performance> {
         return CsvToBeanBuilder<Performance>(fileReader)
-            .withType(Performance::class.java)
-            .withIgnoreLeadingWhiteSpace(true)
-            .withSkipLines(0)
-            .withThrowExceptions(false)
-            .build()
+                .withType(Performance::class.java)
+                .withIgnoreLeadingWhiteSpace(true)
+                .withSkipLines(0)
+                .withThrowExceptions(true)
+                .withFieldAsNull(CSVReaderNullFieldIndicator.EMPTY_SEPARATORS)
+                .build()
     }
 }
