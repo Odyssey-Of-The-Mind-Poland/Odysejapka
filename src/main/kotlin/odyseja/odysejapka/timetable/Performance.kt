@@ -7,25 +7,25 @@ data class Performance (
     val id: Int = 0,
     @CsvBindByName(column = "Konkurs")
     val city: String = "",
-    @CsvBindByName(column = "Drużyna")
+    @CsvBindByName(column = "Drużyna", required = true)
     val team: String = "",
-    @CsvBindByName(column = "Problem")
+    @CsvBindByName(column = "Problem", required = true)
     val problem: Int = 0,
-    @CsvBindByName(column = "Grupa wiekowa")
+    @CsvBindByName(column = "Grupa wiekowa", required = true)
     val age: Int = 0,
-    @CsvBindByName(column = "Scena")
+    @CsvBindByName(column = "Scena", required = true)
     val stage: Int = 0,
-    @CsvBindByName(column = "Godzina występu")
+    @CsvBindByName(column = "Godzina występu", required = true)
     var performance: String = "",
-    @CsvBindByName(column = "Godzina spontana")
+    @CsvBindByName(column = "Godzina spontana", required = true)
     var spontan: String = "",
-    @CsvBindByName(column = "Część")
+    @CsvBindByName(column = "Część", required = false)
     val part: Int? = null,
-    @CsvBindByName(column = "Dzień występu")
+    @CsvBindByName(column = "Dzień występu", required = true)
     var performanceDay: String = "",
-    @CsvBindByName(column = "Dzień spontana")
+    @CsvBindByName(column = "Dzień spontana", required = true)
     var spontanDay: String = "",
-    @CsvBindByName(column = "Liga")
+    @CsvBindByName(column = "Liga", required = false)
     var league: String? = null,
     var zspRow: Int? = null,
     var zspSheet: String? = null,
@@ -40,7 +40,6 @@ data class Performance (
     }
 
     fun validate() {
-        require(team.isNotEmpty()) {"Nazwa drużyny nie może być pusta."}
         require(problem in 0..5) {"Numer problemu musi wynosić od 0 do 5."}
         require(age in 0..4) {"Numer grupy wiekowej musi wynosić od 0 do 4."}
         require(Regex("\\d{2}:\\d{2}").matches(spontan)) {"Godzina spontana powinna być w następującym formacie: 08:45."}
