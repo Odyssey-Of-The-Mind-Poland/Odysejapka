@@ -27,6 +27,43 @@ export async function get(path: string): Promise<any> {
     return  await response.json();
 }
 
+/** GET with Bearer auth, no cityId (for /api/v1/users, /api/v1/roles) */
+export async function getWithAuth(path: string): Promise<any> {
+    const response = await fetch(BASE_URL + path, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: getBearer(),
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.status}`);
+    }
+
+    return await response.json();
+}
+
+/** POST with Bearer auth, no cityId */
+export async function postNoCity(request: any, path: string, successText: string): Promise<any> {
+    const response = await fetch(BASE_URL + path, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: getBearer(),
+        },
+        body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+        showSadToast('Coś poszło nie tak :c');
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    showHappyToast(successText ?? 'Akcja wykonana pomyślnie');
+    return await response.json();
+}
+
 export async function post(request: any, path: string, succesText: string): Promise<any> {
     const response = await fetch(BASE_URL + path + '?cityId=' + currentCity.id, {
         method: 'POST',
