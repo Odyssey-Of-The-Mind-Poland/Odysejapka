@@ -11,6 +11,8 @@
 \usepackage{float}
 \usepackage{geometry}
 \usepackage[none]{hyphenat}
+\usepackage{graphicx}
+\usepackage{adjustbox}
 
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand\tabularxcolumn[1]{m{#1}}
@@ -18,7 +20,8 @@
 \setmainfont{Ubuntu-Regular.ttf}[
   BoldFont = Ubuntu-Bold.ttf,
   ItalicFont = Ubuntu-Italic.ttf,
-  BoldItalicFont = Ubuntu-BoldItalic.ttf
+  BoldItalicFont = Ubuntu-BoldItalic.ttf,
+  LetterSpace=-3.5
 ]
 
 \newgeometry{
@@ -51,7 +54,7 @@
     \centering
     \setlength{\extrarowheight}{2pt}
     \begin{tabularx}{\linewidth}{
-    m{2em} X m{5.5em} m{4em} m{3em} m{4em} m{5.5em}}
+    m{2em} X m{5em} m{3.5em} m{2.5em} m{3.5em} m{5em}}
         M-ce &
         Placówka &
         &
@@ -61,14 +64,14 @@
         Suma/Karne \\[2pt]
 <%#teamScores%>
         \multirow{2}{*}{<%placeStyle%>} &
-        <%teamStyle%> &
+        \adjustbox{max width=\linewidth}{<%teamStyle%>} &
         Przeliczone: &
         <%longTermScore%> &
         <%styleScore%> &
         <%spontaneousScore%> &
         <%total%> \\
         &
-        <%cityStyle%> &
+        \adjustbox{max width=\linewidth}{<%cityStyle%>} &
         \textcolor{gray}{Surowe:} &
         \textcolor{gray}{<%rawLongTerm%>} &
         \textcolor{gray}{<%rawStyle%>} &
