@@ -1,16 +1,25 @@
 <script lang="ts">
     import * as Input from "$lib/components/ui/input/index.js";
     import type {TeamForm} from "$lib/utils/form-results";
+    import type {ValidationFailure} from "$lib/utils/form-validation";
     import RangePenaltyInput from "./RangePenaltyInput.svelte";
     import DiscretePenaltyInput from "./DiscretePenaltyInput.svelte";
     import SinglePenaltyInput from "./SinglePenaltyInput.svelte";
     import ZeroBalsaPenaltyInput from "./ZeroBalsaPenaltyInput.svelte";
+    import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
 
     let {
         penaltyEntry = $bindable(),
+        validationErrors = [],
     } = $props<{
         penaltyEntry: TeamForm['penaltyEntries'][0];
+        validationErrors?: ValidationFailure[];
     }>();
+
+    let entryErrors = $derived(
+        validationErrors.filter(e => e.entryId === penaltyEntry.entry.id)
+    );
+    let hasError = $derived(entryErrors.length > 0);
 
     const isCommentEnabled = $derived.by(() => {
         if (penaltyEntry.entry.penaltyType === 'ZERO_BALSA') {
@@ -26,16 +35,24 @@
     const maxCommentLength = 100;
 </script>
 
-<div class="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group">
+<div class="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : ''}">
     <!-- Left: Index + Name -->
     <div class="flex-1 min-w-0">
         <div class="flex items-start gap-2">
             <span class="text-xs text-muted-foreground font-mono tabular-nums shrink-0 pt-0.5">
                 {penaltyEntry.entry.sortIndex}.
             </span>
-            <span class="text-sm font-medium text-foreground">
-                {penaltyEntry.entry.name}
-            </span>
+            <div class="flex flex-col gap-0.5">
+                <span class="text-sm font-medium text-foreground">
+                    {penaltyEntry.entry.name}
+                </span>
+                {#if hasError}
+                    <div class="flex items-center gap-1">
+                        <CircleAlertIcon class="size-3 text-destructive shrink-0" />
+                        <span class="text-xs text-destructive">{entryErrors[0].message}</span>
+                    </div>
+                {/if}
+            </div>
         </div>
     </div>
 

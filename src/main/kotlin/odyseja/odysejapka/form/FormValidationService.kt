@@ -8,6 +8,7 @@ class FormValidationService {
     fun validateTeamForm(teamForm: TeamForm): List<ValidationFailure> {
         val failures = mutableListOf<ValidationFailure>()
         failures.addAll(validateDtEntries(teamForm.dtEntries))
+        failures.addAll(validatePenaltyEntries(teamForm.penaltyEntries))
         return failures
     }
 
@@ -74,6 +75,42 @@ class FormValidationService {
             entryId = entryId,
             rule = "objective-same-score",
             message = "Wszyscy sędziowie muszą przyznać tę samą liczbę punktów"
+        )
+    }
+
+    private fun validatePenaltyEntries(entries: List<TeamForm.PenaltyTeamFormEntry>): List<ValidationFailure> {
+        val failures = mutableListOf<ValidationFailure>()
+
+        for (penaltyEntry in entries) {
+            validatePenaltyCommentRequired(penaltyEntry)?.let { failures.add(it) }
+        }
+
+        return failures
+    }
+
+    /**
+     * Rule: penalty-comment-required
+     * When a penalty value is set (non-zero), a comment is required.
+     */
+    private fun validatePenaltyCommentRequired(
+        penaltyEntry: TeamForm.PenaltyTeamFormEntry
+    ): ValidationFailure? {
+        val entryId = penaltyEntry.entry.id ?: return null
+
+        val hasPenalty = when (penaltyEntry.entry.penaltyType) {
+            PenaltyFormEntry.PenaltyType.ZERO_BALSA -> penaltyEntry.zeroBalsa == true
+            else -> penaltyEntry.result != null && penaltyEntry.result != 0L
+        }
+
+        if (!hasPenalty) return null
+
+        val hasComment = !penaltyEntry.comment.isNullOrBlank()
+        if (hasComment) return null
+
+        return ValidationFailure(
+            entryId = entryId,
+            rule = "penalty-comment-required",
+            message = "Komentarz jest wymagany gdy kara jest naliczona"
         )
     }
 }
