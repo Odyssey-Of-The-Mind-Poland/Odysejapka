@@ -82,10 +82,9 @@ class TeamFormService(
             val judgesA = createJudgeMap(judgeCount, results, entryId, JudgeType.DT_A)
             val judgesB = createJudgeMap(judgeCount, results, entryId, JudgeType.DT_B)
 
-            val noElement = results
-                .firstOrNull { it.entryId == entryId }
-                ?.noElement
-                ?: false
+            val firstResult = results.firstOrNull { it.entryId == entryId }
+            val noElement = firstResult?.noElement ?: false
+            val noElementComment = if (noElement) firstResult?.comment else null
 
             val nestedEntries = getNestedEntries(templateEntry, results, judgeCount)
 
@@ -96,6 +95,7 @@ class TeamFormService(
                     JudgeType.DT_B to judgesB
                 ),
                 noElement = noElement,
+                noElementComment = noElementComment,
                 nestedEntries = nestedEntries
             )
         }.filterNotNull()

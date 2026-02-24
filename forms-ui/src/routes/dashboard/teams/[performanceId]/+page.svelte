@@ -26,13 +26,20 @@
     }));
 
     let formData = $state<TeamForm | null>(null);
+    let savedResultsSnapshot = $state<string>('');
 
     let validationErrors = $derived(teamFormQuery.data?.validationErrors ?? []);
     let hasValidationErrors = $derived(validationErrors.length > 0);
 
+    let currentResultsSnapshot = $derived(
+        formData ? JSON.stringify(buildResults(formData)) : ''
+    );
+    let isDirty = $derived(currentResultsSnapshot !== savedResultsSnapshot);
+
     $effect(() => {
         if (teamFormQuery.data) {
             formData = JSON.parse(JSON.stringify(teamFormQuery.data));
+            savedResultsSnapshot = JSON.stringify(buildResults(teamFormQuery.data));
         }
     });
 
@@ -96,13 +103,13 @@
                 <Button
                     variant="outline"
                     onclick={() => window.location.href = `/dashboard/teams/${performanceIdParam}/preview`}
-                    disabled={hasValidationErrors}
+                    disabled={hasValidationErrors || isDirty}
                 >
                     Podgląd
                 </Button>
                 <Button
                     onclick={handleSave}
-                    disabled={saveMutation.isPending || !formData}
+                    disabled={saveMutation.isPending || !formData || !isDirty}
                 >
                     <SaveIcon class="size-4" />
                     {saveMutation.isPending ? 'Zapisywanie...' : 'Zatwierdź arkusz'}
