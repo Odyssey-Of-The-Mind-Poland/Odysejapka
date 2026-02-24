@@ -104,16 +104,18 @@
         <div class={nested ? "flex flex-col divide-y divide-border" : "rounded-xl border bg-card shadow-sm overflow-hidden divide-y divide-border"}>
             {#if showHeader}
                 <!-- Judge badges row aligned with selects -->
-                <div class="flex items-center gap-4 px-5 py-2.5 bg-muted/40">
+                <div class="flex items-start gap-4 px-5 py-2.5 bg-muted/40">
                     <div class="flex-1 min-w-0"></div>
-                    <div class="flex items-center gap-2 shrink-0">
+                    <div class="flex items-start gap-2 shrink-0">
                         {#each allColumns as column}
-                            <div class="w-[5.5rem] flex justify-center">
+                            <div class="w-[5.5rem] flex flex-col gap-1 items-center">
+                                <span class="text-[10px] leading-none invisible">Punkty</span>
                                 <Badge variant="default" class="text-xs">{getColumnLabel(column.type, column.judge)}</Badge>
                             </div>
                         {/each}
                         {#if showNoElementColumn}
-                            <div class="w-[7rem] ml-2 pl-2 border-l border-border flex justify-center">
+                            <div class="w-[16rem] ml-2 pl-2 border-l border-border flex flex-col gap-1 items-center">
+                                <span class="text-[10px] leading-none invisible">Punkty</span>
                                 <span class="text-[10px] text-muted-foreground font-medium">Brak elementu</span>
                             </div>
                         {/if}

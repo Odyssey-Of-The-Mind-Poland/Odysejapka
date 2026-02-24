@@ -16,7 +16,7 @@ class FormValidationService {
         val failures = mutableListOf<ValidationFailure>()
 
         for (dtEntry in entries) {
-            validateSingleDtEntry(dtEntry)?.let { failures.add(it) }
+            failures.addAll(validateSingleDtEntry(dtEntry))
 
             if (dtEntry.nestedEntries.isNotEmpty()) {
                 failures.addAll(validateDtEntries(dtEntry.nestedEntries))
@@ -26,17 +26,41 @@ class FormValidationService {
         return failures
     }
 
-    private fun validateSingleDtEntry(dtEntry: TeamForm.DtTeamFormEntry): ValidationFailure? {
-        val scoring = dtEntry.entry.scoring ?: return null
-        val entryId = dtEntry.entry.id ?: return null
+    private fun validateSingleDtEntry(dtEntry: TeamForm.DtTeamFormEntry): List<ValidationFailure> {
+        val entryId = dtEntry.entry.id ?: return emptyList()
+        val scoring = dtEntry.entry.scoring ?: return emptyList()
+        val failures = mutableListOf<ValidationFailure>()
 
-        if (dtEntry.noElement) return null
-
-        if (scoring.scoringType == LongTermFormEntry.ScoringType.OBJECTIVE) {
-            return validateObjectiveSameScore(dtEntry, entryId)
+        if (dtEntry.noElement) {
+            validateNoElementCommentRequired(dtEntry, entryId)?.let { failures.add(it) }
+            return failures
         }
 
-        return null
+        if (scoring.scoringType == LongTermFormEntry.ScoringType.OBJECTIVE) {
+            validateObjectiveSameScore(dtEntry, entryId)?.let { failures.add(it) }
+        }
+
+        return failures
+    }
+
+    /**
+     * Rule: no-element-comment-required
+     * When "Brak elementu" is checked, a comment is required.
+     */
+    private fun validateNoElementCommentRequired(
+        dtEntry: TeamForm.DtTeamFormEntry,
+        entryId: Long
+    ): ValidationFailure? {
+        if (!dtEntry.noElement) return null
+
+        val hasComment = !dtEntry.noElementComment.isNullOrBlank()
+        if (hasComment) return null
+
+        return ValidationFailure(
+            entryId = entryId,
+            rule = "no-element-comment-required",
+            message = "Komentarz jest wymagany gdy zaznaczono brak elementu"
+        )
     }
 
     /**

@@ -40,6 +40,7 @@ export type DtTeamFormEntry = {
     entry: LongTermFormEntry;
     results: Record<JudgeType, Record<number, number | string | null>>;
     noElement: boolean;
+    noElementComment?: string | null;
     nestedEntries?: DtTeamFormEntry[];
 };
 
@@ -101,7 +102,8 @@ function toNumberOrNull(value: number | string | null | undefined): number | nul
 function processEntryResults(
     entryId: number,
     results: Record<JudgeType, Record<number, number | string | null>>,
-    noElement: boolean = false
+    noElement: boolean = false,
+    noElementComment?: string | null
 ): PerformanceResult[] {
     return Object.entries(results).flatMap(([judgeType, judgeMap]) => {
         return Object.entries(judgeMap)
@@ -113,7 +115,8 @@ function processEntryResults(
                         judgeType: judgeType as JudgeType,
                         judge: Number(judge),
                         result: numValue,
-                        ...(noElement ? { noElement: true } : {})
+                        ...(noElement ? { noElement: true } : {}),
+                        ...(noElement && noElementComment ? { comment: noElementComment } : {})
                     };
                 }
                 return null;
@@ -132,7 +135,7 @@ function processDtEntries(
         const results: PerformanceResult[] = [];
         // Process main entry
         if (dtEntry.entry.id != null) {
-            results.push(...processEntryResults(dtEntry.entry.id, dtEntry.results, dtEntry.noElement));
+            results.push(...processEntryResults(dtEntry.entry.id, dtEntry.results, dtEntry.noElement, dtEntry.noElementComment));
         }
         // Process nested entries recursively
         if (dtEntry.nestedEntries && dtEntry.nestedEntries.length > 0) {

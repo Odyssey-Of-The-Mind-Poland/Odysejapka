@@ -1,5 +1,6 @@
 <script lang="ts">
     import type {TeamForm, JudgeType, DtTeamFormEntry, ValidationFailure} from "$lib/utils/form-results";
+    import * as Input from "$lib/components/ui/input/index.js";
     import ObjectiveJudgeInput from "./ObjectiveJudgeInput.svelte";
     import SubjectiveJudgeInput from "./SubjectiveJudgeInput.svelte";
     import {Checkbox} from "$lib/components/ui/checkbox";
@@ -102,9 +103,9 @@
     {/if}
 {:else}
     <!-- Scoring entry row -->
-    <div class="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : ''}">
+    <div class="flex items-start gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : ''}">
         <!-- Left: Index + Name -->
-        <div class="flex-1 min-w-0">
+        <div class="flex-1 min-w-0 pt-1.5">
             <div class="flex items-start gap-2">
                 <span class="text-sm text-muted-foreground font-mono tabular-nums shrink-0 pt-0.5">
                     {dtEntry.entry.sortIndex}.
@@ -124,7 +125,7 @@
         </div>
 
         <!-- Right: Judge inputs -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-start gap-2 shrink-0">
             {#each allColumns as column}
                 {@const isEnabled = isColumnEnabled(column)}
                 {@const objectiveBucket = dtEntry.entry.scoring?.objectiveBucket}
@@ -150,13 +151,22 @@
             {/each}
 
             {#if showNoElementColumn}
-                <div class="w-[7rem] ml-2 pl-2 border-l border-border flex items-center justify-center">
+                <div class="w-[16rem] ml-2 pl-2 border-l border-border flex flex-col items-center justify-center gap-1.5">
                     {#if dtEntry.entry.scoring?.noElementEnabled}
                         {@const entryId = dtEntry.entry.id ?? 0}
                         <Checkbox
                             id="no-element-{entryId}"
                             bind:checked={dtEntry.noElement}
                         />
+                        {#if dtEntry.noElement}
+                            <Input.Input
+                                type="text"
+                                bind:value={dtEntry.noElementComment}
+                                class="w-full h-7 text-xs"
+                                placeholder="Komentarz..."
+                                maxlength={100}
+                            />
+                        {/if}
                     {/if}
                 </div>
             {/if}
