@@ -7,5 +7,10 @@
     }>();
 </script>
 
-<Checkbox bind:checked disabled={disabled} />
+<div class="flex flex-col gap-1">
+    <span class="text-[10px] text-muted-foreground leading-none">Wartość</span>
+    <div class="w-[5.5rem] h-8 flex items-center justify-center">
+        <Checkbox bind:checked disabled={disabled} />
+    </div>
+</div>
 

@@ -82,7 +82,7 @@
             {/if}
         </div>
 
-        <div class="flex flex-col gap-1 w-48">
+        <div class="flex flex-col gap-1 w-80">
             <span class="text-[10px] text-muted-foreground leading-none">Komentarz</span>
             <Input.Input
                 type="text"
