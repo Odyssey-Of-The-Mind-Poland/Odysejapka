@@ -10,6 +10,7 @@ data class TeamForm(
     val dtEntries: List<DtTeamFormEntry>,
     val styleEntries: List<StyleTeamFormEntry>,
     val penaltyEntries: List<PenaltyTeamFormEntry>,
+    val weightHeldEntries: List<WeightHeldTeamFormEntry> = emptyList(),
     val validationErrors: List<ValidationFailure> = emptyList()
 ) {
     data class DtTeamFormEntry(
@@ -19,17 +20,22 @@ data class TeamForm(
         val noElementComment: String? = null,
         val nestedEntries: List<DtTeamFormEntry> = emptyList()
     )
-    
+
     data class StyleTeamFormEntry(
         val entry: StyleFormEntry,
         val results: Map<JudgeType, Map<Int, Long?>>,
         val styleName: String? = null
     )
-    
+
     data class PenaltyTeamFormEntry(
         val entry: PenaltyFormEntry,
         val result: Long?,
         val zeroBalsa: Boolean? = null,
         val comment: String? = null
+    )
+
+    data class WeightHeldTeamFormEntry(
+        val entry: WeightHeldFormEntry,
+        val weights: List<Double> = emptyList()
     )
 }

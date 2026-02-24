@@ -34,6 +34,16 @@ export type PenaltyFormEntry = {
     sortIndex: number;
 };
 
+export type WeightHeldFormEntry = {
+    id: number | null;
+    sortIndex: number;
+};
+
+export type WeightHeldTeamFormEntry = {
+    entry: WeightHeldFormEntry;
+    weights: number[];
+};
+
 export type JudgeType = 'DT_A' | 'DT_B' | 'STYLE';
 
 export type DtTeamFormEntry = {
@@ -69,6 +79,7 @@ export type TeamForm = {
         zeroBalsa?: boolean;
         comment?: string | null;
     }>;
+    weightHeldEntries: WeightHeldTeamFormEntry[];
     validationErrors: ValidationFailure[];
 };
 
@@ -85,6 +96,7 @@ export type PerformanceResult = {
 
 export type PerformanceResultsRequest = {
     results: PerformanceResult[];
+    weightHeldResults?: Record<number, number[]>;
 };
 
 /**
@@ -105,24 +117,24 @@ function processEntryResults(
     noElement: boolean = false,
     noElementComment?: string | null
 ): PerformanceResult[] {
-    return Object.entries(results).flatMap(([judgeType, judgeMap]) => {
-        return Object.entries(judgeMap)
-            .map(([judge, value]) => {
-                const numValue = toNumberOrNull(value);
-                if (numValue != null) {
-                    return {
-                        entryId,
-                        judgeType: judgeType as JudgeType,
-                        judge: Number(judge),
-                        result: numValue,
-                        ...(noElement ? { noElement: true } : {}),
-                        ...(noElement && noElementComment ? { comment: noElementComment } : {})
-                    };
-                }
-                return null;
-            })
-            .filter((result): result is PerformanceResult => result !== null);
-    });
+    const output: PerformanceResult[] = [];
+    for (const [judgeType, judgeMap] of Object.entries(results)) {
+        for (const [judge, value] of Object.entries(judgeMap)) {
+            const numValue = toNumberOrNull(value);
+            if (numValue != null) {
+                const result: PerformanceResult = {
+                    entryId,
+                    judgeType: judgeType as JudgeType,
+                    judge: Number(judge),
+                    result: numValue,
+                };
+                if (noElement) result.noElement = true;
+                if (noElement && noElementComment) result.comment = noElementComment;
+                output.push(result);
+            }
+        }
+    }
+    return output;
 }
 
 /**
@@ -224,15 +236,37 @@ function processPenaltyEntries(
 }
 
 /**
- * Builds performance results array from team form data
+ * Processes weight held entries into a map of entryId -> weights
  */
-export function buildResults(formData: TeamForm | null): PerformanceResult[] {
-    if (!formData) return [];
-    
+function processWeightHeldEntries(
+    weightHeldEntries: TeamForm['weightHeldEntries']
+): Record<number, number[]> | undefined {
+    if (!weightHeldEntries || weightHeldEntries.length === 0) return undefined;
+
+    const result: Record<number, number[]> = {};
+    for (const entry of weightHeldEntries) {
+        if (entry.entry.id != null && entry.weights.length > 0) {
+            result[entry.entry.id] = [...entry.weights];
+        }
+    }
+
+    return Object.keys(result).length > 0 ? result : undefined;
+}
+
+/**
+ * Builds performance results request from team form data
+ */
+export function buildResults(formData: TeamForm | null): PerformanceResultsRequest {
+    if (!formData) return { results: [] };
+
     const dtResults = processDtEntries(formData.dtEntries);
     const styleResults = processStyleEntries(formData.styleEntries);
     const penaltyResults = processPenaltyEntries(formData.penaltyEntries);
-    
-    return [...dtResults, ...styleResults, ...penaltyResults];
+    const weightHeldResults = processWeightHeldEntries(formData.weightHeldEntries);
+
+    return {
+        results: [...dtResults, ...styleResults, ...penaltyResults],
+        ...(weightHeldResults ? { weightHeldResults } : {})
+    };
 }
 

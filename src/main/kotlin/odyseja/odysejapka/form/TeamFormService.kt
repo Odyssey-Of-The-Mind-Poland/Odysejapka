@@ -16,6 +16,7 @@ class TeamFormService(
     fun getTeamForm(performanceId: Int): TeamForm {
         val resultEntity = teamResultRepository.findByPerformanceId(performanceId)
         val results = resultEntity?.results?.results ?: emptyList()
+        val weightHeldResults = resultEntity?.results?.weightHeldResults ?: emptyMap()
         val performance = performanceRepository.findById(performanceId).get()
         val problem = performance.problemEntity.id
         val city = performance.cityEntity
@@ -40,6 +41,7 @@ class TeamFormService(
         val dtEntries = getDtResults(form.dtEntries, results, judgeCount)
         val styleEntries = getStyleResults(form.styleEntries, results, judgeCount)
         val penaltyEntries = getPenaltyResults(form.penaltyEntries, results)
+        val weightHeldEntries = if (problem == 4) getWeightHeldResults(weightHeldResults) else emptyList()
 
         val isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final")
 
@@ -52,7 +54,8 @@ class TeamFormService(
             isFo = isFo,
             dtEntries = dtEntries,
             styleEntries = styleEntries,
-            penaltyEntries = penaltyEntries
+            penaltyEntries = penaltyEntries,
+            weightHeldEntries = weightHeldEntries
         )
     }
 
@@ -156,5 +159,18 @@ class TeamFormService(
                 comment = comment
             )
         }.filterNotNull()
+    }
+
+    private fun getWeightHeldResults(
+        weightHeldResults: Map<Long, List<Double>>
+    ): List<TeamForm.WeightHeldTeamFormEntry> {
+        val entry = WeightHeldFormEntry.forProblem4()
+        val weights = weightHeldResults[WeightHeldFormEntry.PROBLEM_4_ENTRY_ID] ?: emptyList()
+        return listOf(
+            TeamForm.WeightHeldTeamFormEntry(
+                entry = entry,
+                weights = weights
+            )
+        )
     }
 }

@@ -11,6 +11,7 @@
     import DtEntriesTable from "./DtEntriesTable.svelte";
     import StyleEntriesTable from "./StyleEntriesTable.svelte";
     import PenaltyEntriesTable from "./PenaltyEntriesTable.svelte";
+    import WeightHeldEntriesTable from "./WeightHeldEntriesTable.svelte";
     import FileTextIcon from "@lucide/svelte/icons/file-text";
     import SaveIcon from "@lucide/svelte/icons/save";
     import EyeIcon from "@lucide/svelte/icons/eye";
@@ -38,8 +39,9 @@
 
     $effect(() => {
         if (teamFormQuery.data) {
-            formData = JSON.parse(JSON.stringify(teamFormQuery.data));
-            savedResultsSnapshot = JSON.stringify(buildResults(teamFormQuery.data));
+            const data = { ...teamFormQuery.data, weightHeldEntries: teamFormQuery.data.weightHeldEntries ?? [] };
+            formData = JSON.parse(JSON.stringify(data));
+            savedResultsSnapshot = JSON.stringify(buildResults(data));
         }
     });
 
@@ -54,8 +56,7 @@
     function handleSave() {
         if (!formData) return;
 
-        const results = buildResults(formData);
-        const request: PerformanceResultsRequest = { results };
+        const request = buildResults(formData);
         saveMutation.mutate(request);
     }
 
@@ -132,10 +133,11 @@
     {:else if formData}
         <div class="flex flex-col gap-8">
             <DtEntriesTable bind:entries={formData.dtEntries} isFo={formData.isFo} {validationErrors} />
+            <WeightHeldEntriesTable bind:entries={formData.weightHeldEntries} {validationErrors} />
             <StyleEntriesTable bind:entries={formData.styleEntries} />
             <PenaltyEntriesTable bind:entries={formData.penaltyEntries} {validationErrors} />
 
-            {#if formData.dtEntries.length === 0 && formData.styleEntries.length === 0 && formData.penaltyEntries.length === 0}
+            {#if formData.dtEntries.length === 0 && formData.styleEntries.length === 0 && formData.penaltyEntries.length === 0 && formData.weightHeldEntries.length === 0}
                 <div class="rounded-lg border border-dashed p-12 text-center">
                     <FileTextIcon class="size-10 text-muted-foreground/40 mx-auto mb-3" />
                     <p class="text-muted-foreground font-medium">Nie znaleziono wpisów</p>
