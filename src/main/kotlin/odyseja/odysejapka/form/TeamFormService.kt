@@ -12,25 +12,10 @@ class TeamFormService(
     private val cityFormJudgesRepository: CityFormJudgesRepository,
 ) {
 
-    /**
-     * Builds a TeamForm from the submitted request data (for validation before saving).
-     */
-    @Transactional
-    fun buildTeamFormFromRequest(performanceId: Int, request: PerformanceResultsRequest): TeamForm {
-        return buildTeamForm(performanceId, request.results)
-    }
-
     @Transactional
     fun getTeamForm(performanceId: Int): TeamForm {
         val resultEntity = teamResultRepository.findByPerformanceId(performanceId)
         val results = resultEntity?.results?.results ?: emptyList()
-        return buildTeamForm(performanceId, results)
-    }
-
-    private fun buildTeamForm(
-        performanceId: Int,
-        results: List<PerformanceResultsRequest.PerformanceResult>
-    ): TeamForm {
         val performance = performanceRepository.findById(performanceId).get()
         val problem = performance.problemEntity.id
         val city = performance.cityEntity

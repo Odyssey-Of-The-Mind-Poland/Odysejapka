@@ -1,6 +1,5 @@
 <script lang="ts">
-    import type {TeamForm, JudgeType} from "$lib/utils/form-results";
-    import type {ValidationFailure} from "$lib/utils/form-validation";
+    import type {TeamForm, JudgeType, ValidationFailure} from "$lib/utils/form-results";
     import DtEntryRow from "./DtEntryRow.svelte";
     import ClipboardListIcon from "@lucide/svelte/icons/clipboard-list";
     import {Badge} from "$lib/components/ui/badge/index.js";

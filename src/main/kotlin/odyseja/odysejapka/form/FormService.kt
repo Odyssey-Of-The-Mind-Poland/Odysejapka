@@ -63,11 +63,8 @@ class FormService(
     }
 
     fun getTeamForm(performanceId: Int): TeamForm {
-        return teamFormService.getTeamForm(performanceId)
-    }
-
-    fun validateTeamForm(performanceId: Int, request: PerformanceResultsRequest): List<ValidationFailure> {
-        val teamForm = teamFormService.buildTeamFormFromRequest(performanceId, request)
-        return formValidationService.validateTeamForm(teamForm)
+        val teamForm = teamFormService.getTeamForm(performanceId)
+        val errors = formValidationService.validateTeamForm(teamForm)
+        return teamForm.copy(validationErrors = errors)
     }
 }

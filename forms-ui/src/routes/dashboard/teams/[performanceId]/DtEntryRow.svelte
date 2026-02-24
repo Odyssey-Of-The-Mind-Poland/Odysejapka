@@ -1,6 +1,5 @@
 <script lang="ts">
-    import type {TeamForm, JudgeType, DtTeamFormEntry} from "$lib/utils/form-results";
-    import type {ValidationFailure} from "$lib/utils/form-validation";
+    import type {TeamForm, JudgeType, DtTeamFormEntry, ValidationFailure} from "$lib/utils/form-results";
     import ObjectiveJudgeInput from "./ObjectiveJudgeInput.svelte";
     import SubjectiveJudgeInput from "./SubjectiveJudgeInput.svelte";
     import {Checkbox} from "$lib/components/ui/checkbox";

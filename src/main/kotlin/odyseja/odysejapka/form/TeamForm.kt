@@ -9,7 +9,8 @@ data class TeamForm(
     val isFo: Boolean,
     val dtEntries: List<DtTeamFormEntry>,
     val styleEntries: List<StyleTeamFormEntry>,
-    val penaltyEntries: List<PenaltyTeamFormEntry>
+    val penaltyEntries: List<PenaltyTeamFormEntry>,
+    val validationErrors: List<ValidationFailure> = emptyList()
 ) {
     data class DtTeamFormEntry(
         val entry: LongTermFormEntry,
