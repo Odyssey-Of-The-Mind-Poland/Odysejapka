@@ -10,6 +10,7 @@ class FormService(
     private val teamFormService: TeamFormService,
     private val judgeCountService: JudgeCountService,
     private val teamResultService: TeamResultService,
+    private val formValidationService: FormValidationService,
 ) {
 
     @Transactional
@@ -63,5 +64,10 @@ class FormService(
 
     fun getTeamForm(performanceId: Int): TeamForm {
         return teamFormService.getTeamForm(performanceId)
+    }
+
+    fun validateTeamForm(performanceId: Int, request: PerformanceResultsRequest): List<ValidationFailure> {
+        val teamForm = teamFormService.buildTeamFormFromRequest(performanceId, request)
+        return formValidationService.validateTeamForm(teamForm)
     }
 }

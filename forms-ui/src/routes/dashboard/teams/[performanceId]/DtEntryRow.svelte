@@ -1,9 +1,11 @@
 <script lang="ts">
     import type {TeamForm, JudgeType, DtTeamFormEntry} from "$lib/utils/form-results";
+    import type {ValidationFailure} from "$lib/utils/form-validation";
     import ObjectiveJudgeInput from "./ObjectiveJudgeInput.svelte";
     import SubjectiveJudgeInput from "./SubjectiveJudgeInput.svelte";
     import {Checkbox} from "$lib/components/ui/checkbox";
     import DtEntriesTable from "./DtEntriesTable.svelte";
+    import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
 
     const {
         dtEntry = $bindable(),
@@ -11,7 +13,8 @@
         maxJudgeCount,
         isFo = false,
         showNested = true,
-        showNoElementColumn = false
+        showNoElementColumn = false,
+        validationErrors = []
     } = $props<{
         dtEntry: DtTeamFormEntry;
         allColumns: Array<{ type: 'DT_A' | 'DT_B', judge: number }>;
@@ -19,9 +22,15 @@
         isFo: boolean;
         showNested?: boolean;
         showNoElementColumn?: boolean;
+        validationErrors?: ValidationFailure[];
     }>();
 
     let previousNoElement = $state(dtEntry.noElement);
+
+    let entryErrors = $derived(
+        validationErrors.filter(e => e.entryId === dtEntry.entry.id)
+    );
+    let hasError = $derived(entryErrors.length > 0);
 
     function isColumnEnabled(
         column: { type: 'DT_A' | 'DT_B', judge: number }
@@ -88,21 +97,30 @@
                 parentAllColumns={allColumns}
                 parentMaxJudgeCount={maxJudgeCount}
                 parentShowNoElementColumn={showNoElementColumn}
+                {validationErrors}
             />
         </div>
     {/if}
 {:else}
     <!-- Scoring entry row -->
-    <div class="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group">
+    <div class="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : ''}">
         <!-- Left: Index + Name -->
         <div class="flex-1 min-w-0">
             <div class="flex items-start gap-2">
                 <span class="text-sm text-muted-foreground font-mono tabular-nums shrink-0 pt-0.5">
                     {dtEntry.entry.sortIndex}.
                 </span>
-                <span class="text-sm font-medium text-foreground">
-                    {dtEntry.entry.name}
-                </span>
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-sm font-medium text-foreground">
+                        {dtEntry.entry.name}
+                    </span>
+                    {#if hasError}
+                        <div class="flex items-center gap-1">
+                            <CircleAlertIcon class="size-3 text-destructive shrink-0" />
+                            <span class="text-xs text-destructive">{entryErrors[0].message}</span>
+                        </div>
+                    {/if}
+                </div>
             </div>
         </div>
 
@@ -156,6 +174,7 @@
                 parentAllColumns={allColumns}
                 parentMaxJudgeCount={maxJudgeCount}
                 parentShowNoElementColumn={showNoElementColumn}
+                {validationErrors}
             />
         </div>
     {/if}
