@@ -14,6 +14,8 @@
         isFo = false,
         showNested = true,
         showNoElementColumn = false,
+        nestingLevel = 0,
+        entryIndex = 0,
         validationErrors = []
     } = $props<{
         dtEntry: DtTeamFormEntry;
@@ -22,13 +24,25 @@
         isFo: boolean;
         showNested?: boolean;
         showNoElementColumn?: boolean;
+        nestingLevel?: number;
+        entryIndex?: number;
         validationErrors?: ValidationFailure[];
     }>();
+
+    function getDisplayLabel(): string {
+        if (nestingLevel === 1) {
+            return String.fromCharCode(97 + entryIndex) + ".";
+        }
+        if (nestingLevel >= 2) {
+            return "";
+        }
+        return dtEntry.entry.sortIndex + ".";
+    }
 
     let previousNoElement = $state(dtEntry.noElement);
 
     let entryErrors = $derived(
-        validationErrors.filter(e => e.entryId === dtEntry.entry.id)
+        validationErrors.filter((e: ValidationFailure) => e.entryId === dtEntry.entry.id)
     );
     let hasError = $derived(entryErrors.length > 0);
 
@@ -82,7 +96,9 @@
     <!-- Section header row -->
     <div class="px-5 py-3 bg-muted/30">
         <div class="flex items-baseline gap-2">
-            <span class="text-sm font-bold text-foreground tabular-nums">{dtEntry.entry.sortIndex}.</span>
+            {#if getDisplayLabel()}
+                <span class="text-sm font-bold text-foreground tabular-nums">{getDisplayLabel()}</span>
+            {/if}
             <span class="font-semibold text-foreground">{dtEntry.entry.name}</span>
         </div>
     </div>
@@ -94,6 +110,7 @@
                 isFo={isFo}
                 showHeader={false}
                 nested={true}
+                nestingLevel={nestingLevel + 1}
                 parentAllColumns={allColumns}
                 parentMaxJudgeCount={maxJudgeCount}
                 parentShowNoElementColumn={showNoElementColumn}
@@ -107,9 +124,11 @@
         <!-- Left: Index + Name -->
         <div class="flex-1 min-w-0 pt-1.5">
             <div class="flex items-start gap-2">
-                <span class="text-sm text-muted-foreground font-mono tabular-nums shrink-0 pt-0.5">
-                    {dtEntry.entry.sortIndex}.
-                </span>
+                {#if getDisplayLabel()}
+                    <span class="text-sm text-muted-foreground font-mono tabular-nums shrink-0 pt-0.5">
+                        {getDisplayLabel()}
+                    </span>
+                {/if}
                 <div class="flex flex-col gap-0.5">
                     <span class="text-sm font-medium text-foreground">
                         {dtEntry.entry.name}
@@ -180,6 +199,7 @@
                 isFo={isFo}
                 showHeader={false}
                 nested={true}
+                nestingLevel={nestingLevel + 1}
                 parentAllColumns={allColumns}
                 parentMaxJudgeCount={maxJudgeCount}
                 parentShowNoElementColumn={showNoElementColumn}

@@ -63,7 +63,7 @@ class TeamFormToRawTeamFormConverterTest {
         Assertions.assertThat(result.age).isEqualTo(1)
 
         Assertions.assertThat(result.dtEntries).hasSize(1)
-        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("DT Entry 1")
+        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("0. DT Entry 1")
         Assertions.assertThat(result.dtEntries[0].averageScore).isEqualTo(15.0) // (10 + 20 + 15) / 3
         Assertions.assertThat(result.dtEntries[0].noElement).isFalse
 
@@ -134,11 +134,11 @@ class TeamFormToRawTeamFormConverterTest {
         val result = TeamFormToRawTeamFormConverter.convert(teamForm)
 
         Assertions.assertThat(result.dtEntries).hasSize(3)
-        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("DT Section")
+        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("0. DT Section")
         Assertions.assertThat(result.dtEntries[0].averageScore).isNull()
-        Assertions.assertThat(result.dtEntries[1].name).isEqualTo("  Nested Entry 1")
+        Assertions.assertThat(result.dtEntries[1].name).isEqualTo("a. Nested Entry 1")
         Assertions.assertThat(result.dtEntries[1].averageScore).isEqualTo(10.0)
-        Assertions.assertThat(result.dtEntries[2].name).isEqualTo("  Nested Entry 2")
+        Assertions.assertThat(result.dtEntries[2].name).isEqualTo("b. Nested Entry 2")
         Assertions.assertThat(result.dtEntries[2].averageScore).isEqualTo(20.0)
         Assertions.assertThat(result.dtEntries[2].noElement).isTrue
     }
@@ -407,9 +407,9 @@ class TeamFormToRawTeamFormConverterTest {
         val result = TeamFormToRawTeamFormConverter.convert(teamForm)
 
         Assertions.assertThat(result.dtEntries).hasSize(3)
-        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("Level 1")
-        Assertions.assertThat(result.dtEntries[1].name).isEqualTo("  Level 2")
-        Assertions.assertThat(result.dtEntries[2].name).isEqualTo("    Level 3")
+        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("0. Level 1")
+        Assertions.assertThat(result.dtEntries[1].name).isEqualTo("a. Level 2")
+        Assertions.assertThat(result.dtEntries[2].name).isEqualTo("Level 3")
         Assertions.assertThat(result.dtEntries[2].averageScore).isEqualTo(10.0)
     }
 }

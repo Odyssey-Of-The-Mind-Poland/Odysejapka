@@ -61,26 +61,29 @@ object TeamFormToRawTeamFormConverter {
 
     private fun flattenDtEntries(entries: List<TeamForm.DtTeamFormEntry>): List<RawTeamFormEntry> {
         val result = mutableListOf<RawTeamFormEntry>()
-        
-        fun processEntry(entry: TeamForm.DtTeamFormEntry, indent: Int = 0) {
-            val prefix = "  ".repeat(indent)
+
+        fun processEntry(entry: TeamForm.DtTeamFormEntry, nestingLevel: Int = 0, index: Int = 0) {
+            val prefix = when (nestingLevel) {
+                0 -> "${entry.entry.sortIndex}."
+                1 -> "${('a'.code + index).toChar()}."
+                else -> ""
+            }
             result.add(
                 RawTeamFormEntry(
-                    name = "$prefix${entry.entry.name}",
+                    name = if (prefix.isNotEmpty()) "$prefix ${entry.entry.name}" else entry.entry.name,
                     averageScore = calculateAverage(entry.results),
                     noElement = entry.noElement
                 )
             )
-            
-            entry.nestedEntries.forEach { nested ->
-                processEntry(nested, indent + 1)
+
+            entry.nestedEntries.forEachIndexed { i, nested ->
+                processEntry(nested, nestingLevel + 1, i)
             }
         }
-        
-        entries.forEach { entry ->
-            processEntry(entry)
+
+        entries.forEachIndexed { i, entry ->
+            processEntry(entry, 0, i)
         }
-        
         return result
     }
 

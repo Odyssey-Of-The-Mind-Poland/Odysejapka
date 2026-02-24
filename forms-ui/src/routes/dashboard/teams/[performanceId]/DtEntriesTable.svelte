@@ -9,6 +9,7 @@
         isFo = false,
         showHeader = true,
         nested = false,
+        nestingLevel = 0,
         parentAllColumns,
         parentMaxJudgeCount,
         parentShowNoElementColumn,
@@ -18,6 +19,7 @@
         isFo: boolean;
         showHeader?: boolean;
         nested?: boolean;
+        nestingLevel?: number;
         parentAllColumns?: Array<{ type: 'DT_A' | 'DT_B', judge: number }>;
         parentMaxJudgeCount?: number;
         parentShowNoElementColumn?: boolean;
@@ -128,6 +130,8 @@
                     allColumns={allColumns}
                     maxJudgeCount={maxJudgeCount}
                     isFo={isFo}
+                    nestingLevel={nestingLevel}
+                    entryIndex={i}
                     {showNoElementColumn}
                     {validationErrors}
                 />
