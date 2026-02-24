@@ -1,5 +1,6 @@
-import UsersIcon from "@tabler/icons-svelte/icons/users";
-import UsersGroupIcon from "@tabler/icons-svelte/icons/users-group";
+import IconUserCog from "@tabler/icons-svelte/icons/user-cog";
+import IconForms from "@tabler/icons-svelte/icons/forms";
+import IconUsersGroup from "@tabler/icons-svelte/icons/users-group";
 
 export const routes = {
     user: {
@@ -9,19 +10,19 @@ export const routes = {
     },
     navMain: [
         {
-            title: "User management",
+            title: "Użytkownicy",
             url: "/dashboard/users",
-            icon: UsersIcon,
+            icon: IconUserCog,
         },
         {
-            title: "Edytor",
+            title: "Edytor formularzy",
             url: "/dashboard/editor",
-            icon: UsersIcon,
+            icon: IconForms,
         },
         {
-            title: "Teams",
+            title: "Drużyny",
             url: "/dashboard/teams",
-            icon: UsersGroupIcon,
+            icon: IconUsersGroup,
         },
     ],
 };

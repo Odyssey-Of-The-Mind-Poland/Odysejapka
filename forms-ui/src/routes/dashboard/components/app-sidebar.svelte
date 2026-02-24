@@ -1,7 +1,6 @@
 <script lang="ts">
-    import UsersIcon from "@tabler/icons-svelte/icons/users";
     import * as Sidebar from "$lib/registry/ui/sidebar";
-    import AdministrationGroup from "./nav-main.svelte";
+    import NavMain from "./nav-main.svelte";
     import NavUser from "./nav-user.svelte";
     import type {ComponentProps} from "svelte";
     import {routes} from "../routes";
@@ -24,7 +23,7 @@
         </Sidebar.Menu>
     </Sidebar.Header>
     <Sidebar.Content>
-        <AdministrationGroup items={routes.navMain}/>
+        <NavMain items={routes.navMain}/>
     </Sidebar.Content>
     <Sidebar.Footer>
         <NavUser user={routes.user}/>

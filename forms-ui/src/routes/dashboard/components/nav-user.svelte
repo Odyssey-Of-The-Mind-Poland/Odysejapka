@@ -54,7 +54,7 @@
                 <DropdownMenu.Item>
                     <SignOut>
                         <LogoutIcon/>
-                        Log out
+                        Wyloguj
                     </SignOut>
                 </DropdownMenu.Item>
             </DropdownMenu.Content>
