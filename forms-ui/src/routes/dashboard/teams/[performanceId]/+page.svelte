@@ -141,7 +141,7 @@
         <div class="flex flex-col gap-8">
             <DtEntriesTable bind:entries={formData.dtEntries} isFo={formData.isFo} {validationErrors} />
             <StyleEntriesTable bind:entries={formData.styleEntries} />
-            <PenaltyEntriesTable bind:entries={formData.penaltyEntries} />
+            <PenaltyEntriesTable bind:entries={formData.penaltyEntries} {validationErrors} />
 
             {#if formData.dtEntries.length === 0 && formData.styleEntries.length === 0 && formData.penaltyEntries.length === 0}
                 <div class="rounded-lg border border-dashed p-12 text-center">
