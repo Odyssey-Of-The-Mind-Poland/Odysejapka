@@ -9,6 +9,7 @@ class FormValidationService {
         val failures = mutableListOf<ValidationFailure>()
         failures.addAll(validateDtEntries(teamForm.dtEntries))
         failures.addAll(validatePenaltyEntries(teamForm.penaltyEntries))
+        failures.addAll(validateWeightHeldEntries(teamForm.weightHeldEntries))
         return failures
     }
 
@@ -136,5 +137,41 @@ class FormValidationService {
             rule = "penalty-comment-required",
             message = "Komentarz jest wymagany gdy kara jest naliczona"
         )
+    }
+
+    private fun validateWeightHeldEntries(entries: List<TeamForm.WeightHeldTeamFormEntry>): List<ValidationFailure> {
+        val failures = mutableListOf<ValidationFailure>()
+
+        for (weightHeldEntry in entries) {
+            val entryId = weightHeldEntry.entry.id ?: continue
+            val weights = weightHeldEntry.weights
+
+            if (weights.isEmpty()) continue
+
+            if (weights.first() != 2.5) {
+                failures.add(
+                    ValidationFailure(
+                        entryId = entryId,
+                        rule = "weight-held-first-must-be-2.5",
+                        message = "Pierwszy ciężar musi wynosić 2,5 kg"
+                    )
+                )
+            }
+
+            for (weight in weights) {
+                if (weight !in WeightHeldFormEntry.ALLOWED_WEIGHTS) {
+                    failures.add(
+                        ValidationFailure(
+                            entryId = entryId,
+                            rule = "weight-held-invalid-value",
+                            message = "Niedozwolona wartość ciężaru: $weight"
+                        )
+                    )
+                    break
+                }
+            }
+        }
+
+        return failures
     }
 }

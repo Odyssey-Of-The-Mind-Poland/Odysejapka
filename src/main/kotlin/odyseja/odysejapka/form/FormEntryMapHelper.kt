@@ -22,7 +22,6 @@ object FormEntryMapHelper {
         form.penaltyEntries.forEach { entry ->
             collectEntries(entry, map)
         }
-        
         return map
     }
 

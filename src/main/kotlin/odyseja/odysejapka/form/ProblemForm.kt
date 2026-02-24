@@ -6,6 +6,4 @@ data class ProblemForm(
     val penaltyEntries: List<PenaltyFormEntry>,
     val smallJudgesTeam: List<Int>? = null,
     val bigJudgesTeam: List<Int>? = null
-) {
-
-}
+)
