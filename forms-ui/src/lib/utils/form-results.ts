@@ -86,6 +86,8 @@ export type TeamForm = {
     }>;
     weightHeldEntries: WeightHeldTeamFormEntry[];
     validationErrors: ValidationFailure[];
+    canPreview?: boolean;
+    judgeCount?: number;
 };
 
 export type PerformanceResult = {

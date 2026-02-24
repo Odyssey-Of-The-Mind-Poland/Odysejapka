@@ -125,7 +125,7 @@
                 <Button
                     variant="outline"
                     onclick={() => window.location.href = `/dashboard/teams/${performanceIdParam}/preview`}
-                    disabled={hasValidationErrors || isDirty}
+                    disabled={isDirty || !(teamFormQuery.data?.canPreview ?? false)}
                 >
                     Podgląd
                 </Button>

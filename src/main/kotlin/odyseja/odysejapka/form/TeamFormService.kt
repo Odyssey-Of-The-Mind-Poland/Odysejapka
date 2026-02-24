@@ -34,7 +34,8 @@ class TeamFormService(
             performanceTime = "",
             dtEntries = emptyList(),
             styleEntries = emptyList(),
-            penaltyEntries = emptyList()
+            penaltyEntries = emptyList(),
+            judgeCount = judgeCount
         )
 
         val formEntity = formProblemRepository.findByProblem(problem) ?: return emptyForm
@@ -62,7 +63,8 @@ class TeamFormService(
             dtEntries = dtEntries,
             styleEntries = styleEntries,
             penaltyEntries = penaltyEntries,
-            weightHeldEntries = weightHeldEntries
+            weightHeldEntries = weightHeldEntries,
+            judgeCount = judgeCount
         )
     }
 

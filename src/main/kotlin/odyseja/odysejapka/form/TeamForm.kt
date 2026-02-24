@@ -13,7 +13,9 @@ data class TeamForm(
     val styleEntries: List<StyleTeamFormEntry>,
     val penaltyEntries: List<PenaltyTeamFormEntry>,
     val weightHeldEntries: List<WeightHeldTeamFormEntry> = emptyList(),
-    val validationErrors: List<ValidationFailure> = emptyList()
+    val validationErrors: List<ValidationFailure> = emptyList(),
+    val canPreview: Boolean = false,
+    val judgeCount: Int = 1
 ) {
     data class DtTeamFormEntry(
         val entry: LongTermFormEntry,

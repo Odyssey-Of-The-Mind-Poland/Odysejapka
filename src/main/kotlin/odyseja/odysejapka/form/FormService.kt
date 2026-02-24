@@ -65,6 +65,7 @@ class FormService(
     fun getTeamForm(performanceId: Int): TeamForm {
         val teamForm = teamFormService.getTeamForm(performanceId)
         val errors = formValidationService.validateTeamForm(teamForm)
-        return teamForm.copy(validationErrors = errors)
+        val canPreview = errors.isEmpty()
+        return teamForm.copy(validationErrors = errors, canPreview = canPreview)
     }
 }

@@ -13,7 +13,8 @@ class FormValidationService {
     fun validateTeamForm(teamForm: TeamForm): List<ValidationFailure> {
         val failures = mutableListOf<ValidationFailure>()
         failures.addAll(validatePerformanceFields(teamForm))
-        failures.addAll(validateDtEntries(teamForm.dtEntries))
+        failures.addAll(validateDtEntries(teamForm.dtEntries, teamForm.judgeCount))
+        failures.addAll(validateStyleEntriesAllJudges(teamForm.styleEntries, teamForm.judgeCount))
         failures.addAll(validatePenaltyEntries(teamForm.penaltyEntries))
         failures.addAll(validateWeightHeldEntries(teamForm.weightHeldEntries))
         return failures
@@ -42,21 +43,21 @@ class FormValidationService {
         return failures
     }
 
-    private fun validateDtEntries(entries: List<TeamForm.DtTeamFormEntry>): List<ValidationFailure> {
+    private fun validateDtEntries(entries: List<TeamForm.DtTeamFormEntry>, judgeCount: Int): List<ValidationFailure> {
         val failures = mutableListOf<ValidationFailure>()
 
         for (dtEntry in entries) {
-            failures.addAll(validateSingleDtEntry(dtEntry))
+            failures.addAll(validateSingleDtEntry(dtEntry, judgeCount))
 
             if (dtEntry.nestedEntries.isNotEmpty()) {
-                failures.addAll(validateDtEntries(dtEntry.nestedEntries))
+                failures.addAll(validateDtEntries(dtEntry.nestedEntries, judgeCount))
             }
         }
 
         return failures
     }
 
-    private fun validateSingleDtEntry(dtEntry: TeamForm.DtTeamFormEntry): List<ValidationFailure> {
+    private fun validateSingleDtEntry(dtEntry: TeamForm.DtTeamFormEntry, judgeCount: Int): List<ValidationFailure> {
         val entryId = dtEntry.entry.id ?: return emptyList()
         val scoring = dtEntry.entry.scoring ?: return emptyList()
         val failures = mutableListOf<ValidationFailure>()
@@ -66,10 +67,71 @@ class FormValidationService {
             return failures
         }
 
+        validateAllJudgesFilled(dtEntry, entryId, judgeCount)?.let { failures.add(it) }
+
         if (scoring.scoringType == LongTermFormEntry.ScoringType.OBJECTIVE) {
             validateObjectiveSameScore(dtEntry, entryId)?.let { failures.add(it) }
         }
 
+        return failures
+    }
+
+    /**
+     * Rule: all-judges-required
+     * All judges must have a value for each scoring entry.
+     */
+    private fun validateAllJudgesFilled(
+        dtEntry: TeamForm.DtTeamFormEntry,
+        entryId: Long,
+        judgeCount: Int
+    ): ValidationFailure? {
+        val scoring = dtEntry.entry.scoring ?: return null
+
+        val enabledTypes = when (scoring.judges) {
+            LongTermFormEntry.JudgesType.A -> listOf(JudgeType.DT_A)
+            LongTermFormEntry.JudgesType.B -> listOf(JudgeType.DT_B)
+            LongTermFormEntry.JudgesType.A_PLUS_B -> listOf(JudgeType.DT_A, JudgeType.DT_B)
+        }
+
+        for (judgeType in enabledTypes) {
+            val judgeMap = dtEntry.results[judgeType] ?: continue
+            for (judgeIndex in 1..judgeCount) {
+                judgeMap[judgeIndex] ?: return ValidationFailure(
+                    entryId = entryId,
+                    rule = "all-judges-required",
+                    message = "Wszyscy sędziowie muszą przyznać punkty"
+                )
+            }
+        }
+        return null
+    }
+
+    /**
+     * Rule: all-style-judges-required
+     * All style judges must have a value for each style entry.
+     */
+    private fun validateStyleEntriesAllJudges(
+        entries: List<TeamForm.StyleTeamFormEntry>,
+        judgeCount: Int
+    ): List<ValidationFailure> {
+        val failures = mutableListOf<ValidationFailure>()
+        for (entry in entries) {
+            val entryId = entry.entry.id ?: continue
+            val styleMap = entry.results[JudgeType.STYLE] ?: continue
+            for (judgeIndex in 1..judgeCount) {
+                val value = styleMap[judgeIndex]
+                if (value == null) {
+                    failures.add(
+                        ValidationFailure(
+                            entryId = entryId,
+                            rule = "all-judges-required",
+                            message = "Wszyscy sędziowie muszą przyznać punkty"
+                        )
+                    )
+                    break
+                }
+            }
+        }
         return failures
     }
 
