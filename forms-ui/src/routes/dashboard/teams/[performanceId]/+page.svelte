@@ -31,24 +31,7 @@
     let formData = $state<TeamForm | null>(null);
     let savedResultsSnapshot = $state<string>('');
 
-    function getPerformanceFieldValidationErrors(data: TeamForm | null) {
-        if (!data) return [];
-        const errors: Array<{ entryId: number; rule: string; message: string }> = [];
-        if (String(data.performanceAt ?? "").trim() === "") {
-            errors.push({ entryId: PERFORMANCE_AT_ENTRY_ID, rule: "performance-at-required", message: "Godzina występu jest wymagana" });
-        }
-        if (String(data.performanceTime ?? "").trim() === "") {
-            errors.push({ entryId: PERFORMANCE_TIME_ENTRY_ID, rule: "performance-time-required", message: "Czas trwania występu jest wymagany" });
-        }
-        return errors;
-    }
-
-    let serverValidationErrors = $derived(teamFormQuery.data?.validationErrors ?? []);
-    let performanceFieldErrors = $derived(getPerformanceFieldValidationErrors(formData));
-    let validationErrors = $derived([
-        ...serverValidationErrors.filter(e => e.entryId !== PERFORMANCE_AT_ENTRY_ID && e.entryId !== PERFORMANCE_TIME_ENTRY_ID),
-        ...performanceFieldErrors
-    ]);
+    let validationErrors = $derived(teamFormQuery.data?.validationErrors ?? []);
     let hasValidationErrors = $derived(validationErrors.length > 0);
     let performanceAtError = $derived(validationErrors.find(e => e.entryId === PERFORMANCE_AT_ENTRY_ID));
     let performanceTimeError = $derived(validationErrors.find(e => e.entryId === PERFORMANCE_TIME_ENTRY_ID));

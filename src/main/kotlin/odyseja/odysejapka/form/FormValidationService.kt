@@ -11,6 +11,9 @@ class FormValidationService {
     }
 
     fun validateTeamForm(teamForm: TeamForm): List<ValidationFailure> {
+        if (!hasAnyValues(teamForm)) {
+            return emptyList()
+        }
         val failures = mutableListOf<ValidationFailure>()
         failures.addAll(validatePerformanceFields(teamForm))
         failures.addAll(validateDtEntries(teamForm.dtEntries, teamForm.judgeCount))
@@ -18,6 +21,24 @@ class FormValidationService {
         failures.addAll(validatePenaltyEntries(teamForm.penaltyEntries))
         failures.addAll(validateWeightHeldEntries(teamForm.weightHeldEntries))
         return failures
+    }
+
+    private fun hasAnyValues(teamForm: TeamForm): Boolean {
+        if (teamForm.performanceAt.isNotBlank() || teamForm.performanceTime.isNotBlank()) return true
+        if (hasAnyDtValues(teamForm.dtEntries)) return true
+        if (teamForm.styleEntries.any { entry -> entry.results.values.any { judgeMap -> judgeMap.values.any { it != null } } }) return true
+        if (teamForm.penaltyEntries.any { it.result != null || it.zeroBalsa == true }) return true
+        if (teamForm.weightHeldEntries.any { it.weights.isNotEmpty() }) return true
+        return false
+    }
+
+    private fun hasAnyDtValues(entries: List<TeamForm.DtTeamFormEntry>): Boolean {
+        for (entry in entries) {
+            if (entry.noElement) return true
+            if (entry.results.values.any { judgeMap -> judgeMap.values.any { it != null } }) return true
+            if (hasAnyDtValues(entry.nestedEntries)) return true
+        }
+        return false
     }
 
     private fun validatePerformanceFields(teamForm: TeamForm): List<ValidationFailure> {
