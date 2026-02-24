@@ -46,6 +46,19 @@
         }
     });
 
+    let rangeDisplay = $derived.by(() => {
+        if (!rangesQuery.data) return '';
+        const range = rangesQuery.data.find(r => r.name === subjectiveRangeName);
+        if (!range) return '';
+        if (isFo) {
+            return `${range.foRanges.min} – ${range.foRanges.max} pkt`;
+        } else {
+            const vals = range.frValues.values;
+            if (vals.length <= 4) return vals.join(', ') + ' pkt';
+            return `${vals[0]} – ${vals[vals.length - 1]} pkt`;
+        }
+    });
+
     let stringValue = $derived(
         value !== null && value !== undefined ? String(value) : undefined
     );
@@ -55,23 +68,25 @@
     }
 </script>
 
-<Select.Root
-    type="single"
-    value={stringValue}
-    onValueChange={handleValueChange}
-    disabled={disabled}
->
-    <Select.Trigger class="w-24" disabled={disabled}>
-        {stringValue ?? 'Wybierz'}
-    </Select.Trigger>
-    <Select.Content>
-        <Select.Group>
-            {#each availableValues as rangeValue}
-                <Select.Item value={String(rangeValue)} label={String(rangeValue)}>
-                    {rangeValue}
-                </Select.Item>
-            {/each}
-        </Select.Group>
-    </Select.Content>
-</Select.Root>
-
+<div class="flex flex-col gap-1">
+    <span class="text-[10px] text-muted-foreground leading-none">Punkty</span>
+    <Select.Root
+        type="single"
+        value={stringValue}
+        onValueChange={handleValueChange}
+        disabled={disabled}
+    >
+        <Select.Trigger class="w-[5.5rem] h-8 text-sm" disabled={disabled}>
+            {stringValue ?? 'Punkty'}
+        </Select.Trigger>
+        <Select.Content>
+            <Select.Group>
+                {#each availableValues as rangeValue}
+                    <Select.Item value={String(rangeValue)} label={String(rangeValue)}>
+                        {rangeValue}
+                    </Select.Item>
+                {/each}
+            </Select.Group>
+        </Select.Content>
+    </Select.Root>
+</div>
