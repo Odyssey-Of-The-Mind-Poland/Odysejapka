@@ -6,6 +6,9 @@
     import {Spinner} from "$lib/components/ui/spinner";
     import {session as sessionStore} from "$lib/sessionStore";
     import {get} from "svelte/store";
+    import DownloadIcon from "@lucide/svelte/icons/download";
+    import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
+    import FileTextIcon from "@lucide/svelte/icons/file-text";
 
     let performanceId = $derived(Number(page.params.performanceId));
     let performanceIdParam = $derived(page.params.performanceId);
@@ -23,19 +26,19 @@
         try {
             const currentSession = get(sessionStore);
             const token = currentSession?.accessToken;
-            
+
             const url = `/api/v1/form/${performanceIdParam}/preview/pdf`;
             const headers: HeadersInit = {};
             if (token) {
                 headers['Authorization'] = `Bearer ${token}`;
             }
-            
+
             const response = await fetch(url, { headers });
-            
+
             if (!response.ok) {
                 throw new Error(`Failed to load PDF: ${response.statusText}`);
             }
-            
+
             const blob = await response.blob();
             const objectUrl = URL.createObjectURL(blob);
             pdfUrl = objectUrl;
@@ -60,29 +63,43 @@
     }
 </script>
 
-<div class="flex flex-col gap-4 h-full">
-    <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Podgląd formularza drużyny</h1>
-        <div class="flex gap-2">
-            <Button variant="outline" onclick={downloadPdf}>
+<div class="flex flex-col gap-6 h-full">
+    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div class="flex items-start gap-4">
+            <div class="flex items-center justify-center size-12 rounded-xl bg-primary/10 shrink-0">
+                <FileTextIcon class="size-6 text-primary" />
+            </div>
+            <div>
+                <h1 class="text-2xl font-semibold tracking-tight">Podgląd formularza</h1>
+                <p class="text-sm text-muted-foreground">Drużyna {performanceId}</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+            <Button variant="outline" size="sm" onclick={downloadPdf}>
+                <DownloadIcon class="size-4" />
                 Pobierz PDF
             </Button>
-            <Button onclick={() => window.history.back()}>
+            <Button size="sm" onclick={() => window.history.back()}>
+                <ArrowLeftIcon class="size-4" />
                 Powrót
             </Button>
         </div>
     </div>
 
-    <div class="flex-1 border rounded-lg overflow-hidden h-full">
+    <div class="flex-1 rounded-xl border bg-card shadow-sm overflow-hidden h-full">
         {#if isLoading}
-            <div class="flex justify-center items-center h-full">
+            <div class="flex flex-col items-center justify-center h-full gap-3">
                 <Spinner size="sm"/>
+                <p class="text-sm text-muted-foreground">Ładowanie podglądu...</p>
             </div>
         {:else if error}
-            <div class="flex justify-center items-center h-full text-red-500">
+            <div class="flex flex-col items-center justify-center h-full gap-3">
+                <div class="flex items-center justify-center size-12 rounded-xl bg-destructive/10">
+                    <FileTextIcon class="size-6 text-destructive" />
+                </div>
                 <div class="text-center">
-                    <p class="font-medium">Błąd ładowania PDF</p>
-                    <p class="text-sm">{error}</p>
+                    <p class="font-medium text-destructive">Błąd ładowania PDF</p>
+                    <p class="text-sm text-muted-foreground mt-1">{error}</p>
                 </div>
             </div>
         {:else if pdfUrl}
@@ -94,4 +111,3 @@
         {/if}
     </div>
 </div>
-

@@ -1,6 +1,4 @@
 <script lang="ts">
-    import * as Table from "$lib/components/ui/table/index.js";
-    import * as Input from "$lib/components/ui/input/index.js";
     import type {TeamForm, JudgeType, DtTeamFormEntry} from "$lib/utils/form-results";
     import ObjectiveJudgeInput from "./ObjectiveJudgeInput.svelte";
     import SubjectiveJudgeInput from "./SubjectiveJudgeInput.svelte";
@@ -12,13 +10,15 @@
         allColumns,
         maxJudgeCount,
         isFo = false,
-        showNested = true
+        showNested = true,
+        showNoElementColumn = false
     } = $props<{
         dtEntry: DtTeamFormEntry;
         allColumns: Array<{ type: 'DT_A' | 'DT_B', judge: number }>;
         maxJudgeCount: number;
         isFo: boolean;
         showNested?: boolean;
+        showNoElementColumn?: boolean;
     }>();
 
     let previousNoElement = $state(dtEntry.noElement);
@@ -48,6 +48,14 @@
         return true;
     }
 
+    let isSection = $derived(
+        dtEntry.entry.type === 'SECTION' || dtEntry.entry.type === 'SCORING_GROUP'
+    );
+    let hasScoring = $derived(!!dtEntry.entry.scoring);
+    let hasNestedEntries = $derived(
+        showNested && dtEntry.nestedEntries && dtEntry.nestedEntries.length > 0 && isSection
+    );
+
     $effect(() => {
         if (dtEntry.noElement && !previousNoElement) {
             Object.keys(dtEntry.results).forEach((judgeType) => {
@@ -59,66 +67,96 @@
         }
         previousNoElement = dtEntry.noElement;
     });
-
-
 </script>
 
-<Table.Row>
-    <Table.Cell>
-        <div class="flex flex-col">
-            <div class="font-extralight text-sm">
-                {dtEntry.entry.sortIndex}
-            </div>
-            <div class="font-medium">
-                {dtEntry.entry.name}
+{#if isSection && !hasScoring}
+    <!-- Section header row -->
+    <div class="px-5 py-3 bg-muted/30">
+        <div class="flex items-baseline gap-2">
+            <span class="text-sm font-bold text-foreground tabular-nums">{dtEntry.entry.sortIndex}.</span>
+            <span class="font-semibold text-foreground">{dtEntry.entry.name}</span>
+        </div>
+    </div>
+
+    {#if hasNestedEntries}
+        <div class="border-l-2 border-primary/20 ml-5">
+            <DtEntriesTable
+                entries={dtEntry.nestedEntries!}
+                isFo={isFo}
+                showHeader={false}
+                nested={true}
+                parentAllColumns={allColumns}
+                parentMaxJudgeCount={maxJudgeCount}
+                parentShowNoElementColumn={showNoElementColumn}
+            />
+        </div>
+    {/if}
+{:else}
+    <!-- Scoring entry row -->
+    <div class="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group">
+        <!-- Left: Index + Name -->
+        <div class="flex-1 min-w-0">
+            <div class="flex items-start gap-2">
+                <span class="text-sm text-muted-foreground font-mono tabular-nums shrink-0 pt-0.5">
+                    {dtEntry.entry.sortIndex}.
+                </span>
+                <span class="text-sm font-medium text-foreground">
+                    {dtEntry.entry.name}
+                </span>
             </div>
         </div>
-    </Table.Cell>
-    {#each allColumns as column}
-        {@const isEnabled = isColumnEnabled(column)}
-        {@const objectiveBucket = dtEntry.entry.scoring?.objectiveBucket}
-        {@const subjectiveRange = dtEntry.entry.scoring?.subjectiveRange}
-        {@const isObjective = dtEntry.entry.scoring?.scoringType === 'OBJECTIVE' && objectiveBucket}
-        {@const isSubjective = dtEntry.entry.scoring?.scoringType === 'SUBJECTIVE' && subjectiveRange}
-        <Table.Cell>
-            {#if isObjective && objectiveBucket}
-                <ObjectiveJudgeInput
+
+        <!-- Right: Judge inputs -->
+        <div class="flex items-center gap-2 shrink-0">
+            {#each allColumns as column}
+                {@const isEnabled = isColumnEnabled(column)}
+                {@const objectiveBucket = dtEntry.entry.scoring?.objectiveBucket}
+                {@const subjectiveRange = dtEntry.entry.scoring?.subjectiveRange}
+                {@const isObjective = dtEntry.entry.scoring?.scoringType === 'OBJECTIVE' && objectiveBucket}
+                {@const isSubjective = dtEntry.entry.scoring?.scoringType === 'SUBJECTIVE' && subjectiveRange}
+                {#if isObjective && objectiveBucket}
+                    <ObjectiveJudgeInput
                         objectiveBucketName={objectiveBucket}
                         bind:value={dtEntry.results[column.type][column.judge]}
                         disabled={!isEnabled || dtEntry.noElement}
-                />
-            {:else if isSubjective && subjectiveRange}
-                <SubjectiveJudgeInput
+                    />
+                {:else if isSubjective && subjectiveRange}
+                    <SubjectiveJudgeInput
                         subjectiveRangeName={subjectiveRange}
                         isFo={isFo}
                         bind:value={dtEntry.results[column.type][column.judge]}
                         disabled={!isEnabled || dtEntry.noElement}
-                />
-            {/if}
-        </Table.Cell>
-    {/each}
-    <Table.Cell>
-        {#if dtEntry.entry.scoring?.noElementEnabled}
-            {@const entryId = dtEntry.entry.id ?? 0}
-            <Checkbox 
-                id="no-element-{entryId}"
-                bind:checked={dtEntry.noElement}
-            />
-        {/if}
-    </Table.Cell>
-</Table.Row>
-{#if showNested && dtEntry.nestedEntries && dtEntry.nestedEntries.length > 0 && 
-    (dtEntry.entry.type === 'SCORING_GROUP' || dtEntry.entry.type === 'SECTION')}
-    <Table.Row>
-        <Table.Cell colspan={allColumns.length + 2} class="p-0">
-            <div class="pl-8 pr-4 py-4">
-                <DtEntriesTable 
-                    entries={dtEntry.nestedEntries}
-                    isFo={isFo}
-                    showHeader={false}
-                />
-            </div>
-        </Table.Cell>
-    </Table.Row>
-{/if}
+                    />
+                {:else if !isEnabled}
+                    <div class="w-[5.5rem]"></div>
+                {/if}
+            {/each}
 
+            {#if showNoElementColumn}
+                <div class="w-[7rem] ml-2 pl-2 border-l border-border flex items-center justify-center">
+                    {#if dtEntry.entry.scoring?.noElementEnabled}
+                        {@const entryId = dtEntry.entry.id ?? 0}
+                        <Checkbox
+                            id="no-element-{entryId}"
+                            bind:checked={dtEntry.noElement}
+                        />
+                    {/if}
+                </div>
+            {/if}
+        </div>
+    </div>
+
+    {#if hasNestedEntries}
+        <div class="border-l-2 border-primary/20 ml-5">
+            <DtEntriesTable
+                entries={dtEntry.nestedEntries!}
+                isFo={isFo}
+                showHeader={false}
+                nested={true}
+                parentAllColumns={allColumns}
+                parentMaxJudgeCount={maxJudgeCount}
+                parentShowNoElementColumn={showNoElementColumn}
+            />
+        </div>
+    {/if}
+{/if}

@@ -15,9 +15,9 @@
     }
 
     let {
-        label, 
-        value = $bindable(), 
-        id, 
+        label,
+        value = $bindable(),
+        id,
         flexClass = 'flex-1',
         disabled = false,
         placeholder = ' ',
@@ -26,18 +26,18 @@
         triggerContent,
         children
     }: Props = $props();
-    
+
     let isFunction = typeof triggerContent === 'function';
     let triggerText = $derived(isFunction ? (triggerContent as () => string)() : '');
     let triggerSnippet = $derived(!isFunction ? (triggerContent as import('svelte').Snippet) : undefined);
-    
+
     let selectId = id?.toString() || `select-${Math.random().toString(36).substr(2, 9)}`;
     let selectValue = $state(value ?? undefined);
-    
+
     $effect(() => {
         selectValue = value ?? undefined;
     });
-    
+
     $effect(() => {
         value = selectValue ?? null;
     });
@@ -45,10 +45,10 @@
 
 <div class="group relative {flexClass}">
     <label
-            class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
+            class="absolute top-0 z-10 block pointer-events-none cursor-default px-2 text-xs font-medium text-muted-foreground transition-colors group-focus-within:text-primary"
             for={selectId}
     >
-        <span class="inline-flex bg-background px-1">{label}</span>
+        <span class="inline-flex bg-background px-1 rounded-sm">{label}</span>
     </label>
     <Select.Root
         type="single"
@@ -56,7 +56,7 @@
         disabled={disabled}
         onValueChange={onValueChange}
     >
-        <Select.Trigger class="pt-5 w-full {className}" id={selectId} disabled={disabled}>
+        <Select.Trigger class="pt-5 w-full transition-colors {className}" id={selectId} disabled={disabled}>
             {#if isFunction}
                 {triggerText}
             {:else if triggerSnippet}
@@ -68,4 +68,3 @@
         </Select.Content>
     </Select.Root>
 </div>
-

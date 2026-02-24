@@ -37,23 +37,25 @@
     }
 </script>
 
-<Select.Root
-    type="single"
-    value={stringValue}
-    onValueChange={handleValueChange}
-    disabled={disabled}
->
-    <Select.Trigger class="w-24" disabled={disabled}>
-        {stringValue ?? 'Wybierz'}
-    </Select.Trigger>
-    <Select.Content>
-        <Select.Group>
-            {#each availableValues as bucketValue}
-                <Select.Item value={String(bucketValue)} label={String(bucketValue)}>
-                    {bucketValue}
-                </Select.Item>
-            {/each}
-        </Select.Group>
-    </Select.Content>
-</Select.Root>
-
+<div class="flex flex-col gap-1">
+    <span class="text-[10px] text-muted-foreground leading-none">Punkty</span>
+    <Select.Root
+        type="single"
+        value={stringValue}
+        onValueChange={handleValueChange}
+        disabled={disabled}
+    >
+        <Select.Trigger class="w-[5.5rem] h-8 text-sm" disabled={disabled}>
+            {stringValue ?? 'Punkty'}
+        </Select.Trigger>
+        <Select.Content>
+            <Select.Group>
+                {#each availableValues as bucketValue}
+                    <Select.Item value={String(bucketValue)} label={String(bucketValue)}>
+                        {bucketValue}
+                    </Select.Item>
+                {/each}
+            </Select.Group>
+        </Select.Content>
+    </Select.Root>
+</div>

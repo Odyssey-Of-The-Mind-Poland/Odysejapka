@@ -1,12 +1,25 @@
 <script lang="ts">
-    import * as Table from "$lib/components/ui/table/index.js";
     import type {TeamForm, JudgeType} from "$lib/utils/form-results";
     import DtEntryRow from "./DtEntryRow.svelte";
+    import ClipboardListIcon from "@lucide/svelte/icons/clipboard-list";
+    import {Badge} from "$lib/components/ui/badge/index.js";
 
-    const {entries = $bindable(), isFo = false, showHeader = true} = $props<{
+    const {
+        entries = $bindable(),
+        isFo = false,
+        showHeader = true,
+        nested = false,
+        parentAllColumns,
+        parentMaxJudgeCount,
+        parentShowNoElementColumn,
+    } = $props<{
         entries: TeamForm['dtEntries'];
         isFo: boolean;
         showHeader?: boolean;
+        nested?: boolean;
+        parentAllColumns?: Array<{ type: 'DT_A' | 'DT_B', judge: number }>;
+        parentMaxJudgeCount?: number;
+        parentShowNoElementColumn?: boolean;
     }>();
 
     function getJudgeKeys(results: Record<JudgeType, Record<number, number | string | null>>): number[] {
@@ -42,7 +55,7 @@
     }
 
     function getColumnLabel(type: 'DT_A' | 'DT_B', judge: number): string {
-        const prefix = type === 'DT_A' ? 'A' : 'B';
+        const prefix = type === 'DT_A' ? 'Sędzia A' : 'Sędzia B';
         return `${prefix}${judge}`;
     }
 
@@ -60,42 +73,60 @@
         });
         return maxJudge || 1;
     }
+
+    function hasAnyNoElement(entries: TeamForm['dtEntries']): boolean {
+        return entries.some(entry => {
+            if (entry.entry.scoring?.noElementEnabled) return true;
+            if (entry.nestedEntries) return hasAnyNoElement(entry.nestedEntries);
+            return false;
+        });
+    }
 </script>
 
 {#if entries.length > 0}
-    {@const allColumns = getAllJudgeColumns(entries)}
-    {@const maxJudgeCount = getMaxJudgeCount(entries)}
-    <div class="flex flex-col gap-2">
+    {@const allColumns = parentAllColumns ?? getAllJudgeColumns(entries)}
+    {@const maxJudgeCount = parentMaxJudgeCount ?? getMaxJudgeCount(entries)}
+    {@const showNoElementColumn = parentShowNoElementColumn ?? hasAnyNoElement(entries)}
+    <div class="flex flex-col gap-3">
         {#if showHeader}
-            <h2 class="text-xl font-semibold">Punktacja Długoterminowa</h2>
+            <div class="flex items-center gap-2.5">
+                <div class="flex items-center justify-center size-8 rounded-lg bg-secondary/10">
+                    <ClipboardListIcon class="size-4 text-secondary" />
+                </div>
+                <div>
+                    <h2 class="text-lg font-semibold tracking-tight">Punktacja długoterminowa</h2>
+                    <p class="text-xs text-muted-foreground">{entries.length} {entries.length === 1 ? 'wpis' : 'wpisów'}</p>
+                </div>
+            </div>
         {/if}
-        <div class="rounded-md border">
-            <Table.Root>
-                {#if showHeader}
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.Head>Nazwa</Table.Head>
-                            {#each allColumns as column}
-                                <Table.Head>{getColumnLabel(column.type, column.judge)}</Table.Head>
-                            {/each}
-                            <Table.Head>
-                                Brak elementu
-                            </Table.Head>
-                        </Table.Row>
-                    </Table.Header>
-                {/if}
-                <Table.Body>
-                    {#each entries as dtEntry, i (dtEntry.entry.id)}
-                        <DtEntryRow
-                            bind:dtEntry={entries[i]}
-                            allColumns={allColumns}
-                            maxJudgeCount={maxJudgeCount}
-                            isFo={isFo}
-                        />
-                    {/each}
-                </Table.Body>
-            </Table.Root>
+        <div class={nested ? "flex flex-col divide-y divide-border" : "rounded-xl border bg-card shadow-sm overflow-hidden divide-y divide-border"}>
+            {#if showHeader}
+                <!-- Judge badges row aligned with selects -->
+                <div class="flex items-center gap-4 px-5 py-2.5 bg-muted/40">
+                    <div class="flex-1 min-w-0"></div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        {#each allColumns as column}
+                            <div class="w-[5.5rem] flex justify-center">
+                                <Badge variant="default" class="text-xs">{getColumnLabel(column.type, column.judge)}</Badge>
+                            </div>
+                        {/each}
+                        {#if showNoElementColumn}
+                            <div class="w-[7rem] ml-2 pl-2 border-l border-border flex justify-center">
+                                <span class="text-[10px] text-muted-foreground font-medium">Brak elementu</span>
+                            </div>
+                        {/if}
+                    </div>
+                </div>
+            {/if}
+            {#each entries as dtEntry, i (dtEntry.entry.id)}
+                <DtEntryRow
+                    bind:dtEntry={entries[i]}
+                    allColumns={allColumns}
+                    maxJudgeCount={maxJudgeCount}
+                    isFo={isFo}
+                    {showNoElementColumn}
+                />
+            {/each}
         </div>
     </div>
 {/if}
-

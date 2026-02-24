@@ -1,9 +1,10 @@
 <script lang="ts">
-    import * as Table from "$lib/components/ui/table/index.js";
     import type { TeamForm, JudgeType } from "$lib/utils/form-results";
     import StyleEntryRow from "./StyleEntryRow.svelte";
+    import PaletteIcon from "@lucide/svelte/icons/palette";
+    import {Badge} from "$lib/components/ui/badge/index.js";
 
-    const { entries = $bindable() } = $props<{ 
+    const { entries = $bindable() } = $props<{
         entries: TeamForm['styleEntries'];
     }>();
 
@@ -30,29 +31,34 @@
 
 {#if entries.length > 0}
     {@const allJudgeColumns = getAllJudgeColumns(entries)}
-    <div class="flex flex-col gap-2">
-        <h2 class="text-xl font-semibold">Styl</h2>
-        <div class="rounded-md border">
-            <Table.Root>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.Head>Nazwa</Table.Head>
-                        <Table.Head>Nazwa stylu</Table.Head>
-                        {#each allJudgeColumns as judge}
-                            <Table.Head>STYL {judge}</Table.Head>
-                        {/each}
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {#each entries as styleEntry, i (styleEntry.entry.id)}
-                        <StyleEntryRow
-                            bind:styleEntry={entries[i]}
-                            allJudgeColumns={allJudgeColumns}
-                        />
+    <div class="flex flex-col gap-3">
+        <div class="flex items-center gap-2.5">
+            <div class="flex items-center justify-center size-8 rounded-lg bg-primary/10">
+                <PaletteIcon class="size-4 text-primary" />
+            </div>
+            <div>
+                <h2 class="text-lg font-semibold tracking-tight">Styl</h2>
+                <p class="text-xs text-muted-foreground">{entries.length} {entries.length === 1 ? 'wpis' : 'wpisów'}</p>
+            </div>
+        </div>
+        <div class="rounded-xl border bg-card shadow-sm overflow-hidden divide-y divide-border">
+            <!-- Judge badges row aligned with selects -->
+            <div class="flex items-center gap-4 px-5 py-2.5 bg-muted/40">
+                <div class="flex-1 min-w-0"></div>
+                <div class="flex items-center gap-4 shrink-0">
+                    {#each allJudgeColumns as judge}
+                        <div class="w-[5.5rem] flex justify-center">
+                            <Badge variant="default" class="text-xs whitespace-nowrap">STYL {judge}</Badge>
+                        </div>
                     {/each}
-                </Table.Body>
-            </Table.Root>
+                </div>
+            </div>
+            {#each entries as styleEntry, i (styleEntry.entry.id)}
+                <StyleEntryRow
+                    bind:styleEntry={entries[i]}
+                    allJudgeColumns={allJudgeColumns}
+                />
+            {/each}
         </div>
     </div>
 {/if}
-

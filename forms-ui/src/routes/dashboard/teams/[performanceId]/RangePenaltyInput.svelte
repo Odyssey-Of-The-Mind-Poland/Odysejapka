@@ -24,23 +24,25 @@
     }
 </script>
 
-<Select.Root
-    type="single"
-    value={stringValue}
-    onValueChange={handleValueChange}
-    disabled={disabled}
->
-    <Select.Trigger class="w-24" disabled={disabled}>
-        {stringValue ?? 'Wybierz'}
-    </Select.Trigger>
-    <Select.Content>
-        <Select.Group>
-            {#each options as optionValue}
-                <Select.Item value={String(optionValue)} label={String(optionValue)}>
-                    {optionValue}
-                </Select.Item>
-            {/each}
-        </Select.Group>
-    </Select.Content>
-</Select.Root>
-
+<div class="flex flex-col gap-1">
+    <span class="text-[10px] text-muted-foreground leading-none">Wartość</span>
+    <Select.Root
+        type="single"
+        value={stringValue}
+        onValueChange={handleValueChange}
+        disabled={disabled}
+    >
+        <Select.Trigger class="w-[5.5rem] h-8 text-sm" disabled={disabled}>
+            {stringValue ?? 'Wybierz'}
+        </Select.Trigger>
+        <Select.Content>
+            <Select.Group>
+                {#each options as optionValue}
+                    <Select.Item value={String(optionValue)} label={String(optionValue)}>
+                        {optionValue}
+                    </Select.Item>
+                {/each}
+            </Select.Group>
+        </Select.Content>
+    </Select.Root>
+</div>

@@ -12,21 +12,21 @@
     }
 
     let {label, value = $bindable(), id, class: className = '', flexClass = 'flex-1', onInput, type, ...inputProps}: Props = $props();
-    
+
     let inputId = id?.toString() || `input-${Math.random().toString(36).substr(2, 9)}`;
     let inputType = type ?? 'text';
 </script>
 
 <div class="group relative {flexClass}">
     <label
-            class="absolute top-0 block pointer-events-none cursor-default px-2 text-xs font-medium text-foreground"
+            class="absolute top-0 z-10 block pointer-events-none cursor-default px-2 text-xs font-medium text-muted-foreground transition-colors group-focus-within:text-primary"
             for={inputId}
     >
-        <span class="inline-flex bg-background px-1">{label}</span>
+        <span class="inline-flex bg-background px-1 rounded-sm">{label}</span>
     </label>
-    <Input 
-        bind:value={value} 
-        class="w-full dark:bg-background pt-5 {className}" 
+    <Input
+        bind:value={value}
+        class="w-full dark:bg-background pt-5 transition-colors focus:border-primary/50 {className}"
         placeholder=" "
         type={inputType}
         id={inputId}
@@ -34,4 +34,3 @@
         {...(inputProps as any)}
     />
 </div>
-
