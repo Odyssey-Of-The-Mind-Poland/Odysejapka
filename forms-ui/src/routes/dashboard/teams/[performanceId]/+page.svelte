@@ -2,12 +2,13 @@
     import {Spinner} from "$lib/components/ui/spinner";
     import {Button} from "$lib/components/ui/button/index.js";
     import {Badge} from "$lib/components/ui/badge/index.js";
-    import {createOdysejaQuery, createPutMutation} from "$lib/queries";
+    import {createOdysejaQuery, createPutMutation, createPostMutation} from "$lib/queries";
     import {setBreadcrumbs} from "$lib/breadcrumbs";
     import {page} from "$app/state";
     import {onMount} from "svelte";
     import {toast} from "svelte-sonner";
     import {buildResults, type TeamForm, type PerformanceResultsRequest} from "$lib/utils/form-results";
+    import {type ValidationFailure} from "$lib/utils/form-validation";
     import DtEntriesTable from "./DtEntriesTable.svelte";
     import StyleEntriesTable from "./StyleEntriesTable.svelte";
     import PenaltyEntriesTable from "./PenaltyEntriesTable.svelte";
@@ -26,6 +27,7 @@
     }));
 
     let formData = $state<TeamForm | null>(null);
+    let validationErrors = $state<ValidationFailure[]>([]);
 
     $effect(() => {
         if (teamFormQuery.data) {
@@ -41,13 +43,29 @@
         }
     }));
 
+    let validateMutation = $derived(createPostMutation<ValidationFailure[], PerformanceResultsRequest>({
+        path: () => `/api/v1/form/${performanceIdParam}/validate`,
+        queryKey: ['teamForm', performanceIdParam],
+        onSuccess: (errors) => {
+            validationErrors = errors;
+
+            if (errors.length > 0) {
+                toast.error(`Formularz zawiera ${errors.length} ${errors.length === 1 ? 'błąd' : 'błędów'}`);
+                return;
+            }
+
+            const results = buildResults(formData!);
+            const request: PerformanceResultsRequest = { results };
+            saveMutation.mutate(request);
+        }
+    }));
+
     function handleSave() {
         if (!formData) return;
 
         const results = buildResults(formData);
         const request: PerformanceResultsRequest = { results };
-
-        saveMutation.mutate(request);
+        validateMutation.mutate(request);
     }
 
     onMount(() => {
@@ -99,10 +117,10 @@
                 </Button>
                 <Button
                     onclick={handleSave}
-                    disabled={saveMutation.isPending || !formData}
+                    disabled={validateMutation.isPending || saveMutation.isPending || !formData}
                 >
                     <SaveIcon class="size-4" />
-                    {saveMutation.isPending ? 'Zapisywanie...' : 'Zatwierdź arkusz'}
+                    {validateMutation.isPending ? 'Walidacja...' : saveMutation.isPending ? 'Zapisywanie...' : 'Zatwierdź arkusz'}
                 </Button>
             </div>
         </div>
@@ -121,7 +139,7 @@
         </div>
     {:else if formData}
         <div class="flex flex-col gap-8">
-            <DtEntriesTable bind:entries={formData.dtEntries} isFo={formData.isFo} />
+            <DtEntriesTable bind:entries={formData.dtEntries} isFo={formData.isFo} {validationErrors} />
             <StyleEntriesTable bind:entries={formData.styleEntries} />
             <PenaltyEntriesTable bind:entries={formData.penaltyEntries} />
 

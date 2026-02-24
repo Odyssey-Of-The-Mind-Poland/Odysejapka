@@ -12,28 +12,32 @@ class TeamFormService(
     private val cityFormJudgesRepository: CityFormJudgesRepository,
 ) {
 
+    /**
+     * Builds a TeamForm from the submitted request data (for validation before saving).
+     */
+    @Transactional
+    fun buildTeamFormFromRequest(performanceId: Int, request: PerformanceResultsRequest): TeamForm {
+        return buildTeamForm(performanceId, request.results)
+    }
+
     @Transactional
     fun getTeamForm(performanceId: Int): TeamForm {
+        val resultEntity = teamResultRepository.findByPerformanceId(performanceId)
+        val results = resultEntity?.results?.results ?: emptyList()
+        return buildTeamForm(performanceId, results)
+    }
+
+    private fun buildTeamForm(
+        performanceId: Int,
+        results: List<PerformanceResultsRequest.PerformanceResult>
+    ): TeamForm {
         val performance = performanceRepository.findById(performanceId).get()
         val problem = performance.problemEntity.id
         val city = performance.cityEntity
 
         val judgeCount = cityFormJudgesRepository.findByProblemAndCity(problem, city)?.judgeCount ?: 1
 
-        val formEntity = formProblemRepository.findByProblem(problem)
-            ?: return TeamForm(
-                performanceId = performanceId,
-                teamName = performance.team,
-                cityName = city.name,
-                problem = problem,
-                age = performance.ageEntity.id,
-                isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final"),
-                dtEntries = emptyList(),
-                styleEntries = emptyList(),
-                penaltyEntries = emptyList()
-            )
-
-        val form = formEntity.form ?: return TeamForm(
+        val emptyForm = TeamForm(
             performanceId = performanceId,
             teamName = performance.team,
             cityName = city.name,
@@ -45,8 +49,8 @@ class TeamFormService(
             penaltyEntries = emptyList()
         )
 
-        val resultEntity = teamResultRepository.findByPerformanceId(performanceId)
-        val results = resultEntity?.results?.results ?: emptyList()
+        val formEntity = formProblemRepository.findByProblem(problem) ?: return emptyForm
+        val form = formEntity.form ?: return emptyForm
 
         val dtEntries = getDtResults(form.dtEntries, results, judgeCount)
         val styleEntries = getStyleResults(form.styleEntries, results, judgeCount)
