@@ -1,7 +1,6 @@
 <script lang="ts">
     import * as Input from "$lib/components/ui/input/index.js";
-    import type {TeamForm} from "$lib/utils/form-results";
-    import type {ValidationFailure} from "$lib/utils/form-validation";
+    import type {TeamForm, ValidationFailure} from "$lib/utils/form-results";
     import RangePenaltyInput from "./RangePenaltyInput.svelte";
     import DiscretePenaltyInput from "./DiscretePenaltyInput.svelte";
     import SinglePenaltyInput from "./SinglePenaltyInput.svelte";

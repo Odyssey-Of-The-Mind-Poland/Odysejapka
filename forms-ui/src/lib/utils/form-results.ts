@@ -43,6 +43,12 @@ export type DtTeamFormEntry = {
     nestedEntries?: DtTeamFormEntry[];
 };
 
+export type ValidationFailure = {
+    entryId: number;
+    rule: string;
+    message: string;
+};
+
 export type TeamForm = {
     performanceId: number;
     teamName: string;
@@ -62,6 +68,7 @@ export type TeamForm = {
         zeroBalsa?: boolean;
         comment?: string | null;
     }>;
+    validationErrors: ValidationFailure[];
 };
 
 export type PerformanceResult = {

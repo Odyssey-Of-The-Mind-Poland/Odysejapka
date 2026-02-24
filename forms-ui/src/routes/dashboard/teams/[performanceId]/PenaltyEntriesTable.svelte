@@ -1,6 +1,5 @@
 <script lang="ts">
-    import type { TeamForm } from "$lib/utils/form-results";
-    import type { ValidationFailure } from "$lib/utils/form-validation";
+    import type { TeamForm, ValidationFailure } from "$lib/utils/form-results";
     import PenaltyEntryRow from "./PenaltyEntryRow.svelte";
     import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 
