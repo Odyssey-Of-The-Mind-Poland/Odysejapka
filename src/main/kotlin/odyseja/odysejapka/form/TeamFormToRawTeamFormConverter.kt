@@ -3,7 +3,8 @@ package odyseja.odysejapka.form
 data class RawTeamFormEntry(
     val name: String,
     val averageScore: Double?,
-    val noElement: Boolean = false
+    val noElement: Boolean = false,
+    val isSectionHeader: Boolean = false
 )
 
 data class RawTeamForm(
@@ -11,6 +12,8 @@ data class RawTeamForm(
     val cityName: String,
     val problem: Int,
     val age: Int,
+    val performanceAt: String = "",
+    val performanceTime: String = "",
     val dtEntries: List<RawTeamFormEntry>,
     val dtSum: Double,
     val styleEntries: List<RawTeamFormEntry>,
@@ -49,6 +52,8 @@ object TeamFormToRawTeamFormConverter {
             cityName = teamForm.cityName,
             problem = teamForm.problem,
             age = teamForm.age,
+            performanceAt = teamForm.performanceAt,
+            performanceTime = teamForm.performanceTime,
             dtEntries = dtEntries,
             dtSum = dtSum,
             styleEntries = styleEntries,
@@ -59,30 +64,74 @@ object TeamFormToRawTeamFormConverter {
         )
     }
 
+    /**
+     * Flattens DT entries with group handling:
+     * - SCORING_GROUP: collapsed to one row (group name + sum of subentries)
+     * - SECTION: section name as header row, then nested entries as a., b., c., etc.
+     * - SCORING (leaf): single row with score
+     */
     private fun flattenDtEntries(entries: List<TeamForm.DtTeamFormEntry>): List<RawTeamFormEntry> {
         val result = mutableListOf<RawTeamFormEntry>()
 
-        fun processEntry(entry: TeamForm.DtTeamFormEntry, nestingLevel: Int = 0, index: Int = 0) {
-            val prefix = when (nestingLevel) {
-                0 -> "${entry.entry.sortIndex}."
-                1 -> "${('a'.code + index).toChar()}."
-                else -> ""
-            }
-            result.add(
-                RawTeamFormEntry(
-                    name = if (prefix.isNotEmpty()) "$prefix ${entry.entry.name}" else entry.entry.name,
-                    averageScore = calculateAverage(entry.results),
-                    noElement = entry.noElement
-                )
-            )
+        fun processEntry(entry: TeamForm.DtTeamFormEntry, nestingLevel: Int, index: Int, isInsideScoringGroup: Boolean): Double {
+            val isScoringGroup = entry.entry.type == LongTermFormEntry.EntryType.SCORING_GROUP
+            val isSection = entry.entry.type == LongTermFormEntry.EntryType.SECTION
+            val hasNested = entry.nestedEntries.isNotEmpty()
 
-            entry.nestedEntries.forEachIndexed { i, nested ->
-                processEntry(nested, nestingLevel + 1, i)
+            return when {
+                isScoringGroup && hasNested -> {
+                    val nestedSum = entry.nestedEntries.mapIndexed { i, nested ->
+                        processEntry(nested, nestingLevel + 1, i, isInsideScoringGroup = true)
+                    }.sum()
+                    if (!isInsideScoringGroup) {
+                        val prefix = when (nestingLevel) {
+                            0 -> "${entry.entry.sortIndex}."
+                            1 -> "${('a'.code + index).toChar()}."
+                            else -> ""
+                        }
+                        val name = if (prefix.isNotEmpty()) "$prefix ${entry.entry.name}" else entry.entry.name
+                        result.add(RawTeamFormEntry(name = name, averageScore = nestedSum, noElement = false))
+                    }
+                    nestedSum
+                }
+                isSection && hasNested -> {
+                    if (!isInsideScoringGroup) {
+                        val prefix = when (nestingLevel) {
+                            0 -> "${entry.entry.sortIndex}."
+                            1 -> "${('a'.code + index).toChar()}."
+                            else -> ""
+                        }
+                        val name = if (prefix.isNotEmpty()) "$prefix ${entry.entry.name}" else entry.entry.name
+                        result.add(RawTeamFormEntry(name = name, averageScore = null, noElement = false, isSectionHeader = true))
+                    }
+                    entry.nestedEntries.mapIndexed { i, nested ->
+                        processEntry(nested, nestingLevel + 1, i, isInsideScoringGroup)
+                    }.sum()
+                }
+                else -> {
+                    val score = calculateAverage(entry.results) ?: 0.0
+                    if (!isInsideScoringGroup) {
+                        val prefix = when (nestingLevel) {
+                            0 -> "${entry.entry.sortIndex}."
+                            1 -> "${('a'.code + index).toChar()}."
+                            else -> ""
+                        }
+                        val name = if (prefix.isNotEmpty()) "$prefix ${entry.entry.name}" else entry.entry.name
+                        result.add(
+                            RawTeamFormEntry(
+                                name = name,
+                                averageScore = score,
+                                noElement = entry.noElement
+                            )
+                        )
+                    }
+                    score
+                }
             }
         }
 
         entries.forEachIndexed { i, entry ->
-            processEntry(entry, 0, i)
+            processEntry(entry, 0, i, isInsideScoringGroup = false)
         }
         return result
     }

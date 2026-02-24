@@ -136,6 +136,7 @@ class TeamFormToRawTeamFormConverterTest {
         Assertions.assertThat(result.dtEntries).hasSize(3)
         Assertions.assertThat(result.dtEntries[0].name).isEqualTo("0. DT Section")
         Assertions.assertThat(result.dtEntries[0].averageScore).isNull()
+        Assertions.assertThat(result.dtEntries[0].isSectionHeader).isTrue()
         Assertions.assertThat(result.dtEntries[1].name).isEqualTo("a. Nested Entry 1")
         Assertions.assertThat(result.dtEntries[1].averageScore).isEqualTo(10.0)
         Assertions.assertThat(result.dtEntries[2].name).isEqualTo("b. Nested Entry 2")
@@ -408,9 +409,68 @@ class TeamFormToRawTeamFormConverterTest {
 
         Assertions.assertThat(result.dtEntries).hasSize(3)
         Assertions.assertThat(result.dtEntries[0].name).isEqualTo("0. Level 1")
+        Assertions.assertThat(result.dtEntries[0].isSectionHeader).isTrue()
         Assertions.assertThat(result.dtEntries[1].name).isEqualTo("a. Level 2")
+        Assertions.assertThat(result.dtEntries[1].isSectionHeader).isTrue()
         Assertions.assertThat(result.dtEntries[2].name).isEqualTo("Level 3")
         Assertions.assertThat(result.dtEntries[2].averageScore).isEqualTo(10.0)
+    }
+
+    @Test
+    fun `should collapse SCORING_GROUP to single row with summed score`() {
+        val teamForm = TeamForm(
+            performanceId = 1,
+            teamName = "Team A",
+            cityName = "City 1",
+            problem = 1,
+            age = 1,
+            isFo = false,
+            dtEntries = listOf(
+                TeamForm.DtTeamFormEntry(
+                    entry = LongTermFormEntry(
+                        id = 1L,
+                        name = "Scoring Group",
+                        type = LongTermFormEntry.EntryType.SCORING_GROUP
+                    ),
+                    results = emptyMap(),
+                    nestedEntries = listOf(
+                        TeamForm.DtTeamFormEntry(
+                            entry = LongTermFormEntry(
+                                id = 2L,
+                                name = "Sub Entry 1",
+                                type = LongTermFormEntry.EntryType.SCORING,
+                                scoring = LongTermFormEntry.ScoringData(
+                                    scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
+                                    noElementEnabled = false
+                                )
+                            ),
+                            results = mapOf(JudgeType.DT_A to mapOf(1 to 10L))
+                        ),
+                        TeamForm.DtTeamFormEntry(
+                            entry = LongTermFormEntry(
+                                id = 3L,
+                                name = "Sub Entry 2",
+                                type = LongTermFormEntry.EntryType.SCORING,
+                                scoring = LongTermFormEntry.ScoringData(
+                                    scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
+                                    noElementEnabled = false
+                                )
+                            ),
+                            results = mapOf(JudgeType.DT_A to mapOf(1 to 20L))
+                        )
+                    )
+                )
+            ),
+            styleEntries = emptyList(),
+            penaltyEntries = emptyList()
+        )
+
+        val result = TeamFormToRawTeamFormConverter.convert(teamForm)
+
+        Assertions.assertThat(result.dtEntries).hasSize(1)
+        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("0. Scoring Group")
+        Assertions.assertThat(result.dtEntries[0].averageScore).isEqualTo(30.0) // 10 + 20
+        Assertions.assertThat(result.dtEntries[0].isSectionHeader).isFalse()
     }
 }
 

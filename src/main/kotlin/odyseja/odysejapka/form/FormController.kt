@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/form")
 class FormController(
     private val formService: FormService?,
-    private val teamFormHtmlGeneratorService: TeamFormHtmlGeneratorService?,
     private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService?
 ) {
 
@@ -52,14 +51,6 @@ class FormController(
     @GetMapping("/objective-buckets")
     fun getObjectiveBuckets(): List<ObjectiveBucketDto> {
         return ObjectiveBuckets.entries.map { it.toBucketsResponse() }
-    }
-
-    @GetMapping("/{performanceId}/preview")
-    fun getTeamFormPreview(@PathVariable performanceId: Int): ResponseEntity<String> {
-        val html = teamFormHtmlGeneratorService!!.generateHtml(performanceId)
-        return ResponseEntity.ok()
-            .contentType(MediaType.TEXT_HTML)
-            .body(html)
     }
 
     @GetMapping("/{performanceId}/preview/pdf")
