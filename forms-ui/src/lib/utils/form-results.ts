@@ -60,6 +60,9 @@ export type ValidationFailure = {
     message: string;
 };
 
+export const PERFORMANCE_AT_ENTRY_ID = -1;
+export const PERFORMANCE_TIME_ENTRY_ID = -2;
+
 export type TeamForm = {
     performanceId: number;
     teamName: string;
@@ -67,6 +70,8 @@ export type TeamForm = {
     problem: number;
     age: number;
     isFo: boolean;
+    performanceAt?: string;
+    performanceTime?: string;
     dtEntries: DtTeamFormEntry[];
     styleEntries: Array<{
         entry: StyleFormEntry;
@@ -97,6 +102,8 @@ export type PerformanceResult = {
 export type PerformanceResultsRequest = {
     results: PerformanceResult[];
     weightHeldResults?: Record<number, number[]>;
+    performanceAt?: string;
+    performanceTime?: string;
 };
 
 /**
@@ -266,7 +273,9 @@ export function buildResults(formData: TeamForm | null): PerformanceResultsReque
 
     return {
         results: [...dtResults, ...styleResults, ...penaltyResults],
-        ...(weightHeldResults ? { weightHeldResults } : {})
+        ...(weightHeldResults ? { weightHeldResults } : {}),
+        performanceAt: String(formData.performanceAt ?? "").trim() || "",
+        performanceTime: String(formData.performanceTime ?? "").trim() || ""
     };
 }
 

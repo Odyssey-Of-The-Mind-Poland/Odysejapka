@@ -5,11 +5,40 @@ import org.springframework.stereotype.Service
 @Service
 class FormValidationService {
 
+    companion object {
+        const val PERFORMANCE_AT_ENTRY_ID = -1L
+        const val PERFORMANCE_TIME_ENTRY_ID = -2L
+    }
+
     fun validateTeamForm(teamForm: TeamForm): List<ValidationFailure> {
         val failures = mutableListOf<ValidationFailure>()
+        failures.addAll(validatePerformanceFields(teamForm))
         failures.addAll(validateDtEntries(teamForm.dtEntries))
         failures.addAll(validatePenaltyEntries(teamForm.penaltyEntries))
         failures.addAll(validateWeightHeldEntries(teamForm.weightHeldEntries))
+        return failures
+    }
+
+    private fun validatePerformanceFields(teamForm: TeamForm): List<ValidationFailure> {
+        val failures = mutableListOf<ValidationFailure>()
+        if (teamForm.performanceAt.isBlank()) {
+            failures.add(
+                ValidationFailure(
+                    entryId = PERFORMANCE_AT_ENTRY_ID,
+                    rule = "performance-at-required",
+                    message = "Godzina występu jest wymagana"
+                )
+            )
+        }
+        if (teamForm.performanceTime.isBlank()) {
+            failures.add(
+                ValidationFailure(
+                    entryId = PERFORMANCE_TIME_ENTRY_ID,
+                    rule = "performance-time-required",
+                    message = "Czas trwania występu jest wymagany"
+                )
+            )
+        }
         return failures
     }
 

@@ -7,7 +7,9 @@
     import {page} from "$app/state";
     import {onMount} from "svelte";
     import {toast} from "svelte-sonner";
-    import {buildResults, type TeamForm, type PerformanceResultsRequest} from "$lib/utils/form-results";
+    import {buildResults, type TeamForm, type PerformanceResultsRequest, PERFORMANCE_AT_ENTRY_ID, PERFORMANCE_TIME_ENTRY_ID} from "$lib/utils/form-results";
+    import * as Input from "$lib/components/ui/input/index.js";
+    import * as Label from "$lib/components/ui/label/index.js";
     import DtEntriesTable from "./DtEntriesTable.svelte";
     import StyleEntriesTable from "./StyleEntriesTable.svelte";
     import PenaltyEntriesTable from "./PenaltyEntriesTable.svelte";
@@ -29,8 +31,27 @@
     let formData = $state<TeamForm | null>(null);
     let savedResultsSnapshot = $state<string>('');
 
-    let validationErrors = $derived(teamFormQuery.data?.validationErrors ?? []);
+    function getPerformanceFieldValidationErrors(data: TeamForm | null) {
+        if (!data) return [];
+        const errors: Array<{ entryId: number; rule: string; message: string }> = [];
+        if (String(data.performanceAt ?? "").trim() === "") {
+            errors.push({ entryId: PERFORMANCE_AT_ENTRY_ID, rule: "performance-at-required", message: "Godzina występu jest wymagana" });
+        }
+        if (String(data.performanceTime ?? "").trim() === "") {
+            errors.push({ entryId: PERFORMANCE_TIME_ENTRY_ID, rule: "performance-time-required", message: "Czas trwania występu jest wymagany" });
+        }
+        return errors;
+    }
+
+    let serverValidationErrors = $derived(teamFormQuery.data?.validationErrors ?? []);
+    let performanceFieldErrors = $derived(getPerformanceFieldValidationErrors(formData));
+    let validationErrors = $derived([
+        ...serverValidationErrors.filter(e => e.entryId !== PERFORMANCE_AT_ENTRY_ID && e.entryId !== PERFORMANCE_TIME_ENTRY_ID),
+        ...performanceFieldErrors
+    ]);
     let hasValidationErrors = $derived(validationErrors.length > 0);
+    let performanceAtError = $derived(validationErrors.find(e => e.entryId === PERFORMANCE_AT_ENTRY_ID));
+    let performanceTimeError = $derived(validationErrors.find(e => e.entryId === PERFORMANCE_TIME_ENTRY_ID));
 
     let currentResultsSnapshot = $derived(
         formData ? JSON.stringify(buildResults(formData)) : ''
@@ -132,6 +153,39 @@
         </div>
     {:else if formData}
         <div class="flex flex-col gap-8">
+            <!-- Performance time and duration at top -->
+            <div class="rounded-xl border bg-card shadow-sm p-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2">
+                        <Label.Root for="performanceAt">Godzina występu</Label.Root>
+                        <Input.Input
+                            id="performanceAt"
+                            type="time"
+                            class={performanceAtError ? "border-destructive focus-visible:ring-destructive" : ""}
+                            bind:value={formData.performanceAt}
+                        />
+                        {#if performanceAtError}
+                            <p class="text-sm text-destructive">{performanceAtError.message}</p>
+                        {/if}
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <Label.Root for="performanceTime">Czas trwania (min)</Label.Root>
+                        <Input.Input
+                            id="performanceTime"
+                            type="number"
+                            min="0"
+                            step="1"
+                            placeholder="np. 8"
+                            class={performanceTimeError ? "border-destructive focus-visible:ring-destructive" : ""}
+                            bind:value={formData.performanceTime}
+                        />
+                        {#if performanceTimeError}
+                            <p class="text-sm text-destructive">{performanceTimeError.message}</p>
+                        {/if}
+                    </div>
+                </div>
+            </div>
+
             <DtEntriesTable bind:entries={formData.dtEntries} isFo={formData.isFo} {validationErrors} />
             <WeightHeldEntriesTable bind:entries={formData.weightHeldEntries} {validationErrors} />
             <StyleEntriesTable bind:entries={formData.styleEntries} />

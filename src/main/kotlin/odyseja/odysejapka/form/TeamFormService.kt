@@ -30,6 +30,8 @@ class TeamFormService(
             problem = problem,
             age = performance.ageEntity.id,
             isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final"),
+            performanceAt = "",
+            performanceTime = "",
             dtEntries = emptyList(),
             styleEntries = emptyList(),
             penaltyEntries = emptyList()
@@ -45,6 +47,9 @@ class TeamFormService(
 
         val isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final")
 
+        val performanceAt = resultEntity?.results?.performanceAt ?: ""
+        val performanceTime = resultEntity?.results?.performanceTime ?: ""
+
         return TeamForm(
             performanceId = performanceId,
             teamName = performance.team,
@@ -52,6 +57,8 @@ class TeamFormService(
             problem = problem,
             age = performance.ageEntity.id,
             isFo = isFo,
+            performanceAt = performanceAt,
+            performanceTime = performanceTime,
             dtEntries = dtEntries,
             styleEntries = styleEntries,
             penaltyEntries = penaltyEntries,

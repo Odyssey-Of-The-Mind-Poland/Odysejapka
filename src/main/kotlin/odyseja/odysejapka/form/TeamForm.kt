@@ -7,6 +7,8 @@ data class TeamForm(
     val problem: Int,
     val age: Int,
     val isFo: Boolean,
+    val performanceAt: String = "",
+    val performanceTime: String = "",
     val dtEntries: List<DtTeamFormEntry>,
     val styleEntries: List<StyleTeamFormEntry>,
     val penaltyEntries: List<PenaltyTeamFormEntry>,
