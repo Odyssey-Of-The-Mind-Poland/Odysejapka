@@ -3,12 +3,14 @@
     import SiteHeader from "./components/site-header.svelte";
     import * as Sidebar from "$lib/registry/ui/sidebar/index.js";
     import {goto} from "$app/navigation";
+    import {page} from "$app/state";
     import {onMount, onDestroy} from "svelte";
     import {session as sessionStore} from "$lib/sessionStore";
     import {currentUser} from "$lib/userStore";
     import {apiFetch} from "$lib/api";
     import type {CurrentUser} from "$lib/userStore";
     import {get} from "svelte/store";
+    import {routes} from "./routes";
 
     import jwtDecode from "jwt-decode";
 
@@ -31,10 +33,19 @@
         goto("/");
     }
 
+    function checkRouteAccess(user: CurrentUser) {
+        const currentPath = page.url.pathname;
+        const matchedRoute = routes.navMain.find((r) => currentPath.startsWith(r.url));
+        if (matchedRoute?.requiredRole && !user.roles.includes(matchedRoute.requiredRole)) {
+            goto("/dashboard/teams");
+        }
+    }
+
     async function fetchCurrentUser() {
         try {
             const user = await apiFetch<CurrentUser>('/api/v1/users/me');
             currentUser.set(user);
+            checkRouteAccess(user);
         } catch {
             handleSessionExpiry();
         }

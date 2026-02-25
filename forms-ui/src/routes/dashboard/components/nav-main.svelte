@@ -1,14 +1,24 @@
 <script lang="ts">
     import * as Sidebar from "$lib/registry/ui/sidebar";
-    import type {Icon} from "@tabler/icons-svelte";
+    import {currentUser} from "$lib/userStore";
+    import type {NavItem} from "../routes";
 
-    let {items}: { items: { title: string; url: string; icon?: Icon }[] } = $props();
+    let {items}: { items: NavItem[] } = $props();
+
+    let user = $derived($currentUser);
+
+    let visibleItems = $derived(
+        items.filter((item: NavItem) => {
+            if (!item.requiredRole) return true;
+            return user?.roles.includes(item.requiredRole) ?? false;
+        })
+    );
 </script>
 
 <Sidebar.Group>
     <Sidebar.GroupContent>
         <Sidebar.Menu>
-            {#each items as item (item.title)}
+            {#each visibleItems as item (item.title)}
                 <Sidebar.MenuItem>
                     <Sidebar.MenuButton tooltipContent={item.title}>
                         {#snippet child({props})}
