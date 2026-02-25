@@ -1,0 +1,110 @@
+\documentclass[10pt, a4paper]{article}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage[table]{xcolor}
+\usepackage{fontspec}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{geometry}
+\usepackage{colortbl}
+
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand\tabularxcolumn[1]{m{#1}}
+
+\setmainfont{Ubuntu-Regular.ttf}[
+  BoldFont = Ubuntu-Bold.ttf,
+  ItalicFont = Ubuntu-Italic.ttf,
+  BoldItalicFont = Ubuntu-BoldItalic.ttf,
+]
+
+\newgeometry{
+    top=25mm,
+    bottom=25mm,
+    outer=15mm,
+    inner=15mm
+}
+
+\setstretch{1.1}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\footnotesize str. \thepage}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+{\Large\bfseries Formularz Wyników Drużyny}\\[12pt]
+{\normalsize
+\textbf{Drużyna:} <%teamName%> \\
+\textbf{Miasto:} <%cityName%> \\
+\textbf{Problem:} <%problem%> \hspace{1em} \textbf{Grupa wiekowa:} <%age%> \\
+<%#performanceAt%>\textbf{Godzina występu:} <%performanceAt%><%/performanceAt%><%#performanceTime%> \hspace{1em} \textbf{Czas trwania:} <%performanceTime%> min<%/performanceTime%>
+}\\[16pt]
+\end{center}
+
+\noindent\textbf{Długoterminowe (DT)}\\[4pt]
+\begin{tabularx}{\linewidth}{|X|r|}
+\hline
+\rowcolor{gray!15}
+\textbf{Wpis} & \textbf{Średnia} \\
+\hline
+<%#dtEntries%>
+<%#isSectionHeader%>
+\textbf{<%name%>} & --- \\
+<%/isSectionHeader%>
+<%^isSectionHeader%><%#noElement%>
+<%name%> & \textit{brak elementu} \\
+<%/noElement%><%^noElement%>
+<%name%> & <%score%> \\
+<%/noElement%><%/isSectionHeader%>
+<%/dtEntries%>
+\hline
+\rowcolor{blue!10}
+\textbf{Suma DT} & \textbf{<%dtSum%>} \\
+\hline
+\end{tabularx}
+
+\vspace{12pt}
+\noindent\textbf{Styl}\\[4pt]
+\begin{tabularx}{\linewidth}{|X|r|}
+\hline
+\rowcolor{gray!15}
+\textbf{Wpis} & \textbf{Średnia} \\
+\hline
+<%#styleEntries%>
+<%name%> & <%score%> \\
+<%/styleEntries%>
+\hline
+\rowcolor{blue!10}
+\textbf{Suma Styl} & \textbf{<%styleSum%>} \\
+\hline
+\end{tabularx}
+
+\vspace{12pt}
+\noindent\textbf{Kary}\\[4pt]
+\begin{tabularx}{\linewidth}{|X|r|}
+\hline
+\rowcolor{gray!15}
+\textbf{Wpis} & \textbf{Wynik} \\
+\hline
+<%#penaltyEntries%>
+<%name%> & <%score%> \\
+<%/penaltyEntries%>
+\hline
+\rowcolor{blue!10}
+\textbf{Suma Kar} & \textbf{<%penaltySum%>} \\
+\hline
+\end{tabularx}
+
+\vspace{12pt}
+\begin{tabularx}{\linewidth}{|X|r|}
+\hline
+\rowcolor{green!15}
+\textbf{SUMA CAŁKOWITA} & \textbf{<%totalSum%>} \\
+\hline
+\end{tabularx}
+
+\end{document}
