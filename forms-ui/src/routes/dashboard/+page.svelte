@@ -4,6 +4,6 @@
     import {goto} from "$app/navigation";
 
     onMount(() => {
-        goto("/dashboard/editor");
+        goto("/dashboard/teams");
     })
 </script>
