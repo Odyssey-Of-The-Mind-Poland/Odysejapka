@@ -49,15 +49,16 @@
 <%#groups%>
 \newpage
 \fancyhead{}%
-\fancyhead[C]{\fontsize{16}{18}\selectfont Problem <%problem%>: <%problemName%> \hspace{2mm} | \hspace{2mm} Grupa wiekowa <%division%>}
+\fancyhead[C]{\fontsize{16}{18}\selectfont \textbf{P}roblem \textbf{<%problem%>}: <%problemName%> \hspace{2mm} | \hspace{2mm} \textbf{G}rupa wiekowa \textbf{<%division%>}}
 \begin{table}[H]
     \centering
     \setlength{\extrarowheight}{2pt}
     \begin{tabularx}{\linewidth}{
-    m{2em} X m{5em} m{3.5em} m{2.5em} m{3.5em} m{5em}}
+    m{2em} X m{5em} <%#showWeight%>m{3em} <%/showWeight%>m{3.5em} m{2.5em} m{3.5em} m{5em}}
         M-ce &
         Placówka &
         &
+        <%#showWeight%>Udźwig & <%/showWeight%>
         Problem &
         Styl &
         Spontan &
@@ -66,6 +67,7 @@
         \multirow{2}{*}{<%placeStyle%>} &
         \adjustbox{max width=\linewidth}{<%teamStyle%>} &
         Przeliczone: &
+        <%#showWeight%><%balsaScore%> & <%/showWeight%>
         <%longTermScore%> &
         <%styleScore%> &
         <%spontaneousScore%> &
@@ -73,6 +75,7 @@
         &
         \adjustbox{max width=\linewidth}{<%cityStyle%>} &
         \textcolor{gray}{Surowe:} &
+        <%#showWeight%>\textcolor{gray}{<%weightHeld%>} & <%/showWeight%>
         \textcolor{gray}{<%rawLongTerm%>} &
         \textcolor{gray}{<%rawStyle%>} &
         \textcolor{gray}{<%rawSpontaneous%>} &

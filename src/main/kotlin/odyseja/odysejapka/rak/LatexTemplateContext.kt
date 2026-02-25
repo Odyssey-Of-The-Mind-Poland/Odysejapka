@@ -10,6 +10,7 @@ data class LatexGroup(
     val problem: Int,
     val division: Int,
     val problemName: String,
+    val showWeight: Boolean,
     val teamScores: List<LatexRow>
 )
 
@@ -17,6 +18,9 @@ data class LatexRow(
     val placeStyle: String,
     val teamStyle: String,
     val cityStyle: String,
+    val showWeight: Boolean,
+    val weightHeld: String,
+    val balsaScore: String,
     val longTermScore: String,
     val styleScore: String,
     val spontaneousScore: String,

@@ -2,6 +2,7 @@ package odyseja.odysejapka.rak
 
 import Team
 import com.samskivert.mustache.Mustache
+import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.problem.ProblemService
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
@@ -35,11 +36,8 @@ class LatexGeneratorService(
         val initialGroups = RakCalculator().calculateScores(teams, isRegion)
             .sortedWith(compareBy({ it.problem }, { it.division }))
         val splitGroups = initialGroups.flatMap { splitLargeGroup(it) }
-        val problems = problemService.getProblems()
-        val problemNames = (1..5).map { i ->
-            problems.getOrNull(i - 1)?.name?.takeIf { it.isNotBlank() } ?: "Problem $i"
-        }
-        val context = buildContext(splitGroups, problemNames, contestName)
+        val problems = problemService.getProblems().filterNotNull()
+        val context = buildContext(splitGroups, problems, contestName)
         val templateSource = ClassPathResource("templates/latex/results.tex").inputStream.reader().readText()
         return Mustache.compiler()
             .withDelims("<% %>")
@@ -62,34 +60,45 @@ class LatexGeneratorService(
 
     private fun buildContext(
         groups: List<FinalScoreGroup>,
-        problemNames: List<String>,
+        problems: List<ProblemEntity>,
         contestName: String?
     ): LatexResultsContext {
         val escapedContestName = escapeLatex(
             contestName?.takeIf { it.isNotBlank() } ?: "34. Ogólnopolski Finał Odysei Umysłu"
         )
         val latexGroups = groups.map { group ->
-            val problemName = problemNames.getOrNull(group.problem - 1) ?: "Problem ${group.problem}"
+            val problemName = problems.find { it.id == group.problem }?.name?.takeIf { it.isNotBlank() }
+                ?: "Problem ${group.problem}"
             LatexGroup(
                 problem = group.problem,
                 division = group.division,
                 problemName = escapeLatex(problemName),
-                teamScores = group.teamScores.map { score -> toLatexRow(score) }
+                showWeight = group.problem == 4,
+                teamScores = group.teamScores.map { score -> toLatexRow(score, group.problem) }
             )
         }
         return LatexResultsContext(contestName = escapedContestName, groups = latexGroups)
     }
 
-    private fun toLatexRow(score: FinalTeamScore): LatexRow {
+    private fun toLatexRow(score: FinalTeamScore, problem: Int): LatexRow {
         val placeContent = if (score.team.ranatra) "${score.place}\\\\[1pt]{\\color{orange}[RF]}" else "${score.place}"
         val placeStyle = if (score.isWinner) "{\\color{blue}\\bfseries $placeContent}" else placeContent
         val teamStyle = if (score.isWinner) "{\\color{blue}\\bfseries ${escapeLatex(score.team.shortTeamName)}}" else escapeLatex(score.team.shortTeamName)
         val cityStyle = if (score.isWinner) "{\\color{blue}\\bfseries ${escapeLatex(score.team.city)}}" else "{\\color{gray} ${escapeLatex(score.team.city)}}"
         val penaltyStyle = if ((score.team.penaltyScore ?: 0f) != 0f) "\\textcolor{red}{${formatInt(score.team.penaltyScore!!)}}" else "{\\color{gray} ${formatInt(score.team.penaltyScore ?: 0f)}}"
+        val showWeight = problem == 4
+        val (weightHeld, balsaScore) = if (showWeight) {
+            formatNum(score.team.weightHeld ?: 0f) to formatNum(score.balsaScore)
+        } else {
+            "" to ""
+        }
         return LatexRow(
             placeStyle = placeStyle,
             teamStyle = teamStyle,
             cityStyle = cityStyle,
+            showWeight = showWeight,
+            weightHeld = weightHeld,
+            balsaScore = balsaScore,
             longTermScore = formatNum(score.longTermScore),
             styleScore = formatNum(score.styleScore),
             spontaneousScore = formatNum(score.spontaneousScore),

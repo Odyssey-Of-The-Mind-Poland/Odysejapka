@@ -75,7 +75,7 @@ class PrincipalUserCreationFilter(
         val email = userInfo.values["email"] as? String
         return CreateUserRequest(
             username = name ?: userId,
-            email = email ?: "",
+            email = email?.takeIf { it.isNotBlank() } ?: "user-$userId@placeholder",
             userId = userId
         )
     }
