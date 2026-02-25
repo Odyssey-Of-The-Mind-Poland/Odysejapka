@@ -10,6 +10,13 @@
     import SearchIcon from "@lucide/svelte/icons/search";
     import UsersIcon from "@lucide/svelte/icons/users";
     import {page} from "$app/state";
+    import RequirePermission from "$lib/components/RequirePermission.svelte";
+    import CsvUploadDialog from "./CsvUploadDialog.svelte";
+
+    type City = {
+        id: number;
+        name: string;
+    };
 
     type PerformanceGroup = {
         group: {
@@ -50,6 +57,17 @@
     };
 
     let cityName = $derived(decodeURIComponent(page.params.city));
+
+    let citiesQuery = createOdysejaQuery<City[]>({
+        queryKey: ['cities'],
+        path: '/api/v1/city',
+    });
+
+    let cityId = $derived.by(() => {
+        if (!citiesQuery.data) return null;
+        const found = citiesQuery.data.find((c: City) => c.name === cityName);
+        return found?.id ?? null;
+    });
 
     let performanceGroupsQuery = createOdysejaQuery<PerformanceGroup[]>({
         queryKey: ['performanceGroups'],
@@ -102,20 +120,27 @@
 
 <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-3">
-            <div class="flex items-center justify-center size-10 rounded-lg bg-primary/10">
-                <UsersIcon class="size-5 text-primary"/>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center justify-center size-10 rounded-lg bg-primary/10">
+                    <UsersIcon class="size-5 text-primary"/>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-semibold tracking-tight">{cityName}</h1>
+                    <p class="text-sm text-muted-foreground">
+                        {#if teams.length > 0}
+                            {teams.length} {teams.length === 1 ? 'drużyna' : 'drużyn'}
+                        {:else}
+                            Drużyny w mieście {cityName}
+                        {/if}
+                    </p>
+                </div>
             </div>
-            <div>
-                <h1 class="text-2xl font-semibold tracking-tight">{cityName}</h1>
-                <p class="text-sm text-muted-foreground">
-                    {#if teams.length > 0}
-                        {teams.length} {teams.length === 1 ? 'drużyna' : 'drużyn'}
-                    {:else}
-                        Drużyny w mieście {cityName}
-                    {/if}
-                </p>
-            </div>
+            {#if cityId !== null}
+                <RequirePermission role="ADMINISTRATOR">
+                    <CsvUploadDialog {cityId}/>
+                </RequirePermission>
+            {/if}
         </div>
     </div>
 
