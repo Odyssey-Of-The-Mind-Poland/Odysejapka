@@ -1,15 +1,15 @@
 <script lang="ts">
     import SignInButton from "./SignInButton.svelte";
-    import {page} from '$app/state';
+    import {currentUser} from "$lib/userStore";
 
-    $: session = page.data.session;
+    let user = $derived($currentUser);
 </script>
 
 <nav class="flex justify-between items-center p-4 border-b shadow-sm">
     <div class="flex items-center gap-6">
-        <a class="text-lg font-bold" href="/">Odyseja Forularze</a>
+        <a class="text-lg font-bold" href="/">Odyseja Formularze</a>
 
-        {#if session?.user}
+        {#if user}
             <a href="/dashboard" class="text-sm font-medium text-gray-700 hover:text-black transition-colors">
                 Dashboard
             </a>

@@ -3,9 +3,11 @@
     import SiteHeader from "./components/site-header.svelte";
     import * as Sidebar from "$lib/registry/ui/sidebar/index.js";
     import {goto} from "$app/navigation";
-    import {routes} from "./routes";
     import {onMount, onDestroy} from "svelte";
     import {session as sessionStore} from "$lib/sessionStore";
+    import {currentUser} from "$lib/userStore";
+    import {apiFetch} from "$lib/api";
+    import type {CurrentUser} from "$lib/userStore";
     import {get} from "svelte/store";
 
     import jwtDecode from "jwt-decode";
@@ -25,12 +27,23 @@
 
     function handleSessionExpiry() {
         sessionStore.set(null);
+        currentUser.set(null);
         goto("/");
+    }
+
+    async function fetchCurrentUser() {
+        try {
+            const user = await apiFetch<CurrentUser>('/api/v1/users/me');
+            currentUser.set(user);
+        } catch {
+            handleSessionExpiry();
+        }
     }
 
     onMount(() => {
         if (isSessionActive(data.session?.accessToken)) {
             sessionStore.set(data.session);
+            fetchCurrentUser();
         } else {
             handleSessionExpiry();
         }

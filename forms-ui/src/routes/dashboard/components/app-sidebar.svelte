@@ -26,6 +26,6 @@
         <NavMain items={routes.navMain}/>
     </Sidebar.Content>
     <Sidebar.Footer>
-        <NavUser user={routes.user}/>
+        <NavUser/>
     </Sidebar.Footer>
 </Sidebar.Root>

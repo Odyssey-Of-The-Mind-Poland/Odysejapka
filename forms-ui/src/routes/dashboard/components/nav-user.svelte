@@ -6,19 +6,17 @@
     import {SignOut} from "@auth/sveltekit/components";
     import * as Avatar from "$lib/registry/ui/avatar/index.js";
     import * as DropdownMenu from "$lib/registry/ui/dropdown-menu/index.js";
+    import {currentUser} from "$lib/userStore";
 
-    let {
-        user,
-    }: {
-        user: {
-            name: string;
-            email: string;
-            avatar: string;
-        };
-    } = $props();
     const sidebar = Sidebar.useSidebar();
 
-    let session = $derived(page.data.session)
+    let session = $derived(page.data.session);
+    let user = $derived($currentUser);
+
+    function getInitials(name: string | null | undefined): string {
+        if (!name) return '?';
+        return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+    }
 </script>
 
 <Sidebar.Menu>
@@ -32,13 +30,13 @@
                             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     >
                         <Avatar.Root class="h-8 w-8 rounded-lg">
-                            <Avatar.Image src={session?.user?.image} alt={session?.user?.name}/>
-                            <Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+                            <Avatar.Image src={session?.user?.image} alt={user?.username ?? session?.user?.name}/>
+                            <Avatar.Fallback class="rounded-lg">{getInitials(user?.username ?? session?.user?.name)}</Avatar.Fallback>
                         </Avatar.Root>
                         <div class="grid flex-1 text-left text-sm leading-tight">
-                            <span class="truncate font-medium">{session?.user?.name}</span>
+                            <span class="truncate font-medium">{user?.username ?? session?.user?.name}</span>
                             <span class="text-muted-foreground truncate text-xs">
-								{session?.user?.email}
+								{user?.email ?? session?.user?.email}
 							</span>
                         </div>
                         <DotsVerticalIcon class="ml-auto size-4"/>
