@@ -191,7 +191,7 @@ class TeamFormToRawTeamFormConverterTest {
 
         val result = TeamFormToRawTeamFormConverter.convert(teamForm)
 
-        Assertions.assertThat(result.dtEntries[0].averageScore).isNull()
+        Assertions.assertThat(result.dtEntries[0].averageScore).isZero()
         Assertions.assertThat(result.styleEntries[0].averageScore).isNull()
         Assertions.assertThat(result.penaltyEntries[0].averageScore).isNull()
 
