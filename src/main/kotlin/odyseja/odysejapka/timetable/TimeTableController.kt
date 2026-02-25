@@ -1,14 +1,17 @@
 package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.Progress
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
-@RestController()
+@RestController
 @RequestMapping("/timeTable")
 class TimeTableController(
     private val timeTableService: TimeTableService,
-    private val importTimetableService: ImportTimetableService
+    private val importTimetableService: ImportTimetableService,
+    private val importCsvService: ImportCsvService
 ) {
 
     @GetMapping
@@ -16,20 +19,21 @@ class TimeTableController(
         return cityId?.let { timeTableService.getByCity(cityId) } ?: timeTableService.getFinals()
     }
 
-    @GetMapping("{performanceId}")
+    @GetMapping("/{performanceId}")
     fun getPerformance(@PathVariable performanceId: Int): Performance {
         return timeTableService.getPerformance(performanceId)
     }
 
-    @Secured("ROLE_ADMINISTRATOR")
-    @PostMapping("/load")
-    @ResponseBody
-    fun addPerformance(@RequestBody performances: List<Performance>): List<PerformanceEntity> {
-        return timeTableService.addPerformance(performances)
+    @PostMapping("/csv")
+    fun importPerformances(
+        @RequestParam("file") file: MultipartFile,
+        @RequestParam("cityId") cityId: Int,
+    ) {
+        importCsvService.uploadCsvFile(file, cityId)
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @PostMapping()
+    @PostMapping
     @ResponseBody
     fun addPerformance(@RequestBody performance: Performance): PerformanceEntity {
         return timeTableService.addPerformance(performance)
@@ -42,7 +46,7 @@ class TimeTableController(
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @DeleteMapping("{performanceId}")
+    @DeleteMapping("/{performanceId}")
     fun delPerformance(@PathVariable performanceId: Int) {
         timeTableService.delPerformance(performanceId)
     }
