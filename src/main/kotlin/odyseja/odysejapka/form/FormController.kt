@@ -14,33 +14,33 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/form")
 class FormController(
-    private val formService: FormService?,
-    private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService?
+    private val formService: FormService,
+    private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService
 ) {
 
     @PutMapping("/{problem}")
     fun setProblemForm(@PathVariable problem: Int, @RequestBody problemForm: ProblemForm) {
-        formService!!.setFormEntries(problem, problemForm)
+        formService.setFormEntries(problem, problemForm)
     }
 
     @GetMapping("/{problem}")
     fun getProblemForm(@PathVariable problem: Int): ProblemForm {
-        return formService!!.getProblemForm(problem)
+        return formService.getProblemForm(problem)
     }
 
     @GetMapping("/{problem}/judge-count")
     fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCountResponse {
-        return formService!!.getJudgeCount(problem, cityId)
+        return formService.getJudgeCount(problem, cityId)
     }
 
     @PutMapping("/{performanceId}/result")
     fun setTeamResults(@PathVariable performanceId: Int, @RequestBody result: PerformanceResultsRequest) {
-        formService!!.setTeamResults(performanceId, result)
+        formService.setTeamResults(performanceId, result)
     }
 
     @GetMapping("/{performanceId}/result")
     fun getTeamResults(@PathVariable performanceId: Int): TeamForm {
-        return formService!!.getTeamForm(performanceId)
+        return formService.getTeamForm(performanceId)
     }
 
     @GetMapping("/subjective-ranges")
@@ -55,7 +55,7 @@ class FormController(
 
     @GetMapping("/{performanceId}/preview/pdf")
     fun getTeamFormPdf(@PathVariable performanceId: Int): ResponseEntity<ByteArray> {
-        val pdfBytes = teamFormPdfGeneratorService!!.generatePdf(performanceId)
+        val pdfBytes = teamFormPdfGeneratorService.generatePdf(performanceId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"team-form-${performanceId}.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)
@@ -64,7 +64,7 @@ class FormController(
 
     @GetMapping("/{performanceId}/preview/pdf/download")
     fun downloadTeamFormPdf(@PathVariable performanceId: Int): ResponseEntity<ByteArray> {
-        val pdfBytes = teamFormPdfGeneratorService!!.generatePdf(performanceId)
+        val pdfBytes = teamFormPdfGeneratorService.generatePdf(performanceId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"team-form-${performanceId}.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)
