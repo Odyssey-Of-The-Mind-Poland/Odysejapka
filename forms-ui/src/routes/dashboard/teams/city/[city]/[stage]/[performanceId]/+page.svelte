@@ -20,8 +20,13 @@
     import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
     import {goto} from "$app/navigation";
 
+    let cityName = $derived(decodeURIComponent(page.params.city));
+    let stageParam = $derived(page.params.stage);
     let performanceId = $derived(Number(page.params.performanceId));
     let performanceIdParam = $derived(page.params.performanceId);
+
+    let stageUrl = $derived(`/dashboard/teams/city/${encodeURIComponent(cityName)}/${stageParam}`);
+    let teamUrl = $derived(`${stageUrl}/${performanceIdParam}`);
 
     let teamFormQuery = $derived(createOdysejaQuery<TeamForm>({
         queryKey: ['teamForm', performanceIdParam],
@@ -67,7 +72,9 @@
     onMount(() => {
         setBreadcrumbs([
             {name: 'Drużyny', href: '/dashboard/teams'},
-            {name: `Drużyna ${performanceId}`, href: `/dashboard/teams/${performanceId}`}
+            {name: cityName, href: `/dashboard/teams/city/${encodeURIComponent(cityName)}`},
+            {name: `Scena ${stageParam}`, href: stageUrl},
+            {name: `Drużyna ${performanceId}`, href: teamUrl}
         ]);
     });
 </script>
@@ -79,7 +86,7 @@
             <div class="flex items-center gap-4">
                 <button
                     class="flex items-center justify-center size-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shrink-0 cursor-pointer"
-                    onclick={() => goto('/dashboard/teams')}
+                    onclick={() => goto(stageUrl)}
                 >
                     <ArrowLeftIcon class="size-5" />
                 </button>
@@ -107,7 +114,7 @@
             <div class="flex items-center gap-2 shrink-0">
                 <Button
                     variant="outline"
-                    onclick={() => window.location.href = `/dashboard/teams/${performanceIdParam}/preview`}
+                    onclick={() => window.location.href = `${teamUrl}/preview`}
                     disabled={isDirty || !(teamFormQuery.data?.canPreview ?? false)}
                 >
                     Podgląd

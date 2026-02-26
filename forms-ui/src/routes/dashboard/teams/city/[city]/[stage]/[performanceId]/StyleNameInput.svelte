@@ -14,4 +14,3 @@
     disabled={disabled}
     placeholder="Nazwa stylu"
 />
-

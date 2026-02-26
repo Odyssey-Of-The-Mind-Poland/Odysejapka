@@ -28,11 +28,7 @@ class UserRolesToAuthContextFilter(private val userService: UserService) : Gener
         authentication: Authentication,
         context: SecurityContext
     ) {
-        val userId = getUserId(authentication.principal)
-        if (userId == null) {
-            logger.warn("No user ID provided. Using default user context")
-            return
-        }
+        val userId = getUserId(authentication.principal) ?: return
 
         val user = userService.getUserByUserId(userId)
         if (user == null || user.roles.isEmpty()) {

@@ -8,8 +8,14 @@
     import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
     import FileTextIcon from "@lucide/svelte/icons/file-text";
 
+    let cityName = $derived(decodeURIComponent(page.params.city));
+    let stageParam = $derived(page.params.stage);
     let performanceId = $derived(Number(page.params.performanceId));
     let performanceIdParam = $derived(page.params.performanceId);
+
+    let stageUrl = $derived(`/dashboard/teams/city/${encodeURIComponent(cityName)}/${stageParam}`);
+    let teamUrl = $derived(`${stageUrl}/${performanceIdParam}`);
+
     let pdfUrl = $state<string | null>(null);
     let isLoading = $state(true);
     let error = $state<string | null>(null);
@@ -17,8 +23,10 @@
     onMount(async () => {
         setBreadcrumbs([
             {name: 'Drużyny', href: '/dashboard/teams'},
-            {name: `Drużyna ${performanceId}`, href: `/dashboard/teams/${performanceId}`},
-            {name: 'Podgląd', href: `/dashboard/teams/${performanceId}/preview`}
+            {name: cityName, href: `/dashboard/teams/city/${encodeURIComponent(cityName)}`},
+            {name: `Scena ${stageParam}`, href: stageUrl},
+            {name: `Drużyna ${performanceId}`, href: teamUrl},
+            {name: 'Podgląd', href: `${teamUrl}/preview`}
         ]);
 
         try {

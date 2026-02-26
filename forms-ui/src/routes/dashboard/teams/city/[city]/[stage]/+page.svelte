@@ -223,7 +223,7 @@
                         {#each filteredTeams as team (team.performanceId)}
                             <Table.Row
                                     class="cursor-pointer transition-colors hover:bg-muted/50 group"
-                                    onclick={() => goto(`/dashboard/teams/${team.performanceId}`)}
+                                    onclick={() => goto(`/dashboard/teams/city/${encodeURIComponent(cityName)}/${activeStage}/${team.performanceId}`)}
                             >
                                 <Table.Cell class="font-medium">{team.team}</Table.Cell>
                                 <Table.Cell>

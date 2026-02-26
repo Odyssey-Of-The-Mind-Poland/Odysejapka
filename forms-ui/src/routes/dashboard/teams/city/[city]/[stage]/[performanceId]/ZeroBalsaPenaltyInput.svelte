@@ -13,4 +13,3 @@
         <Checkbox bind:checked disabled={disabled} />
     </div>
 </div>
-
