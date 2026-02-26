@@ -52,6 +52,12 @@ class TimeTableController(
     }
 
     @Secured("ROLE_ADMINISTRATOR")
+    @DeleteMapping
+    fun clearTimetable() {
+        timeTableService.clearTimetable()
+    }
+
+    @Secured("ROLE_ADMINISTRATOR")
     @PostMapping("/import")
     fun import(@RequestBody importTimeTable: ImportTimeTable, @RequestParam cityId: Int) {
         return importTimetableService.import(importTimeTable.zspId, cityId)
