@@ -17,4 +17,11 @@ class UserAccessService(
         val user = userRepository.findByUserId(principalUserId) ?: return false
         return userRolesRepository.findByUserId(user.userId!!).any { it.role == Role.ADMINISTRATOR }
     }
+
+    @Transactional(readOnly = true)
+    fun hasProblemRole(principalUserId: String, problem: Int): Boolean {
+        val user = userRepository.findByUserId(principalUserId) ?: return false
+        val expectedRole = Role.valueOf("PROBLEM_$problem")
+        return userRolesRepository.findByUserId(user.userId!!).any { it.role == expectedRole }
+    }
 }
