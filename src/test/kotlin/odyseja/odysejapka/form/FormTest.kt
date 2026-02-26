@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
 
-@WithMockUser(username = "testuser", roles = ["ADMIN"])
+@WithMockUser(username = "testuser", roles = ["ADMINISTRATOR"])
 class FormTest : OdysejaDsl() {
 
     @Test

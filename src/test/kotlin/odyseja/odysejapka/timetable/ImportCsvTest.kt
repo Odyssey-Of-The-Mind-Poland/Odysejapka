@@ -11,7 +11,7 @@ import org.springframework.security.test.context.support.WithMockUser
 import java.time.LocalDate
 import kotlin.test.Test
 
-@WithMockUser(username = "testuser", roles = ["ADMIN"])
+@WithMockUser(username = "testuser", roles = ["ADMINISTRATOR"])
 class ImportCsvTest: OdysejaDsl() {
 
     private lateinit var city: CityEntity

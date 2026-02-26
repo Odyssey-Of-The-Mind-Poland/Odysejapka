@@ -9,8 +9,12 @@ import odyseja.odysejapka.form.StyleFormEntry
 import odyseja.odysejapka.form.PenaltyFormEntry
 import odyseja.odysejapka.form.PerformanceResultsRequest
 import odyseja.odysejapka.form.ProblemForm
+import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.timetable.Performance
 import odyseja.odysejapka.timetable.TimeTableController
+import odyseja.odysejapka.users.CreateUserRequest
+import odyseja.odysejapka.users.UserRoles
+import odyseja.odysejapka.users.UserService
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -36,11 +40,29 @@ class OdysejaDsl {
     @Autowired
     lateinit var controllerClientFactory: ControllerClientFactory
 
+    @Autowired
+    lateinit var userService: UserService
+
     @BeforeEach
     fun setUp() {
+        ensureTestUserExists()
         formClient = controllerClientFactory.create(FormController::class.java)
         cityClient = controllerClientFactory.create(CityController::class.java)
         timeTableClient = controllerClientFactory.create(TimeTableController::class.java)
+    }
+
+    private fun ensureTestUserExists() {
+        val testUserId = "testuser"
+        if (userService.getUserByUserId(testUserId) == null) {
+            val user = userService.createUser(
+                CreateUserRequest(
+                    username = testUserId,
+                    email = "testuser@test",
+                    userId = testUserId
+                )
+            )
+            userService.assignRolesToUser(UserRoles(userId = user.id, roles = listOf(Role.ADMINISTRATOR)))
+        }
     }
 
 
@@ -104,10 +126,10 @@ class OdysejaDsl {
         return timeTableClient.addPerformance(performance).id
     }
 
-    fun getTeamResults(performanceId: Int) = formClient.getTeamResults(performanceId)
+    fun getTeamResults(performanceId: Int) = formClient.getTeamResults(performanceId, null)
 
     fun setTeamResults(performanceId: Int, results: List<PerformanceResultsRequest.PerformanceResult>) {
-        formClient.setTeamResults(performanceId, PerformanceResultsRequest(results))
+        formClient.setTeamResults(performanceId, PerformanceResultsRequest(results), null)
     }
 
     fun performanceResult(entryId: Long, result: Long, judge: Int = 1, judgeType: JudgeType = JudgeType.DT_A) =
