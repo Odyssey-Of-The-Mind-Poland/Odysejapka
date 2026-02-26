@@ -1,12 +1,9 @@
-import type {LayoutServerLoad} from "../../../../.svelte-kit/types/src/routes/dashboard/$types";
 import {apiFetch} from "$lib/api";
+import type {LayoutLoad} from './$types';
 
-export const load: LayoutServerLoad = async ({parent}) => {
-    const {session} = await parent();
+export const load: LayoutLoad = async () => {
     try {
-        const users = await apiFetch(`/api/v1/users`, {
-            apiToken: session?.accessToken
-        });
+        const users = await apiFetch(`/api/v1/users`);
         return {users};
     } catch (e) {
         console.log(e)

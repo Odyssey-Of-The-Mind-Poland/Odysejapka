@@ -1,9 +1,8 @@
 <script lang="ts">
-    import {SignIn, SignOut} from "@auth/sveltekit/components";
+    import {SignOut} from "@auth/sveltekit/components";
     import {page} from "$app/state"
     import {Button} from "$lib/components/ui/button";
     import {currentUser} from "$lib/userStore";
-    import {session as sessionStore} from "$lib/sessionStore";
     import {apiFetch} from "$lib/api";
     import type {CurrentUser} from "$lib/userStore";
     import {onMount} from "svelte";
@@ -13,14 +12,14 @@
     let checking = $state(true);
 
     onMount(async () => {
-        if (session?.accessToken) {
-            sessionStore.set(session);
-            try {
-                const me = await apiFetch<CurrentUser>('/api/v1/users/me');
+        currentUser.set(null);
+        try {
+            const me = await apiFetch<CurrentUser>('/api/v1/users/me');
+            if (me?.id) {
                 currentUser.set(me);
-            } catch {
-                currentUser.set(null);
             }
+        } catch {
+            // Not authenticated — leave currentUser as null
         }
         checking = false;
     });
@@ -30,14 +29,25 @@
     <!-- loading -->
 {:else if user}
     <span class="signedInText">
-      <img src={session?.user?.image} alt="User Avatar" class="w-8 h-8 rounded-full" />
+      {#if session?.user?.image}
+        <img src={session.user.image} alt="User Avatar" class="w-8 h-8 rounded-full" />
+      {/if}
     </span>
-    <SignOut>
-        <Button slot="submitButton" class="buttonPrimary">Sign out</Button>
-    </SignOut>
+    {#if session?.user}
+        <!-- Auth0 user: use Auth.js sign-out -->
+        <SignOut>
+            <input type="hidden" name="callbackUrl" value="/" />
+            <Button slot="submitButton" class="buttonPrimary">Sign out</Button>
+        </SignOut>
+    {:else}
+        <!-- Local user: clear backend token cookie -->
+        <form method="POST" action="/auth/logout">
+            <Button type="submit" class="buttonPrimary">Sign out</Button>
+        </form>
+    {/if}
 {:else}
     <span class="notSignedInText">You are not signed in</span>
-    <SignIn>
-        <Button slot="submitButton" class="buttonPrimary">Sign in</Button>
-    </SignIn>
+    <a href="/auth/login">
+        <Button class="buttonPrimary">Sign in</Button>
+    </a>
 {/if}

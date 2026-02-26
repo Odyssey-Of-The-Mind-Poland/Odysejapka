@@ -39,6 +39,12 @@ class PrincipalUserCreationFilter(
             return
         }
 
+        // Skip Auth0 UserInfo call for locally-issued JWTs — user was already
+        // created during registration in AuthController
+        if (isLocalJwt(principal)) {
+            return
+        }
+
         val accessToken = extractAccessToken(request)
 
         if (accessToken == null) {
@@ -48,6 +54,13 @@ class PrincipalUserCreationFilter(
 
         val userInfo = fetchAuth0UserInfo(accessToken, userId)
         userService.createUser(userInfo)
+    }
+
+    private fun isLocalJwt(principal: Any): Boolean {
+        if (principal is Jwt) {
+            return principal.getClaimAsString("iss") == JwtService.ISSUER
+        }
+        return false
     }
 
     private fun userAlreadyCreated(userId: String): Boolean = userService.getUserByUserId(userId) != null
@@ -79,4 +92,4 @@ class PrincipalUserCreationFilter(
             userId = userId
         )
     }
-} 
+}

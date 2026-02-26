@@ -4,34 +4,11 @@
     import * as Sidebar from "$lib/registry/ui/sidebar/index.js";
     import {goto} from "$app/navigation";
     import {page} from "$app/state";
-    import {onMount, onDestroy} from "svelte";
-    import {session as sessionStore} from "$lib/sessionStore";
+    import {onMount} from "svelte";
     import {currentUser} from "$lib/userStore";
     import {apiFetch} from "$lib/api";
     import type {CurrentUser} from "$lib/userStore";
-    import {get} from "svelte/store";
     import {routes} from "./routes";
-
-    import jwtDecode from "jwt-decode";
-
-    export let data;
-
-    function isSessionActive(token?: string): boolean {
-        if (!token) return false;
-        try {
-            type JwtPayload = { exp?: number };
-            const {exp} = jwtDecode<JwtPayload>(token);
-            return !!exp && exp > Math.floor(Date.now() / 1000);
-        } catch {
-            return false;
-        }
-    }
-
-    function handleSessionExpiry() {
-        sessionStore.set(null);
-        currentUser.set(null);
-        goto("/");
-    }
 
     function checkRouteAccess(user: CurrentUser) {
         const currentPath = page.url.pathname;
@@ -47,26 +24,14 @@
             currentUser.set(user);
             checkRouteAccess(user);
         } catch {
-            handleSessionExpiry();
+            // Token expired or invalid — redirect to login
+            currentUser.set(null);
+            goto("/auth/login");
         }
     }
 
     onMount(() => {
-        if (isSessionActive(data.session?.accessToken)) {
-            sessionStore.set(data.session);
-            fetchCurrentUser();
-        } else {
-            handleSessionExpiry();
-        }
-
-        const interval = setInterval(() => {
-            const token = get(sessionStore)?.accessToken;
-            if (!isSessionActive(token)) {
-                handleSessionExpiry();
-            }
-        }, 10_000);
-
-        onDestroy(() => clearInterval(interval));
+        fetchCurrentUser();
     });
 </script>
 
@@ -82,5 +47,3 @@
         </div>
     </Sidebar.Inset>
 </Sidebar.Provider>
-
-

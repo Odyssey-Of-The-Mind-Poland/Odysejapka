@@ -6,9 +6,6 @@
     import IconFileTypeCsv from '@tabler/icons-svelte/icons/file-type-csv';
     import IconX from '@tabler/icons-svelte/icons/x';
     import {toast} from 'svelte-sonner';
-    import {session} from '$lib/sessionStore';
-    import {baseUrl} from '$lib/api';
-    import {get} from 'svelte/store';
     import {getQueryClientContext} from '@tanstack/svelte-query';
 
     let {cityId}: { cityId: number } = $props();
@@ -61,12 +58,9 @@
             formData.append('file', file);
             formData.append('cityId', String(cityId));
 
-            const currentSession = get(session);
-            const token = currentSession?.accessToken;
-
-            const response = await fetch(`${baseUrl}/timeTable/csv`, {
+            // Route through BFF proxy — token is added server-side
+            const response = await fetch('/api/proxy/timeTable/csv', {
                 method: 'POST',
-                headers: token ? {'Authorization': `Bearer ${token}`} : {},
                 body: formData,
             });
 

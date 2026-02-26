@@ -1,28 +1,23 @@
-import { session } from './sessionStore';
-import { get } from 'svelte/store';
-
-export const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
+/**
+ * API client that routes all requests through the SvelteKit BFF proxy.
+ * No tokens are handled client-side — the proxy reads them from
+ * server-side encrypted cookies and forwards as Bearer headers.
+ */
 export async function apiFetch<T>(
 	endpoint: string,
-	{ apiToken = undefined, ...options }: RequestInit & { apiToken?: string } = {}
+	options: RequestInit = {}
 ): Promise<T> {
-	if (!baseUrl) {
-		throw new Error('VITE_API_BASE_URL is not defined in environment variables');
-	}
-
-	const currentSession = get(session);
-	const token = apiToken ?? currentSession?.accessToken;
+	// Rewrite /api/... to /api/proxy/... so the BFF proxy handles it.
+	// E.g. /api/v1/users/me → /api/proxy/v1/users/me
+	const url = endpoint.startsWith('/api/')
+		? `/api/proxy/${endpoint.slice(5)}`
+		: endpoint;
 
 	const headers = new Headers(options.headers || {});
-	headers.set('Content-Type', 'application/json');
-	if (token) {
-		headers.set('Authorization', `Bearer ${token}`);
+	if (!headers.has('Content-Type')) {
+		headers.set('Content-Type', 'application/json');
 	}
 
-	const url =
-		endpoint.startsWith('http') || typeof window !== 'undefined' ? endpoint : baseUrl + endpoint;
-	console.log(url);
 	const response = await fetch(url, {
 		...options,
 		headers
@@ -31,6 +26,7 @@ export async function apiFetch<T>(
 	if (!response.ok) {
 		throw new Error(`API error: ${response.status} ${response.statusText}`);
 	}
+
 	const text = await response.text();
 
 	if (!text || !text.trim()) {

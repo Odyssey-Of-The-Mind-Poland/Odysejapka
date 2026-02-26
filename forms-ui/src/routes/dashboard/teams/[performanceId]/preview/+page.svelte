@@ -4,8 +4,6 @@
     import {setBreadcrumbs} from "$lib/breadcrumbs";
     import {Button} from "$lib/components/ui/button/index.js";
     import {Spinner} from "$lib/components/ui/spinner";
-    import {session as sessionStore} from "$lib/sessionStore";
-    import {get} from "svelte/store";
     import DownloadIcon from "@lucide/svelte/icons/download";
     import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
     import FileTextIcon from "@lucide/svelte/icons/file-text";
@@ -24,16 +22,9 @@
         ]);
 
         try {
-            const currentSession = get(sessionStore);
-            const token = currentSession?.accessToken;
-
-            const url = `/api/v1/form/${performanceIdParam}/preview/pdf`;
-            const headers: HeadersInit = {};
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
-
-            const response = await fetch(url, { headers });
+            // Route through BFF proxy — token is added server-side
+            const url = `/api/proxy/v1/form/${performanceIdParam}/preview/pdf`;
+            const response = await fetch(url);
 
             if (!response.ok) {
                 throw new Error(`Failed to load PDF: ${response.statusText}`);
@@ -57,7 +48,7 @@
 
     function downloadPdf() {
         const link = document.createElement('a');
-        link.href = `/api/v1/form/${performanceIdParam}/preview/pdf/download`;
+        link.href = `/api/proxy/v1/form/${performanceIdParam}/preview/pdf/download`;
         link.download = `team-form-${performanceIdParam}.pdf`;
         link.click();
     }

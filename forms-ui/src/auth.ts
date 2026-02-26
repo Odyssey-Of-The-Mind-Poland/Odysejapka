@@ -19,16 +19,24 @@ export const {handle, signIn, signOut} = SvelteKitAuth({
         }),
     ],
     callbacks: {
+        async redirect({url, baseUrl}) {
+            // After sign-in, redirect to dashboard
+            if (url.startsWith(baseUrl)) return url;
+            return `${baseUrl}/dashboard`;
+        },
         async jwt({token, account}) {
             if (account) {
+                // Store tokens in the server-side JWT — never sent to browser
                 token.accessToken = account.access_token;
                 token.idToken = account.id_token;
             }
             return token;
         },
         async session({session, token}) {
-            session.accessToken = token.accessToken as string;
-            session.idToken = token.idToken as string;
+            // Keep accessToken in session so the BFF proxy can read it
+            // via event.locals.auth() on the server side.
+            // The root layout strips it before sending to the browser.
+            (session as any).accessToken = token.accessToken as string;
             return session;
         },
     },

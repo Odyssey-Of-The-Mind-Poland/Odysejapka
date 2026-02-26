@@ -20,6 +20,12 @@ class UserEntity {
     @Column(name = "user_id", nullable = false, unique = true)
     var userId: String? = null
 
+    @Column(name = "password")
+    var password: String? = null
+
+    @Column(name = "auth_provider", nullable = true)
+    var authProvider: String = "auth0"
+
     @Column(name = "created_at", nullable = false)
     var createdAt: Instant? = null
 
@@ -30,6 +36,17 @@ class UserEntity {
                 email = user.email
                 userId = user.userId
                 createdAt = Instant.now()
+            }
+        }
+
+        fun forLocalAuth(name: String, email: String, password: String): UserEntity {
+            return UserEntity().apply {
+                this.name = name
+                this.email = email
+                this.userId = java.util.UUID.randomUUID().toString()
+                this.password = password
+                this.authProvider = "local"
+                this.createdAt = Instant.now()
             }
         }
     }
