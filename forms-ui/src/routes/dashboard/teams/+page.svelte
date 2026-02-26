@@ -15,8 +15,8 @@
     };
 
     let citiesQuery = createOdysejaQuery<City[]>({
-        queryKey: ['cities'],
-        path: '/api/v1/city',
+        queryKey: ['dashboardCities'],
+        path: '/api/v1/dashboard/cities',
     });
 
     let cities = $derived.by(() => {

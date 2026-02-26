@@ -61,8 +61,8 @@
     let activeStage = $derived(Number(page.params.stage));
 
     let citiesQuery = createOdysejaQuery<City[]>({
-        queryKey: ['cities'],
-        path: '/api/v1/city',
+        queryKey: ['dashboardCities'],
+        path: '/api/v1/dashboard/cities',
     });
 
     let cityId = $derived.by(() => {
@@ -72,8 +72,8 @@
     });
 
     let performanceGroupsQuery = createOdysejaQuery<PerformanceGroup[]>({
-        queryKey: ['performanceGroups'],
-        path: '/api/v2/timeTable',
+        queryKey: ['dashboardTeams'],
+        path: '/api/v1/dashboard/teams',
     });
 
     let searchQuery = $state('');
@@ -172,23 +172,19 @@
         </div>
     {:else}
         <div class="flex items-center justify-between">
-            {#if stages.length > 1}
-                <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
-                    {#each stages as stage (stage)}
-                        <a
-                                href={stageUrl(stage)}
-                                class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline
-                                    {activeStage === stage
-                                        ? 'bg-background text-foreground shadow-sm'
-                                        : 'text-muted-foreground hover:text-foreground'}"
-                        >
-                            Scena {stage}
-                        </a>
-                    {/each}
-                </div>
-            {:else}
-                <div></div>
-            {/if}
+            <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
+                {#each stages as stage (stage)}
+                    <a
+                            href={stageUrl(stage)}
+                            class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline
+                                {activeStage === stage
+                                    ? 'bg-background text-foreground shadow-sm'
+                                    : 'text-muted-foreground hover:text-foreground'}"
+                    >
+                        Scena {stage}
+                    </a>
+                {/each}
+            </div>
             {#if cityId !== null}
                 <RequirePermission role="ADMINISTRATOR">
                     <StageCredentialsButton {cityId} stage={activeStage}/>

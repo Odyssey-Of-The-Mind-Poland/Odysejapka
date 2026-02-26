@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository
 
 interface StageUserRepository : CrudRepository<StageUserEntity, Long> {
     fun findByCityIdAndStage(cityId: Int, stage: Int): StageUserEntity?
-    fun findAllByCityId(cityId: Int): List<StageUserEntity>
     fun deleteAllByCityId(cityId: Int)
+    fun findByUserId(userId: Long): StageUserEntity?
 }

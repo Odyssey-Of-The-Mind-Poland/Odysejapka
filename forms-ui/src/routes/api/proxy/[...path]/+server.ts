@@ -1,6 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { getBackendToken } from '$lib/server/session';
+import { getBackendToken, clearBackendToken } from '$lib/server/session';
 
 const BACKEND_URL = env.BACKEND_URL || 'http://localhost:8081';
 

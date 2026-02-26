@@ -69,7 +69,7 @@
             }
 
             toast.success('Drużyny zostały zaimportowane');
-            await queryClient.invalidateQueries({queryKey: ['performanceGroups']});
+            await queryClient.invalidateQueries({queryKey: ['dashboardTeams']});
             open = false;
             file = null;
         } catch (err) {

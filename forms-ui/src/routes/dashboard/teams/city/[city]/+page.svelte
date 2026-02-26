@@ -19,8 +19,8 @@
     let cityName = $derived(decodeURIComponent(page.params.city));
 
     let performanceGroupsQuery = createOdysejaQuery<PerformanceGroup[]>({
-        queryKey: ['performanceGroups'],
-        path: '/api/v2/timeTable',
+        queryKey: ['dashboardTeams'],
+        path: '/api/v1/dashboard/teams',
     });
 
     let stages = $derived.by(() => {
