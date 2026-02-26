@@ -4,11 +4,13 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException
 import odyseja.odysejapka.OdysejaDsl
 import odyseja.odysejapka.city.CityEntity
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.test.context.support.WithMockUser
 import java.time.LocalDate
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 @WithMockUser(username = "testuser", roles = ["ADMIN"])
@@ -18,11 +20,12 @@ class ImportCsvTest: OdysejaDsl() {
 
     @BeforeEach
     fun csvSetUp() {
+        timeTableClient.clearTimetable()
+
         city = createCity("finał")
     }
 
     @Test
-    @Disabled
     fun `should import csv file`() {
         val content = this.javaClass.getResourceAsStream("/import-csv-test-cases/fo2025.csv")
             ?: throw IllegalArgumentException("Brakuje pliku fo2025.csv.")
