@@ -8,12 +8,12 @@ import odyseja.odysejapka.roles.Role
 
 @RestController
 @RequestMapping("/api/v1/users")
-class UsersRestController(private val userService: UserService?) {
+class UsersRestController(private val userService: UserService) {
 
     @GetMapping()
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     fun getUsers(): List<User> {
-        return userService!!.listUsers()
+        return userService.listUsers()
     }
 
     @PostMapping("/{userId}/roles")
@@ -23,19 +23,19 @@ class UsersRestController(private val userService: UserService?) {
         @RequestBody roles: List<Role>
     ): UserRoles {
         val userRoles = UserRoles(userId, roles)
-        return userService!!.assignRolesToUser(userRoles)
+        return userService.assignRolesToUser(userRoles)
     }
 
     @GetMapping("/{userId}/roles")
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     fun getUserRoles(@PathVariable userId: Long): UserRoles {
-        return userService!!.getUserRoles(userId)
+        return userService.getUserRoles(userId)
     }
 
     @GetMapping("/{userId}")
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     fun getUser(@PathVariable userId: Long): User? {
-        return userService!!.getUser(userId)
+        return userService.getUser(userId)
     }
 
     @GetMapping("/me")
@@ -46,6 +46,6 @@ class UsersRestController(private val userService: UserService?) {
             is String -> principal
             else -> null
         }
-        return userId?.let { userService?.getUserByUserId(it) }
+        return userId?.let { userService.getUserByUserId(it) }
     }
 } 
