@@ -32,7 +32,6 @@ class UserRolesToAuthContextFilter(private val userService: UserService) : Gener
 
         val user = userService.getUserByUserId(userId)
         if (user == null || user.roles.isEmpty()) {
-            logger.warn("User with ID $userId not found or has no roles. Using default user context")
             return
         }
 
