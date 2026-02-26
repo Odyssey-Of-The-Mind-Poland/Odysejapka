@@ -23,7 +23,7 @@
         loading = true;
         error = null;
         try {
-            credentials = await apiFetch<Credentials>(`/stage/${cityId}/${stage}/credentials`);
+            credentials = await apiFetch<Credentials>(`/api/stage/${cityId}/${stage}/credentials`);
         } catch (e) {
             error = 'Brak danych logowania dla tej sceny.';
             credentials = null;

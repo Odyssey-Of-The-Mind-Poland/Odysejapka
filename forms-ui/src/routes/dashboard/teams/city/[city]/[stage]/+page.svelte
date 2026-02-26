@@ -12,6 +12,7 @@
     import {page} from "$app/state";
     import RequirePermission from "$lib/components/RequirePermission.svelte";
     import CsvUploadDialog from "../CsvUploadDialog.svelte";
+    import StageCredentialsButton from "./StageCredentialsButton.svelte";
 
     type City = {
         id: number;
@@ -170,21 +171,30 @@
             <p class="text-sm text-muted-foreground mt-1">{String(performanceGroupsQuery.error)}</p>
         </div>
     {:else}
-        {#if stages.length > 1}
-            <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
-                {#each stages as stage (stage)}
-                    <a
-                            href={stageUrl(stage)}
-                            class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline
-                                {activeStage === stage
-                                    ? 'bg-background text-foreground shadow-sm'
-                                    : 'text-muted-foreground hover:text-foreground'}"
-                    >
-                        Scena {stage}
-                    </a>
-                {/each}
-            </div>
-        {/if}
+        <div class="flex items-center justify-between">
+            {#if stages.length > 1}
+                <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
+                    {#each stages as stage (stage)}
+                        <a
+                                href={stageUrl(stage)}
+                                class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline
+                                    {activeStage === stage
+                                        ? 'bg-background text-foreground shadow-sm'
+                                        : 'text-muted-foreground hover:text-foreground'}"
+                        >
+                            Scena {stage}
+                        </a>
+                    {/each}
+                </div>
+            {:else}
+                <div></div>
+            {/if}
+            {#if cityId !== null}
+                <RequirePermission role="ADMINISTRATOR">
+                    <StageCredentialsButton {cityId} stage={activeStage}/>
+                </RequirePermission>
+            {/if}
+        </div>
 
         {#if teams.length === 0 && !searchQuery.trim()}
             <div class="rounded-lg border border-dashed p-12 text-center">

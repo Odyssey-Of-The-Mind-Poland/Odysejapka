@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
-@RequestMapping("/timeTable")
+@RequestMapping(value = ["/timeTable", "/api/timeTable"])
 class TimeTableController(
     private val timeTableService: TimeTableService,
     private val importTimetableService: ImportTimetableService,
@@ -25,6 +25,7 @@ class TimeTableController(
     }
 
     @PostMapping("/csv")
+    @Secured("ROLE_ADMINISTRATOR")
     fun importPerformances(
         @RequestParam("file") file: MultipartFile,
         @RequestParam("cityId") cityId: Int,

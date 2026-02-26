@@ -1,12 +1,14 @@
 package odyseja.odysejapka.stage
 
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
 @RestController()
-@RequestMapping("/stage")
+@RequestMapping(value = ["/stage", "/api/stage"])
 class StageController(
-  private val stageService: StageService
+  private val stageService: StageService,
+  private val stageUserService: StageUserService
 ) {
 
   @GetMapping()
@@ -18,5 +20,16 @@ class StageController(
   @PutMapping
   fun updateStage(@RequestBody stages: List<Stage>) {
     return stageService.updateStage(stages)
+  }
+
+  @Secured("ROLE_ADMINISTRATOR")
+  @GetMapping("/{cityId}/{stage}/credentials")
+  fun getStageCredentials(
+    @PathVariable cityId: Int,
+    @PathVariable stage: Int
+  ): ResponseEntity<StageUserCredentials> {
+    val credentials = stageUserService.getCredentials(cityId, stage)
+      ?: return ResponseEntity.notFound().build()
+    return ResponseEntity.ok(credentials)
   }
 }

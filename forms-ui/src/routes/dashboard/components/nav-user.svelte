@@ -50,10 +50,20 @@
                     sideOffset={4}
             >
                 <DropdownMenu.Item>
-                    <SignOut>
-                        <LogoutIcon/>
-                        Wyloguj
-                    </SignOut>
+                    {#if session?.user}
+                        <SignOut>
+                            <input type="hidden" name="callbackUrl" value="/" />
+                            <LogoutIcon/>
+                            Wyloguj
+                        </SignOut>
+                    {:else}
+                        <form method="POST" action="/auth/logout" class="contents">
+                            <button type="submit" class="flex items-center gap-2 w-full">
+                                <LogoutIcon/>
+                                Wyloguj
+                            </button>
+                        </form>
+                    {/if}
                 </DropdownMenu.Item>
             </DropdownMenu.Content>
         </DropdownMenu.Root>

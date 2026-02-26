@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtDecoders
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
@@ -62,7 +63,9 @@ class SecurityConfiguration(
         val auth0Decoder: JwtDecoder = JwtDecoders.fromIssuerLocation(auth0IssuerUri)
         val auth0Manager = JwtAuthenticationProvider(auth0Decoder)
 
-        val localDecoder = NimbusJwtDecoder.withSecretKey(jwtService.getSigningKey()).build()
+        val localDecoder = NimbusJwtDecoder.withSecretKey(jwtService.getSigningKey())
+            .macAlgorithm(MacAlgorithm.HS256)
+            .build()
         val localManager = JwtAuthenticationProvider(localDecoder)
 
         val managers: Map<String, AuthenticationManager> = mapOf(

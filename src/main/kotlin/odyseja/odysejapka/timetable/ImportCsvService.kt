@@ -5,6 +5,7 @@ import com.opencsv.bean.CsvToBeanBuilder
 import com.opencsv.enums.CSVReaderNullFieldIndicator
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.stage.StageUserService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -15,7 +16,8 @@ import java.nio.charset.StandardCharsets
 @Service
 class ImportCsvService(
     private val timeTableService: TimeTableService,
-    private val cityRepository: CityRepository
+    private val cityRepository: CityRepository,
+    private val stageUserService: StageUserService
 ) {
     @Transactional
     fun uploadCsvFile(file: MultipartFile, cityId: Int) {
@@ -38,6 +40,9 @@ class ImportCsvService(
             }
 
             timeTableService.addPerformances(parsed, city)
+
+            val stages = parsed.map { it.stage }.toSet()
+            stageUserService.createStageUsers(cityId, stages)
         }
     }
 
