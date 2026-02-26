@@ -1,7 +1,6 @@
 package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.Progress
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -49,6 +48,12 @@ class TimeTableController(
     @DeleteMapping("/{performanceId}")
     fun delPerformance(@PathVariable performanceId: Int) {
         timeTableService.delPerformance(performanceId)
+    }
+
+    @Secured("ROLE_ADMINISTRATOR")
+    @DeleteMapping
+    fun clearTimetable() {
+        timeTableService.clearTimetable()
     }
 
     @Secured("ROLE_ADMINISTRATOR")
