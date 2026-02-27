@@ -137,7 +137,7 @@ class TimeTableService(
         return timeTableRepository.findAllByCityEntity_Id(cityId).map { it.toPerformance() }
     }
 
-    fun deleteCity(cityId: Int) {
+    fun deleteByCity(cityId: Int) {
         timeTableRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
     }
 
