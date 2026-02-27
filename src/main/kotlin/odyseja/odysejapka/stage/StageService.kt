@@ -3,6 +3,7 @@ package odyseja.odysejapka.stage
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class StageService(
@@ -44,6 +45,7 @@ class StageService(
     changeService.updateVersion()
   }
 
+  @Transactional
   fun clearStagesByCity(cityId: Int) {
     stageRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
     changeService.updateVersion()
