@@ -11,7 +11,7 @@ class StageService(
     private val changeService: ChangeService
 ) {
 
-  fun getStages(city: Int): List<Stage> {
+  fun getStagesByCity(city: Int): List<Stage> {
     return stageRepository.findAllByCityEntity(cityRepository.findById(city)).map {
       Stage(
         it!!.id,
@@ -41,6 +41,11 @@ class StageService(
       stageRepository.save(toEdit)
     }
 
+    changeService.updateVersion()
+  }
+
+  fun clearStagesByCity(cityId: Int) {
+    stageRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
     changeService.updateVersion()
   }
 }

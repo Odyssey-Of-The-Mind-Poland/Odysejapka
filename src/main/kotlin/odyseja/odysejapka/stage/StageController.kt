@@ -13,13 +13,19 @@ class StageController(
 
   @GetMapping()
   fun getStages(@RequestParam(required = false) cityId: Int?): List<Stage> {
-    return cityId?.let { stageService.getStages(cityId) } ?: stageService.getStages(0)
+    return cityId?.let { stageService.getStagesByCity(cityId) } ?: stageService.getStagesByCity(0)
   }
 
   @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
   @PutMapping
   fun updateStage(@RequestBody stages: List<Stage>) {
     return stageService.updateStage(stages)
+  }
+
+  @Secured("ROLE_ADMINISTRATOR")
+  @DeleteMapping("/{cityId}")
+  fun clearStagesByCity(@PathVariable cityId: Int) {
+    stageService.clearStagesByCity(cityId)
   }
 
   @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
