@@ -3,7 +3,6 @@
     import LogoutIcon from "@tabler/icons-svelte/icons/logout";
     import * as Sidebar from "$lib/registry/ui/sidebar";
     import {page} from "$app/state";
-    import {SignOut} from "@auth/sveltekit/components";
     import * as Avatar from "$lib/registry/ui/avatar/index.js";
     import * as DropdownMenu from "$lib/registry/ui/dropdown-menu/index.js";
     import {currentUser} from "$lib/userStore";
@@ -50,20 +49,12 @@
                     sideOffset={4}
             >
                 <DropdownMenu.Item>
-                    {#if session?.user}
-                        <SignOut>
-                            <input type="hidden" name="callbackUrl" value="/" />
+                    <form method="POST" action="/auth/logout" class="contents">
+                        <button type="submit" class="flex items-center gap-2 w-full">
                             <LogoutIcon/>
                             Wyloguj
-                        </SignOut>
-                    {:else}
-                        <form method="POST" action="/auth/logout" class="contents">
-                            <button type="submit" class="flex items-center gap-2 w-full">
-                                <LogoutIcon/>
-                                Wyloguj
-                            </button>
-                        </form>
-                    {/if}
+                        </button>
+                    </form>
                 </DropdownMenu.Item>
             </DropdownMenu.Content>
         </DropdownMenu.Root>

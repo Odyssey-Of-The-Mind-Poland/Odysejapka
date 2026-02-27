@@ -1,5 +1,4 @@
 <script lang="ts">
-    import {SignOut} from "@auth/sveltekit/components";
     import {page} from "$app/state"
     import {Button} from "$lib/components/ui/button";
     import {currentUser} from "$lib/userStore";
@@ -33,18 +32,9 @@
         <img src={session.user.image} alt="User Avatar" class="w-8 h-8 rounded-full" />
       {/if}
     </span>
-    {#if session?.user}
-        <!-- Auth0 user: use Auth.js sign-out -->
-        <SignOut>
-            <input type="hidden" name="callbackUrl" value="/" />
-            <Button slot="submitButton" class="buttonPrimary">Sign out</Button>
-        </SignOut>
-    {:else}
-        <!-- Local user: clear backend token cookie -->
-        <form method="POST" action="/auth/logout">
-            <Button type="submit" class="buttonPrimary">Sign out</Button>
-        </form>
-    {/if}
+    <form method="POST" action="/auth/logout">
+        <Button type="submit" class="buttonPrimary">Sign out</Button>
+    </form>
 {:else}
     <span class="notSignedInText">You are not signed in</span>
     <a href="/auth/login">

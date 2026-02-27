@@ -43,6 +43,16 @@ async function proxyRequest(event: Parameters<RequestHandler>[0]): Promise<Respo
 
 	const response = await fetch(targetUrl, init);
 
+	// If backend returns 401, clear all auth cookies and redirect to main page
+	if (response.status === 401) {
+		clearBackendToken(event.cookies);
+		event.cookies.delete('authjs.session-token', { path: '/' });
+		event.cookies.delete('__Secure-authjs.session-token', { path: '/' });
+		event.cookies.delete('authjs.callback-url', { path: '/' });
+		event.cookies.delete('authjs.csrf-token', { path: '/' });
+		throw redirect(302, '/');
+	}
+
 	// Forward the response with relevant headers
 	const responseHeaders = new Headers();
 	const respContentType = response.headers.get('Content-Type');
