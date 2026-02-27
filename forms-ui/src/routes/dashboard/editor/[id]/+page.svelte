@@ -12,7 +12,9 @@
     import StyleCard from "./StyleCard.svelte";
     import PenaltyCard from "./PenaltyCard.svelte";
     import JudgeCount from "./JudgeCount.svelte";
+    import TranslationTab from "./TranslationTab.svelte";
 
+    let activeTab = $state<'editor' | 'translation'>('editor');
     let problem = $derived(page.params.id);
     let formQuery = createOdysejaQuery<ProblemForm>({
         queryKey: ['problems'],
@@ -66,36 +68,61 @@
             <Button onclick={save}>Zapisz</Button>
         </div>
 
-        <Separator.Root/>
-
-        <JudgeCount {form}/>
-
-        <Separator.Root/>
-
-        <div class="flex flex-col gap-6">
-            <ScoringCard
-                    title="Punktacja długoterminowa"
-                    entries={form.dtEntries}
-                    bind:form={form}
-                    onAddEntry={addEntry}
-                    onRemoveEntry={removeEntry}
-            />
-
-            <StyleCard
-                    title="Styl"
-                    entries={form.styleEntries}
-                    bind:form={form}
-                    onAddEntry={addEntry}
-                    onRemoveEntry={removeEntry}
-            />
-
-            <PenaltyCard
-                    title="Karne"
-                    entries={form.penaltyEntries}
-                    bind:form={form}
-                    onAddEntry={addEntry}
-                    onRemoveEntry={removeEntry}
-            />
+        <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
+            <button
+                class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline cursor-pointer
+                    {activeTab === 'editor'
+                        ? 'bg-background text-foreground shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'}"
+                onclick={() => activeTab = 'editor'}
+            >
+                Formularz
+            </button>
+            <button
+                class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline cursor-pointer
+                    {activeTab === 'translation'
+                        ? 'bg-background text-foreground shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'}"
+                onclick={() => activeTab = 'translation'}
+            >
+                Tłumaczenie
+            </button>
         </div>
+
+        {#if activeTab === 'editor'}
+            <Separator.Root/>
+
+            <JudgeCount {form}/>
+
+            <Separator.Root/>
+
+            <div class="flex flex-col gap-6">
+                <ScoringCard
+                        title="Punktacja długoterminowa"
+                        entries={form.dtEntries}
+                        bind:form={form}
+                        onAddEntry={addEntry}
+                        onRemoveEntry={removeEntry}
+                />
+
+                <StyleCard
+                        title="Styl"
+                        entries={form.styleEntries}
+                        bind:form={form}
+                        onAddEntry={addEntry}
+                        onRemoveEntry={removeEntry}
+                />
+
+                <PenaltyCard
+                        title="Karne"
+                        entries={form.penaltyEntries}
+                        bind:form={form}
+                        onAddEntry={addEntry}
+                        onRemoveEntry={removeEntry}
+                />
+            </div>
+        {:else}
+            <TranslationTab bind:form={form} />
+        {/if}
     </div>
 {/if}

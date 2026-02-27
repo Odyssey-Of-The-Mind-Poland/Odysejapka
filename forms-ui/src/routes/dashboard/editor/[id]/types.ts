@@ -9,6 +9,7 @@ export type ProblemForm = {
 export type FormEntryType = {
 	id: number | null;
 	name: string;
+	translation?: string;
 	type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY';
 	scoring?: ScoringData | null;
 	scoringGroup?: ScoringGroupData | null;

@@ -3,6 +3,7 @@ package odyseja.odysejapka.form
 data class StyleFormEntry(
     val id: Long?,
     val name: String,
+    val translation: String? = null,
     val type: EntryType,
     val styleType: StyleType = StyleType.PREDEFINED,
     val entries: List<StyleFormEntry> = emptyList(),

@@ -25,18 +25,18 @@ data class RawTeamForm(
 
 object TeamFormToRawTeamFormConverter {
 
-    fun convert(teamForm: TeamForm): RawTeamForm {
-        val dtEntries = flattenDtEntries(teamForm.dtEntries)
+    fun convert(teamForm: TeamForm, useTranslation: Boolean = false): RawTeamForm {
+        val dtEntries = flattenDtEntries(teamForm.dtEntries, useTranslation)
         val styleEntries = teamForm.styleEntries.map { entry ->
             RawTeamFormEntry(
-                name = entry.entry.name,
+                name = resolveName(entry.entry.name, entry.entry.translation, useTranslation),
                 averageScore = calculateAverage(entry.results),
                 noElement = false
             )
         }
         val penaltyEntries = teamForm.penaltyEntries.map { entry ->
             RawTeamFormEntry(
-                name = entry.entry.name,
+                name = resolveName(entry.entry.name, entry.entry.translation, useTranslation),
                 averageScore = entry.result?.toDouble(),
                 noElement = false
             )
@@ -70,13 +70,14 @@ object TeamFormToRawTeamFormConverter {
      * - SECTION: section name as header row, then nested entries as a., b., c., etc.
      * - SCORING (leaf): single row with score
      */
-    private fun flattenDtEntries(entries: List<TeamForm.DtTeamFormEntry>): List<RawTeamFormEntry> {
+    private fun flattenDtEntries(entries: List<TeamForm.DtTeamFormEntry>, useTranslation: Boolean): List<RawTeamFormEntry> {
         val result = mutableListOf<RawTeamFormEntry>()
 
         fun processEntry(entry: TeamForm.DtTeamFormEntry, nestingLevel: Int, index: Int, isInsideScoringGroup: Boolean): Double {
             val isScoringGroup = entry.entry.type == LongTermFormEntry.EntryType.SCORING_GROUP
             val isSection = entry.entry.type == LongTermFormEntry.EntryType.SECTION
             val hasNested = entry.nestedEntries.isNotEmpty()
+            val entryName = resolveName(entry.entry.name, entry.entry.translation, useTranslation)
 
             return when {
                 isScoringGroup && hasNested -> {
@@ -89,7 +90,7 @@ object TeamFormToRawTeamFormConverter {
                             1 -> "${('a'.code + index).toChar()}."
                             else -> ""
                         }
-                        val name = if (prefix.isNotEmpty()) "$prefix ${entry.entry.name}" else entry.entry.name
+                        val name = if (prefix.isNotEmpty()) "$prefix $entryName" else entryName
                         result.add(RawTeamFormEntry(name = name, averageScore = nestedSum, noElement = false))
                     }
                     nestedSum
@@ -101,7 +102,7 @@ object TeamFormToRawTeamFormConverter {
                             1 -> "${('a'.code + index).toChar()}."
                             else -> ""
                         }
-                        val name = if (prefix.isNotEmpty()) "$prefix ${entry.entry.name}" else entry.entry.name
+                        val name = if (prefix.isNotEmpty()) "$prefix $entryName" else entryName
                         result.add(RawTeamFormEntry(name = name, averageScore = null, noElement = false, isSectionHeader = true))
                     }
                     entry.nestedEntries.mapIndexed { i, nested ->
@@ -116,7 +117,7 @@ object TeamFormToRawTeamFormConverter {
                             1 -> "${('a'.code + index).toChar()}."
                             else -> ""
                         }
-                        val name = if (prefix.isNotEmpty()) "$prefix ${entry.entry.name}" else entry.entry.name
+                        val name = if (prefix.isNotEmpty()) "$prefix $entryName" else entryName
                         result.add(
                             RawTeamFormEntry(
                                 name = name,
@@ -134,6 +135,11 @@ object TeamFormToRawTeamFormConverter {
             processEntry(entry, 0, i, isInsideScoringGroup = false)
         }
         return result
+    }
+
+    private fun resolveName(name: String, translation: String?, useTranslation: Boolean): String {
+        if (!useTranslation) return name
+        return translation?.takeIf { it.isNotBlank() } ?: name
     }
 
     private fun calculateAverage(results: Map<JudgeType, Map<Int, Long?>>): Double? {

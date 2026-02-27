@@ -109,6 +109,22 @@ class FormController(
             .body(pdfBytes)
     }
 
+    @GetMapping("/{performanceId}/preview/pdf/english")
+    fun getTeamFormPdfEnglish(
+        @PathVariable performanceId: Int,
+        @AuthenticationPrincipal principal: Any?
+    ): ResponseEntity<ByteArray> {
+        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        performanceAccessService.checkAccess(userId, performanceId)
+        val teamForm = formService!!.getTeamForm(performanceId)
+        if (!teamForm.approved) throw ResponseStatusException(HttpStatus.CONFLICT, "Form not approved")
+        val pdfBytes = teamFormPdfGeneratorService!!.generatePdf(performanceId, english = true)
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"team-form-${performanceId}-en.pdf\"")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdfBytes)
+    }
+
     @GetMapping("/{performanceId}/preview/pdf/download")
     fun downloadTeamFormPdf(
         @PathVariable performanceId: Int,

@@ -16,9 +16,49 @@
     let stageUrl = $derived(`/dashboard/teams/city/${encodeURIComponent(cityName)}/${stageParam}`);
     let teamUrl = $derived(`${stageUrl}/${performanceIdParam}`);
 
+    let activeTab = $state<'polish' | 'english'>('polish');
     let pdfUrl = $state<string | null>(null);
     let isLoading = $state(true);
     let error = $state<string | null>(null);
+
+    function getPdfEndpoint(lang: 'polish' | 'english'): string {
+        if (lang === 'english') {
+            return `/api/proxy/v1/form/${performanceIdParam}/preview/pdf/english`;
+        }
+        return `/api/proxy/v1/form/${performanceIdParam}/preview/pdf`;
+    }
+
+    async function loadPdf(lang: 'polish' | 'english') {
+        isLoading = true;
+        error = null;
+
+        if (pdfUrl) {
+            URL.revokeObjectURL(pdfUrl);
+            pdfUrl = null;
+        }
+
+        try {
+            const url = getPdfEndpoint(lang);
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`Failed to load PDF: ${response.statusText}`);
+            }
+
+            const blob = await response.blob();
+            pdfUrl = URL.createObjectURL(blob);
+            isLoading = false;
+        } catch (e) {
+            error = e instanceof Error ? e.message : 'Failed to load PDF';
+            isLoading = false;
+        }
+    }
+
+    function switchTab(tab: 'polish' | 'english') {
+        if (tab === activeTab) return;
+        activeTab = tab;
+        loadPdf(tab);
+    }
 
     onMount(async () => {
         setBreadcrumbs([
@@ -29,23 +69,7 @@
             {name: 'Podgląd', href: `${teamUrl}/preview`}
         ]);
 
-        try {
-            // Route through BFF proxy — token is added server-side
-            const url = `/api/proxy/v1/form/${performanceIdParam}/preview/pdf`;
-            const response = await fetch(url);
-
-            if (!response.ok) {
-                throw new Error(`Failed to load PDF: ${response.statusText}`);
-            }
-
-            const blob = await response.blob();
-            const objectUrl = URL.createObjectURL(blob);
-            pdfUrl = objectUrl;
-            isLoading = false;
-        } catch (e) {
-            error = e instanceof Error ? e.message : 'Failed to load PDF';
-            isLoading = false;
-        }
+        await loadPdf('polish');
     });
 
     onDestroy(() => {
@@ -83,6 +107,27 @@
                 Powrót
             </Button>
         </div>
+    </div>
+
+    <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
+        <button
+            class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline cursor-pointer
+                {activeTab === 'polish'
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'}"
+            onclick={() => switchTab('polish')}
+        >
+            Polski
+        </button>
+        <button
+            class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline cursor-pointer
+                {activeTab === 'english'
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'}"
+            onclick={() => switchTab('english')}
+        >
+            Angielski
+        </button>
     </div>
 
     <div class="flex-1 rounded-xl border bg-card shadow-sm overflow-hidden h-full">

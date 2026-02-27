@@ -7,8 +7,8 @@ class TeamFormPdfGeneratorService(
     private val latexGeneratorService: TeamFormLatexGeneratorService
 ) {
 
-    fun generatePdf(performanceId: Int): ByteArray {
-        return latexGeneratorService.generatePdf(performanceId)
+    fun generatePdf(performanceId: Int, english: Boolean = false): ByteArray {
+        return latexGeneratorService.generatePdf(performanceId, english)
     }
 }
 

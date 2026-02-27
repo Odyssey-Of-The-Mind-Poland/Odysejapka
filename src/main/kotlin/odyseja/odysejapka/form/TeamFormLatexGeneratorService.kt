@@ -12,11 +12,12 @@ class TeamFormLatexGeneratorService(
     private val texapiClient: TexapiClient
 ) {
 
-    fun generatePdf(performanceId: Int): ByteArray {
+    fun generatePdf(performanceId: Int, english: Boolean = false): ByteArray {
         val teamForm = teamFormService.getTeamForm(performanceId)
-        val rawForm = TeamFormToRawTeamFormConverter.convert(teamForm)
+        val rawForm = TeamFormToRawTeamFormConverter.convert(teamForm, useTranslation = english)
         val context = rawFormToMustacheContext(rawForm)
-        val latex = renderTemplate(context)
+        val templateName = if (english) "team-form-en.tex" else "team-form.tex"
+        val latex = renderTemplate(context, templateName)
         val fontFiles = loadFontFiles()
         require(fontFiles.any { it.first == "Ubuntu-Regular.ttf" }) {
             "Ubuntu fonts required for LaTeX PDF. Add static/fonts/Ubuntu-Regular.ttf to resources."
@@ -24,8 +25,8 @@ class TeamFormLatexGeneratorService(
         return texapiClient.compileFilesToPdf(latex, fontFiles)
     }
 
-    private fun renderTemplate(context: Map<String, Any>): String {
-        val templateSource = ClassPathResource("templates/latex/team-form.tex").inputStream.reader().readText()
+    private fun renderTemplate(context: Map<String, Any>, templateName: String = "team-form.tex"): String {
+        val templateSource = ClassPathResource("templates/latex/$templateName").inputStream.reader().readText()
         return Mustache.compiler()
             .withDelims("<% %>")
             .escapeHTML(false)
