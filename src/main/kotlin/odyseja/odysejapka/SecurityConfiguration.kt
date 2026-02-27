@@ -112,6 +112,7 @@ class SecurityConfiguration(
                 it
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/v1/auth/**").permitAll()
+                    .requestMatchers("/ws/**").permitAll()
                     .anyRequest().permitAll()
             }
             .oauth2ResourceServer { oauth2 ->

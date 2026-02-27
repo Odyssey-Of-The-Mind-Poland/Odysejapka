@@ -20,11 +20,15 @@
     import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
     import {goto} from "$app/navigation";
     import {currentUser} from "$lib/userStore";
+    import ChatBubble from "./ChatBubble.svelte";
+    import ChatPanel from "./ChatPanel.svelte";
 
     let cityName = $derived(decodeURIComponent(page.params.city));
     let stageParam = $derived(page.params.stage);
     let performanceId = $derived(Number(page.params.performanceId));
     let performanceIdParam = $derived(page.params.performanceId);
+
+    let isChatOpen = $state(false);
 
     let stageUrl = $derived(`/dashboard/teams/city/${encodeURIComponent(cityName)}/${stageParam}`);
     let teamUrl = $derived(`${stageUrl}/${performanceIdParam}`);
@@ -224,3 +228,12 @@
         </div>
     {/if}
 </div>
+
+<!-- Chat -->
+{#if !isChatOpen}
+    <ChatBubble unreadCount={0} onclick={() => isChatOpen = true} />
+{/if}
+{#if isChatOpen}
+    <ChatPanel performanceId={performanceIdParam} onclose={() => isChatOpen = false} />
+    <ChatBubble unreadCount={0} onclick={() => isChatOpen = false} />
+{/if}

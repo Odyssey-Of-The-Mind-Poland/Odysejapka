@@ -14,6 +14,13 @@ export default defineConfig({
 		allowedHosts: ['grzybek.snet.ovh']
 	},
 	server: {
-		port: 5172
+		port: 5172,
+		proxy: {
+			'/ws': {
+				target: 'http://localhost:8081',
+				ws: true,
+				changeOrigin: true
+			}
+		}
 	}
 });
