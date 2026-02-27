@@ -49,9 +49,9 @@ class TeamsFormController(
             group.performances.map { it.id }
         }
 
-        val actualTimesMap = if (allPerformanceIds.isNotEmpty()) {
+        val teamResultsMap = if (allPerformanceIds.isNotEmpty()) {
             teamResultRepository.findAllByPerformanceIdIn(allPerformanceIds)
-                .associate { it.performanceId to it.performanceAt }
+                .associateBy { it.performanceId }
         } else {
             emptyMap()
         }
@@ -60,7 +60,7 @@ class TeamsFormController(
             TeamListGroup(
                 group = group.group,
                 performances = group.performances.map { performance ->
-                    TeamListPerformance.from(performance, actualTimesMap[performance.id])
+                    TeamListPerformance.from(performance, teamResultsMap[performance.id])
                 }
             )
         }

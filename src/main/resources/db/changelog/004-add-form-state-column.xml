@@ -5,9 +5,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <include file="db/changelog/001-drop-role-check-constraint.xml"/>
-    <include file="db/changelog/002-add-approved-column.xml"/>
-    <include file="db/changelog/003-extract-time-columns.xml"/>
-    <include file="db/changelog/004-add-form-state-column.xml"/>
+    <changeSet id="004" author="odysejapka" failOnError="false">
+        <comment>Add form_state column with default NOT_SCORED</comment>
+        <sql>
+            ALTER TABLE team_results ADD COLUMN IF NOT EXISTS form_state varchar(255) NOT NULL DEFAULT 'NOT_SCORED';
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

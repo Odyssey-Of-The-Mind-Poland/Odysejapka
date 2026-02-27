@@ -1,5 +1,7 @@
 package odyseja.odysejapka.dashboard
 
+import odyseja.odysejapka.form.FormState
+import odyseja.odysejapka.form.TeamResultEntity
 import odyseja.odysejapka.timetable.Performance
 import odyseja.odysejapka.timetable.PerformanceGroup
 
@@ -14,9 +16,12 @@ data class TeamListPerformance(
     val performanceDay: String,
     val league: String?,
     val actualPerformanceAt: String? = null,
+    val formState: String = FormState.NOT_SCORED.name,
+    val formStateLabel: String = FormState.NOT_SCORED.label,
 ) {
     companion object {
-        fun from(performance: Performance, actualPerformanceAt: String?): TeamListPerformance {
+        fun from(performance: Performance, teamResult: TeamResultEntity?): TeamListPerformance {
+            val state = teamResult?.formState ?: FormState.NOT_SCORED
             return TeamListPerformance(
                 id = performance.id,
                 city = performance.city,
@@ -27,7 +32,9 @@ data class TeamListPerformance(
                 performance = performance.performance,
                 performanceDay = performance.performanceDay,
                 league = performance.league,
-                actualPerformanceAt = actualPerformanceAt,
+                actualPerformanceAt = teamResult?.performanceAt,
+                formState = state.name,
+                formStateLabel = state.label,
             )
         }
     }

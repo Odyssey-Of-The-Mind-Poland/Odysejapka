@@ -61,6 +61,15 @@ class FormService(
     @Transactional
     fun setTeamResults(performanceId: Int, request: PerformanceResultsRequest) {
         teamResultService.setTeamResults(performanceId, request)
+        val teamForm = teamFormService.getTeamForm(performanceId)
+        val errors = formValidationService.validateTeamForm(teamForm)
+        val anomalies = formAnomalyService.detectAnomalies(teamForm)
+        val state = when {
+            errors.isNotEmpty() -> FormState.ERROR
+            anomalies.isNotEmpty() -> FormState.ANOMALY
+            else -> FormState.SCORED
+        }
+        teamResultService.updateFormState(performanceId, state)
     }
 
     fun getTeamForm(performanceId: Int): TeamForm {

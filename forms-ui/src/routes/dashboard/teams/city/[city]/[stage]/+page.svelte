@@ -14,6 +14,7 @@
     import CsvUploadDialog from "../CsvUploadDialog.svelte";
     import StageCredentialsButton from "./StageCredentialsButton.svelte";
     import ObsuwaBadge from "./ObsuwaBadge.svelte";
+    import FormStateBadge from "./FormStateBadge.svelte";
 
     type City = {
         id: number;
@@ -40,6 +41,8 @@
             performanceDay: string;
             league: string | null;
             actualPerformanceAt: string | null;
+            formState: string;
+            formStateLabel: string;
         }>;
     };
 
@@ -54,6 +57,8 @@
         expectedTime: string;
         actualTime: string | null;
         performanceDay: string;
+        formState: string;
+        formStateLabel: string;
     };
 
     type TeamGroup = {
@@ -108,6 +113,8 @@
                         expectedTime: performance.performance,
                         actualTime: performance.actualPerformanceAt,
                         performanceDay: performance.performanceDay,
+                        formState: performance.formState,
+                        formStateLabel: performance.formStateLabel,
                     });
                 }
             });
@@ -279,6 +286,7 @@
                                     <Table.Header>
                                         <Table.Row class="bg-muted/40 hover:bg-muted/40">
                                             <Table.Head class="font-semibold">Drużyna</Table.Head>
+                                            <Table.Head class="font-semibold">Status</Table.Head>
                                             <Table.Head class="font-semibold">Godzina występu</Table.Head>
                                             <Table.Head class="font-semibold">Faktyczna godzina</Table.Head>
                                             <Table.Head class="font-semibold">Obsuwa</Table.Head>
@@ -291,6 +299,9 @@
                                                     onclick={() => goto(`/dashboard/teams/city/${encodeURIComponent(cityName)}/${activeStage}/${team.performanceId}`)}
                                             >
                                                 <Table.Cell class="font-medium">{team.team}</Table.Cell>
+                                                <Table.Cell>
+                                                    <FormStateBadge formState={team.formState} formStateLabel={team.formStateLabel} />
+                                                </Table.Cell>
                                                 <Table.Cell class="font-mono tabular-nums text-sm">
                                                     {team.expectedTime}
                                                 </Table.Cell>

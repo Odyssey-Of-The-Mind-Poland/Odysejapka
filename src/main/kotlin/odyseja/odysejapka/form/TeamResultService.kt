@@ -27,6 +27,14 @@ class TeamResultService(
         val entity = teamResultRepository.findByPerformanceId(performanceId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         entity.approved = true
+        entity.formState = FormState.APPROVED
+        teamResultRepository.save(entity)
+    }
+
+    @Transactional
+    fun updateFormState(performanceId: Int, state: FormState) {
+        val entity = teamResultRepository.findByPerformanceId(performanceId) ?: return
+        entity.formState = state
         teamResultRepository.save(entity)
     }
 }

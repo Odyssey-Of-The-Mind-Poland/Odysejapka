@@ -28,5 +28,9 @@ class TeamResultEntity {
 
     @Column(name = "performance_time")
     var performanceTime: String? = null
+
+    @Column(name = "form_state", columnDefinition = "varchar(255)")
+    @Enumerated(EnumType.STRING)
+    var formState: FormState = FormState.NOT_SCORED
 }
 
