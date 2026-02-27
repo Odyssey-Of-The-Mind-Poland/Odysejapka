@@ -30,10 +30,7 @@ class PrincipalUserCreationFilter(
 
     private fun createUser(authentication: Authentication, request: HttpServletRequest) {
         val principal = authentication.principal
-        val userId = getUserId(principal)
-        if (userId == null) {
-            return
-        }
+        val userId = getUserId(principal) ?: return
 
         if (userAlreadyCreated(userId)) {
             return
