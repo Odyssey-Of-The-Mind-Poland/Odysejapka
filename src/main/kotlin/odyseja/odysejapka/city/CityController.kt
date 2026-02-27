@@ -21,7 +21,7 @@ class CityController(
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @DeleteMapping("{cityId}")
+    @DeleteMapping("/{cityId}")
     fun deleteCity(@PathVariable cityId: Int) {
         return cityService.deleteCity(cityId)
     }
