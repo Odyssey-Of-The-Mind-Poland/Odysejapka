@@ -32,5 +32,20 @@ class TeamResultEntity {
     @Column(name = "form_state", columnDefinition = "varchar(255)")
     @Enumerated(EnumType.STRING)
     var formState: FormState = FormState.NOT_SCORED
+
+    @Column(name = "raw_dt")
+    var rawDt: Double? = null
+
+    @Column(name = "raw_style")
+    var rawStyle: Double? = null
+
+    @Column(name = "raw_penalty")
+    var rawPenalty: Double? = null
+
+    @Column(name = "raw_weight")
+    var rawWeight: Double? = null
+
+    @Column(name = "raw_total")
+    var rawTotal: Double? = null
 }
 

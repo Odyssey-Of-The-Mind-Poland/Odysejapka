@@ -18,6 +18,11 @@ data class TeamListPerformance(
     val actualPerformanceAt: String? = null,
     val formState: String = FormState.NOT_SCORED.name,
     val formStateLabel: String = FormState.NOT_SCORED.label,
+    val rawDt: Double? = null,
+    val rawStyle: Double? = null,
+    val rawPenalty: Double? = null,
+    val rawWeight: Double? = null,
+    val rawTotal: Double? = null,
 ) {
     companion object {
         fun from(performance: Performance, teamResult: TeamResultEntity?): TeamListPerformance {
@@ -35,6 +40,11 @@ data class TeamListPerformance(
                 actualPerformanceAt = teamResult?.performanceAt,
                 formState = state.name,
                 formStateLabel = state.label,
+                rawDt = teamResult?.rawDt,
+                rawStyle = teamResult?.rawStyle,
+                rawPenalty = teamResult?.rawPenalty,
+                rawWeight = teamResult?.rawWeight,
+                rawTotal = teamResult?.rawTotal,
             )
         }
     }

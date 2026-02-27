@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="005" author="odysejapka" failOnError="false">
+        <comment>Add raw score columns to team_results</comment>
+        <sql>
+            ALTER TABLE team_results ADD COLUMN IF NOT EXISTS raw_dt double precision;
+            ALTER TABLE team_results ADD COLUMN IF NOT EXISTS raw_style double precision;
+            ALTER TABLE team_results ADD COLUMN IF NOT EXISTS raw_penalty double precision;
+            ALTER TABLE team_results ADD COLUMN IF NOT EXISTS raw_weight double precision;
+            ALTER TABLE team_results ADD COLUMN IF NOT EXISTS raw_total double precision;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

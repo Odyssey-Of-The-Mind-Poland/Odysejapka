@@ -43,6 +43,11 @@
             actualPerformanceAt: string | null;
             formState: string;
             formStateLabel: string;
+            rawDt: number | null;
+            rawStyle: number | null;
+            rawPenalty: number | null;
+            rawWeight: number | null;
+            rawTotal: number | null;
         }>;
     };
 
@@ -59,6 +64,11 @@
         performanceDay: string;
         formState: string;
         formStateLabel: string;
+        rawDt: number | null;
+        rawStyle: number | null;
+        rawPenalty: number | null;
+        rawWeight: number | null;
+        rawTotal: number | null;
     };
 
     type TeamGroup = {
@@ -115,6 +125,11 @@
                         performanceDay: performance.performanceDay,
                         formState: performance.formState,
                         formStateLabel: performance.formStateLabel,
+                        rawDt: performance.rawDt,
+                        rawStyle: performance.rawStyle,
+                        rawPenalty: performance.rawPenalty,
+                        rawWeight: performance.rawWeight,
+                        rawTotal: performance.rawTotal,
                     });
                 }
             });
@@ -290,6 +305,13 @@
                                             <Table.Head class="font-semibold">Godzina występu</Table.Head>
                                             <Table.Head class="font-semibold">Faktyczna godzina</Table.Head>
                                             <Table.Head class="font-semibold">Obsuwa</Table.Head>
+                                            <Table.Head class="font-semibold">DT</Table.Head>
+                                            <Table.Head class="font-semibold">Styl</Table.Head>
+                                            <Table.Head class="font-semibold">Karne</Table.Head>
+                                            {#if group.problem === 4}
+                                                <Table.Head class="font-semibold">Waga</Table.Head>
+                                            {/if}
+                                            <Table.Head class="font-semibold">Suma</Table.Head>
                                         </Table.Row>
                                     </Table.Header>
                                     <Table.Body>
@@ -314,6 +336,43 @@
                                                 </Table.Cell>
                                                 <Table.Cell>
                                                     <ObsuwaBadge expectedTime={team.expectedTime} actualTime={team.actualTime} />
+                                                </Table.Cell>
+                                                <Table.Cell class="font-mono tabular-nums text-sm">
+                                                    {#if team.rawDt != null}
+                                                        {team.rawDt.toFixed(2)}
+                                                    {:else}
+                                                        <span class="text-muted-foreground">—</span>
+                                                    {/if}
+                                                </Table.Cell>
+                                                <Table.Cell class="font-mono tabular-nums text-sm">
+                                                    {#if team.rawStyle != null}
+                                                        {team.rawStyle.toFixed(2)}
+                                                    {:else}
+                                                        <span class="text-muted-foreground">—</span>
+                                                    {/if}
+                                                </Table.Cell>
+                                                <Table.Cell class="font-mono tabular-nums text-sm">
+                                                    {#if team.rawPenalty != null}
+                                                        {team.rawPenalty.toFixed(2)}
+                                                    {:else}
+                                                        <span class="text-muted-foreground">—</span>
+                                                    {/if}
+                                                </Table.Cell>
+                                                {#if group.problem === 4}
+                                                    <Table.Cell class="font-mono tabular-nums text-sm">
+                                                        {#if team.rawWeight != null}
+                                                            {team.rawWeight.toFixed(2)}
+                                                        {:else}
+                                                            <span class="text-muted-foreground">—</span>
+                                                        {/if}
+                                                    </Table.Cell>
+                                                {/if}
+                                                <Table.Cell class="font-mono tabular-nums text-sm font-semibold">
+                                                    {#if team.rawTotal != null}
+                                                        {team.rawTotal.toFixed(2)}
+                                                    {:else}
+                                                        <span class="text-muted-foreground">—</span>
+                                                    {/if}
                                                 </Table.Cell>
                                             </Table.Row>
                                         {/each}

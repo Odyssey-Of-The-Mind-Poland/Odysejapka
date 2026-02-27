@@ -37,4 +37,15 @@ class TeamResultService(
         entity.formState = state
         teamResultRepository.save(entity)
     }
+
+    @Transactional
+    fun updateRawScores(performanceId: Int, rawDt: Double, rawStyle: Double, rawPenalty: Double, rawWeight: Double?, rawTotal: Double) {
+        val entity = teamResultRepository.findByPerformanceId(performanceId) ?: return
+        entity.rawDt = rawDt
+        entity.rawStyle = rawStyle
+        entity.rawPenalty = rawPenalty
+        entity.rawWeight = rawWeight
+        entity.rawTotal = rawTotal
+        teamResultRepository.save(entity)
+    }
 }

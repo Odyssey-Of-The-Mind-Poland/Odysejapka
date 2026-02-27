@@ -83,5 +83,19 @@ class FormService(
     @Transactional
     fun approveForm(performanceId: Int) {
         teamResultService.approveTeamResult(performanceId)
+
+        val teamForm = teamFormService.getTeamForm(performanceId)
+        val rawForm = TeamFormToRawTeamFormConverter.convert(teamForm)
+        val rawWeight = if (teamForm.problem == 4) {
+            teamForm.weightHeldEntries.flatMap { it.weights }.sum()
+        } else null
+        teamResultService.updateRawScores(
+            performanceId = performanceId,
+            rawDt = rawForm.dtSum,
+            rawStyle = rawForm.styleSum,
+            rawPenalty = rawForm.penaltySum,
+            rawWeight = rawWeight,
+            rawTotal = rawForm.totalSum
+        )
     }
 }
