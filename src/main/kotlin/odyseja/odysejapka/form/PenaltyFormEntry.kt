@@ -3,8 +3,8 @@ package odyseja.odysejapka.form
 data class PenaltyFormEntry(
     val id: Long?,
     val name: String,
-    val translation: String? = null,
     val type: EntryType,
+    val translation: String? = null,
     val penaltyType: PenaltyType? = null,
     val penaltyRange: RangeData? = null,
     val penaltyDiscrete: DiscreteData? = null,

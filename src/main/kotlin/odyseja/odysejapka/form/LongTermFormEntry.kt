@@ -3,8 +3,8 @@ package odyseja.odysejapka.form
 data class LongTermFormEntry(
     val id: Long?,
     val name: String,
-    val translation: String? = null,
     val type: EntryType,
+    val translation: String? = null,
     val scoring: ScoringData? = null,
     val entries: List<LongTermFormEntry> = emptyList(),
     val sortIndex: Int = 0,

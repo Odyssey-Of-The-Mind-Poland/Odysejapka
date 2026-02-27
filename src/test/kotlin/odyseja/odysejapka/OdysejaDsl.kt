@@ -80,17 +80,17 @@ class OdysejaDsl {
 
     fun seedDefault(): Unit = setForm(
         dt = listOf(LongTermFormEntry(
-            null, "DT", LongTermFormEntry.EntryType.SCORING,
+            id = null, name = "DT", type = LongTermFormEntry.EntryType.SCORING,
             scoring = LongTermFormEntry.ScoringData(
                 scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
                 noElementEnabled = false
             )
         )),
         style = listOf(StyleFormEntry(
-            null, "Style", StyleFormEntry.EntryType.STYLE
+            id = null, name = "Style", type = StyleFormEntry.EntryType.STYLE
         )),
         penalty = listOf(PenaltyFormEntry(
-            null, "Penalty", PenaltyFormEntry.EntryType.PENALTY
+            id = null, name = "Penalty", type = PenaltyFormEntry.EntryType.PENALTY
         ))
     )
 
