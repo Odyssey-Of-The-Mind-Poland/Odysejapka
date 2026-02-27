@@ -22,5 +22,11 @@ class TeamResultEntity {
 
     @Column(nullable = false)
     var approved: Boolean = false
+
+    @Column(name = "performance_at")
+    var performanceAt: String? = null
+
+    @Column(name = "performance_time")
+    var performanceTime: String? = null
 }
 

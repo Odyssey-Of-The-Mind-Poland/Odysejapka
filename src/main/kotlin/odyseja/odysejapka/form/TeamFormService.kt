@@ -50,8 +50,8 @@ class TeamFormService(
 
         val isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final")
 
-        val performanceAt = resultEntity?.results?.performanceAt ?: ""
-        val performanceTime = resultEntity?.results?.performanceTime ?: ""
+        val performanceAt = resultEntity?.performanceAt ?: ""
+        val performanceTime = resultEntity?.performanceTime ?: ""
 
         return TeamForm(
             performanceId = performanceId,

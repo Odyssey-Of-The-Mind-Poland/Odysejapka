@@ -7,5 +7,6 @@
 
     <include file="db/changelog/001-drop-role-check-constraint.xml"/>
     <include file="db/changelog/002-add-approved-column.xml"/>
+    <include file="db/changelog/003-extract-time-columns.xml"/>
 
 </databaseChangeLog>

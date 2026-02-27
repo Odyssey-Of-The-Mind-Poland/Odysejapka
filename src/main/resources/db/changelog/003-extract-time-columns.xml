@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="003-add-columns" author="odysejapka" failOnError="false">
+        <comment>Add performance_at and performance_time columns to team_results</comment>
+        <sql>
+            ALTER TABLE team_results ADD COLUMN IF NOT EXISTS performance_at varchar(255);
+            ALTER TABLE team_results ADD COLUMN IF NOT EXISTS performance_time varchar(255);
+        </sql>
+    </changeSet>
+
+    <changeSet id="003-extract-from-jsonb" author="odysejapka" failOnError="false">
+        <comment>Extract performanceAt and performanceTime from JSONB results into new columns</comment>
+        <sql>
+            UPDATE team_results
+            SET performance_at = results->>'performanceAt',
+                performance_time = results->>'performanceTime'
+            WHERE results IS NOT NULL
+              AND (performance_at IS NULL OR performance_time IS NULL);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

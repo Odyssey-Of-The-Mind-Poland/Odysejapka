@@ -13,13 +13,14 @@
     import RequirePermission from "$lib/components/RequirePermission.svelte";
     import CsvUploadDialog from "../CsvUploadDialog.svelte";
     import StageCredentialsButton from "./StageCredentialsButton.svelte";
+    import ObsuwaBadge from "./ObsuwaBadge.svelte";
 
     type City = {
         id: number;
         name: string;
     };
 
-    type PerformanceGroup = {
+    type TeamListGroup = {
         group: {
             city: string;
             problem: number;
@@ -36,14 +37,8 @@
             age: number;
             stage: number;
             performance: string;
-            spontan: string;
-            part: number;
-            performanceDay: string;
-            spontanDay: string;
-            league: string;
-            zspRow: number | null;
-            zspSheet: string | null;
-            performanceDate: string | null;
+            league: string | null;
+            actualPerformanceAt: string | null;
         }>;
     };
 
@@ -53,8 +48,10 @@
         problem: number;
         age: number;
         stage: number;
-        league: string;
+        league: string | null;
         performanceId: number;
+        expectedTime: string;
+        actualTime: string | null;
     };
 
     let cityName = $derived(decodeURIComponent(page.params.city));
@@ -71,7 +68,7 @@
         return found?.id ?? null;
     });
 
-    let performanceGroupsQuery = createOdysejaQuery<PerformanceGroup[]>({
+    let performanceGroupsQuery = createOdysejaQuery<TeamListGroup[]>({
         queryKey: ['dashboardTeams'],
         path: '/api/v1/dashboard/teams',
     });
@@ -83,7 +80,7 @@
 
         const teamList: TeamInfo[] = [];
 
-        performanceGroupsQuery.data.forEach((group: PerformanceGroup) => {
+        performanceGroupsQuery.data.forEach((group: TeamListGroup) => {
             group.performances.forEach((performance) => {
                 if (performance.city === cityName) {
                     teamList.push({
@@ -94,6 +91,8 @@
                         stage: performance.stage,
                         league: performance.league,
                         performanceId: performance.id,
+                        expectedTime: performance.performance,
+                        actualTime: performance.actualPerformanceAt,
                     });
                 }
             });
@@ -117,7 +116,7 @@
         const q = searchQuery.toLowerCase().trim();
         return teams.filter((t: TeamInfo) =>
             t.team.toLowerCase().includes(q) ||
-            t.league.toLowerCase().includes(q) ||
+            (t.league ?? '').toLowerCase().includes(q) ||
             String(t.problem).includes(q)
         );
     });
@@ -217,6 +216,9 @@
                             <Table.Head class="font-semibold">Problem</Table.Head>
                             <Table.Head class="font-semibold">Wiek</Table.Head>
                             <Table.Head class="font-semibold">Liga</Table.Head>
+                            <Table.Head class="font-semibold">Oczekiwana</Table.Head>
+                            <Table.Head class="font-semibold">Rzeczywista</Table.Head>
+                            <Table.Head class="font-semibold">Obsuwa</Table.Head>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -233,7 +235,24 @@
                                     <Badge variant="secondary" class="font-mono tabular-nums">{team.age}</Badge>
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <Badge variant="outline">{team.league}</Badge>
+                                    {#if team.league}
+                                        <Badge variant="outline">{team.league}</Badge>
+                                    {:else}
+                                        <span class="text-muted-foreground">—</span>
+                                    {/if}
+                                </Table.Cell>
+                                <Table.Cell class="font-mono tabular-nums text-sm">
+                                    {team.expectedTime}
+                                </Table.Cell>
+                                <Table.Cell class="font-mono tabular-nums text-sm">
+                                    {#if team.actualTime}
+                                        {team.actualTime}
+                                    {:else}
+                                        <span class="text-muted-foreground">—</span>
+                                    {/if}
+                                </Table.Cell>
+                                <Table.Cell>
+                                    <ObsuwaBadge expectedTime={team.expectedTime} actualTime={team.actualTime} />
                                 </Table.Cell>
                             </Table.Row>
                         {/each}

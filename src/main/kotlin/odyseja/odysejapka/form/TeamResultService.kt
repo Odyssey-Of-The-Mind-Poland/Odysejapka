@@ -17,6 +17,8 @@ class TeamResultService(
 
         entity.results = request
         entity.approved = false
+        entity.performanceAt = request.performanceAt.ifBlank { null }
+        entity.performanceTime = request.performanceTime.ifBlank { null }
         teamResultRepository.save(entity)
     }
 
