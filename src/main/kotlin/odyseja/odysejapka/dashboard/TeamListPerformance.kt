@@ -11,6 +11,7 @@ data class TeamListPerformance(
     val age: Int,
     val stage: Int,
     val performance: String,
+    val performanceDay: String,
     val league: String?,
     val actualPerformanceAt: String? = null,
 ) {
@@ -24,6 +25,7 @@ data class TeamListPerformance(
                 age = performance.age,
                 stage = performance.stage,
                 performance = performance.performance,
+                performanceDay = performance.performanceDay,
                 league = performance.league,
                 actualPerformanceAt = actualPerformanceAt,
             )

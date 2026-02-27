@@ -37,6 +37,7 @@
             age: number;
             stage: number;
             performance: string;
+            performanceDay: string;
             league: string | null;
             actualPerformanceAt: string | null;
         }>;
@@ -52,6 +53,19 @@
         performanceId: number;
         expectedTime: string;
         actualTime: string | null;
+        performanceDay: string;
+    };
+
+    type TeamGroup = {
+        problem: number;
+        age: number;
+        league: string | null;
+        teams: TeamInfo[];
+    };
+
+    type DayGroup = {
+        day: string;
+        groups: TeamGroup[];
     };
 
     let cityName = $derived(decodeURIComponent(page.params.city));
@@ -93,12 +107,13 @@
                         performanceId: performance.id,
                         expectedTime: performance.performance,
                         actualTime: performance.actualPerformanceAt,
+                        performanceDay: performance.performanceDay,
                     });
                 }
             });
         });
 
-        return teamList.sort((a, b) => a.team.localeCompare(b.team));
+        return teamList.sort((a, b) => a.expectedTime.localeCompare(b.expectedTime));
     });
 
     let stages = $derived.by(() => {
@@ -120,6 +135,43 @@
             String(t.problem).includes(q)
         );
     });
+
+    const dayOrder: Record<string, number> = { 'sobota': 0, 'niedziela': 1 };
+
+    let groupedByDay = $derived.by((): DayGroup[] => {
+        const dayMap = new Map<string, Map<string, TeamInfo[]>>();
+
+        for (const team of filteredTeams) {
+            const day = team.performanceDay || 'inne';
+            const groupKey = `${team.problem}-${team.age}-${team.league ?? ''}`;
+
+            if (!dayMap.has(day)) dayMap.set(day, new Map());
+            const groups = dayMap.get(day)!;
+            if (!groups.has(groupKey)) groups.set(groupKey, []);
+            groups.get(groupKey)!.push(team);
+        }
+
+        const days = [...dayMap.entries()]
+            .sort(([a], [b]) => (dayOrder[a] ?? 99) - (dayOrder[b] ?? 99));
+
+        return days.map(([day, groupsMap]) => {
+            const groups = [...groupsMap.entries()]
+                .map(([key, teams]) => {
+                    const parts = key.split('-');
+                    const problem = Number(parts[0]);
+                    const age = Number(parts[1]);
+                    const league = parts.slice(2).join('-') || null;
+                    return { problem, age, league, teams } as TeamGroup;
+                })
+                .sort((a, b) => a.problem - b.problem || a.age - b.age || (a.league ?? '').localeCompare(b.league ?? ''));
+
+            return { day, groups };
+        });
+    });
+
+    function dayLabel(day: string): string {
+        return day.charAt(0).toUpperCase() + day.slice(1);
+    }
 
     function stageUrl(stage: number) {
         return `/dashboard/teams/city/${encodeURIComponent(cityName)}/${stage}`;
@@ -208,64 +260,66 @@
                 />
             </div>
 
-            <div class="rounded-xl border bg-card shadow-sm overflow-hidden">
-                <Table.Root>
-                    <Table.Header>
-                        <Table.Row class="bg-muted/40 hover:bg-muted/40">
-                            <Table.Head class="font-semibold">Drużyna</Table.Head>
-                            <Table.Head class="font-semibold">Problem</Table.Head>
-                            <Table.Head class="font-semibold">Wiek</Table.Head>
-                            <Table.Head class="font-semibold">Liga</Table.Head>
-                            <Table.Head class="font-semibold">Oczekiwana</Table.Head>
-                            <Table.Head class="font-semibold">Rzeczywista</Table.Head>
-                            <Table.Head class="font-semibold">Obsuwa</Table.Head>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {#each filteredTeams as team (team.performanceId)}
-                            <Table.Row
-                                    class="cursor-pointer transition-colors hover:bg-muted/50 group"
-                                    onclick={() => goto(`/dashboard/teams/city/${encodeURIComponent(cityName)}/${activeStage}/${team.performanceId}`)}
-                            >
-                                <Table.Cell class="font-medium">{team.team}</Table.Cell>
-                                <Table.Cell>
-                                    <Badge variant="outline" class="font-mono tabular-nums">{team.problem}</Badge>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <Badge variant="secondary" class="font-mono tabular-nums">{team.age}</Badge>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    {#if team.league}
-                                        <Badge variant="outline">{team.league}</Badge>
-                                    {:else}
-                                        <span class="text-muted-foreground">—</span>
-                                    {/if}
-                                </Table.Cell>
-                                <Table.Cell class="font-mono tabular-nums text-sm">
-                                    {team.expectedTime}
-                                </Table.Cell>
-                                <Table.Cell class="font-mono tabular-nums text-sm">
-                                    {#if team.actualTime}
-                                        {team.actualTime}
-                                    {:else}
-                                        <span class="text-muted-foreground">—</span>
-                                    {/if}
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <ObsuwaBadge expectedTime={team.expectedTime} actualTime={team.actualTime} />
-                                </Table.Cell>
-                            </Table.Row>
-                        {/each}
-                    </Table.Body>
-                </Table.Root>
+            {#each groupedByDay as dayGroup (dayGroup.day)}
+                <div class="flex flex-col gap-4">
+                    <h2 class="text-xl font-semibold tracking-tight">{dayLabel(dayGroup.day)}</h2>
 
-                {#if filteredTeams.length === 0 && searchQuery.trim()}
-                    <div class="py-8 text-center text-muted-foreground">
-                        <p class="font-medium">Brak wyników</p>
-                        <p class="text-sm mt-1">Spróbuj innej frazy</p>
-                    </div>
-                {/if}
-            </div>
+                    {#each dayGroup.groups as group (`${group.problem}-${group.age}-${group.league ?? ''}`)}
+                        <div class="flex flex-col gap-1.5">
+                            <div class="flex items-center gap-2 px-1">
+                                <Badge variant="outline" class="font-mono tabular-nums">Problem {group.problem}</Badge>
+                                <Badge variant="secondary" class="font-mono tabular-nums">Grupa wiekowa {group.age}</Badge>
+                                {#if group.league}
+                                    <Badge variant="outline">{group.league}</Badge>
+                                {/if}
+                                <span class="text-xs text-muted-foreground">{group.teams.length} {group.teams.length === 1 ? 'drużyna' : 'drużyn'}</span>
+                            </div>
+                            <div class="rounded-xl border bg-card shadow-sm overflow-hidden">
+                                <Table.Root>
+                                    <Table.Header>
+                                        <Table.Row class="bg-muted/40 hover:bg-muted/40">
+                                            <Table.Head class="font-semibold">Drużyna</Table.Head>
+                                            <Table.Head class="font-semibold">Godzina występu</Table.Head>
+                                            <Table.Head class="font-semibold">Faktyczna godzina</Table.Head>
+                                            <Table.Head class="font-semibold">Obsuwa</Table.Head>
+                                        </Table.Row>
+                                    </Table.Header>
+                                    <Table.Body>
+                                        {#each group.teams as team (team.performanceId)}
+                                            <Table.Row
+                                                    class="cursor-pointer transition-colors hover:bg-muted/50 group"
+                                                    onclick={() => goto(`/dashboard/teams/city/${encodeURIComponent(cityName)}/${activeStage}/${team.performanceId}`)}
+                                            >
+                                                <Table.Cell class="font-medium">{team.team}</Table.Cell>
+                                                <Table.Cell class="font-mono tabular-nums text-sm">
+                                                    {team.expectedTime}
+                                                </Table.Cell>
+                                                <Table.Cell class="font-mono tabular-nums text-sm">
+                                                    {#if team.actualTime}
+                                                        {team.actualTime}
+                                                    {:else}
+                                                        <span class="text-muted-foreground">—</span>
+                                                    {/if}
+                                                </Table.Cell>
+                                                <Table.Cell>
+                                                    <ObsuwaBadge expectedTime={team.expectedTime} actualTime={team.actualTime} />
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        {/each}
+                                    </Table.Body>
+                                </Table.Root>
+                            </div>
+                        </div>
+                    {/each}
+                </div>
+            {/each}
+
+            {#if filteredTeams.length === 0 && searchQuery.trim()}
+                <div class="py-8 text-center text-muted-foreground">
+                    <p class="font-medium">Brak wyników</p>
+                    <p class="text-sm mt-1">Spróbuj innej frazy</p>
+                </div>
+            {/if}
         {/if}
     {/if}
 </div>
