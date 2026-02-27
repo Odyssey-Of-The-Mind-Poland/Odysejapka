@@ -48,4 +48,13 @@ class TeamResultService(
         entity.rawTotal = rawTotal
         teamResultRepository.save(entity)
     }
+
+    @Transactional
+    fun toggleRanatra(performanceId: Int): Boolean {
+        val entity = teamResultRepository.findByPerformanceId(performanceId)
+            ?: TeamResultEntity().apply { this.performanceId = performanceId }
+        entity.ranatra = !entity.ranatra
+        teamResultRepository.save(entity)
+        return entity.ranatra
+    }
 }

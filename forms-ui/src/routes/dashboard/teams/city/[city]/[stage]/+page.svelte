@@ -14,6 +14,7 @@
     import CsvUploadDialog from "../CsvUploadDialog.svelte";
     import StageCredentialsButton from "./StageCredentialsButton.svelte";
     import ObsuwaBadge from "./ObsuwaBadge.svelte";
+    import BugIcon from "@lucide/svelte/icons/bug";
     import FormStateBadge from "./FormStateBadge.svelte";
 
     type City = {
@@ -48,6 +49,7 @@
             rawPenalty: number | null;
             rawWeight: number | null;
             rawTotal: number | null;
+            ranatra: boolean;
         }>;
     };
 
@@ -69,6 +71,7 @@
         rawPenalty: number | null;
         rawWeight: number | null;
         rawTotal: number | null;
+        ranatra: boolean;
     };
 
     type TeamGroup = {
@@ -130,6 +133,7 @@
                         rawPenalty: performance.rawPenalty,
                         rawWeight: performance.rawWeight,
                         rawTotal: performance.rawTotal,
+                        ranatra: performance.ranatra ?? false,
                     });
                 }
             });
@@ -320,7 +324,17 @@
                                                     class="cursor-pointer transition-colors hover:bg-muted/50 group"
                                                     onclick={() => goto(`/dashboard/teams/city/${encodeURIComponent(cityName)}/${activeStage}/${team.performanceId}`)}
                                             >
-                                                <Table.Cell class="font-medium">{team.team}</Table.Cell>
+                                                <Table.Cell class="font-medium">
+                                                    <div class="flex items-center gap-1.5">
+                                                        {team.team}
+                                                        {#if team.ranatra}
+                                                            <Badge variant="default" class="text-[10px] px-1.5 py-0">
+                                                                <BugIcon class="size-3 mr-0.5" />
+                                                                R
+                                                            </Badge>
+                                                        {/if}
+                                                    </div>
+                                                </Table.Cell>
                                                 <Table.Cell>
                                                     <FormStateBadge formState={team.formState} formStateLabel={team.formStateLabel} />
                                                 </Table.Cell>

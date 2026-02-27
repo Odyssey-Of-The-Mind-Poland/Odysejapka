@@ -17,7 +17,8 @@ data class TeamForm(
     val anomalies: List<Anomaly> = emptyList(),
     val canPreview: Boolean = false,
     val approved: Boolean = false,
-    val judgeCount: Int = 1
+    val judgeCount: Int = 1,
+    val ranatra: Boolean = false
 ) {
     data class DtTeamFormEntry(
         val entry: LongTermFormEntry,

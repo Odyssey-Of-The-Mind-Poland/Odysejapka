@@ -96,6 +96,7 @@ export type TeamForm = {
     canPreview?: boolean;
     approved?: boolean;
     judgeCount?: number;
+    ranatra?: boolean;
 };
 
 export type PerformanceResult = {

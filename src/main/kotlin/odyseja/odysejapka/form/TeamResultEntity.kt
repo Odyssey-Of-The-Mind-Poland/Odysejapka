@@ -47,5 +47,8 @@ class TeamResultEntity {
 
     @Column(name = "raw_total")
     var rawTotal: Double? = null
+
+    @Column(nullable = false)
+    var ranatra: Boolean = false
 }
 

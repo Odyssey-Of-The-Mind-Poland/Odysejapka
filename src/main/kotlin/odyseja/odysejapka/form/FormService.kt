@@ -98,4 +98,9 @@ class FormService(
             rawTotal = rawForm.totalSum
         )
     }
+
+    @Transactional
+    fun toggleRanatra(performanceId: Int): Boolean {
+        return teamResultService.toggleRanatra(performanceId)
+    }
 }

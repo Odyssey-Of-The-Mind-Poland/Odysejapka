@@ -16,6 +16,7 @@ class TeamFormService(
     fun getTeamForm(performanceId: Int): TeamForm {
         val resultEntity = teamResultRepository.findByPerformanceId(performanceId)
         val approved = resultEntity?.approved ?: false
+        val ranatra = resultEntity?.ranatra ?: false
         val results = resultEntity?.results?.results ?: emptyList()
         val weightHeldResults = resultEntity?.results?.weightHeldResults ?: emptyMap()
         val performance = performanceRepository.findById(performanceId).get()
@@ -37,7 +38,8 @@ class TeamFormService(
             styleEntries = emptyList(),
             penaltyEntries = emptyList(),
             approved = approved,
-            judgeCount = judgeCount
+            judgeCount = judgeCount,
+            ranatra = ranatra
         )
 
         val formEntity = formProblemRepository.findByProblem(problem) ?: return emptyForm
@@ -67,7 +69,8 @@ class TeamFormService(
             penaltyEntries = penaltyEntries,
             weightHeldEntries = weightHeldEntries,
             approved = approved,
-            judgeCount = judgeCount
+            judgeCount = judgeCount,
+            ranatra = ranatra
         )
     }
 

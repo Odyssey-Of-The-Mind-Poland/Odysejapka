@@ -93,6 +93,23 @@ class FormController(
         formService!!.approveForm(performanceId)
     }
 
+    @PutMapping("/{performanceId}/ranatra")
+    fun toggleRanatra(
+        @PathVariable performanceId: Int,
+        @AuthenticationPrincipal principal: Any?
+    ): Map<String, Boolean> {
+        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        performanceAccessService.checkAccess(userId, performanceId)
+        val performance = performanceRepository.findById(performanceId).orElse(null)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val problem = performance.problemEntity.id
+        if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN)
+        }
+        val newValue = formService!!.toggleRanatra(performanceId)
+        return mapOf("ranatra" to newValue)
+    }
+
     @GetMapping("/{performanceId}/preview/pdf")
     fun getTeamFormPdf(
         @PathVariable performanceId: Int,

@@ -23,6 +23,7 @@ data class TeamListPerformance(
     val rawPenalty: Double? = null,
     val rawWeight: Double? = null,
     val rawTotal: Double? = null,
+    val ranatra: Boolean = false,
 ) {
     companion object {
         fun from(performance: Performance, teamResult: TeamResultEntity?): TeamListPerformance {
@@ -45,6 +46,7 @@ data class TeamListPerformance(
                 rawPenalty = teamResult?.rawPenalty,
                 rawWeight = teamResult?.rawWeight,
                 rawTotal = teamResult?.rawTotal,
+                ranatra = teamResult?.ranatra ?: false,
             )
         }
     }

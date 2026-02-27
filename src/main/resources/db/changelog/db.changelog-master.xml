@@ -11,5 +11,6 @@
     <include file="db/changelog/004-add-form-state-column.xml"/>
     <include file="db/changelog/005-add-raw-score-columns.xml"/>
     <include file="db/changelog/006-create-chat-messages-table.xml"/>
+    <include file="db/changelog/007-add-ranatra-column.xml"/>
 
 </databaseChangeLog>

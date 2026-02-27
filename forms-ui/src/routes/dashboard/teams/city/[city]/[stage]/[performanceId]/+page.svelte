@@ -1,7 +1,6 @@
 <script lang="ts">
     import {Spinner} from "$lib/components/ui/spinner";
     import {Button} from "$lib/components/ui/button/index.js";
-    import {Badge} from "$lib/components/ui/badge/index.js";
     import {createOdysejaQuery, createPutMutation} from "$lib/queries";
     import {setBreadcrumbs} from "$lib/breadcrumbs";
     import {page} from "$app/state";
@@ -20,6 +19,7 @@
     import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
     import {goto} from "$app/navigation";
     import {currentUser} from "$lib/userStore";
+    import {Switch} from "$lib/components/ui/switch/index.js";
     import ChatBubble from "./ChatBubble.svelte";
     import ChatPanel from "./ChatPanel.svelte";
 
@@ -85,6 +85,15 @@
         }
     }));
 
+    let ranatraMutation = $derived(createPutMutation<{ ranatra: boolean }, null>({
+        path: () => `/api/v1/form/${performanceIdParam}/ranatra`,
+        queryKey: ['teamForm', performanceIdParam],
+        onSuccess: (data) => {
+            toast.success(data.ranatra ? 'Ranatra oznaczona' : 'Ranatra usunięta');
+        }
+    }));
+    let isRanatra = $derived(teamFormQuery.data?.ranatra ?? false);
+
     function handleSave() {
         if (!formData) return;
 
@@ -94,6 +103,10 @@
 
     function handleApprove() {
         approveMutation.mutate(null);
+    }
+
+    function handleToggleRanatra() {
+        ranatraMutation.mutate(null);
     }
 
     onMount(() => {
@@ -165,6 +178,19 @@
                 </Button>
             </div>
         </div>
+        {#if canApprove}
+            <div class="flex items-center justify-end gap-2 px-6 pb-4">
+                <Label.Root for="ranatra-toggle" class="text-sm {isRanatra ? 'text-primary font-medium' : 'text-muted-foreground'}">
+                    Ranatra
+                </Label.Root>
+                <Switch
+                    id="ranatra-toggle"
+                    checked={isRanatra}
+                    onCheckedChange={handleToggleRanatra}
+                    disabled={ranatraMutation.isPending}
+                />
+            </div>
+        {/if}
     </div>
 
     <!-- Content -->
