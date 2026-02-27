@@ -1,27 +1,19 @@
 package odyseja.odysejapka.dashboard
 
-import odyseja.odysejapka.roles.Role
-import odyseja.odysejapka.users.UserRepository
-import odyseja.odysejapka.users.UserRolesRepository
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-class UserAccessService(
-    private val userRepository: UserRepository,
-    private val userRolesRepository: UserRolesRepository
-) {
+class UserAccessService {
 
-    @Transactional(readOnly = true)
-    fun isAdmin(principalUserId: String): Boolean {
-        val user = userRepository.findByUserId(principalUserId) ?: return false
-        return userRolesRepository.findByUserId(user.userId!!).any { it.role == Role.ADMINISTRATOR }
-    }
+    fun isAdmin(): Boolean = hasAuthority("ROLE_ADMINISTRATOR")
 
-    @Transactional(readOnly = true)
-    fun hasProblemRole(principalUserId: String, problem: Int): Boolean {
-        val user = userRepository.findByUserId(principalUserId) ?: return false
-        val expectedRole = Role.valueOf("PROBLEM_$problem")
-        return userRolesRepository.findByUserId(user.userId!!).any { it.role == expectedRole }
+    fun isKapitan(): Boolean = hasAuthority("ROLE_KAPITAN")
+
+    fun hasProblemRole(problem: Int): Boolean = hasAuthority("ROLE_PROBLEM_$problem")
+
+    private fun hasAuthority(authority: String): Boolean {
+        val authentication = SecurityContextHolder.getContext().authentication ?: return false
+        return authentication.authorities.any { it.authority == authority }
     }
 }

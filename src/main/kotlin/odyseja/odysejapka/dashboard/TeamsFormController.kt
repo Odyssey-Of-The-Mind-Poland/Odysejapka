@@ -27,13 +27,15 @@ class TeamsFormController(
             performanceGroupService.getPerformanceGroups(city.id)
         }
 
-        if (userAccessService.isAdmin(userId)) return allGroups
+        if (userAccessService.isAdmin()) return allGroups
 
         val accessibleStagesByCityId = accessibleCities.associate { city ->
             city.id to stageAccessService.getAccessibleStages(userId, city.id)
         }
 
         return allGroups.filter { group ->
+            if (userAccessService.hasProblemRole(group.group.problem)) return@filter true
+
             val cityEntity = accessibleCities.find { it.name == group.group.city }
                 ?: return@filter false
             val stages = accessibleStagesByCityId[cityEntity.id] ?: return@filter false

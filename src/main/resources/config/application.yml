@@ -17,6 +17,8 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://odyseja.eu.auth0.com/
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
   jpa:
     hibernate:
       ddl-auto: ${DDL_AUTO:update}

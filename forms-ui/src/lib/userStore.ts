@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 
-export type Role = 'ADMINISTRATOR' | 'USER';
+export type Role = 'ADMINISTRATOR' | 'USER' | 'PROBLEM_1' | 'PROBLEM_2' | 'PROBLEM_3' | 'PROBLEM_4' | 'PROBLEM_5' | 'KAPITAN';
 
 export type CurrentUser = {
 	id: number;

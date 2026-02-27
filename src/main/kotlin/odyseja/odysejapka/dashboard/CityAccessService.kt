@@ -17,7 +17,7 @@ class CityAccessService(
 
     @Transactional(readOnly = true)
     fun getAccessibleCities(principalUserId: String): List<CityEntity> {
-        if (userAccessService.isAdmin(principalUserId)) {
+        if (userAccessService.isAdmin() || userAccessService.isKapitan()) {
             return cityRepository.findAll().filterNotNull()
         }
 

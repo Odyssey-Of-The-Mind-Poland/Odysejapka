@@ -14,7 +14,7 @@ class UserRolesEntity {
     @Column(name = "user_id", nullable = false)
     var userId: String? = null
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(255)")
     @Enumerated(EnumType.STRING)
     var role: Role? = null
 

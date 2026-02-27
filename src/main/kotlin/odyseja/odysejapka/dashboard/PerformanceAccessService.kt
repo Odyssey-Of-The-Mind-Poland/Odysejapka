@@ -18,12 +18,12 @@ class PerformanceAccessService(
 
     @Transactional(readOnly = true)
     fun checkAccess(principalUserId: String, performanceId: Int) {
-        if (userAccessService.isAdmin(principalUserId)) return
+        if (userAccessService.isAdmin()) return
 
         val performance = performanceRepository.findById(performanceId).orElse(null)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
-        if (userAccessService.hasProblemRole(principalUserId, performance.problemEntity.id)) return
+        if (userAccessService.hasProblemRole(performance.problemEntity.id)) return
 
         val user = userRepository.findByUserId(principalUserId)
             ?: throw ResponseStatusException(HttpStatus.FORBIDDEN)
