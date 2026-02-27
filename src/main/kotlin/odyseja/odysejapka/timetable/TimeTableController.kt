@@ -60,6 +60,12 @@ class TimeTableController(
     }
 
     @Secured("ROLE_ADMINISTRATOR")
+    @DeleteMapping("/{cityId}")
+    fun clearTimetableByCity(@PathVariable cityId: Int) {
+        timeTableService.clearTimetableByCity(cityId)
+    }
+
+    @Secured("ROLE_ADMINISTRATOR")
     @PostMapping("/import")
     fun import(@RequestBody importTimeTable: ImportTimeTable, @RequestParam cityId: Int) {
         return importTimetableService.import(GoogleIdExtractor.extractGoogleId(importTimeTable.zspId), cityId)

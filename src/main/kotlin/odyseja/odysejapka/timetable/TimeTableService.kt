@@ -101,6 +101,13 @@ class TimeTableService(
         changeService.updateVersion()
     }
 
+    @Transactional
+    fun clearTimetableByCity(cityId: Int) {
+        timeTableRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
+        changeService.updateVersion()
+    }
+
+
     fun getAge(age: Int): AgeEntity {
         return ageRepository.findFirstById(age) ?: ageRepository.save(
             AgeEntity(
