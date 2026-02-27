@@ -25,7 +25,7 @@ class ImportTimetableService(
         clearTimeTable(cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val cityName = cityRepository.findFirstById(cityId).name
-        performanceService.deleteCity(cityId)
+        performanceService.deleteByCity(cityId)
         importer = TimeTableImporter(performanceService, sheetsAdapter, cityName)
 
         job = Thread {
@@ -35,7 +35,7 @@ class ImportTimetableService(
     }
 
     fun clearTimeTable(cityId: Int) {
-        performanceService.deleteCity(cityId)
+        performanceService.deleteByCity(cityId)
     }
 
     fun stop() {
