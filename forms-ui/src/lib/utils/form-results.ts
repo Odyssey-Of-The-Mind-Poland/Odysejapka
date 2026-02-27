@@ -60,6 +60,12 @@ export type ValidationFailure = {
     message: string;
 };
 
+export type Anomaly = {
+    entryId: number;
+    rule: string;
+    message: string;
+};
+
 export const PERFORMANCE_AT_ENTRY_ID = -1;
 export const PERFORMANCE_TIME_ENTRY_ID = -2;
 
@@ -86,6 +92,7 @@ export type TeamForm = {
     }>;
     weightHeldEntries: WeightHeldTeamFormEntry[];
     validationErrors: ValidationFailure[];
+    anomalies?: Anomaly[];
     canPreview?: boolean;
     approved?: boolean;
     judgeCount?: number;

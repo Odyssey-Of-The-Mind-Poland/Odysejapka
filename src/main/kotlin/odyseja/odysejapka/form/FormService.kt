@@ -11,6 +11,7 @@ class FormService(
     private val judgeCountService: JudgeCountService,
     private val teamResultService: TeamResultService,
     private val formValidationService: FormValidationService,
+    private val formAnomalyService: FormAnomalyService,
 ) {
 
     @Transactional
@@ -65,8 +66,9 @@ class FormService(
     fun getTeamForm(performanceId: Int): TeamForm {
         val teamForm = teamFormService.getTeamForm(performanceId)
         val errors = formValidationService.validateTeamForm(teamForm)
+        val anomalies = formAnomalyService.detectAnomalies(teamForm)
         val canPreview = errors.isEmpty()
-        return teamForm.copy(validationErrors = errors, canPreview = canPreview)
+        return teamForm.copy(validationErrors = errors, anomalies = anomalies, canPreview = canPreview)
     }
 
     @Transactional

@@ -14,6 +14,7 @@ data class TeamForm(
     val penaltyEntries: List<PenaltyTeamFormEntry>,
     val weightHeldEntries: List<WeightHeldTeamFormEntry> = emptyList(),
     val validationErrors: List<ValidationFailure> = emptyList(),
+    val anomalies: List<Anomaly> = emptyList(),
     val canPreview: Boolean = false,
     val approved: Boolean = false,
     val judgeCount: Int = 1

@@ -1,11 +1,12 @@
 <script lang="ts">
-    import type {TeamForm, JudgeType, DtTeamFormEntry, ValidationFailure} from "$lib/utils/form-results";
+    import type {TeamForm, JudgeType, DtTeamFormEntry, ValidationFailure, Anomaly} from "$lib/utils/form-results";
     import * as Input from "$lib/components/ui/input/index.js";
     import ObjectiveJudgeInput from "./ObjectiveJudgeInput.svelte";
     import SubjectiveJudgeInput from "./SubjectiveJudgeInput.svelte";
     import {Checkbox} from "$lib/components/ui/checkbox";
     import DtEntriesTable from "./DtEntriesTable.svelte";
     import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
+    import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 
     const {
         dtEntry = $bindable(),
@@ -16,7 +17,8 @@
         showNoElementColumn = false,
         nestingLevel = 0,
         entryIndex = 0,
-        validationErrors = []
+        validationErrors = [],
+        anomalies = []
     } = $props<{
         dtEntry: DtTeamFormEntry;
         allColumns: Array<{ type: 'DT_A' | 'DT_B', judge: number }>;
@@ -27,6 +29,7 @@
         nestingLevel?: number;
         entryIndex?: number;
         validationErrors?: ValidationFailure[];
+        anomalies?: Anomaly[];
     }>();
 
     function getDisplayLabel(): string {
@@ -45,6 +48,11 @@
         validationErrors.filter((e: ValidationFailure) => e.entryId === dtEntry.entry.id)
     );
     let hasError = $derived(entryErrors.length > 0);
+
+    let entryAnomalies = $derived(
+        anomalies.filter((a: Anomaly) => a.entryId === dtEntry.entry.id)
+    );
+    let hasAnomaly = $derived(entryAnomalies.length > 0);
 
     function isColumnEnabled(
         column: { type: 'DT_A' | 'DT_B', judge: number }
@@ -106,7 +114,7 @@
     {#if hasNestedEntries}
         <div class="border-l-2 border-primary/20 ml-5">
             <DtEntriesTable
-                entries={dtEntry.nestedEntries!}
+                entries={dtEntry.nestedEntries}
                 isFo={isFo}
                 showHeader={false}
                 nested={true}
@@ -115,12 +123,13 @@
                 parentMaxJudgeCount={maxJudgeCount}
                 parentShowNoElementColumn={showNoElementColumn}
                 {validationErrors}
+                {anomalies}
             />
         </div>
     {/if}
 {:else}
     <!-- Scoring entry row -->
-    <div class="flex items-start gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : ''}">
+    <div class="flex items-start gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : hasAnomaly ? 'border-l-3 border-l-amber-500 bg-amber-500/5' : ''}">
         <!-- Left: Index + Name -->
         <div class="flex-1 min-w-0 pt-1.5">
             <div class="flex items-start gap-2">
@@ -137,6 +146,12 @@
                         <div class="flex items-center gap-1">
                             <CircleAlertIcon class="size-3 text-destructive shrink-0" />
                             <span class="text-xs text-destructive">{entryErrors[0].message}</span>
+                        </div>
+                    {/if}
+                    {#if hasAnomaly}
+                        <div class="flex items-center gap-1">
+                            <TriangleAlertIcon class="size-3 text-amber-600 shrink-0" />
+                            <span class="text-xs text-amber-600">{entryAnomalies[0].message}</span>
                         </div>
                     {/if}
                 </div>
@@ -204,6 +219,7 @@
                 parentMaxJudgeCount={maxJudgeCount}
                 parentShowNoElementColumn={showNoElementColumn}
                 {validationErrors}
+                {anomalies}
             />
         </div>
     {/if}

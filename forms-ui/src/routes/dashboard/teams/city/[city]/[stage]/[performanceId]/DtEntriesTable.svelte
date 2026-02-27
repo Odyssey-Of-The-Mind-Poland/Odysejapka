@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type {TeamForm, JudgeType, ValidationFailure} from "$lib/utils/form-results";
+    import type {TeamForm, JudgeType, ValidationFailure, Anomaly} from "$lib/utils/form-results";
     import DtEntryRow from "./DtEntryRow.svelte";
     import ClipboardListIcon from "@lucide/svelte/icons/clipboard-list";
     import {Badge} from "$lib/components/ui/badge/index.js";
@@ -14,6 +14,7 @@
         parentMaxJudgeCount,
         parentShowNoElementColumn,
         validationErrors = [],
+        anomalies = [],
     } = $props<{
         entries: TeamForm['dtEntries'];
         isFo: boolean;
@@ -24,6 +25,7 @@
         parentMaxJudgeCount?: number;
         parentShowNoElementColumn?: boolean;
         validationErrors?: ValidationFailure[];
+        anomalies?: Anomaly[];
     }>();
 
     function getJudgeKeys(results: Record<JudgeType, Record<number, number | string | null>>): number[] {
@@ -134,6 +136,7 @@
                     entryIndex={i}
                     {showNoElementColumn}
                     {validationErrors}
+                    {anomalies}
                 />
             {/each}
         </div>

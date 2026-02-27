@@ -7,7 +7,7 @@
     import {page} from "$app/state";
     import {onMount} from "svelte";
     import {toast} from "svelte-sonner";
-    import {buildResults, type TeamForm, type PerformanceResultsRequest, PERFORMANCE_AT_ENTRY_ID, PERFORMANCE_TIME_ENTRY_ID} from "$lib/utils/form-results";
+    import {buildResults, type TeamForm, type PerformanceResultsRequest, type Anomaly, PERFORMANCE_AT_ENTRY_ID, PERFORMANCE_TIME_ENTRY_ID} from "$lib/utils/form-results";
     import * as Input from "$lib/components/ui/input/index.js";
     import * as Label from "$lib/components/ui/label/index.js";
     import DtEntriesTable from "./DtEntriesTable.svelte";
@@ -38,6 +38,7 @@
     let savedResultsSnapshot = $state<string>('');
 
     let validationErrors = $derived(teamFormQuery.data?.validationErrors ?? []);
+    let anomalies = $derived(teamFormQuery.data?.anomalies ?? []);
     let hasValidationErrors = $derived(validationErrors.length > 0);
     let performanceAtError = $derived(validationErrors.find(e => e.entryId === PERFORMANCE_AT_ENTRY_ID));
     let performanceTimeError = $derived(validationErrors.find(e => e.entryId === PERFORMANCE_TIME_ENTRY_ID));
@@ -208,10 +209,10 @@
                 </div>
             </div>
 
-            <DtEntriesTable bind:entries={formData.dtEntries} isFo={formData.isFo} {validationErrors} />
+            <DtEntriesTable bind:entries={formData.dtEntries} isFo={formData.isFo} {validationErrors} {anomalies} />
             <WeightHeldEntriesTable bind:entries={formData.weightHeldEntries} {validationErrors} />
             <StyleEntriesTable bind:entries={formData.styleEntries} />
-            <PenaltyEntriesTable bind:entries={formData.penaltyEntries} {validationErrors} />
+            <PenaltyEntriesTable bind:entries={formData.penaltyEntries} {validationErrors} {anomalies} />
 
             {#if formData.dtEntries.length === 0 && formData.styleEntries.length === 0 && formData.penaltyEntries.length === 0 && formData.weightHeldEntries.length === 0}
                 <div class="rounded-lg border border-dashed p-12 text-center">

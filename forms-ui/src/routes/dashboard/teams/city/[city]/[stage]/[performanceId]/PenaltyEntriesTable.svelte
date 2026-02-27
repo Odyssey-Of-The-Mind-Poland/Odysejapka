@@ -1,11 +1,12 @@
 <script lang="ts">
-    import type { TeamForm, ValidationFailure } from "$lib/utils/form-results";
+    import type { TeamForm, ValidationFailure, Anomaly } from "$lib/utils/form-results";
     import PenaltyEntryRow from "./PenaltyEntryRow.svelte";
     import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 
-    const { entries = $bindable(), validationErrors = [] } = $props<{
+    const { entries = $bindable(), validationErrors = [], anomalies = [] } = $props<{
         entries: TeamForm['penaltyEntries'];
         validationErrors?: ValidationFailure[];
+        anomalies?: Anomaly[];
     }>();
 </script>
 
@@ -25,6 +26,7 @@
                 <PenaltyEntryRow
                     bind:penaltyEntry={entries[i]}
                     {validationErrors}
+                    {anomalies}
                 />
             {/each}
         </div>
