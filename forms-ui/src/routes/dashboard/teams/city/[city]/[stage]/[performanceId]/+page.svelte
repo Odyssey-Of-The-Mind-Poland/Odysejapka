@@ -16,9 +16,10 @@
     import WeightHeldEntriesTable from "./WeightHeldEntriesTable.svelte";
     import FileTextIcon from "@lucide/svelte/icons/file-text";
     import SaveIcon from "@lucide/svelte/icons/save";
-    import EyeIcon from "@lucide/svelte/icons/eye";
+    import CheckIcon from "@lucide/svelte/icons/check";
     import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
     import {goto} from "$app/navigation";
+    import {currentUser} from "$lib/userStore";
 
     let cityName = $derived(decodeURIComponent(page.params.city));
     let stageParam = $derived(page.params.stage);
@@ -62,11 +63,32 @@
         }
     }));
 
+    let user = $derived($currentUser);
+    let problemNumber = $derived(teamFormQuery.data?.problem);
+    let canApprove = $derived(
+        (user?.roles?.some(r => r === 'ADMINISTRATOR') ||
+        (user?.roles?.includes('KAPITAN') && problemNumber != null && user?.roles?.includes(`PROBLEM_${problemNumber}` as any)))
+        ?? false
+    );
+    let isApproved = $derived(teamFormQuery.data?.approved ?? false);
+
+    let approveMutation = $derived(createPutMutation<unknown, null>({
+        path: () => `/api/v1/form/${performanceIdParam}/approve`,
+        queryKey: ['teamForm', performanceIdParam],
+        onSuccess: () => {
+            toast.success('Arkusz został zatwierdzony');
+        }
+    }));
+
     function handleSave() {
         if (!formData) return;
 
         const request = buildResults(formData);
         saveMutation.mutate(request);
+    }
+
+    function handleApprove() {
+        approveMutation.mutate(null);
     }
 
     onMount(() => {
@@ -115,16 +137,26 @@
                 <Button
                     variant="outline"
                     onclick={() => window.location.href = `${teamUrl}/preview`}
-                    disabled={isDirty || !(teamFormQuery.data?.canPreview ?? false)}
+                    disabled={isDirty || !(teamFormQuery.data?.canPreview ?? false) || !isApproved}
                 >
                     Podgląd
                 </Button>
+                {#if canApprove}
+                    <Button
+                        class="bg-green-600 text-white hover:bg-green-700"
+                        onclick={handleApprove}
+                        disabled={approveMutation.isPending || isDirty || isApproved || !(teamFormQuery.data?.canPreview ?? false)}
+                    >
+                        <CheckIcon class="size-4" />
+                        {approveMutation.isPending ? 'Zatwierdzanie...' : 'Zatwierdź arkusz'}
+                    </Button>
+                {/if}
                 <Button
                     onclick={handleSave}
                     disabled={saveMutation.isPending || !formData || !isDirty}
                 >
                     <SaveIcon class="size-4" />
-                    {saveMutation.isPending ? 'Zapisywanie...' : 'Zatwierdź arkusz'}
+                    {saveMutation.isPending ? 'Zapisywanie...' : 'Zapisz'}
                 </Button>
             </div>
         </div>

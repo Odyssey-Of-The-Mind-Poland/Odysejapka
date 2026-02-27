@@ -5,7 +5,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <include file="db/changelog/001-drop-role-check-constraint.xml"/>
-    <include file="db/changelog/002-add-approved-column.xml"/>
+    <changeSet id="002" author="odysejapka" failOnError="false">
+        <comment>Add approved column with default false so existing rows get a value</comment>
+        <sql>ALTER TABLE team_results ADD COLUMN IF NOT EXISTS approved boolean NOT NULL DEFAULT false</sql>
+    </changeSet>
 
 </databaseChangeLog>

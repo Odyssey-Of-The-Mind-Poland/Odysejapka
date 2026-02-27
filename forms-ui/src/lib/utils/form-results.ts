@@ -87,6 +87,7 @@ export type TeamForm = {
     weightHeldEntries: WeightHeldTeamFormEntry[];
     validationErrors: ValidationFailure[];
     canPreview?: boolean;
+    approved?: boolean;
     judgeCount?: number;
 };
 

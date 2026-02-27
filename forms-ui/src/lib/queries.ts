@@ -58,8 +58,9 @@ function createBodyMutation<TData = unknown, TVariables = unknown>({
 				const target = resolvePath(path, variables);
 
 				const hasBody = variables !== undefined && variables !== null;
-				const body =
-					hasBody && (variables as any).body === undefined ? variables : (variables as any).body;
+				const body = hasBody
+					? ((variables as any).body === undefined ? variables : (variables as any).body)
+					: undefined;
 
 				const response = await apiFetch<TData>(target, {
 					method,

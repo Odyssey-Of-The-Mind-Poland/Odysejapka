@@ -15,6 +15,7 @@ data class TeamForm(
     val weightHeldEntries: List<WeightHeldTeamFormEntry> = emptyList(),
     val validationErrors: List<ValidationFailure> = emptyList(),
     val canPreview: Boolean = false,
+    val approved: Boolean = false,
     val judgeCount: Int = 1
 ) {
     data class DtTeamFormEntry(

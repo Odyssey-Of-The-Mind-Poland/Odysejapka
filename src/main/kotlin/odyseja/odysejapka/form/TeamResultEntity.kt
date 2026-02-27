@@ -19,5 +19,8 @@ class TeamResultEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     @Convert(converter = PerformanceResultsConverter::class)
     var results: PerformanceResultsRequest? = null
+
+    @Column(nullable = false)
+    var approved: Boolean = false
 }
 

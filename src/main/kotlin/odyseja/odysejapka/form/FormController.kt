@@ -1,7 +1,9 @@
 package odyseja.odysejapka.form
 
 import odyseja.odysejapka.dashboard.PerformanceAccessService
+import odyseja.odysejapka.dashboard.UserAccessService
 import odyseja.odysejapka.dashboard.extractUserId
+import odyseja.odysejapka.timetable.PerformanceRepository
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -22,7 +24,9 @@ import org.springframework.web.server.ResponseStatusException
 class FormController(
     private val formService: FormService?,
     private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService?,
-    private val performanceAccessService: PerformanceAccessService
+    private val performanceAccessService: PerformanceAccessService,
+    private val userAccessService: UserAccessService,
+    private val performanceRepository: PerformanceRepository
 ) {
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
@@ -37,7 +41,6 @@ class FormController(
         return formService!!.getProblemForm(problem)
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @GetMapping("/{problem}/judge-count")
     fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCountResponse {
         return formService!!.getJudgeCount(problem, cityId)
@@ -64,16 +67,30 @@ class FormController(
         return formService!!.getTeamForm(performanceId)
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @GetMapping("/subjective-ranges")
     fun getSubjectiveRanges(): List<SubjectiveRangeDto> {
         return SubjectiveRanges.entries.map { it.toRangesResponse() }
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @GetMapping("/objective-buckets")
     fun getObjectiveBuckets(): List<ObjectiveBucketDto> {
         return ObjectiveBuckets.entries.map { it.toBucketsResponse() }
+    }
+
+    @PutMapping("/{performanceId}/approve")
+    fun approveForm(
+        @PathVariable performanceId: Int,
+        @AuthenticationPrincipal principal: Any?
+    ) {
+        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        performanceAccessService.checkAccess(userId, performanceId)
+        val performance = performanceRepository.findById(performanceId).orElse(null)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val problem = performance.problemEntity.id
+        if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN)
+        }
+        formService!!.approveForm(performanceId)
     }
 
     @GetMapping("/{performanceId}/preview/pdf")
@@ -83,6 +100,8 @@ class FormController(
     ): ResponseEntity<ByteArray> {
         val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         performanceAccessService.checkAccess(userId, performanceId)
+        val teamForm = formService!!.getTeamForm(performanceId)
+        if (!teamForm.approved) throw ResponseStatusException(HttpStatus.CONFLICT, "Form not approved")
         val pdfBytes = teamFormPdfGeneratorService!!.generatePdf(performanceId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"team-form-${performanceId}.pdf\"")
@@ -97,6 +116,8 @@ class FormController(
     ): ResponseEntity<ByteArray> {
         val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         performanceAccessService.checkAccess(userId, performanceId)
+        val teamForm = formService!!.getTeamForm(performanceId)
+        if (!teamForm.approved) throw ResponseStatusException(HttpStatus.CONFLICT, "Form not approved")
         val pdfBytes = teamFormPdfGeneratorService!!.generatePdf(performanceId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"team-form-${performanceId}.pdf\"")

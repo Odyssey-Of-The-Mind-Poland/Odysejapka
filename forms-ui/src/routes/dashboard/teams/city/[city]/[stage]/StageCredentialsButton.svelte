@@ -83,7 +83,7 @@
                             <Button
                                     variant="ghost"
                                     size="icon"
-                                    onclick={() => copyToClipboard(credentials!.email)}
+                                    onclick={() => copyToClipboard(credentials?.email ?? '')}
                             >
                                 <IconCopy class="size-4"/>
                             </Button>
@@ -98,7 +98,7 @@
                             <Button
                                     variant="ghost"
                                     size="icon"
-                                    onclick={() => copyToClipboard(credentials!.password)}
+                                    onclick={() => copyToClipboard(credentials?.password ?? '')}
                             >
                                 <IconCopy class="size-4"/>
                             </Button>

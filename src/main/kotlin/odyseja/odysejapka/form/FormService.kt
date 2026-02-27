@@ -68,4 +68,9 @@ class FormService(
         val canPreview = errors.isEmpty()
         return teamForm.copy(validationErrors = errors, canPreview = canPreview)
     }
+
+    @Transactional
+    fun approveForm(performanceId: Int) {
+        teamResultService.approveTeamResult(performanceId)
+    }
 }
