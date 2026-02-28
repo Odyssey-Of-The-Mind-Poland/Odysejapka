@@ -53,7 +53,7 @@ internal class SakRunner(
         }
         val (sheet, fileId) = sheetEntry
         val sheetName = sheet.properties.title
-        val values = sheetsAdapter.getValue(fileId, sheetName, "A1:X20")
+        val values = sheetsAdapter.getValue(fileId, sheetName, "A1:AZ20")
 
         var teamStartCell = findCell(values, "Drużyna")
         var pointsCell = findCell(values, "Ostateczny wynik").copy(second = teamStartCell.second)
@@ -82,7 +82,7 @@ internal class SakRunner(
         sheetsAdapter.writeValue(
             zspId,
             team.zspSheet!!,
-            "S${team.zspRow}",
+            "T${team.zspRow}",
             getZspValue(sheetId, sheetName, "${pointsCell.first}${pointsCell.second}")
         )
         processedTeamsCount.incrementAndGet()

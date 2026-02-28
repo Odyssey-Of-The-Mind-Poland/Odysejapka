@@ -37,7 +37,15 @@ class DriveAdapter(
         val file = File()
         file.name = newName
         file.parents = listOf(destination)
-        return service.Files().copy(fileId, file).execute()
+        repeat(3) { attempt ->
+            try {
+                return service.Files().copy(fileId, file).execute()
+            } catch (e: Exception) {
+                if (attempt == 2) throw e
+                Thread.sleep(1000)
+            }
+        }
+        throw IllegalStateException("Unreachable")
     }
 
     fun createFolder(folderName: String, parentDir: String): String {
