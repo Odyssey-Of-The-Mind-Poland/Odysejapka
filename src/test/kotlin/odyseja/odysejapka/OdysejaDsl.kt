@@ -10,6 +10,10 @@ import odyseja.odysejapka.form.PenaltyFormEntry
 import odyseja.odysejapka.form.PerformanceResultsRequest
 import odyseja.odysejapka.form.ProblemForm
 import odyseja.odysejapka.roles.Role
+import odyseja.odysejapka.spontan.SpontanController
+import odyseja.odysejapka.spontan.SpontanDefinition
+import odyseja.odysejapka.spontan.SpontanFieldEntry
+import odyseja.odysejapka.spontan.SpontanType
 import odyseja.odysejapka.timetable.Performance
 import odyseja.odysejapka.timetable.TimeTableController
 import odyseja.odysejapka.users.CreateUserRequest
@@ -36,6 +40,7 @@ class OdysejaDsl {
     lateinit var formClient: FormController
     lateinit var cityClient: CityController
     lateinit var timeTableClient: TimeTableController
+    lateinit var spontanClient: SpontanController
 
     @Autowired
     lateinit var controllerClientFactory: ControllerClientFactory
@@ -49,6 +54,7 @@ class OdysejaDsl {
         formClient = controllerClientFactory.create(FormController::class.java)
         cityClient = controllerClientFactory.create(CityController::class.java)
         timeTableClient = controllerClientFactory.create(TimeTableController::class.java)
+        spontanClient = controllerClientFactory.create(SpontanController::class.java)
     }
 
     private fun ensureTestUserExists() {
@@ -106,24 +112,39 @@ class OdysejaDsl {
     fun createCity(name: String) = cityClient.saveCity(CreateCityRequest(name))
 
     fun createPerformance(cityId: Int): Int {
+        return createPerformance(cityId, team = "Sample Team")
+    }
+
+    fun createPerformance(
+        cityId: Int,
+        team: String = "Sample Team",
+        problem: Int = 1,
+        age: Int = 1,
+        stage: Int = 1,
+        spontan: String = "",
+        spontanDay: String = "",
+        performance: String = "",
+        performanceDay: String = "",
+        league: String? = ""
+    ): Int {
         val cityName = cityClient.getCities().firstOrNull { it?.id == cityId }?.name ?: "Unknown"
-        val performance = Performance(
-            city = cityName, team = "Sample Team",
+        val perf = Performance(
+            city = cityName, team = team,
             id = 0,
-            problem = 1,
-            age = 1,
-            stage = 1,
-            performance = "",
-            spontan = "",
+            problem = problem,
+            age = age,
+            stage = stage,
+            performance = performance,
+            spontan = spontan,
             part = 1,
-            performanceDay = "",
-            spontanDay = "",
-            league = "",
+            performanceDay = performanceDay,
+            spontanDay = spontanDay,
+            league = league,
             zspRow = 1,
             zspSheet = "",
             performanceDate = LocalDate.now(),
         )
-        return timeTableClient.addPerformance(performance).id
+        return timeTableClient.addPerformance(perf).id
     }
 
     fun getTeamResults(performanceId: Int) = formClient.getTeamResults(performanceId, null)

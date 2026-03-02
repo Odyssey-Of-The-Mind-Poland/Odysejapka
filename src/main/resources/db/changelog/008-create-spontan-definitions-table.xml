@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="008-create-spontan-definitions-table" author="odysejapka">
+        <comment>Create spontan_definition table for storing spontan form definitions as JSON</comment>
+        <sql>
+            CREATE TABLE IF NOT EXISTS spontan_definition (
+                id BIGSERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                type VARCHAR(50) NOT NULL,
+                multiplier DOUBLE PRECISION,
+                form_data JSONB
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

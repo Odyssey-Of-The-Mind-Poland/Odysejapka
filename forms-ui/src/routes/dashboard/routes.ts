@@ -2,6 +2,7 @@ import IconUserCog from "@tabler/icons-svelte/icons/user-cog";
 import IconForms from "@tabler/icons-svelte/icons/forms";
 import IconUsersGroup from "@tabler/icons-svelte/icons/users-group";
 import IconBuilding from "@tabler/icons-svelte/icons/building";
+import IconBulb from "@tabler/icons-svelte/icons/bulb";
 import type {Role} from "$lib/userStore";
 
 export type NavItem = {
@@ -23,6 +24,12 @@ export const routes = {
             title: "Edytor formularzy",
             url: "/dashboard/editor",
             icon: IconForms,
+            requiredRole: 'ADMINISTRATOR',
+        },
+        {
+            title: "Edytor spontanów",
+            url: "/dashboard/spontan-editor",
+            icon: IconBulb,
             requiredRole: 'ADMINISTRATOR',
         },
         {

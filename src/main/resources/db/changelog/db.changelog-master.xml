@@ -12,5 +12,7 @@
     <include file="db/changelog/005-add-raw-score-columns.xml"/>
     <include file="db/changelog/006-create-chat-messages-table.xml"/>
     <include file="db/changelog/007-add-ranatra-column.xml"/>
+    <include file="db/changelog/008-create-spontan-definitions-table.xml"/>
+    <include file="db/changelog/009-create-spontan-group-assignment-table.xml"/>
 
 </databaseChangeLog>
