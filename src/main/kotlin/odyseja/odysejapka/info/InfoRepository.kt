@@ -8,4 +8,6 @@ interface InfoRepository : CrudRepository<InfoEntity?, Int?> {
   fun findByCity(city: CityEntity): Iterable<InfoEntity>
 
   fun findAllByOrderBySortNumber(): Iterable<InfoEntity>
+
+  fun deleteByCityId(cityId: Int)
 }
