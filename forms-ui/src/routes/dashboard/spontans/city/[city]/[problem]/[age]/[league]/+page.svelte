@@ -66,21 +66,23 @@
         return found?.id ?? null;
     });
 
-    let queryPath = $derived(
-        cityId !== null
-            ? `/api/v1/spontan/result/${cityId}/teams?problem=${problem}&age=${age}&league=${encodeURIComponent(league)}`
-            : ''
-    );
+    type GroupTeamsQueryResult = ReturnType<typeof createOdysejaQuery<SpontanGroupTeams>>;
+    let groupTeamsQuery = $state<GroupTeamsQueryResult | null>(null);
+    let lastCityId = $state<number | null>(null);
 
-    let groupTeamsQuery = $derived(createOdysejaQuery<SpontanGroupTeams>({
-        queryKey: ['spontanGroupTeams', String(cityId), String(problem), String(age), league],
-        path: queryPath,
-        enabled: cityId !== null,
-    }));
+    $effect(() => {
+        if (cityId !== null && cityId !== lastCityId) {
+            lastCityId = cityId;
+            groupTeamsQuery = createOdysejaQuery<SpontanGroupTeams>({
+                queryKey: ['spontanGroupTeams', String(cityId), String(problem), String(age), league],
+                path: `/api/v1/spontan/result/${cityId}/teams?problem=${problem}&age=${age}&league=${encodeURIComponent(league)}`,
+            });
+        }
+    });
 
-    let definition = $derived(groupTeamsQuery.data?.spontanDefinition);
-    let judgeCount = $derived(groupTeamsQuery.data?.judgeCount ?? 3);
-    let teams = $derived(groupTeamsQuery.data?.teams ?? []);
+    let definition = $derived(groupTeamsQuery?.data?.spontanDefinition);
+    let judgeCount = $derived(groupTeamsQuery?.data?.judgeCount ?? 3);
+    let teams = $derived(groupTeamsQuery?.data?.teams ?? []);
 
     // Editable state: Map<performanceId, Map<"judge-field", value>>
     let editState = $state<Record<number, Record<string, number>>>({});
@@ -181,7 +183,7 @@
         </div>
     </div>
 
-    {#if groupTeamsQuery.isPending || citiesQuery.isPending}
+    {#if !groupTeamsQuery || groupTeamsQuery.isPending || citiesQuery.isPending}
         <div class="flex flex-col items-center justify-center py-16 gap-3">
             <Spinner size="sm"/>
             <p class="text-sm text-muted-foreground">Ładowanie...</p>

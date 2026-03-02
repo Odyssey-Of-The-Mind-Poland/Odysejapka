@@ -54,14 +54,19 @@
         path: '/api/v1/spontan',
     });
 
-    let groupsQueryKey = $derived(cityId !== null ? ['spontanGroups', String(cityId)] : ['spontanGroups', 'none']);
-    let groupsQueryPath = $derived(cityId !== null ? `/api/v1/spontan/group/${cityId}` : '');
+    type GroupsQueryResult = ReturnType<typeof createOdysejaQuery<SpontanGroupAssignment[]>>;
+    let groupsQuery = $state<GroupsQueryResult | null>(null);
+    let lastCityId = $state<number | null>(null);
 
-    let groupsQuery = $derived(createOdysejaQuery<SpontanGroupAssignment[]>({
-        queryKey: groupsQueryKey,
-        path: groupsQueryPath,
-        enabled: cityId !== null,
-    }));
+    $effect(() => {
+        if (cityId !== null && cityId !== lastCityId) {
+            lastCityId = cityId;
+            groupsQuery = createOdysejaQuery<SpontanGroupAssignment[]>({
+                queryKey: ['spontanGroups', String(cityId)],
+                path: `/api/v1/spontan/group/${cityId}`,
+            });
+        }
+    });
 
     let assignMutation = createPutMutation<SpontanGroupAssignment, {
         cityId: number;
@@ -140,7 +145,7 @@
         </div>
     </div>
 
-    {#if groupsQuery.isPending || citiesQuery.isPending}
+    {#if !groupsQuery || groupsQuery.isPending || citiesQuery.isPending}
         <div class="flex flex-col items-center justify-center py-16 gap-3">
             <Spinner size="sm"/>
             <p class="text-sm text-muted-foreground">Ładowanie grup...</p>
