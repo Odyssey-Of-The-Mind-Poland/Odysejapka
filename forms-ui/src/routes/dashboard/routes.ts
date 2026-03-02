@@ -3,6 +3,7 @@ import IconForms from "@tabler/icons-svelte/icons/forms";
 import IconUsersGroup from "@tabler/icons-svelte/icons/users-group";
 import IconBuilding from "@tabler/icons-svelte/icons/building";
 import IconBulb from "@tabler/icons-svelte/icons/bulb";
+import IconSparkles from "@tabler/icons-svelte/icons/sparkles";
 import type {Role} from "$lib/userStore";
 
 export type NavItem = {
@@ -37,6 +38,11 @@ export const routes = {
             url: "/dashboard/cities",
             icon: IconBuilding,
             requiredRole: 'ADMINISTRATOR',
+        },
+        {
+            title: "Spontany",
+            url: "/dashboard/spontans",
+            icon: IconSparkles,
         },
         {
             title: "Drużyny",
