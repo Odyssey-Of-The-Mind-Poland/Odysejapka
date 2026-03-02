@@ -17,6 +17,7 @@ class SakCommandEntity(
 interface SakCommandRepository : JpaRepository<SakCommandEntity, Long> {
     fun findFirstByOrderByIdDesc(): SakCommandEntity?
     fun findFirstByCityIdOrderByIdDesc(cityId: Int): SakCommandEntity?
+    fun deleteByCityId(cityId: Int)
 }
 
 

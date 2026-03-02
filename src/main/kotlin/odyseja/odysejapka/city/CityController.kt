@@ -14,6 +14,12 @@ class CityController(
         return cityService.getCities()
     }
 
+    @GetMapping("/name/{cityName}")
+    fun getCityByName(@PathVariable cityName: String): CityEntity {
+        return cityService.getCityByName(cityName)
+            ?: throw IllegalArgumentException("Nie ma miasta o nazwie $cityName.")
+    }
+
     @Secured("ROLE_ADMINISTRATOR")
     @PostMapping
     fun saveCity(@RequestBody cityRequest: CreateCityRequest): CityEntity {
@@ -23,6 +29,15 @@ class CityController(
     @Secured("ROLE_ADMINISTRATOR")
     @DeleteMapping("/{cityId}")
     fun deleteCity(@PathVariable cityId: Int) {
-        return cityService.deleteCity(cityId)
+        cityService.deleteCity(cityId)
+    }
+
+    @Secured("ROLE_ADMINISTRATOR")
+    @DeleteMapping
+    fun clearCities() {
+        val cities = cityService.getCities()
+        cities.forEach {
+            cityService.deleteCity(it!!.id)
+        }
     }
 }

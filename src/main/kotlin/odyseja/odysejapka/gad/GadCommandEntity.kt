@@ -17,4 +17,5 @@ class GadCommandEntity(
 interface GadCommandRepository : JpaRepository<GadCommandEntity, Long> {
     fun findFirstByOrderByIdDesc(): GadCommandEntity?
     fun findFirstByCityIdOrderByIdDesc(cityId: Int): GadCommandEntity?
+    fun deleteByCityId(cityId: Int)
 }
