@@ -18,8 +18,11 @@ class ImportCsvTest: OdysejaDsl() {
     @BeforeEach
     fun csvSetUp() {
         timeTableClient.clearTimetable()
-
-        city = createCity("finał")
+        city = try {
+            cityClient.getCityByName("finał")
+        } catch (_: Exception) {
+            createCity("finał")
+        }
     }
 
     @Test
