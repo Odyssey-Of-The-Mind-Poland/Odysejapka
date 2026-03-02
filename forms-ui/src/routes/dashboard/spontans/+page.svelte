@@ -71,7 +71,7 @@
             {#each cities as city (city.id)}
                 <button
                         class="text-left w-full"
-                        onclick={() => goto(`/dashboard/spontans/city/${encodeURIComponent(city.name)}`)}
+                        onclick={() => goto(`/dashboard/spontans/city/${city.id}`)}
                 >
                     <Card.Root
                             class="cursor-pointer transition-all hover:shadow-md hover:border-primary/30"

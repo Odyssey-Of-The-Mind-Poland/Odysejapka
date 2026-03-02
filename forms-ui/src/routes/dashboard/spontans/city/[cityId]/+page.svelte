@@ -35,7 +35,7 @@
         judgeCount: number;
     };
 
-    let cityName = $derived(decodeURIComponent(page.params.city));
+    let cityId = $derived(Number(page.params.cityId));
     let isAdmin = $derived($currentUser?.roles.includes('ADMINISTRATOR') ?? false);
 
     let citiesQuery = createOdysejaQuery<City[]>({
@@ -43,10 +43,9 @@
         path: '/api/v1/dashboard/cities',
     });
 
-    let cityId = $derived.by(() => {
-        if (!citiesQuery.data) return null;
-        const found = citiesQuery.data.find((c: City) => c.name === cityName);
-        return found?.id ?? null;
+    let cityName = $derived.by(() => {
+        if (!citiesQuery.data) return '...';
+        return citiesQuery.data.find((c: City) => c.id === cityId)?.name ?? '...';
     });
 
     let spontansQuery = createOdysejaQuery<SpontanDefinition[]>({
@@ -54,18 +53,9 @@
         path: '/api/v1/spontan',
     });
 
-    type GroupsQueryResult = ReturnType<typeof createOdysejaQuery<SpontanGroupAssignment[]>>;
-    let groupsQuery = $state<GroupsQueryResult | null>(null);
-    let lastCityId = $state<number | null>(null);
-
-    $effect(() => {
-        if (cityId !== null && cityId !== lastCityId) {
-            lastCityId = cityId;
-            groupsQuery = createOdysejaQuery<SpontanGroupAssignment[]>({
-                queryKey: ['spontanGroups', String(cityId)],
-                path: `/api/v1/spontan/group/${cityId}`,
-            });
-        }
+    let groupsQuery = createOdysejaQuery<SpontanGroupAssignment[]>({
+        queryKey: ['spontanGroups', String(cityId)],
+        path: `/api/v1/spontan/group/${cityId}`,
     });
 
     let assignMutation = createPutMutation<SpontanGroupAssignment, {
@@ -93,7 +83,6 @@
     });
 
     function handleAssign(group: SpontanGroupAssignment, spontanId: string) {
-        if (!cityId) return;
         assignMutation.mutate({
             cityId,
             problem: group.problem,
@@ -104,7 +93,6 @@
     }
 
     function handleJudgeCount(group: SpontanGroupAssignment, count: string) {
-        if (!cityId) return;
         judgesMutation.mutate({
             cityId,
             problem: group.problem,
@@ -120,14 +108,14 @@
 
     function navigateToGroup(group: SpontanGroupAssignment) {
         if (group.spontanDefinitionId) {
-            goto(`/dashboard/spontans/city/${encodeURIComponent(cityName)}/${group.problem}/${group.age}/${group.league ?? ''}`);
+            goto(`/dashboard/spontans/city/${cityId}/${group.problem}/${group.age}/${group.league ?? ''}`);
         }
     }
 
     onMount(() => {
         setBreadcrumbs([
             {name: 'Spontany', href: '/dashboard/spontans'},
-            {name: cityName, href: `/dashboard/spontans/city/${encodeURIComponent(cityName)}`},
+            {name: cityName, href: `/dashboard/spontans/city/${cityId}`},
         ]);
     });
 </script>
@@ -145,7 +133,7 @@
         </div>
     </div>
 
-    {#if !groupsQuery || groupsQuery.isPending || citiesQuery.isPending}
+    {#if groupsQuery.isPending}
         <div class="flex flex-col items-center justify-center py-16 gap-3">
             <Spinner size="sm"/>
             <p class="text-sm text-muted-foreground">Ładowanie grup...</p>

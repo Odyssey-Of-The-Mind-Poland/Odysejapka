@@ -50,7 +50,7 @@
         teams: SpontanTeamResult[];
     };
 
-    let cityName = $derived(decodeURIComponent(page.params.city));
+    let cityId = $derived(Number(page.params.cityId));
     let problem = $derived(Number(page.params.problem));
     let age = $derived(Number(page.params.age));
     let league = $derived(page.params.league || '');
@@ -60,29 +60,19 @@
         path: '/api/v1/dashboard/cities',
     });
 
-    let cityId = $derived.by(() => {
-        if (!citiesQuery.data) return null;
-        const found = citiesQuery.data.find((c: City) => c.name === cityName);
-        return found?.id ?? null;
+    let cityName = $derived.by(() => {
+        if (!citiesQuery.data) return '...';
+        return citiesQuery.data.find((c: City) => c.id === cityId)?.name ?? '...';
     });
 
-    type GroupTeamsQueryResult = ReturnType<typeof createOdysejaQuery<SpontanGroupTeams>>;
-    let groupTeamsQuery = $state<GroupTeamsQueryResult | null>(null);
-    let lastCityId = $state<number | null>(null);
-
-    $effect(() => {
-        if (cityId !== null && cityId !== lastCityId) {
-            lastCityId = cityId;
-            groupTeamsQuery = createOdysejaQuery<SpontanGroupTeams>({
-                queryKey: ['spontanGroupTeams', String(cityId), String(problem), String(age), league],
-                path: `/api/v1/spontan/result/${cityId}/teams?problem=${problem}&age=${age}&league=${encodeURIComponent(league)}`,
-            });
-        }
+    let groupTeamsQuery = createOdysejaQuery<SpontanGroupTeams>({
+        queryKey: ['spontanGroupTeams', String(cityId), String(problem), String(age), league],
+        path: `/api/v1/spontan/result/${cityId}/teams?problem=${problem}&age=${age}&league=${encodeURIComponent(league)}`,
     });
 
-    let definition = $derived(groupTeamsQuery?.data?.spontanDefinition);
-    let judgeCount = $derived(groupTeamsQuery?.data?.judgeCount ?? 3);
-    let teams = $derived(groupTeamsQuery?.data?.teams ?? []);
+    let definition = $derived(groupTeamsQuery.data?.spontanDefinition);
+    let judgeCount = $derived(groupTeamsQuery.data?.judgeCount ?? 3);
+    let teams = $derived(groupTeamsQuery.data?.teams ?? []);
 
     // Editable state: Map<performanceId, Map<"judge-field", value>>
     let editState = $state<Record<number, Record<string, number>>>({});
@@ -151,7 +141,7 @@
     onMount(() => {
         setBreadcrumbs([
             {name: 'Spontany', href: '/dashboard/spontans'},
-            {name: cityName, href: `/dashboard/spontans/city/${encodeURIComponent(cityName)}`},
+            {name: cityName, href: `/dashboard/spontans/city/${cityId}`},
             {name: `P${problem} G${age}${league ? ` ${league}` : ''}`, href: ''},
         ]);
     });
@@ -183,7 +173,7 @@
         </div>
     </div>
 
-    {#if !groupTeamsQuery || groupTeamsQuery.isPending || citiesQuery.isPending}
+    {#if groupTeamsQuery.isPending}
         <div class="flex flex-col items-center justify-center py-16 gap-3">
             <Spinner size="sm"/>
             <p class="text-sm text-muted-foreground">Ładowanie...</p>
