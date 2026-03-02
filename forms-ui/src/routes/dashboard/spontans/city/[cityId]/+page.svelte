@@ -54,9 +54,11 @@
     });
 
     let groupsQuery = createOdysejaQuery<SpontanGroupAssignment[]>({
-        queryKey: ['spontanGroups', String(cityId)],
-        path: `/api/v1/spontan/group/${cityId}`,
+        queryKey: ['spontanGroups', String(page.params.cityId)],
+        path: `/api/v1/spontan/group/${page.params.cityId}`,
     });
+
+    let groups = $derived(groupsQuery.data ?? []);
 
     let assignMutation = createPutMutation<SpontanGroupAssignment, {
         cityId: number;
@@ -143,7 +145,7 @@
             <p class="font-medium text-destructive">Błąd podczas ładowania</p>
             <p class="text-sm text-muted-foreground mt-1">{String(groupsQuery.error)}</p>
         </div>
-    {:else if groupsQuery.data && groupsQuery.data.length > 0}
+    {:else if groups.length > 0}
         <div class="rounded-xl border bg-card shadow-sm overflow-hidden">
             <Table.Root>
                 <Table.Header>
@@ -155,7 +157,7 @@
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {#each groupsQuery.data as group (groupKey(group))}
+                    {#each groups as group (groupKey(group))}
                         <Table.Row
                                 class={group.spontanDefinitionId ? 'cursor-pointer transition-colors hover:bg-muted/50' : ''}
                                 onclick={() => navigateToGroup(group)}
