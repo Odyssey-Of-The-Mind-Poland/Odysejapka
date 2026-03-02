@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/spontan")
 class SpontanController(
-    private val spontanService: SpontanService
+    private val spontanService: SpontanService,
+    private val spontanResultService: SpontanResultService
 ) {
 
     @GetMapping
@@ -64,5 +65,23 @@ class SpontanController(
         @RequestBody request: SetJudgeCountRequest
     ): SpontanGroupAssignment {
         return spontanService.setJudgeCount(cityId, problem, age, league, request.judgeCount)
+    }
+
+    @GetMapping("/result/{cityId}/teams")
+    fun getGroupTeams(
+        @PathVariable cityId: Int,
+        @RequestParam problem: Int,
+        @RequestParam age: Int,
+        @RequestParam(required = false) league: String?
+    ): SpontanGroupTeams {
+        return spontanResultService.getGroupTeams(cityId, problem, age, league)
+    }
+
+    @PutMapping("/result/{performanceId}")
+    fun setResults(
+        @PathVariable performanceId: Int,
+        @RequestBody request: SpontanResultsRequest
+    ): SpontanTeamResult {
+        return spontanResultService.setResults(performanceId, request)
     }
 }
