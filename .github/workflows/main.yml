@@ -24,10 +24,16 @@ jobs:
             ./gradlew bootjar
             docker build -t odyseja-backend .
             docker build -t odyseja-ui odyseja-ui
+            docker build -t odyseja-forms-ui forms-ui
             export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             export TEXAPI_API_KEY=${{ secrets.TEXAPI_API_KEY }}
             export FRONTEND_URL='http://grzybek.snet.ovh:3000'
             export BACKEND_URL='http://grzybek.snet.ovh:8082'
+            export FORMS_UI_URL='http://grzybek.snet.ovh:3001'
+            export AUTH_SECRET=${{ secrets.FORMS_UI_AUTH_SECRET }}
+            export AUTH0_CLIENT_ID=${{ secrets.FORMS_UI_AUTH0_CLIENT_ID }}
+            export AUTH0_CLIENT_SECRET=${{ secrets.FORMS_UI_AUTH0_CLIENT_SECRET }}
+            export AUTH0_ISSUER='https://odyseja.eu.auth0.com'
+            export AUTH0_AUDIENCE='https://odyseja.eu.auth0.com/api/v2/'
             docker-compose -p odyseja -f deployment/docker-compose.yml up -d
             docker image prune --filter "dangling=true"
-
