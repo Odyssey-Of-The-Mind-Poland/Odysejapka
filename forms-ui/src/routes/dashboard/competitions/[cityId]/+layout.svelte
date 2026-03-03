@@ -6,6 +6,7 @@
     import RequirePermission from "$lib/components/RequirePermission.svelte";
     import IconForms from "@tabler/icons-svelte/icons/forms";
     import IconBulb from "@tabler/icons-svelte/icons/bulb";
+    import {currentUser} from "$lib/userStore";
 
     type City = {
         id: number;
@@ -13,6 +14,7 @@
     };
 
     let cityId = $derived(Number(page.params.cityId));
+    let isSpontan = $derived($currentUser?.roles.includes('SPONTAN') ?? false);
 
     let citiesQuery = $derived(createOdysejaQuery<City[]>({
         queryKey: ['dashboardCities'],
@@ -30,17 +32,25 @@
         return 'dt';
     });
 
+    $effect(() => {
+        if (isSpontan && !page.url.pathname.includes('/spontany')) {
+            goto(`/dashboard/competitions/${cityId}/spontany`, {replaceState: true});
+        }
+    });
+
 </script>
 
 <div class="flex flex-col gap-4">
     <div class="flex items-center justify-between">
         <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
-            <button
-                    class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors {activeTab === 'dt' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}"
-                    onclick={() => goto(`/dashboard/competitions/${cityId}/dt`)}
-            >
-                Problemy DT
-            </button>
+            {#if !isSpontan}
+                <button
+                        class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors {activeTab === 'dt' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}"
+                        onclick={() => goto(`/dashboard/competitions/${cityId}/dt`)}
+                >
+                    Problemy DT
+                </button>
+            {/if}
             <button
                     class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors {activeTab === 'spontany' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}"
                     onclick={() => goto(`/dashboard/competitions/${cityId}/spontany`)}

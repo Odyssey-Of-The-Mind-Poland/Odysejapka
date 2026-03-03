@@ -8,5 +8,6 @@ enum class Role {
     PROBLEM_3,
     PROBLEM_4,
     PROBLEM_5,
-    KAPITAN;
+    KAPITAN,
+    SPONTAN;
 }

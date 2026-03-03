@@ -2,6 +2,7 @@ package odyseja.odysejapka.dashboard
 
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.spontan.SpontanUserRepository
 import odyseja.odysejapka.stage.StageUserRepository
 import odyseja.odysejapka.users.UserRepository
 import org.springframework.stereotype.Service
@@ -12,7 +13,8 @@ class CityAccessService(
     private val cityRepository: CityRepository,
     private val userRepository: UserRepository,
     private val userAccessService: UserAccessService,
-    private val stageUserRepository: StageUserRepository
+    private val stageUserRepository: StageUserRepository,
+    private val spontanUserRepository: SpontanUserRepository
 ) {
 
     @Transactional(readOnly = true)
@@ -22,8 +24,18 @@ class CityAccessService(
         }
 
         val user = userRepository.findByUserId(principalUserId) ?: return emptyList()
-        val stageUser = stageUserRepository.findByUserId(user.id!!) ?: return emptyList()
-        return listOfNotNull(cityRepository.findById(stageUser.cityId).orElse(null))
+
+        val stageUser = stageUserRepository.findByUserId(user.id!!)
+        if (stageUser != null) {
+            return listOfNotNull(cityRepository.findById(stageUser.cityId).orElse(null))
+        }
+
+        val spontanUser = spontanUserRepository.findByUserId(user.id!!)
+        if (spontanUser != null) {
+            return listOfNotNull(cityRepository.findById(spontanUser.cityId).orElse(null))
+        }
+
+        return emptyList()
     }
 
 }

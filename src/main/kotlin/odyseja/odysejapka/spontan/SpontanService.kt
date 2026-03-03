@@ -2,6 +2,7 @@ package odyseja.odysejapka.spontan
 
 import odyseja.odysejapka.city.CityRepository
 import odyseja.odysejapka.timetable.PerformanceRepository
+import odyseja.odysejapka.users.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -12,7 +13,10 @@ class SpontanService(
     private val spontanDefinitionRepository: SpontanDefinitionRepository,
     private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
     private val cityRepository: CityRepository,
-    private val performanceRepository: PerformanceRepository
+    private val performanceRepository: PerformanceRepository,
+    private val spontanUserRepository: SpontanUserRepository,
+    private val userRepository: UserRepository,
+    private val spontanAccessService: SpontanAccessService
 ) {
 
     fun getAll(): List<SpontanDefinition> {
@@ -52,6 +56,8 @@ class SpontanService(
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "City not found")
         }
 
+        val accessibleIds = spontanAccessService.accessibleAssignmentIds(cityId)
+
         val groupIds = performanceRepository.findAllByCityEntity_Id(cityId)
             .map { GroupId(it.problemEntity.id, it.ageEntity.id, it.league ?: "") }
             .distinct()
@@ -60,10 +66,25 @@ class SpontanService(
         val assignments = spontanGroupAssignmentRepository.findByCityId(cityId)
             .associateBy { it.toGroupId() }
 
-        return groupIds.map { groupId ->
-            assignments[groupId]?.toSpontanGroupAssignment()
-                ?: SpontanGroupAssignment(cityId = cityId, groupId = groupId)
-        }
+        val spontanUserNames = buildSpontanUserNameMap(cityId)
+
+        return groupIds
+            .map { groupId ->
+                val entity = assignments[groupId]
+                entity?.toSpontanGroupAssignment(spontanUserNames[entity.spontanUser?.id])
+                    ?: SpontanGroupAssignment(cityId = cityId, groupId = groupId)
+            }
+            .filter { group ->
+                accessibleIds == null || group.id in accessibleIds
+            }
+    }
+
+    private fun buildSpontanUserNameMap(cityId: Int): Map<Long, String> {
+        val spontanUsers = spontanUserRepository.findAllByCityId(cityId)
+        return spontanUsers.mapNotNull { su ->
+            val user = userRepository.findById(su.userId).orElse(null)
+            if (su.id != null && user?.name != null) su.id!! to user.name!! else null
+        }.toMap()
     }
 
     @Transactional

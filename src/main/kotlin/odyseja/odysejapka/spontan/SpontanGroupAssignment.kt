@@ -7,7 +7,9 @@ data class SpontanGroupAssignment(
     val spontanDefinitionId: Long? = null,
     val spontanDefinitionName: String? = null,
     val spontanType: SpontanType? = null,
-    val judgeCount: Int = 3
+    val judgeCount: Int = 3,
+    val spontanUserId: Long? = null,
+    val spontanUserName: String? = null
 )
 
 data class AssignSpontanRequest(

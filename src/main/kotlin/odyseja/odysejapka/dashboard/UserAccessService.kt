@@ -10,6 +10,8 @@ class UserAccessService {
 
     fun isKapitan(): Boolean = hasAuthority("ROLE_KAPITAN")
 
+    fun isSpontan(): Boolean = hasAuthority("ROLE_SPONTAN")
+
     fun isKapitanForProblem(problem: Int): Boolean = isKapitan() && hasProblemRole(problem)
 
     fun hasProblemRole(problem: Int): Boolean = hasAuthority("ROLE_PROBLEM_$problem")
