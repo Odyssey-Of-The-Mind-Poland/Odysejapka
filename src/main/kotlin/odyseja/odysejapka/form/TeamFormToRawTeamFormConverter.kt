@@ -86,7 +86,7 @@ object TeamFormToRawTeamFormConverter {
                     }.sum()
                     if (!isInsideScoringGroup) {
                         val prefix = when (nestingLevel) {
-                            0 -> "${entry.entry.sortIndex}."
+                            0 -> "${entry.entry.sortIndex + 1}."
                             1 -> "${('a'.code + index).toChar()}."
                             else -> ""
                         }
@@ -98,7 +98,7 @@ object TeamFormToRawTeamFormConverter {
                 isSection && hasNested -> {
                     if (!isInsideScoringGroup) {
                         val prefix = when (nestingLevel) {
-                            0 -> "${entry.entry.sortIndex}."
+                            0 -> "${entry.entry.sortIndex + 1}."
                             1 -> "${('a'.code + index).toChar()}."
                             else -> ""
                         }
@@ -113,7 +113,7 @@ object TeamFormToRawTeamFormConverter {
                     val score = calculateAverage(entry.results) ?: 0.0
                     if (!isInsideScoringGroup) {
                         val prefix = when (nestingLevel) {
-                            0 -> "${entry.entry.sortIndex}."
+                            0 -> "${entry.entry.sortIndex + 1}."
                             1 -> "${('a'.code + index).toChar()}."
                             else -> ""
                         }

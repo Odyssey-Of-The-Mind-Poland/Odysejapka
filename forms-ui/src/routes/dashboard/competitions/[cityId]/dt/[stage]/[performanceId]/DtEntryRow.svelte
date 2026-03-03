@@ -39,7 +39,7 @@
         if (nestingLevel >= 2) {
             return "";
         }
-        return dtEntry.entry.sortIndex + ".";
+        return (dtEntry.entry.sortIndex + 1) + ".";
     }
 
     let previousNoElement = $state(dtEntry.noElement);

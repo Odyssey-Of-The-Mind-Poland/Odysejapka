@@ -26,7 +26,7 @@
     <div class="flex-1 min-w-0">
         <div class="flex items-start gap-2">
             <span class="text-xs text-muted-foreground font-mono tabular-nums shrink-0 pt-0.5">
-                {styleEntry.entry.sortIndex}.
+                {styleEntry.entry.sortIndex + 1}.
             </span>
             <div class="flex flex-col gap-1">
                 <span class="text-sm font-medium text-foreground">

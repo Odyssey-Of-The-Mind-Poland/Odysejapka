@@ -40,7 +40,7 @@
 
 </script>
 
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-4 h-full">
     <div class="flex items-center justify-between">
         <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
             {#if !isSpontan}
