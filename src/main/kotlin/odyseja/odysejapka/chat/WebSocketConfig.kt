@@ -31,6 +31,7 @@ class WebSocketConfig(
                 "http://localhost:5172",
                 "http://localhost:5173",
                 "http://grzybek.snet.ovh:3000",
+                "https:/panel.odyseja.org"
             )
             .withSockJS()
     }
