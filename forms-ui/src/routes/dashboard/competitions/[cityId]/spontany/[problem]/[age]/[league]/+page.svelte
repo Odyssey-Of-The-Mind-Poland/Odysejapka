@@ -13,8 +13,9 @@
         id?: number;
         name: string;
         multiplier: number;
-        fieldType?: 'MULTIPLIER' | 'EXPRESSION';
+        fieldType?: 'MULTIPLIER' | 'EXPRESSION' | 'BOOLEAN';
         expression?: string;
+        trueValue?: number;
     };
 
     type SpontanDefinition = {

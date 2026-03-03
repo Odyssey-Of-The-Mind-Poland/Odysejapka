@@ -27,6 +27,12 @@ class SpontanScoreCalculatorTest {
         expression = expression
     )
 
+    private fun booleanField(name: String, trueValue: Double) = SpontanFieldEntry(
+        name = name,
+        fieldType = SpontanFieldType.BOOLEAN,
+        trueValue = trueValue
+    )
+
     private fun manualDefinitionWithFields(vararg fields: SpontanFieldEntry) = SpontanDefinition(
         name = "Manual",
         type = SpontanType.MANUAL,
@@ -291,6 +297,72 @@ class SpontanScoreCalculatorTest {
             )
             // MIN(150, 100) = 100
             assertThat(calculator.calculateScore(definition, results, 1)).isCloseTo(100.0, offset)
+        }
+    }
+
+    @Nested
+    inner class BooleanFieldScore {
+
+        @Test
+        fun `should add trueValue when boolean field is true`() {
+            val definition = manualDefinitionWithFields(booleanField("Bonus", 10.0))
+            val results = SpontanResults(
+                manualJudgeEntries = listOf(
+                    ManualJudgeEntry(judge = 1, creativity = 0.0, teamwork = 0.0)
+                ),
+                manualEntries = listOf(manual("Bonus", 1.0))
+            )
+            assertThat(calculator.calculateScore(definition, results, 1)).isCloseTo(10.0, offset)
+        }
+
+        @Test
+        fun `should add 0 when boolean field is false`() {
+            val definition = manualDefinitionWithFields(booleanField("Bonus", 10.0))
+            val results = SpontanResults(
+                manualJudgeEntries = listOf(
+                    ManualJudgeEntry(judge = 1, creativity = 0.0, teamwork = 0.0)
+                ),
+                manualEntries = listOf(manual("Bonus", 0.0))
+            )
+            assertThat(calculator.calculateScore(definition, results, 1)).isCloseTo(0.0, offset)
+        }
+
+        @Test
+        fun `should mix BOOLEAN with MULTIPLIER fields`() {
+            val definition = manualDefinitionWithFields(
+                SpontanFieldEntry(name = "Weight", multiplier = 2.0),
+                booleanField("Completed", 15.0)
+            )
+            val results = SpontanResults(
+                manualJudgeEntries = listOf(
+                    ManualJudgeEntry(judge = 1, creativity = 0.0, teamwork = 0.0)
+                ),
+                manualEntries = listOf(
+                    manual("Weight", 5.0),
+                    manual("Completed", 1.0)
+                )
+            )
+            // Weight: 5*2.0 = 10, Completed: true -> 15, total: 25
+            assertThat(calculator.calculateScore(definition, results, 1)).isCloseTo(25.0, offset)
+        }
+
+        @Test
+        fun `should mix BOOLEAN with EXPRESSION fields`() {
+            val definition = manualDefinitionWithFields(
+                expressionField("Score", "v*3"),
+                booleanField("Penalty", -5.0)
+            )
+            val results = SpontanResults(
+                manualJudgeEntries = listOf(
+                    ManualJudgeEntry(judge = 1, creativity = 0.0, teamwork = 0.0)
+                ),
+                manualEntries = listOf(
+                    manual("Score", 4.0),
+                    manual("Penalty", 1.0)
+                )
+            )
+            // Score: 4*3 = 12, Penalty: true -> -5, total: 7
+            assertThat(calculator.calculateScore(definition, results, 1)).isCloseTo(7.0, offset)
         }
     }
 

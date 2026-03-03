@@ -24,8 +24,9 @@
         id?: number;
         name: string;
         multiplier: number;
-        fieldType: 'MULTIPLIER' | 'EXPRESSION';
+        fieldType: 'MULTIPLIER' | 'EXPRESSION' | 'BOOLEAN';
         expression?: string;
+        trueValue?: number;
     };
 
     type SpontanDefinition = {
@@ -45,8 +46,9 @@
             id?: number;
             name: string;
             multiplier: number;
-            fieldType: 'MULTIPLIER' | 'EXPRESSION';
+            fieldType: 'MULTIPLIER' | 'EXPRESSION' | 'BOOLEAN';
             expression?: string;
+            trueValue?: number;
         }[];
     };
 
@@ -131,6 +133,7 @@
                 multiplier: f.multiplier,
                 fieldType: f.fieldType,
                 expression: f.fieldType === 'EXPRESSION' ? f.expression : undefined,
+                trueValue: f.fieldType === 'BOOLEAN' ? (f.trueValue ?? 0) : undefined,
             }))
             : [];
 
@@ -186,10 +189,6 @@
             <div>
                 <div class="flex items-center justify-between mb-2">
                     <label class="text-sm font-medium">Pola</label>
-                    <Button variant="outline" size="sm" onclick={addField}>
-                        <IconPlus class="size-3 mr-1"/>
-                        Dodaj pole
-                    </Button>
                 </div>
 
                 {#if newFields.length > 0}
@@ -199,19 +198,20 @@
                                 <Input
                                         bind:value={field.name}
                                         placeholder="Nazwa pola..."
-                                        class="flex-1"
+                                        class="w-200"
                                 />
                                 <Select.Root
                                         type="single"
                                         value={field.fieldType}
-                                        onValueChange={(v) => { if (v === 'MULTIPLIER' || v === 'EXPRESSION') newFields[i].fieldType = v; }}
+                                        onValueChange={(v) => { if (v === 'MULTIPLIER' || v === 'EXPRESSION' || v === 'BOOLEAN') newFields[i].fieldType = v; }}
                                 >
                                     <Select.Trigger class="w-32">
-                                        {field.fieldType === 'MULTIPLIER' ? 'Mnożnik' : 'Wyrażenie'}
+                                        {field.fieldType === 'MULTIPLIER' ? 'Mnożnik' : field.fieldType === 'EXPRESSION' ? 'Wyrażenie' : 'TAK/NIE'}
                                     </Select.Trigger>
                                     <Select.Content>
                                         <Select.Item value="MULTIPLIER">Mnożnik</Select.Item>
                                         <Select.Item value="EXPRESSION">Wyrażenie</Select.Item>
+                                        <Select.Item value="BOOLEAN">TAK/NIE</Select.Item>
                                     </Select.Content>
                                 </Select.Root>
                                 {#if field.fieldType === 'EXPRESSION'}
@@ -219,6 +219,14 @@
                                             bind:value={field.expression}
                                             placeholder="np. FLOOR(v/3)*5"
                                             class="w-48 font-mono"
+                                    />
+                                {:else if field.fieldType === 'BOOLEAN'}
+                                    <Input
+                                            type="number"
+                                            step="0.1"
+                                            bind:value={field.trueValue}
+                                            placeholder="Pkt. za TAK"
+                                            class="w-28"
                                     />
                                 {:else}
                                     <Input
@@ -242,6 +250,10 @@
                 {:else}
                     <p class="text-sm text-muted-foreground">Brak pól. Dodaj pola powyżej.</p>
                 {/if}
+                <Button variant="outline" size="sm" onclick={addField} class="mt-2">
+                    <IconPlus class="size-3 mr-1"/>
+                    Dodaj pole
+                </Button>
 
                 {#if hasExpressionField}
                     <div class="rounded-md border bg-muted/30 p-3 mt-2 text-sm">
@@ -298,7 +310,7 @@
             <p class="font-medium text-destructive">Błąd podczas ładowania spontanów</p>
         </div>
     {:else if spontansQuery.data && (spontansQuery.data.length > 0 || isCreating)}
-        <div class="rounded-xl border bg-card shadow-sm overflow-hidden max-w-2xl">
+        <div class="rounded-xl border bg-card shadow-sm overflow-hidden w-full">
             <Table.Root>
                 <Table.Header>
                     <Table.Row class="bg-muted/40 hover:bg-muted/40">

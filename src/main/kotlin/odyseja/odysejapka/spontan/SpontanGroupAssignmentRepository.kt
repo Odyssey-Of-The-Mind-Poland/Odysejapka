@@ -6,4 +6,5 @@ interface SpontanGroupAssignmentRepository : CrudRepository<SpontanGroupAssignme
     fun findByCityId(cityId: Int): List<SpontanGroupAssignmentEntity>
     fun findByCityIdAndProblemAndAgeAndLeague(cityId: Int, problem: Int, age: Int, league: String): SpontanGroupAssignmentEntity?
     fun findByCityIdAndSpontanUserId(cityId: Int, spontanUserId: Long): List<SpontanGroupAssignmentEntity>
+    fun findBySpontanDefinitionId(spontanDefinitionId: Long): List<SpontanGroupAssignmentEntity>
 }

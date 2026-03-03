@@ -46,6 +46,7 @@ class SpontanScoreCalculator {
             fieldScore += when (fieldDef.fieldType) {
                 SpontanFieldType.MULTIPLIER -> entry.value * fieldDef.multiplier
                 SpontanFieldType.EXPRESSION -> evaluateExpression(fieldDef.expression!!, entry.value)
+                SpontanFieldType.BOOLEAN -> if (entry.value != 0.0) fieldDef.trueValue else 0.0
             }
         }
 

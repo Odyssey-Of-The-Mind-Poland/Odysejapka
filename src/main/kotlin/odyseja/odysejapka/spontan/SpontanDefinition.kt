@@ -15,7 +15,8 @@ enum class SpontanType {
 
 enum class SpontanFieldType {
     MULTIPLIER,
-    EXPRESSION
+    EXPRESSION,
+    BOOLEAN
 }
 
 data class SpontanFieldEntry(
@@ -23,5 +24,6 @@ data class SpontanFieldEntry(
     val name: String,
     val multiplier: Double = 1.0,
     val fieldType: SpontanFieldType = SpontanFieldType.MULTIPLIER,
-    val expression: String? = null
+    val expression: String? = null,
+    val trueValue: Double = 0.0
 )

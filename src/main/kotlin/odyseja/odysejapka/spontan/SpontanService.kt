@@ -75,6 +75,10 @@ class SpontanService(
         if (!spontanDefinitionRepository.existsById(id)) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND)
         }
+        for (assignment in spontanGroupAssignmentRepository.findBySpontanDefinitionId(id)) {
+            assignment.spontanDefinition = null
+            spontanGroupAssignmentRepository.save(assignment)
+        }
         spontanDefinitionRepository.deleteById(id)
     }
 
