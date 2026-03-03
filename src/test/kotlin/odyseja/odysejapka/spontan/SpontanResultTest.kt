@@ -39,17 +39,14 @@ class SpontanResultTest : OdysejaDsl() {
         spontanClient.assignSpontan(city.id, 1, 1, "", AssignSpontanRequest(spontan.id))
 
         val result = spontanClient.setResults(perfId, SpontanResultsRequest(
-            entries = listOf(
-                SpontanResultEntry(judge = 1, field = "creative", value = 3.0),
-                SpontanResultEntry(judge = 1, field = "common", value = 5.0),
-                SpontanResultEntry(judge = 2, field = "creative", value = 4.0),
-                SpontanResultEntry(judge = 2, field = "common", value = 2.0),
-                SpontanResultEntry(judge = 3, field = "creative", value = 2.0),
-                SpontanResultEntry(judge = 3, field = "common", value = 3.0)
+            verbalEntries = listOf(
+                VerbalJudgeEntry(judge = 1, creative = 3.0, common = 5.0),
+                VerbalJudgeEntry(judge = 2, creative = 4.0, common = 2.0),
+                VerbalJudgeEntry(judge = 3, creative = 2.0, common = 3.0)
             )
         ))
 
-        assertThat(result.entries).hasSize(6)
+        assertThat(result.verbalEntries).hasSize(3)
         // Judge 1: 3*5 + 5 = 20
         // Judge 2: 4*5 + 2 = 22
         // Judge 3: 2*5 + 3 = 13
@@ -77,13 +74,13 @@ class SpontanResultTest : OdysejaDsl() {
         spontanClient.setJudgeCount(city.id, 1, 1, "", SetJudgeCountRequest(2))
 
         val result = spontanClient.setResults(perfId, SpontanResultsRequest(
-            entries = listOf(
-                SpontanResultEntry(judge = 1, field = "creativity", value = 8.0),
-                SpontanResultEntry(judge = 1, field = "teamwork", value = 7.0),
-                SpontanResultEntry(judge = 2, field = "creativity", value = 6.0),
-                SpontanResultEntry(judge = 2, field = "teamwork", value = 9.0),
-                SpontanResultEntry(judge = 0, field = "Element1", value = 3.0),
-                SpontanResultEntry(judge = 0, field = "Element2", value = 4.0)
+            manualJudgeEntries = listOf(
+                ManualJudgeEntry(judge = 1, creativity = 8.0, teamwork = 7.0),
+                ManualJudgeEntry(judge = 2, creativity = 6.0, teamwork = 9.0)
+            ),
+            manualEntries = listOf(
+                ManualScoreEntry(field = "Element1", value = 3.0),
+                ManualScoreEntry(field = "Element2", value = 4.0)
             )
         ))
 
@@ -104,9 +101,8 @@ class SpontanResultTest : OdysejaDsl() {
         spontanClient.assignSpontan(city.id, 1, 1, "", AssignSpontanRequest(spontan.id))
 
         spontanClient.setResults(perfId, SpontanResultsRequest(
-            entries = listOf(
-                SpontanResultEntry(judge = 1, field = "creative", value = 5.0),
-                SpontanResultEntry(judge = 1, field = "common", value = 3.0)
+            verbalEntries = listOf(
+                VerbalJudgeEntry(judge = 1, creative = 5.0, common = 3.0)
             )
         ))
 
@@ -114,7 +110,7 @@ class SpontanResultTest : OdysejaDsl() {
         val team = groupTeams.teams.find { it.performanceId == perfId }
 
         assertThat(team).isNotNull
-        assertThat(team!!.entries).hasSize(2)
+        assertThat(team!!.verbalEntries).hasSize(1)
         assertThat(team.rawSpontan).isNotNull()
     }
 
@@ -129,16 +125,14 @@ class SpontanResultTest : OdysejaDsl() {
         spontanClient.assignSpontan(city.id, 1, 1, "", AssignSpontanRequest(spontan.id))
 
         spontanClient.setResults(perfId, SpontanResultsRequest(
-            entries = listOf(
-                SpontanResultEntry(judge = 1, field = "creative", value = 1.0),
-                SpontanResultEntry(judge = 1, field = "common", value = 1.0)
+            verbalEntries = listOf(
+                VerbalJudgeEntry(judge = 1, creative = 1.0, common = 1.0)
             )
         ))
 
         val updated = spontanClient.setResults(perfId, SpontanResultsRequest(
-            entries = listOf(
-                SpontanResultEntry(judge = 1, field = "creative", value = 10.0),
-                SpontanResultEntry(judge = 1, field = "common", value = 5.0)
+            verbalEntries = listOf(
+                VerbalJudgeEntry(judge = 1, creative = 10.0, common = 5.0)
             )
         ))
 

@@ -11,6 +11,7 @@
     import {toast} from 'svelte-sonner';
     import {setBreadcrumbs} from '$lib/breadcrumbs';
     import {onMount} from 'svelte';
+    import {slide} from 'svelte/transition';
 
     onMount(() => {
         setBreadcrumbs([
@@ -126,7 +127,87 @@
             deleteMutation.mutate({id: spontan.id});
         }
     }
+
+    let isEditing = $derived(isCreating || !!editingSpontan);
 </script>
+
+{#snippet editForm()}
+    <div class="flex flex-col gap-4">
+        <div>
+            <label class="text-sm font-medium mb-1 block">Nazwa</label>
+            <Input bind:value={newName} placeholder="Nazwa spontana..."/>
+        </div>
+
+        <div>
+            <label class="text-sm font-medium mb-1 block">Typ</label>
+            <Select.Root
+                    type="single"
+                    value={newType}
+                    onValueChange={(v) => { if (v === 'VERBAL' || v === 'MANUAL') newType = v; }}
+            >
+                <Select.Trigger class="w-full">
+                    {newType === 'VERBAL' ? 'Słowny' : 'Manualny'}
+                </Select.Trigger>
+                <Select.Content>
+                    <Select.Item value="VERBAL">Słowny</Select.Item>
+                    <Select.Item value="MANUAL">Manualny</Select.Item>
+                </Select.Content>
+            </Select.Root>
+        </div>
+
+        {#if newType === 'MANUAL'}
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-sm font-medium">Pola</label>
+                    <Button variant="outline" size="sm" onclick={addField}>
+                        <IconPlus class="size-3 mr-1"/>
+                        Dodaj pole
+                    </Button>
+                </div>
+
+                {#if newFields.length > 0}
+                    <div class="flex flex-col gap-2">
+                        {#each newFields as field, i}
+                            <div class="flex items-center gap-2">
+                                <Input
+                                        bind:value={field.name}
+                                        placeholder="Nazwa pola..."
+                                        class="flex-1"
+                                />
+                                <Input
+                                        type="number"
+                                        step="0.1"
+                                        bind:value={field.multiplier}
+                                        placeholder="Mnożnik"
+                                        class="w-24"
+                                />
+                                <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onclick={() => removeField(i)}
+                                >
+                                    <IconTrash class="size-4 text-red-500"/>
+                                </Button>
+                            </div>
+                        {/each}
+                    </div>
+                {:else}
+                    <p class="text-sm text-muted-foreground">Brak pól. Dodaj pola powyżej.</p>
+                {/if}
+            </div>
+        {/if}
+
+        <div class="flex gap-2 pt-2">
+            <Button
+                    onclick={handleSave}
+                    disabled={!newName.trim() || createMutation.isPending || updateMutation.isPending}
+            >
+                {editingSpontan ? 'Zapisz' : 'Utwórz'}
+            </Button>
+            <Button variant="outline" onclick={resetForm}>Anuluj</Button>
+        </div>
+    </div>
+{/snippet}
 
 <div class="flex flex-col gap-6">
     <div class="flex items-center justify-between">
@@ -145,106 +226,11 @@
                 </p>
             </div>
         </div>
-        {#if !isCreating && !editingSpontan}
-            <Button onclick={startCreate}>
-                <IconPlus class="size-4 mr-1"/>
-                Nowy spontan
-            </Button>
-        {/if}
+        <Button onclick={startCreate}>
+            <IconPlus class="size-4 mr-1"/>
+            Nowy spontan
+        </Button>
     </div>
-
-    {#if isCreating || editingSpontan}
-        <div class="rounded-xl border bg-card shadow-sm p-6 max-w-2xl">
-            <h2 class="text-lg font-semibold mb-4">
-                {editingSpontan ? 'Edytuj spontan' : 'Nowy spontan'}
-            </h2>
-            <div class="flex flex-col gap-4">
-                <div>
-                    <label class="text-sm font-medium mb-1 block">Nazwa</label>
-                    <Input bind:value={newName} placeholder="Nazwa spontana..."/>
-                </div>
-
-                <div>
-                    <label class="text-sm font-medium mb-1 block">Typ</label>
-                    <Select.Root
-                            type="single"
-                            value={newType}
-                            onValueChange={(v) => { if (v) newType = v as 'VERBAL' | 'MANUAL'; }}
-                    >
-                        <Select.Trigger class="w-full">
-                            {newType === 'VERBAL' ? 'Słowny' : 'Manualny'}
-                        </Select.Trigger>
-                        <Select.Content>
-                            <Select.Item value="VERBAL">Słowny</Select.Item>
-                            <Select.Item value="MANUAL">Manualny</Select.Item>
-                        </Select.Content>
-                    </Select.Root>
-                </div>
-
-                {#if newType === 'MANUAL'}
-                    <div>
-                        <label class="text-sm font-medium mb-1 block">Mnożnik</label>
-                        <Input
-                                type="number"
-                                step="0.1"
-                                bind:value={newMultiplier}
-                                placeholder="Mnożnik..."
-                        />
-                    </div>
-
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="text-sm font-medium">Pola</label>
-                            <Button variant="outline" size="sm" onclick={addField}>
-                                <IconPlus class="size-3 mr-1"/>
-                                Dodaj pole
-                            </Button>
-                        </div>
-
-                        {#if newFields.length > 0}
-                            <div class="flex flex-col gap-2">
-                                {#each newFields as field, i}
-                                    <div class="flex items-center gap-2">
-                                        <Input
-                                                bind:value={field.name}
-                                                placeholder="Nazwa pola..."
-                                                class="flex-1"
-                                        />
-                                        <Input
-                                                type="number"
-                                                step="0.1"
-                                                bind:value={field.multiplier}
-                                                placeholder="Mnożnik"
-                                                class="w-24"
-                                        />
-                                        <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onclick={() => removeField(i)}
-                                        >
-                                            <IconTrash class="size-4 text-red-500"/>
-                                        </Button>
-                                    </div>
-                                {/each}
-                            </div>
-                        {:else}
-                            <p class="text-sm text-muted-foreground">Brak pól. Dodaj pola powyżej.</p>
-                        {/if}
-                    </div>
-                {/if}
-
-                <div class="flex gap-2 pt-2">
-                    <Button
-                            onclick={handleSave}
-                            disabled={!newName.trim() || createMutation.isPending || updateMutation.isPending}
-                    >
-                        {editingSpontan ? 'Zapisz' : 'Utwórz'}
-                    </Button>
-                    <Button variant="outline" onclick={resetForm}>Anuluj</Button>
-                </div>
-            </div>
-        </div>
-    {/if}
 
     {#if spontansQuery.isPending}
         <div class="text-muted-foreground text-sm">Ładowanie...</div>
@@ -252,7 +238,7 @@
         <div class="rounded-lg border border-destructive/30 bg-destructive/5 p-6 text-center">
             <p class="font-medium text-destructive">Błąd podczas ładowania spontanów</p>
         </div>
-    {:else if spontansQuery.data && spontansQuery.data.length > 0}
+    {:else if spontansQuery.data && (spontansQuery.data.length > 0 || isCreating)}
         <div class="rounded-xl border bg-card shadow-sm overflow-hidden max-w-2xl">
             <Table.Root>
                 <Table.Header>
@@ -265,7 +251,7 @@
                 </Table.Header>
                 <Table.Body>
                     {#each spontansQuery.data as spontan (spontan.id)}
-                        <Table.Row>
+                        <Table.Row class={editingSpontan?.id === spontan.id ? 'bg-muted/50 hover:bg-muted/50' : ''}>
                             <Table.Cell class="font-medium">{spontan.name}</Table.Cell>
                             <Table.Cell>
                                 {spontan.type === 'VERBAL' ? 'Słowny' : 'Manualny'}
@@ -283,6 +269,7 @@
                                             variant="ghost"
                                             size="icon"
                                             onclick={() => startEdit(spontan)}
+                                            disabled={isEditing}
                                     >
                                         <IconEdit class="size-4"/>
                                     </Button>
@@ -290,14 +277,32 @@
                                             variant="ghost"
                                             size="icon"
                                             onclick={() => handleDelete(spontan)}
-                                            disabled={deleteMutation.isPending}
+                                            disabled={deleteMutation.isPending || isEditing}
                                     >
                                         <IconTrash class="size-4 text-red-500"/>
                                     </Button>
                                 </div>
                             </Table.Cell>
                         </Table.Row>
+                        {#if editingSpontan?.id === spontan.id}
+                            <tr>
+                                <td colspan="4" class="p-0">
+                                    <div transition:slide={{ duration: 200 }} class="px-5 py-4 bg-muted/30">
+                                        {@render editForm()}
+                                    </div>
+                                </td>
+                            </tr>
+                        {/if}
                     {/each}
+                    {#if isCreating}
+                        <tr>
+                            <td colspan="4" class="p-0">
+                                <div transition:slide={{ duration: 200 }} class="px-5 py-4 bg-muted/30">
+                                    {@render editForm()}
+                                </div>
+                            </td>
+                        </tr>
+                    {/if}
                 </Table.Body>
             </Table.Root>
         </div>

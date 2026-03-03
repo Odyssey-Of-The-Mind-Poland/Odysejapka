@@ -14,10 +14,10 @@
         name: string;
     };
 
-    let citiesQuery = createOdysejaQuery<City[]>({
+    let citiesQuery = $derived(createOdysejaQuery<City[]>({
         queryKey: ['dashboardCities'],
         path: '/api/v1/dashboard/cities',
-    });
+    }));
 
     let cities = $derived.by(() => {
         if (!citiesQuery.data) return [];

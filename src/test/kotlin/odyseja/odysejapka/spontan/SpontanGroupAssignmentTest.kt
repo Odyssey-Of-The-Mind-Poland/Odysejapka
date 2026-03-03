@@ -16,8 +16,7 @@ class SpontanGroupAssignmentTest : OdysejaDsl() {
         val groups = spontanClient.getGroupAssignments(city.id)
 
         assertThat(groups).hasSize(1)
-        assertThat(groups[0].problem).isEqualTo(1)
-        assertThat(groups[0].age).isEqualTo(1)
+        assertThat(groups[0].groupId).isEqualTo(GroupId(1, 1, ""))
         assertThat(groups[0].spontanDefinitionId).isNull()
         assertThat(groups[0].judgeCount).isEqualTo(3)
     }

@@ -3,9 +3,7 @@ package odyseja.odysejapka.spontan
 data class SpontanGroupAssignment(
     val id: Long? = null,
     val cityId: Int,
-    val problem: Int,
-    val age: Int,
-    val league: String?,
+    val groupId: GroupId,
     val spontanDefinitionId: Long? = null,
     val spontanDefinitionName: String? = null,
     val spontanType: SpontanType? = null,

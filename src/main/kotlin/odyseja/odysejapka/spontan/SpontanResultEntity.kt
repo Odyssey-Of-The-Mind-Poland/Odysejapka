@@ -18,7 +18,7 @@ class SpontanResultEntity {
     @Column(name = "results", columnDefinition = "jsonb", nullable = true)
     @JdbcTypeCode(SqlTypes.JSON)
     @Convert(converter = SpontanResultsConverter::class)
-    var results: List<SpontanResultEntry>? = null
+    var results: SpontanResults? = null
 
     @Column(name = "raw_spontan")
     var rawSpontan: Double? = null

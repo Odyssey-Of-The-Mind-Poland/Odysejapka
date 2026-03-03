@@ -7,13 +7,13 @@ import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
 
 @Converter(autoApply = false)
-class SpontanResultsConverter : AttributeConverter<List<SpontanResultEntry>, String> {
+class SpontanResultsConverter : AttributeConverter<SpontanResults, String> {
 
     companion object {
         private val objectMapper: ObjectMapper = jacksonObjectMapper()
     }
 
-    override fun convertToDatabaseColumn(attribute: List<SpontanResultEntry>?): String? {
+    override fun convertToDatabaseColumn(attribute: SpontanResults?): String? {
         if (attribute == null) return null
         return try {
             objectMapper.writeValueAsString(attribute)
@@ -22,7 +22,7 @@ class SpontanResultsConverter : AttributeConverter<List<SpontanResultEntry>, Str
         }
     }
 
-    override fun convertToEntityAttribute(dbData: String?): List<SpontanResultEntry>? {
+    override fun convertToEntityAttribute(dbData: String?): SpontanResults? {
         if (dbData == null || dbData.isBlank()) return null
         return try {
             objectMapper.readValue(dbData)

@@ -49,10 +49,11 @@ class SpontanController(
         @PathVariable cityId: Int,
         @RequestParam problem: Int,
         @RequestParam age: Int,
-        @RequestParam(required = false) league: String?,
+        @RequestParam(required = false, defaultValue = "") league: String,
         @RequestBody request: AssignSpontanRequest
     ): SpontanGroupAssignment {
-        return spontanService.assignSpontan(cityId, problem, age, league, request.spontanDefinitionId)
+        val groupId = GroupId(problem, age, league)
+        return spontanService.assignSpontan(cityId, groupId, request.spontanDefinitionId)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
@@ -61,10 +62,11 @@ class SpontanController(
         @PathVariable cityId: Int,
         @RequestParam problem: Int,
         @RequestParam age: Int,
-        @RequestParam(required = false) league: String?,
+        @RequestParam(required = false, defaultValue = "") league: String,
         @RequestBody request: SetJudgeCountRequest
     ): SpontanGroupAssignment {
-        return spontanService.setJudgeCount(cityId, problem, age, league, request.judgeCount)
+        val groupId = GroupId(problem, age, league)
+        return spontanService.setJudgeCount(cityId, groupId, request.judgeCount)
     }
 
     @GetMapping("/result/{cityId}/teams")
@@ -72,9 +74,10 @@ class SpontanController(
         @PathVariable cityId: Int,
         @RequestParam problem: Int,
         @RequestParam age: Int,
-        @RequestParam(required = false) league: String?
+        @RequestParam(required = false, defaultValue = "") league: String
     ): SpontanGroupTeams {
-        return spontanResultService.getGroupTeams(cityId, problem, age, league)
+        val groupId = GroupId(problem, age, league)
+        return spontanResultService.getGroupTeams(cityId, groupId)
     }
 
     @PutMapping("/result/{performanceId}")

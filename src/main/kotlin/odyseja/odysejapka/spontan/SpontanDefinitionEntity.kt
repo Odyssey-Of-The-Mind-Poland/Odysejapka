@@ -26,4 +26,19 @@ class SpontanDefinitionEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     @Convert(converter = SpontanFieldsConverter::class)
     var fields: List<SpontanFieldEntry>? = null
+
+    fun toSpontanDefinition() = SpontanDefinition(
+        id = id,
+        name = name,
+        type = type,
+        multiplier = multiplier,
+        fields = fields ?: emptyList()
+    )
+
+    fun applyFrom(definition: SpontanDefinition) {
+        name = definition.name
+        type = definition.type
+        multiplier = definition.multiplier
+        fields = if (definition.type == SpontanType.MANUAL) definition.fields else null
+    }
 }

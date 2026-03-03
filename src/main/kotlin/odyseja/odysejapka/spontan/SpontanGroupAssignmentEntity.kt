@@ -24,8 +24,8 @@ class SpontanGroupAssignmentEntity {
     @Column(nullable = false)
     var age: Int = 0
 
-    @Column
-    var league: String? = null
+    @Column(nullable = false)
+    var league: String = ""
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "spontan_definition_id")
@@ -33,4 +33,16 @@ class SpontanGroupAssignmentEntity {
 
     @Column(name = "judge_count", nullable = false)
     var judgeCount: Int = 3
+
+    fun toGroupId() = GroupId(problem, age, league)
+
+    fun toSpontanGroupAssignment() = SpontanGroupAssignment(
+        id = id,
+        cityId = city?.id ?: 0,
+        groupId = toGroupId(),
+        spontanDefinitionId = spontanDefinition?.id,
+        spontanDefinitionName = spontanDefinition?.name,
+        spontanType = spontanDefinition?.type,
+        judgeCount = judgeCount
+    )
 }

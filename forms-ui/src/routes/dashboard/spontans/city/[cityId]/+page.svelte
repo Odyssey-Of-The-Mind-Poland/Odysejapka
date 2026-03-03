@@ -23,12 +23,16 @@
         type: 'VERBAL' | 'MANUAL';
     };
 
+    type GroupId = {
+        problem: number;
+        age: number;
+        league: string;
+    };
+
     type SpontanGroupAssignment = {
         id: number | null;
         cityId: number;
-        problem: number;
-        age: number;
-        league: string | null;
+        groupId: GroupId;
         spontanDefinitionId: number | null;
         spontanDefinitionName: string | null;
         spontanType: string | null;
@@ -38,48 +42,44 @@
     let cityId = $derived(Number(page.params.cityId));
     let isAdmin = $derived($currentUser?.roles.includes('ADMINISTRATOR') ?? false);
 
-    let citiesQuery = createOdysejaQuery<City[]>({
+    let citiesQuery = $derived(createOdysejaQuery<City[]>({
         queryKey: ['dashboardCities'],
         path: '/api/v1/dashboard/cities',
-    });
+    }));
 
     let cityName = $derived.by(() => {
         if (!citiesQuery.data) return '...';
         return citiesQuery.data.find((c: City) => c.id === cityId)?.name ?? '...';
     });
 
-    let spontansQuery = createOdysejaQuery<SpontanDefinition[]>({
+    let spontansQuery = $derived(createOdysejaQuery<SpontanDefinition[]>({
         queryKey: ['spontans'],
         path: '/api/v1/spontan',
-    });
+    }));
 
-    let groupsQuery = createOdysejaQuery<SpontanGroupAssignment[]>({
-        queryKey: ['spontanGroups', String(page.params.cityId)],
-        path: `/api/v1/spontan/group/${page.params.cityId}`,
-    });
+    let groupsQuery = $derived(createOdysejaQuery<SpontanGroupAssignment[]>({
+        queryKey: ['spontanGroups'],
+        path: `/api/v1/spontan/group/${cityId}`,
+    }));
 
     let groups = $derived(groupsQuery.data ?? []);
 
     let assignMutation = createPutMutation<SpontanGroupAssignment, {
         cityId: number;
-        problem: number;
-        age: number;
-        league: string | null;
+        groupId: GroupId;
         body: { spontanDefinitionId: number | null };
     }>({
-        path: (vars) => `/api/v1/spontan/group/${vars.cityId}/assign?problem=${vars.problem}&age=${vars.age}${vars.league ? `&league=${encodeURIComponent(vars.league)}` : '&league='}`,
+        path: (vars) => `/api/v1/spontan/group/${vars.cityId}/assign?problem=${vars.groupId.problem}&age=${vars.groupId.age}&league=${encodeURIComponent(vars.groupId.league)}`,
         queryKey: ['spontanGroups'],
         onSuccess: () => toast.success('Spontan przypisany'),
     });
 
     let judgesMutation = createPutMutation<SpontanGroupAssignment, {
         cityId: number;
-        problem: number;
-        age: number;
-        league: string | null;
+        groupId: GroupId;
         body: { judgeCount: number };
     }>({
-        path: (vars) => `/api/v1/spontan/group/${vars.cityId}/judges?problem=${vars.problem}&age=${vars.age}${vars.league ? `&league=${encodeURIComponent(vars.league)}` : '&league='}`,
+        path: (vars) => `/api/v1/spontan/group/${vars.cityId}/judges?problem=${vars.groupId.problem}&age=${vars.groupId.age}&league=${encodeURIComponent(vars.groupId.league)}`,
         queryKey: ['spontanGroups'],
         onSuccess: () => toast.success('Liczba sędziów zmieniona'),
     });
@@ -87,9 +87,7 @@
     function handleAssign(group: SpontanGroupAssignment, spontanId: string) {
         assignMutation.mutate({
             cityId,
-            problem: group.problem,
-            age: group.age,
-            league: group.league,
+            groupId: group.groupId,
             body: {spontanDefinitionId: spontanId === '__none__' ? null : Number(spontanId)},
         });
     }
@@ -97,20 +95,19 @@
     function handleJudgeCount(group: SpontanGroupAssignment, count: string) {
         judgesMutation.mutate({
             cityId,
-            problem: group.problem,
-            age: group.age,
-            league: group.league,
+            groupId: group.groupId,
             body: {judgeCount: Number(count)},
         });
     }
 
-    function groupKey(g: SpontanGroupAssignment): string {
-        return `${g.problem}-${g.age}-${g.league ?? ''}`;
+    function groupKey(g: SpontanGroupAssignment, i: number): string {
+        return `${g.groupId.problem}-${g.groupId.age}-${g.groupId.league}-${i}`;
     }
 
     function navigateToGroup(group: SpontanGroupAssignment) {
         if (group.spontanDefinitionId) {
-            goto(`/dashboard/spontans/city/${cityId}/${group.problem}/${group.age}/${group.league ?? ''}`);
+            const g = group.groupId;
+            goto(`/dashboard/spontans/city/${cityId}/${g.problem}/${g.age}/${g.league || '_'}`);
         }
     }
 
@@ -157,29 +154,29 @@
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {#each groups as group (groupKey(group))}
+                    {#each groups as group, i (groupKey(group, i))}
                         <Table.Row
                                 class={group.spontanDefinitionId ? 'cursor-pointer transition-colors hover:bg-muted/50' : ''}
                                 onclick={() => navigateToGroup(group)}
                         >
                             <Table.Cell>
                                 <div class="flex items-center gap-2">
-                                    <Badge variant="outline" class="font-mono tabular-nums">Problem {group.problem}</Badge>
-                                    <Badge variant="secondary" class="font-mono tabular-nums">Grupa wiekowa {group.age}</Badge>
-                                    {#if group.league}
-                                        <Badge variant="outline">{group.league}</Badge>
+                                    <Badge variant="outline" class="font-mono tabular-nums">Problem {group.groupId.problem}</Badge>
+                                    <Badge variant="secondary" class="font-mono tabular-nums">Grupa wiekowa {group.groupId.age}</Badge>
+                                    {#if group.groupId.league}
+                                        <Badge variant="outline">{group.groupId.league}</Badge>
                                     {/if}
                                 </div>
                             </Table.Cell>
                             <Table.Cell>
                                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                                 <!-- svelte-ignore a11y_no_static_element_interactions -->
-                                <div onclick={(e: MouseEvent) => e.stopPropagation()}>
+                                <div onclick={(e) => e.stopPropagation()}>
                                     {#if isAdmin}
                                         <Select.Root
                                                 type="single"
-                                                value={group.spontanDefinitionId ? String(group.spontanDefinitionId) : '__none__'}
-                                                onValueChange={(v) => { if (v) handleAssign(group, v); }}
+                                                value={group.spontanDefinitionId ? String(group.spontanDefinitionId) : undefined}
+                                                onValueChange={(v) => handleAssign(group, v === '__none__' ? '__none__' : v ?? '__none__')}
                                         >
                                             <Select.Trigger class="w-[220px]">
                                                 {group.spontanDefinitionName ?? 'Brak'}
@@ -201,9 +198,7 @@
                                 </div>
                             </Table.Cell>
                             <Table.Cell>
-                                <!-- svelte-ignore a11y_click_events_have_key_events -->
-                                <!-- svelte-ignore a11y_no_static_element_interactions -->
-                                <div onclick={(e: MouseEvent) => e.stopPropagation()}>
+                                <div onclick={(e) => e.stopPropagation()}>
                                     {#if isAdmin}
                                         <Select.Root
                                                 type="single"
