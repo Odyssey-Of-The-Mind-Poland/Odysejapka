@@ -13,6 +13,8 @@
         id?: number;
         name: string;
         multiplier: number;
+        fieldType?: 'MULTIPLIER' | 'EXPRESSION';
+        expression?: string;
     };
 
     type SpontanDefinition = {
@@ -301,7 +303,6 @@
                             {#each manualFields as field}
                                 <th rowspan="2" class="px-2 py-2 text-center font-semibold border-l align-bottom">
                                     <div>{field.name}</div>
-                                    <div class="text-xs text-muted-foreground font-normal">x{field.multiplier}</div>
                                 </th>
                             {/each}
                         {/if}

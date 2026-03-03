@@ -13,8 +13,15 @@ enum class SpontanType {
     MANUAL
 }
 
+enum class SpontanFieldType {
+    MULTIPLIER,
+    EXPRESSION
+}
+
 data class SpontanFieldEntry(
     val id: Long? = null,
     val name: String,
-    val multiplier: Double = 1.0
+    val multiplier: Double = 1.0,
+    val fieldType: SpontanFieldType = SpontanFieldType.MULTIPLIER,
+    val expression: String? = null
 )

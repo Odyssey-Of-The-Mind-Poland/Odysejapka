@@ -24,6 +24,8 @@
         id?: number;
         name: string;
         multiplier: number;
+        fieldType: 'MULTIPLIER' | 'EXPRESSION';
+        expression?: string;
     };
 
     type SpontanDefinition = {
@@ -32,6 +34,20 @@
         type: 'VERBAL' | 'MANUAL';
         multiplier?: number;
         fields: SpontanField[];
+    };
+
+    type SpontanDefinitionPayload = {
+        id?: number;
+        name: string;
+        type: 'VERBAL' | 'MANUAL';
+        multiplier?: number;
+        fields: {
+            id?: number;
+            name: string;
+            multiplier: number;
+            fieldType: 'MULTIPLIER' | 'EXPRESSION';
+            expression?: string;
+        }[];
     };
 
     let editingSpontan = $state<SpontanDefinition | null>(null);
@@ -93,11 +109,11 @@
         newName = spontan.name;
         newType = spontan.type;
         newMultiplier = spontan.multiplier ?? 1.0;
-        newFields = spontan.fields.map(f => ({...f}));
+        newFields = spontan.fields.map(f => ({...f, fieldType: f.fieldType ?? 'MULTIPLIER'}));
     }
 
     function addField() {
-        newFields = [...newFields, {name: '', multiplier: 1.0}];
+        newFields = [...newFields, {name: '', multiplier: 1.0, fieldType: 'MULTIPLIER'}];
     }
 
     function removeField(index: number) {
@@ -108,17 +124,27 @@
         const trimmed = newName.trim();
         if (!trimmed) return;
 
-        const definition: SpontanDefinition = {
+        const fields = newType === 'MANUAL'
+            ? newFields.filter(f => f.name.trim()).map(f => ({
+                id: f.id,
+                name: f.name,
+                multiplier: f.multiplier,
+                fieldType: f.fieldType,
+                expression: f.fieldType === 'EXPRESSION' ? f.expression : undefined,
+            }))
+            : [];
+
+        const definition: SpontanDefinitionPayload = {
             name: trimmed,
             type: newType,
             multiplier: newType === 'MANUAL' ? newMultiplier : undefined,
-            fields: newType === 'MANUAL' ? newFields.filter(f => f.name.trim()) : [],
+            fields,
         };
 
         if (editingSpontan?.id) {
-            updateMutation.mutate({...definition, id: editingSpontan.id});
+            updateMutation.mutate({...definition, id: editingSpontan.id} as any);
         } else {
-            createMutation.mutate(definition);
+            createMutation.mutate(definition as any);
         }
     }
 
@@ -128,6 +154,7 @@
         }
     }
 
+    let hasExpressionField = $derived(newFields.some(f => f.fieldType === 'EXPRESSION'));
     let isEditing = $derived(isCreating || !!editingSpontan);
 </script>
 
@@ -174,13 +201,34 @@
                                         placeholder="Nazwa pola..."
                                         class="flex-1"
                                 />
-                                <Input
-                                        type="number"
-                                        step="0.1"
-                                        bind:value={field.multiplier}
-                                        placeholder="Mnożnik"
-                                        class="w-24"
-                                />
+                                <Select.Root
+                                        type="single"
+                                        value={field.fieldType}
+                                        onValueChange={(v) => { if (v === 'MULTIPLIER' || v === 'EXPRESSION') newFields[i].fieldType = v; }}
+                                >
+                                    <Select.Trigger class="w-32">
+                                        {field.fieldType === 'MULTIPLIER' ? 'Mnożnik' : 'Wyrażenie'}
+                                    </Select.Trigger>
+                                    <Select.Content>
+                                        <Select.Item value="MULTIPLIER">Mnożnik</Select.Item>
+                                        <Select.Item value="EXPRESSION">Wyrażenie</Select.Item>
+                                    </Select.Content>
+                                </Select.Root>
+                                {#if field.fieldType === 'EXPRESSION'}
+                                    <Input
+                                            bind:value={field.expression}
+                                            placeholder="np. FLOOR(v/3)*5"
+                                            class="w-48 font-mono"
+                                    />
+                                {:else}
+                                    <Input
+                                            type="number"
+                                            step="0.1"
+                                            bind:value={field.multiplier}
+                                            placeholder="Mnożnik"
+                                            class="w-24"
+                                    />
+                                {/if}
                                 <Button
                                         variant="ghost"
                                         size="icon"
@@ -193,6 +241,17 @@
                     </div>
                 {:else}
                     <p class="text-sm text-muted-foreground">Brak pól. Dodaj pola powyżej.</p>
+                {/if}
+
+                {#if hasExpressionField}
+                    <div class="rounded-md border bg-muted/30 p-3 mt-2 text-sm">
+                        <p class="font-medium mb-1">Składnia wyrażeń</p>
+                        <ul class="list-disc list-inside text-muted-foreground space-y-0.5">
+                            <li><code class="font-mono text-xs bg-muted px-1 rounded">v</code> — wartość wpisana w pole</li>
+                            <li>Funkcje: <code class="font-mono text-xs bg-muted px-1 rounded">FLOOR</code>, <code class="font-mono text-xs bg-muted px-1 rounded">CEILING</code>, <code class="font-mono text-xs bg-muted px-1 rounded">ROUND</code>, <code class="font-mono text-xs bg-muted px-1 rounded">MIN</code>, <code class="font-mono text-xs bg-muted px-1 rounded">MAX</code>, <code class="font-mono text-xs bg-muted px-1 rounded">ABS</code>, <code class="font-mono text-xs bg-muted px-1 rounded">SQRT</code></li>
+                            <li>Przykłady: <code class="font-mono text-xs bg-muted px-1 rounded">FLOOR(v/3)*5</code>, <code class="font-mono text-xs bg-muted px-1 rounded">MIN(v, 100)</code>, <code class="font-mono text-xs bg-muted px-1 rounded">v*1.5</code></li>
+                        </ul>
+                    </div>
                 {/if}
             </div>
         {/if}

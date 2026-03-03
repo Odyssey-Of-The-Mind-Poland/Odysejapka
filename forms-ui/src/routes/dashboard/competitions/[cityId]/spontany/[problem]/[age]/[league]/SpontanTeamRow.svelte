@@ -4,6 +4,8 @@
     type SpontanFieldDef = {
         name: string;
         multiplier: number;
+        fieldType?: 'MULTIPLIER' | 'EXPRESSION';
+        expression?: string;
     };
 
     type VerbalEntryForm = {

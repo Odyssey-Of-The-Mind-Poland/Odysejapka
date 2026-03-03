@@ -38,6 +38,8 @@ spring:
       mode: never
 server:
   port: 8081
+  error:
+    include-message: always
 
 clsi:
   base-url: http://grzybek.snet.ovh:3013

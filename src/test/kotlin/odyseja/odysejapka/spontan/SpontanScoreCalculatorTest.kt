@@ -21,6 +21,18 @@ class SpontanScoreCalculatorTest {
         fields = fields.map { SpontanFieldEntry(name = it.first, multiplier = it.second) }
     )
 
+    private fun expressionField(name: String, expression: String) = SpontanFieldEntry(
+        name = name,
+        fieldType = SpontanFieldType.EXPRESSION,
+        expression = expression
+    )
+
+    private fun manualDefinitionWithFields(vararg fields: SpontanFieldEntry) = SpontanDefinition(
+        name = "Manual",
+        type = SpontanType.MANUAL,
+        fields = fields.toList()
+    )
+
     private fun manual(field: String, value: Double) =
         ManualScoreEntry(field = field, value = value)
 
@@ -217,6 +229,112 @@ class SpontanScoreCalculatorTest {
             )
             // judgeScore: 0/1 = 0, fieldScore: 10*2.0 = 20, total: 20
             assertThat(calculator.calculateScore(definition, results, 1)).isCloseTo(20.0, offset)
+        }
+    }
+
+    @Nested
+    inner class ExpressionFieldScore {
+
+        @Test
+        fun `should evaluate FLOOR expression`() {
+            val definition = manualDefinitionWithFields(expressionField("Score", "FLOOR(v/3)*5"))
+            val results = SpontanResults(
+                manualJudgeEntries = listOf(
+                    ManualJudgeEntry(judge = 1, creativity = 0.0, teamwork = 0.0)
+                ),
+                manualEntries = listOf(manual("Score", 9.0))
+            )
+            // FLOOR(9/3)*5 = 3*5 = 15
+            assertThat(calculator.calculateScore(definition, results, 1)).isCloseTo(15.0, offset)
+        }
+
+        @Test
+        fun `should evaluate simple multiplication expression`() {
+            val definition = manualDefinitionWithFields(expressionField("Score", "v*1.5"))
+            val results = SpontanResults(
+                manualJudgeEntries = listOf(
+                    ManualJudgeEntry(judge = 1, creativity = 0.0, teamwork = 0.0)
+                ),
+                manualEntries = listOf(manual("Score", 4.0))
+            )
+            // 4 * 1.5 = 6
+            assertThat(calculator.calculateScore(definition, results, 1)).isCloseTo(6.0, offset)
+        }
+
+        @Test
+        fun `should mix MULTIPLIER and EXPRESSION fields`() {
+            val definition = manualDefinitionWithFields(
+                SpontanFieldEntry(name = "Weight", multiplier = 2.0),
+                expressionField("Bonus", "FLOOR(v/3)*5")
+            )
+            val results = SpontanResults(
+                manualJudgeEntries = listOf(
+                    ManualJudgeEntry(judge = 1, creativity = 0.0, teamwork = 0.0)
+                ),
+                manualEntries = listOf(
+                    manual("Weight", 10.0),
+                    manual("Bonus", 9.0)
+                )
+            )
+            // Weight: 10*2.0 = 20, Bonus: FLOOR(9/3)*5 = 15, total: 35
+            assertThat(calculator.calculateScore(definition, results, 1)).isCloseTo(35.0, offset)
+        }
+
+        @Test
+        fun `should evaluate MIN capping expression`() {
+            val definition = manualDefinitionWithFields(expressionField("Capped", "MIN(v, 100)"))
+            val results = SpontanResults(
+                manualJudgeEntries = listOf(
+                    ManualJudgeEntry(judge = 1, creativity = 0.0, teamwork = 0.0)
+                ),
+                manualEntries = listOf(manual("Capped", 150.0))
+            )
+            // MIN(150, 100) = 100
+            assertThat(calculator.calculateScore(definition, results, 1)).isCloseTo(100.0, offset)
+        }
+    }
+
+    @Nested
+    inner class EvaluateExpression {
+
+        @Test
+        fun `should evaluate simple arithmetic`() {
+            assertThat(calculator.evaluateExpression("v*2", 5.0)).isCloseTo(10.0, offset)
+        }
+
+        @Test
+        fun `should evaluate FLOOR`() {
+            assertThat(calculator.evaluateExpression("FLOOR(v/3)", 10.0)).isCloseTo(3.0, offset)
+        }
+
+        @Test
+        fun `should evaluate CEILING`() {
+            assertThat(calculator.evaluateExpression("CEILING(v/3)", 10.0)).isCloseTo(4.0, offset)
+        }
+
+        @Test
+        fun `should evaluate nested functions`() {
+            assertThat(calculator.evaluateExpression("FLOOR(v/3)*5", 9.0)).isCloseTo(15.0, offset)
+        }
+
+        @Test
+        fun `should evaluate MIN`() {
+            assertThat(calculator.evaluateExpression("MIN(v, 100)", 150.0)).isCloseTo(100.0, offset)
+        }
+
+        @Test
+        fun `should evaluate MAX`() {
+            assertThat(calculator.evaluateExpression("MAX(v, 10)", 5.0)).isCloseTo(10.0, offset)
+        }
+
+        @Test
+        fun `should evaluate ABS`() {
+            assertThat(calculator.evaluateExpression("ABS(v)", -7.0)).isCloseTo(7.0, offset)
+        }
+
+        @Test
+        fun `should evaluate SQRT`() {
+            assertThat(calculator.evaluateExpression("SQRT(v)", 16.0)).isCloseTo(4.0, offset)
         }
     }
 }

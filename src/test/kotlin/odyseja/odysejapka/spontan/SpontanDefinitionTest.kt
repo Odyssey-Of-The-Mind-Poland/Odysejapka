@@ -2,6 +2,7 @@ package odyseja.odysejapka.spontan
 
 import odyseja.odysejapka.OdysejaDsl
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
 
@@ -115,5 +116,46 @@ class SpontanDefinitionTest : OdysejaDsl() {
 
         val fetched = spontanClient.getById(created.id!!)
         assertThat(fetched.fields).isEmpty()
+    }
+
+    @Test
+    fun `should create manual spontan with expression field`() {
+        val created = spontanClient.create(
+            SpontanDefinition(
+                name = "Spontan z wyrażeniem",
+                type = SpontanType.MANUAL,
+                fields = listOf(
+                    SpontanFieldEntry(
+                        name = "Bonus",
+                        fieldType = SpontanFieldType.EXPRESSION,
+                        expression = "FLOOR(v/3)*5"
+                    )
+                )
+            )
+        )
+
+        assertThat(created.id).isNotNull()
+        assertThat(created.fields).hasSize(1)
+        assertThat(created.fields[0].fieldType).isEqualTo(SpontanFieldType.EXPRESSION)
+        assertThat(created.fields[0].expression).isEqualTo("FLOOR(v/3)*5")
+    }
+
+    @Test
+    fun `should reject invalid expression`() {
+        assertThatThrownBy {
+            spontanClient.create(
+                SpontanDefinition(
+                    name = "Nieprawidłowy",
+                    type = SpontanType.MANUAL,
+                    fields = listOf(
+                        SpontanFieldEntry(
+                            name = "Złe pole",
+                            fieldType = SpontanFieldType.EXPRESSION,
+                            expression = "FLOOR(v/3"
+                        )
+                    )
+                )
+            )
+        }.hasMessageContaining("nieprawidłowe wyrażenie")
     }
 }

@@ -1,5 +1,6 @@
 package odyseja.odysejapka.spontan
 
+import com.ezylang.evalex.Expression
 import odyseja.odysejapka.city.CityRepository
 import odyseja.odysejapka.timetable.PerformanceRepository
 import odyseja.odysejapka.users.UserRepository
@@ -31,6 +32,9 @@ class SpontanService(
 
     @Transactional
     fun create(definition: SpontanDefinition): SpontanDefinition {
+        if (definition.type == SpontanType.MANUAL) {
+            validateFields(definition.fields)
+        }
         val entity = SpontanDefinitionEntity().apply { applyFrom(definition) }
         return spontanDefinitionRepository.save(entity).toSpontanDefinition()
     }
@@ -39,8 +43,31 @@ class SpontanService(
     fun update(id: Long, definition: SpontanDefinition): SpontanDefinition {
         val entity = spontanDefinitionRepository.findById(id).orElse(null)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        if (definition.type == SpontanType.MANUAL) {
+            validateFields(definition.fields)
+        }
         entity.applyFrom(definition)
         return spontanDefinitionRepository.save(entity).toSpontanDefinition()
+    }
+
+    private fun validateFields(fields: List<SpontanFieldEntry>) {
+        for (field in fields) {
+            if (field.fieldType == SpontanFieldType.EXPRESSION) {
+                val expr = field.expression
+                    ?: throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Pole '${field.name}': brak wyrażenia"
+                    )
+                try {
+                    Expression(expr).with("v", 1).evaluate()
+                } catch (e: Exception) {
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Pole '${field.name}': nieprawidłowe wyrażenie: ${e.message}"
+                    )
+                }
+            }
+        }
     }
 
     @Transactional

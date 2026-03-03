@@ -1,5 +1,7 @@
 package odyseja.odysejapka.spontan
 
+import com.ezylang.evalex.Expression
+
 class SpontanScoreCalculator {
 
     fun calculateScore(
@@ -38,14 +40,22 @@ class SpontanScoreCalculator {
         val judgeScore = judgeTotal / judgeCount
 
         var fieldScore = 0.0
-        val fieldMultipliers = definition.fields.associate { it.name to it.multiplier }
+        val fieldDefs = definition.fields.associateBy { it.name }
         for (entry in results.manualEntries) {
-            val multiplier = fieldMultipliers[entry.field]
-            if (multiplier != null) {
-                fieldScore += entry.value * multiplier
+            val fieldDef = fieldDefs[entry.field] ?: continue
+            fieldScore += when (fieldDef.fieldType) {
+                SpontanFieldType.MULTIPLIER -> entry.value * fieldDef.multiplier
+                SpontanFieldType.EXPRESSION -> evaluateExpression(fieldDef.expression!!, entry.value)
             }
         }
 
         return judgeScore + fieldScore
+    }
+
+    fun evaluateExpression(expression: String, value: Double): Double {
+        val result = Expression(expression)
+            .with("v", value)
+            .evaluate()
+        return result.numberValue.toDouble()
     }
 }
