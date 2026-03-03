@@ -14,5 +14,4 @@ class PerformanceGroupService(private val performanceRepository: PerformanceRepo
             )
         }
     }
-
 }

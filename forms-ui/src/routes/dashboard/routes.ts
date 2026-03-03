@@ -1,9 +1,5 @@
 import IconUserCog from "@tabler/icons-svelte/icons/user-cog";
-import IconForms from "@tabler/icons-svelte/icons/forms";
-import IconUsersGroup from "@tabler/icons-svelte/icons/users-group";
-import IconBuilding from "@tabler/icons-svelte/icons/building";
-import IconBulb from "@tabler/icons-svelte/icons/bulb";
-import IconSparkles from "@tabler/icons-svelte/icons/sparkles";
+import IconTrophy from "@tabler/icons-svelte/icons/trophy";
 import type {Role} from "$lib/userStore";
 
 export type NavItem = {
@@ -22,32 +18,14 @@ export const routes = {
             requiredRole: 'ADMINISTRATOR',
         },
         {
-            title: "Edytor formularzy",
-            url: "/dashboard/editor",
-            icon: IconForms,
-            requiredRole: 'ADMINISTRATOR',
-        },
-        {
-            title: "Edytor spontanów",
-            url: "/dashboard/spontan-editor",
-            icon: IconBulb,
-            requiredRole: 'ADMINISTRATOR',
-        },
-        {
-            title: "Miasta",
-            url: "/dashboard/cities",
-            icon: IconBuilding,
-            requiredRole: 'ADMINISTRATOR',
-        },
-        {
-            title: "Spontany",
-            url: "/dashboard/spontans",
-            icon: IconSparkles,
-        },
-        {
-            title: "Drużyny",
-            url: "/dashboard/teams",
-            icon: IconUsersGroup,
+            title: "Konkursy",
+            url: "/dashboard/competitions",
+            icon: IconTrophy,
         },
     ] satisfies NavItem[],
+
+    adminRoutes: [
+        {url: "/dashboard/editor", requiredRole: 'ADMINISTRATOR' as Role},
+        {url: "/dashboard/spontan-editor", requiredRole: 'ADMINISTRATOR' as Role},
+    ],
 };

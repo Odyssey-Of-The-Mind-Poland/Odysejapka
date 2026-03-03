@@ -15,7 +15,7 @@
 
     onMount(() => {
         setBreadcrumbs([
-            {name: 'Dashboard', href: '/dashboard'},
+            {name: 'Konkursy', href: '/dashboard/competitions'},
             {name: 'Edytor spontanów', href: '/dashboard/spontan-editor'},
         ]);
     });

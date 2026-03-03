@@ -7,7 +7,8 @@
     import {createOdysejaQuery} from "$lib/queries";
 
     setBreadcrumbs([
-        {name: 'Edytor Formularzy', href: '/dashboard/editor'}
+        {name: 'Konkursy', href: '/dashboard/competitions'},
+        {name: 'Edytor Formularzy', href: '/dashboard/editor'},
     ]);
 
     type Problem = {

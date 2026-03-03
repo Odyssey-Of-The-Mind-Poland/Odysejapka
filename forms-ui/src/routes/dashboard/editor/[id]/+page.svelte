@@ -23,6 +23,7 @@
     let form = $state<ProblemForm>()
     $effect(() => {
         setBreadcrumbs([
+            {name: 'Konkursy', href: '/dashboard/competitions'},
             {name: 'Edytor Formularzy', href: '/dashboard/editor'},
             {name: `Problem ${problem}`, href: `/dashboard/editor/${problem}`}
         ]);

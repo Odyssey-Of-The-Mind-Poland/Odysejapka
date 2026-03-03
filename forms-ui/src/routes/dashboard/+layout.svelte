@@ -12,9 +12,13 @@
 
     function checkRouteAccess(user: CurrentUser) {
         const currentPath = page.url.pathname;
-        const matchedRoute = routes.navMain.find((r) => currentPath.startsWith(r.url));
-        if (matchedRoute?.requiredRole && !user.roles.includes(matchedRoute.requiredRole)) {
-            goto("/dashboard/teams");
+        const allProtectedRoutes = [
+            ...routes.navMain.filter(r => r.requiredRole).map(r => ({url: r.url, requiredRole: r.requiredRole!})),
+            ...routes.adminRoutes,
+        ];
+        const matchedRoute = allProtectedRoutes.find((r) => currentPath.startsWith(r.url));
+        if (matchedRoute && !user.roles.includes(matchedRoute.requiredRole)) {
+            goto("/dashboard/competitions");
         }
     }
 
