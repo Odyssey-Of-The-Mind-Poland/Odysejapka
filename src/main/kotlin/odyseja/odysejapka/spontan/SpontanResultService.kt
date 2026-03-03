@@ -25,6 +25,7 @@ class SpontanResultService(
 
         val performances = performanceRepository.findAllByCityEntity_Id(cityId)
             .filter {
+                !it.isExcludedFromScoring() &&
                 it.problemEntity.id == groupId.problem &&
                 it.ageEntity.id == groupId.age &&
                 (it.league ?: "") == groupId.league

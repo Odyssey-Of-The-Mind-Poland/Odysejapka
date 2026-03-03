@@ -90,6 +90,7 @@ class SpontanService(
         val accessibleIds = spontanAccessService.accessibleAssignmentIds(cityId)
 
         val groupIds = performanceRepository.findAllByCityEntity_Id(cityId)
+            .filter { !it.isExcludedFromScoring() }
             .map { GroupId(it.problemEntity.id, it.ageEntity.id, it.league ?: "") }
             .distinct()
             .sortedWith(compareBy({ it.problem }, { it.age }, { it.league }))

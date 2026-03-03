@@ -62,6 +62,12 @@ class PerformanceEntity(
         )
     }
 
+    fun isExcludedFromScoring(): Boolean {
+        if (problemEntity.id == 0) return true
+        val teamLower = team.lowercase()
+        return listOf("spain", "china", "slovakia").any { teamLower.contains(it) }
+    }
+
     fun toGroup(): PerformanceGroup.Group {
         return PerformanceGroup.Group(
             city = cityEntity.name,

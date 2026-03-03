@@ -7,11 +7,13 @@ class PerformanceGroupService(private val performanceRepository: PerformanceRepo
     fun getPerformanceGroups(cityId: Int?): List<PerformanceGroup> {
         val performances =
             cityId?.let { performanceRepository.findAllByCityEntity_Id(cityId) } ?: performanceRepository.findAll()
-        return performances.groupBy { it?.toGroup() }.map { (group, performances) ->
-            PerformanceGroup(
-                group = group!!,
-                performances = performances.map { it?.toPerformance()!! }
-            )
-        }
+        return performances
+            .filter { it != null && !it.isExcludedFromScoring() }
+            .groupBy { it?.toGroup() }.map { (group, performances) ->
+                PerformanceGroup(
+                    group = group!!,
+                    performances = performances.map { it?.toPerformance()!! }
+                )
+            }
     }
 }
