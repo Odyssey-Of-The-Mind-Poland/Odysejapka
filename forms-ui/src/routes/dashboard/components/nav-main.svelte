@@ -9,8 +9,11 @@
 
     let visibleItems = $derived(
         items.filter((item: NavItem) => {
-            if (!item.requiredRole) return true;
-            return user?.roles.includes(item.requiredRole) ?? false;
+            if (!item.requiredRole && !item.requiredRoles) return true;
+            if (item.requiredRoles) {
+                return item.requiredRoles.some(role => user?.roles.includes(role)) ?? false;
+            }
+            return user?.roles.includes(item.requiredRole!) ?? false;
         })
     );
 </script>

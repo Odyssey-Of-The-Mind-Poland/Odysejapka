@@ -13,11 +13,16 @@
     function checkRouteAccess(user: CurrentUser) {
         const currentPath = page.url.pathname;
         const allProtectedRoutes = [
-            ...routes.navMain.filter(r => r.requiredRole).map(r => ({url: r.url, requiredRole: r.requiredRole!})),
-            ...routes.adminRoutes,
+            ...routes.navMain
+                .filter(r => r.requiredRole || r.requiredRoles)
+                .map(r => ({
+                    url: r.url,
+                    requiredRoles: r.requiredRoles ?? (r.requiredRole ? [r.requiredRole] : []),
+                })),
+            ...routes.adminRoutes.map(r => ({url: r.url, requiredRoles: [r.requiredRole]})),
         ];
         const matchedRoute = allProtectedRoutes.find((r) => currentPath.startsWith(r.url));
-        if (matchedRoute && !user.roles.includes(matchedRoute.requiredRole)) {
+        if (matchedRoute && !matchedRoute.requiredRoles.some(role => user.roles.includes(role))) {
             goto("/dashboard/competitions");
         }
     }

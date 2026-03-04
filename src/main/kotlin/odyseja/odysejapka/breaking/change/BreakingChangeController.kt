@@ -4,7 +4,7 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
 @RestController()
-@RequestMapping("/breaking/change")
+@RequestMapping(value = ["/breaking/change", "/api/breaking/change"])
 class BreakingChangeController(private val breakingChangeService: BreakingChangeService) {
 
     @GetMapping
@@ -13,7 +13,7 @@ class BreakingChangeController(private val breakingChangeService: BreakingChange
     }
 
     @PutMapping
-    @Secured("ROLE_ADMINISTRATOR")
+    @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
     fun setBreakingChange(@RequestBody breakingChange: BreakingChange) {
         breakingChangeService.setBreakingChange(breakingChange)
     }

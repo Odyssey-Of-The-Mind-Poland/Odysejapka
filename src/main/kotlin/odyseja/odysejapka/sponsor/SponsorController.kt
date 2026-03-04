@@ -8,7 +8,7 @@ import java.io.IOException
 
 
 @RestController
-@RequestMapping("/sponsor")
+@RequestMapping(value = ["/sponsor", "/api/sponsor"])
 class SponsorController(private val sponsorService: SponsorService) {
 
     @GetMapping(

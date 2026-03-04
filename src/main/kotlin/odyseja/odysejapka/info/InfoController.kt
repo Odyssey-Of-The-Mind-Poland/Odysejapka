@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*
 
 
 @RestController
-@RequestMapping("/info")
+@RequestMapping(value = ["/info", "/api/info"])
 class InfoController(
   private val infoService: InfoService
 ) {
@@ -39,20 +39,20 @@ class InfoController(
     )
   }
 
-  @Secured("ROLE_ADMINISTRATOR")
+  @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
   @PostMapping
   @ResponseBody
   fun addInfo(@RequestBody info: Info): Info {
     return infoService.addInfo(info)
   }
 
-  @Secured("ROLE_ADMINISTRATOR")
+  @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
   @PutMapping
   fun updateInfo(@RequestBody info: Info): Info {
     return infoService.updateInfo(info)
   }
 
-  @Secured("ROLE_ADMINISTRATOR")
+  @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
   @DeleteMapping("/{id}")
   @ResponseBody
   fun deleteInfo(@PathVariable id: Int) {
