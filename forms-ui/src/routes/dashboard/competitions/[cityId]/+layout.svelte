@@ -4,6 +4,7 @@
     import {createOdysejaQuery} from "$lib/queries";
     import {Button} from "$lib/components/ui/button/index.js";
     import RequirePermission from "$lib/components/RequirePermission.svelte";
+    import GenerateResultsDialog from "./GenerateResultsDialog.svelte";
     import IconForms from "@tabler/icons-svelte/icons/forms";
     import IconBulb from "@tabler/icons-svelte/icons/bulb";
     import {currentUser} from "$lib/userStore";
@@ -71,6 +72,7 @@
                         Edytor spontanów
                     </Button>
                 {/if}
+                <GenerateResultsDialog {cityId}/>
             </RequirePermission>
         </div>
     </div>
