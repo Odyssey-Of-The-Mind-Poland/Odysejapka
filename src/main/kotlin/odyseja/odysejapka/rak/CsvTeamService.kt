@@ -1,6 +1,6 @@
 package odyseja.odysejapka.rak
 
-import Team
+import odyseja.odysejapka.gad.Team
 import com.opencsv.bean.CsvToBeanBuilder
 import org.springframework.stereotype.Service
 import java.io.BufferedReader

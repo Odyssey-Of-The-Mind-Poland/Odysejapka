@@ -1,6 +1,6 @@
 package odyseja.odysejapka.rak
 
-import Team
+import odyseja.odysejapka.gad.Team
 
 data class ComputedTeamScores(
     val team: Team,

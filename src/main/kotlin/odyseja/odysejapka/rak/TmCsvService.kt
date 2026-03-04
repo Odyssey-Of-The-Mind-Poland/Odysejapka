@@ -1,6 +1,6 @@
 package odyseja.odysejapka.rak
 
-import Team
+import odyseja.odysejapka.gad.Team
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.stereotype.Service
 import java.io.ByteArrayOutputStream

@@ -1,5 +1,5 @@
 package odyseja.odysejapka
 
 enum class Status {
-    STOPPED, RUNNING
+    STOPPED, RUNNING, CANCELLED, FAILED
 }

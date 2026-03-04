@@ -1,6 +1,6 @@
 package odyseja.odysejapka.rak
 
-import Team
+import odyseja.odysejapka.gad.Team
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 

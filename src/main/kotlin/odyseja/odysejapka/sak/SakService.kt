@@ -2,33 +2,38 @@ package odyseja.odysejapka.sak
 
 import SakConfiguration
 import odyseja.odysejapka.Progress
-import odyseja.odysejapka.Status
-import odyseja.odysejapka.async.ProcessRunner
+import odyseja.odysejapka.async.BackgroundJobService
+import odyseja.odysejapka.util.GoogleIdExtractor
 import org.springframework.stereotype.Service
 
 @Service
 class SakService(
-    private val sakCommandService: SakCommandService
+    private val sakCommandService: SakCommandService,
+    private val backgroundJobService: BackgroundJobService
 ) {
 
-    private var runner: ProcessRunner? = null
+    private val jobType = "sak"
 
     fun runGad(generateSakCommand: GenerateSakCommand, cityId: Int?) {
-        sakCommandService.saveCommand(generateSakCommand, cityId)
-        runner = ProcessRunner(
+        val command = generateSakCommand.copy(
+            templatesFolderId = GoogleIdExtractor.extractGoogleId(generateSakCommand.templatesFolderId),
+            zspId = GoogleIdExtractor.extractGoogleId(generateSakCommand.zspId)
+        )
+        sakCommandService.saveCommand(command, cityId)
+        backgroundJobService.start(
+            jobType,
             SakConfiguration(
-                generateSakCommand.templatesFolderId,
-                generateSakCommand.zspId
+                command.templatesFolderId,
+                command.zspId
             ).sakRunner()
         )
-        runner?.start()
     }
 
     fun stop() {
-        runner?.stop()
+        backgroundJobService.stop(jobType)
     }
 
     fun getProgress(): Progress {
-        return runner?.getProgress() ?: Progress(0, Status.STOPPED, listOf())
+        return backgroundJobService.getProgress(jobType)
     }
 }

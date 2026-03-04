@@ -1,3 +1,5 @@
+package odyseja.odysejapka.gad
+
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 

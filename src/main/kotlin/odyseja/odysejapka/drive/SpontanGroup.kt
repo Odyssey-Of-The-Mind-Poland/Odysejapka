@@ -1,6 +1,6 @@
 package odyseja.odysejapka.drive
 
-import Team
+import odyseja.odysejapka.gad.Team
 import odyseja.odysejapka.timetable.Performance
 
 data class SpontanGroups(val group: Group, val performances: List<Team>) {

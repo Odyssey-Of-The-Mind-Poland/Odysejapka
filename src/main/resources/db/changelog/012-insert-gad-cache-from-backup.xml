@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="012" author="odysejapka" failOnError="false">
+        <comment>Insert GAD cache data (run if 011 migrated but insert failed due to splitStatements)</comment>
+        <sql splitStatements="false">
+            INSERT INTO cache_entry (cache_key, value) VALUES (
+                'gad:global',
+                '{"templatesFolderId":"1yvGPvAaUsEHb2-OeVVbs3Tc0HsWr3i3J","problemPunctuationCells":{"1":{"dt":"E31","style":"E46","penalty":"E39","balsa":"","anomaly":"I1","anomalyVerify":"H68","actualPerformanceStartTime":"F2"},"2":{"dt":"E26","style":"E42","penalty":"E35","balsa":"","anomaly":"I1","anomalyVerify":"H73","actualPerformanceStartTime":"F2"},"3":{"dt":"E34","style":"E51","penalty":"E44","balsa":"","anomaly":"I1","anomalyVerify":"H75","actualPerformanceStartTime":"F2"},"4":{"dt":"E21","style":"E52","penalty":"E45","balsa":"E52","anomaly":"I1","anomalyVerify":"H105","actualPerformanceStartTime":"F2"},"5":{"dt":"E30","style":"E47","penalty":"E40","balsa":"","anomaly":"I1","anomalyVerify":"H75","actualPerformanceStartTime":"F2"}}}'
+            )
+            ON CONFLICT (cache_key) DO NOTHING;
+
+            INSERT INTO cache_entry (cache_key, value) VALUES (
+                'zsp:city:1',
+                '{"zspId":"1ich-YfzK24Ygkwtnvz1IfH6kuonewxVRdyPLue6cC-A","contestName":null}'
+            )
+            ON CONFLICT (cache_key) DO NOTHING;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

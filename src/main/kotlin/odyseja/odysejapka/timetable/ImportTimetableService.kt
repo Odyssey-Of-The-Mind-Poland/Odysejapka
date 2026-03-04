@@ -1,8 +1,7 @@
 package odyseja.odysejapka.timetable
 
-import TimeTableImporter
 import odyseja.odysejapka.Progress
-import odyseja.odysejapka.Status
+import odyseja.odysejapka.async.BackgroundJobService
 import odyseja.odysejapka.city.CityRepository
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.stereotype.Service
@@ -10,28 +9,22 @@ import org.springframework.stereotype.Service
 @Service
 class ImportTimetableService(
     private val performanceService: TimeTableService,
-    private val cityRepository: CityRepository
+    private val cityRepository: CityRepository,
+    private val backgroundJobService: BackgroundJobService
 ) {
 
-    private var importer: TimeTableImporter? = null
-    private var job: Thread? = null
+    private val jobType = "timetable"
 
     fun import(zspId: String, cityId: Int) {
-
-        if (importer != null || job?.isAlive == true) {
-            throw RuntimeException("Gad is already running")
-        }
-
         clearTimeTable(cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val cityName = cityRepository.findFirstById(cityId).name
         performanceService.deleteCity(cityId)
-        importer = TimeTableImporter(performanceService, sheetsAdapter, cityName)
 
-        job = Thread {
-            importer?.startImporting()
-        }
-        job?.start()
+        backgroundJobService.start(
+            jobType,
+            TimeTableRunner(performanceService, sheetsAdapter, cityName)
+        )
     }
 
     fun clearTimeTable(cityId: Int) {
@@ -39,16 +32,10 @@ class ImportTimetableService(
     }
 
     fun stop() {
-        job?.stop()
-        importer = null
+        backgroundJobService.stop(jobType)
     }
 
     fun getProgress(): Progress {
-        val progress = importer?.getProgress() ?: 100
-        return if (progress != 100) {
-            Progress(progress, Status.RUNNING, listOf())
-        } else {
-            Progress(100, Status.STOPPED, listOf())
-        }
+        return backgroundJobService.getProgress(jobType)
     }
 }

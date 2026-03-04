@@ -1,11 +1,11 @@
 package odyseja.odysejapka.sak
 
-import Team
+import odyseja.odysejapka.gad.Team
 import com.google.api.services.drive.model.File
 import com.google.api.services.sheets.v4.model.Sheet
 import odyseja.odysejapka.async.AsyncLogger
+import odyseja.odysejapka.async.CancellableRunner
 import odyseja.odysejapka.async.Log
-import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
 import odyseja.odysejapka.drive.SpontanGroups
@@ -17,9 +17,10 @@ internal class SakRunner(
     private val sheetsAdapter: SheetAdapter,
     private val zspId: String,
     private val templatesFolderId: String
-) : Runner {
+) : CancellableRunner {
 
     private val templates = getTemplates()
+    private val cancelled = java.util.concurrent.atomic.AtomicBoolean(false)
     private val sheetMap: Map<String, Pair<Sheet, String>> = buildSheetMap()
     private var totalTeamsCount = 0
     private var processedTeamsCount = AtomicInteger(0)
@@ -33,7 +34,7 @@ internal class SakRunner(
             SpontanGroups(group, performances)
         }
         for (group in groups) {
-
+            if (cancelled.get()) return
             if (group.group.age == "0" || group.group.problem == "0") {
                 continue
             }
@@ -43,6 +44,12 @@ internal class SakRunner(
             Thread.sleep(2000) // google API needs this
         }
     }
+
+    override fun requestCancel() {
+        cancelled.set(true)
+    }
+
+    override fun isCancelled(): Boolean = cancelled.get()
 
     private fun processGroup(group: SpontanGroups) {
         val groupCode = group.groupCode()
@@ -59,7 +66,7 @@ internal class SakRunner(
         var pointsCell = findCell(values, "Ostateczny wynik").copy(second = teamStartCell.second)
         val teams = group.performances.sortedBy { it.spontanSort() }
         for (team in teams) {
-
+            if (cancelled.get()) return
             if (team.isForeigner()) {
                 continue
             }

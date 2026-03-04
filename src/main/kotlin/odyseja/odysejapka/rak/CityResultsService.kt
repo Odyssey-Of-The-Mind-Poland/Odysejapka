@@ -1,6 +1,6 @@
 package odyseja.odysejapka.rak
 
-import Team
+import odyseja.odysejapka.gad.Team
 import odyseja.odysejapka.city.CityRepository
 import odyseja.odysejapka.form.FormState
 import odyseja.odysejapka.form.TeamResultEntity

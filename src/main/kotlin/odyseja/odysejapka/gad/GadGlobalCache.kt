@@ -2,9 +2,7 @@ package odyseja.odysejapka.gad
 
 import odyseja.odysejapka.gad.PunctationCells
 
-data class GenerateGadCommand(
+data class GadGlobalCache(
     val templatesFolderId: String,
-    val destinationFolderId: String,
-    val zspId: String,
     val problemPunctuationCells: Map<String, PunctationCells>
 )

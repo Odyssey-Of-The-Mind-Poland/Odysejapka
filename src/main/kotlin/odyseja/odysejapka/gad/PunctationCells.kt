@@ -1,3 +1,5 @@
+package odyseja.odysejapka.gad
+
 data class PunctationCells(
     val dt: String,
     val style: String,

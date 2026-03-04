@@ -1,6 +1,6 @@
 package odyseja.odysejapka.rak
 
-import Team
+import odyseja.odysejapka.gad.Team
 import com.samskivert.mustache.Mustache
 import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.problem.ProblemService

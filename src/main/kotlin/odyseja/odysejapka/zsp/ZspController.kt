@@ -1,6 +1,6 @@
 package odyseja.odysejapka.zsp
 
-import Team
+import odyseja.odysejapka.gad.Team
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

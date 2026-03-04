@@ -1,6 +1,7 @@
 package odyseja.odysejapka.rak
 
 import odyseja.odysejapka.drive.ZspSheetsAdapter
+import odyseja.odysejapka.util.GoogleIdExtractor
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -28,8 +29,9 @@ class RakController(
         @RequestBody request: ZspIdRequest,
         @RequestParam(required = false) cityId: Int?
     ): ResponseEntity<ByteArray> {
-        rakCommandService.saveCommand(request.zspId, cityId)
-        val csvData = rakService.generateCsv(request.zspId)
+        val zspId = GoogleIdExtractor.extractGoogleId(request.zspId)
+        rakCommandService.saveCommand(zspId, request.contestName, cityId)
+        val csvData = rakService.generateCsv(zspId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=your_file.csv")
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -41,8 +43,9 @@ class RakController(
         @RequestBody request: ZspIdRequest,
         @RequestParam(required = false) cityId: Int?
     ): ResponseEntity<ByteArray> {
-        rakCommandService.saveCommand(request.zspId, cityId)
-        val csvData = csvService.generateCsv(request.zspId)
+        val zspId = GoogleIdExtractor.extractGoogleId(request.zspId)
+        rakCommandService.saveCommand(zspId, request.contestName, cityId)
+        val csvData = csvService.generateCsv(zspId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=detailed_results.csv")
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -55,8 +58,9 @@ class RakController(
         @RequestParam(required = false) cityId: Int?,
         @RequestParam(required = false, defaultValue = "false") isRegion: Boolean
     ): ResponseEntity<String> {
-        rakCommandService.saveCommand(request.zspId, cityId)
-        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
+        val zspId = GoogleIdExtractor.extractGoogleId(request.zspId)
+        rakCommandService.saveCommand(zspId, request.contestName, cityId)
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val renderedHtml = htmlGeneratorService.generateHtmlResults(sheetsAdapter.getAllTeams(), isRegion, request.contestName)
 
         return ResponseEntity.ok()
@@ -70,8 +74,9 @@ class RakController(
         @RequestParam(required = false) cityId: Int?,
         @RequestParam(required = false, defaultValue = "false") isRegion: Boolean
     ): ResponseEntity<ByteArray> {
-        rakCommandService.saveCommand(request.zspId, cityId)
-        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
+        val zspId = GoogleIdExtractor.extractGoogleId(request.zspId)
+        rakCommandService.saveCommand(zspId, request.contestName, cityId)
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val pdfBytes = pdfGeneratorService.generatePdf(sheetsAdapter.getAllTeams(), isRegion, request.contestName)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results.pdf\"")
@@ -85,8 +90,9 @@ class RakController(
         @RequestParam(required = false) cityId: Int?,
         @RequestParam(required = false, defaultValue = "false") isRegion: Boolean
     ): ResponseEntity<ByteArray> {
-        rakCommandService.saveCommand(request.zspId, cityId)
-        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
+        val zspId = GoogleIdExtractor.extractGoogleId(request.zspId)
+        rakCommandService.saveCommand(zspId, request.contestName, cityId)
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val pdfBytes = pdfGeneratorService.generateShortPdf(sheetsAdapter.getAllTeams(), isRegion, request.contestName)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results-short.pdf\"")
@@ -100,8 +106,9 @@ class RakController(
         @RequestParam(required = false) cityId: Int?,
         @RequestParam(required = false, defaultValue = "false") isRegion: Boolean
     ): ResponseEntity<ByteArray> {
-        rakCommandService.saveCommand(request.zspId, cityId)
-        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(request.zspId)
+        val zspId = GoogleIdExtractor.extractGoogleId(request.zspId)
+        rakCommandService.saveCommand(zspId, request.contestName, cityId)
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val pdfBytes = latexGeneratorService.generatePdf(sheetsAdapter.getAllTeams(), isRegion, request.contestName)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results-latex.pdf\"")

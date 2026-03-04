@@ -1,6 +1,7 @@
 package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.Progress
+import odyseja.odysejapka.util.GoogleIdExtractor
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
@@ -55,7 +56,7 @@ class TimeTableController(
     @Secured("ROLE_ADMINISTRATOR")
     @PostMapping("/import")
     fun import(@RequestBody importTimeTable: ImportTimeTable, @RequestParam cityId: Int) {
-        return importTimetableService.import(importTimeTable.zspId, cityId)
+        return importTimetableService.import(GoogleIdExtractor.extractGoogleId(importTimeTable.zspId), cityId)
     }
 
     @PostMapping("/import/stop")

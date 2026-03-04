@@ -1,40 +1,38 @@
 package odyseja.odysejapka.gad
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import odyseja.odysejapka.cache.CacheKeys
+import odyseja.odysejapka.cache.CacheService
+import odyseja.odysejapka.gad.GadGlobalCache
+import odyseja.odysejapka.cache.ZspCityCache
 import org.springframework.stereotype.Service
 
 @Service
-class GadCommandService(
-    private val repository: GadCommandRepository,
-    private val objectMapper: ObjectMapper
-) {
+class GadCommandService(private val cacheService: CacheService) {
 
     fun saveCommand(command: GenerateGadCommand, cityId: Int?) {
-        repository.save(
-            GadCommandEntity(
-                cityId = cityId,
-                jsonData = objectMapper.writeValueAsString(command)
-            )
-        )
+        cacheService.put(CacheKeys.GAD_GLOBAL, GadGlobalCache(
+            templatesFolderId = command.templatesFolderId,
+            problemPunctuationCells = command.problemPunctuationCells
+        ))
+        if (cityId != null) {
+            cacheService.put(CacheKeys.zspCity(cityId), ZspCityCache(
+                zspId = command.zspId,
+                contestName = null
+            ))
+        }
     }
 
     fun getCommand(cityId: Int?): GenerateGadCommand {
-        val entity = if (cityId != null) {
-            repository.findFirstByCityIdOrderByIdDesc(cityId)
-        } else {
-            repository.findFirstByOrderByIdDesc()
-        }
+        val global = cacheService.get(CacheKeys.GAD_GLOBAL, GadGlobalCache::class.java)
+        val zsp = if (cityId != null) {
+            cacheService.get(CacheKeys.zspCity(cityId), ZspCityCache::class.java)
+        } else null
 
-        return if (entity == null) {
-            GenerateGadCommand(
-                templatesFolderId = "",
-                destinationFolderId = "",
-                zspId = "",
-                problemPunctuationCells = mapOf()
-            )
-        } else {
-            objectMapper.readValue(entity.jsonData, GenerateGadCommand::class.java)
-        }
+        return GenerateGadCommand(
+            templatesFolderId = global?.templatesFolderId ?: "",
+            destinationFolderId = "",
+            zspId = zsp?.zspId ?: "",
+            problemPunctuationCells = global?.problemPunctuationCells ?: emptyMap()
+        )
     }
-
 }

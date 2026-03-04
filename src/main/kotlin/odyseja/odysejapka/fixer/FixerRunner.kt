@@ -1,10 +1,12 @@
 package odyseja.odysejapka.fixer
 
+import odyseja.odysejapka.async.AsyncLogger
+import odyseja.odysejapka.async.CancellableRunner
 import odyseja.odysejapka.async.Log
-import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
-import java.lang.Thread.sleep
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 class FixerRunner(
     private val driveAdapter: DriveAdapter,
@@ -12,23 +14,38 @@ class FixerRunner(
     private val folderId: String,
     private val pattern: String,
     private val cells: List<FixSheetsCommand.ReplacementCell>
-) : Runner {
+) : CancellableRunner {
+
+    private val logger = AsyncLogger()
+    private val cancelled = AtomicBoolean(false)
+    private var totalFileCount = 0
+    private val processedFileCount = AtomicInteger(0)
+
     override fun run() {
-        driveAdapter.listFiles(folderId).forEach {
-            driveAdapter.listFiles(it.id).forEach { file ->
-                if (matchFileName(file.name, pattern)) {
-                    println("fixSheet: ${file.name}")
-                    fixSheet(file.id)
-                }
-            }
+        val allFiles = driveAdapter.listFiles(folderId).flatMap { folder ->
+            driveAdapter.listFiles(folder.id).filter { matchFileName(it.name, pattern) }
         }
-        println("finished fixing sheets")
+        totalFileCount = allFiles.size.coerceAtLeast(1)
+        for (file in allFiles) {
+            if (cancelled.get()) return
+            logger.log("fixSheet: ${file.name}")
+            fixSheet(file.id)
+            processedFileCount.incrementAndGet()
+        }
+        logger.log("finished fixing sheets")
     }
+
+    override fun requestCancel() {
+        cancelled.set(true)
+    }
+
+    override fun isCancelled(): Boolean = cancelled.get()
 
     private fun fixSheet(id: String) {
         for (cell in cells) {
+            if (cancelled.get()) return
             sheetsAdapter.writeValue(id, cell.sheetName, cell.cell, cell.value)
-            sleep(500)
+            Thread.sleep(500)
         }
     }
 
@@ -38,10 +55,10 @@ class FixerRunner(
     }
 
     override fun getProgress(): Int {
-        TODO("Not yet implemented")
+        return (processedFileCount.get() * 100) / totalFileCount
     }
 
     override fun getLogs(): List<Log> {
-        TODO("Not yet implemented")
+        return logger.getLogs()
     }
 }

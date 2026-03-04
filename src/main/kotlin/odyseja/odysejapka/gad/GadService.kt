@@ -1,36 +1,41 @@
 package odyseja.odysejapka.gad
 
-import GadConfiguration
 import odyseja.odysejapka.Progress
-import odyseja.odysejapka.Status
-import odyseja.odysejapka.async.ProcessRunner
+import odyseja.odysejapka.async.BackgroundJobService
+import odyseja.odysejapka.util.GoogleIdExtractor
 import org.springframework.stereotype.Service
 
 @Service
 class GadService(
-    private val gadCommandService: GadCommandService
+    private val gadCommandService: GadCommandService,
+    private val backgroundJobService: BackgroundJobService
 ) {
 
-    private var runner: ProcessRunner? = null
+    private val jobType = "gad"
 
     fun runGad(generateGadCommand: GenerateGadCommand, cityId: Int?) {
-        gadCommandService.saveCommand(generateGadCommand, cityId)
-        runner = ProcessRunner(
+        val command = generateGadCommand.copy(
+            templatesFolderId = GoogleIdExtractor.extractGoogleId(generateGadCommand.templatesFolderId),
+            destinationFolderId = GoogleIdExtractor.extractGoogleId(generateGadCommand.destinationFolderId),
+            zspId = GoogleIdExtractor.extractGoogleId(generateGadCommand.zspId)
+        )
+        gadCommandService.saveCommand(command, cityId)
+        backgroundJobService.start(
+            jobType,
             GadConfiguration(
-                generateGadCommand.templatesFolderId,
-                generateGadCommand.destinationFolderId,
-                generateGadCommand.zspId,
-                generateGadCommand.problemPunctuationCells
+                command.templatesFolderId,
+                command.destinationFolderId,
+                command.zspId,
+                command.problemPunctuationCells
             ).gadRunner()
         )
-        runner?.start()
     }
 
     fun stop() {
-        runner?.stop()
+        backgroundJobService.stop(jobType)
     }
 
     fun getProgress(): Progress {
-        return runner?.getProgress() ?: Progress(0, Status.STOPPED, listOf())
+        return backgroundJobService.getProgress(jobType)
     }
 }

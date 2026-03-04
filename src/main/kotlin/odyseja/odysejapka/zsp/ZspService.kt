@@ -1,6 +1,6 @@
 package odyseja.odysejapka.zsp
 
-import Team
+import odyseja.odysejapka.gad.Team
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

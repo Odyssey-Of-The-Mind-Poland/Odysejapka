@@ -1,25 +1,34 @@
 package odyseja.odysejapka.fixer
 
-import odyseja.odysejapka.async.ProcessRunner
+import odyseja.odysejapka.Progress
+import odyseja.odysejapka.async.BackgroundJobService
+import odyseja.odysejapka.util.GoogleIdExtractor
 import org.springframework.stereotype.Service
 
 @Service
-class FixerService {
+class FixerService(
+    private val backgroundJobService: BackgroundJobService
+) {
 
-    private var runner: ProcessRunner? = null
+    private val jobType = "fixer"
 
     fun start(fixSheetsCommand: FixSheetsCommand) {
-        runner = ProcessRunner(
+        val folderId = GoogleIdExtractor.extractGoogleId(fixSheetsCommand.folderId)
+        backgroundJobService.start(
+            jobType,
             FixerConfiguration(
-                fixSheetsCommand.folderId,
+                folderId,
                 fixSheetsCommand.pattern,
                 fixSheetsCommand.cells
             ).fixerRunner()
         )
-        runner?.start()
     }
 
     fun stop() {
-        runner?.stop()
+        backgroundJobService.stop(jobType)
+    }
+
+    fun getProgress(): Progress {
+        return backgroundJobService.getProgress(jobType)
     }
 }

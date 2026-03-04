@@ -1,6 +1,6 @@
 package odyseja.odysejapka.rak
 
-import Team
+import odyseja.odysejapka.gad.Team
 import odyseja.odysejapka.gad.TeamsGroup
 import odyseja.odysejapka.gad.TeamsGroups
 

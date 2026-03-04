@@ -1,11 +1,14 @@
+package odyseja.odysejapka.gad
+
 import com.google.api.services.drive.model.File
 import com.google.api.services.sheets.v4.model.Sheet
 import odyseja.odysejapka.async.AsyncLogger
+import odyseja.odysejapka.async.CancellableRunner
 import odyseja.odysejapka.async.Log
-import odyseja.odysejapka.async.Runner
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import odyseja.odysejapka.gad.TeamsGroupKey
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class GadRunner(
@@ -14,9 +17,10 @@ internal class GadRunner(
     private val problemPunctuationCells: Map<String, PunctationCells>,
     private val destinationFolderId: String,
     private val templatesFolderId: String
-) : Runner {
+) : CancellableRunner {
 
     private val templates = getTemplates()
+    private val cancelled = AtomicBoolean(false)
     private var totalSheetCount = 1
     private var processedSheetCount = AtomicInteger(0)
     private val groupFolders = mutableMapOf<TeamsGroupKey, String>()
@@ -26,11 +30,19 @@ internal class GadRunner(
         val sheets = sheetsAdapter.getSheets()
         totalSheetCount = sheets?.size ?: 1
         for (sheet in sheets!!) {
+            if (cancelled.get()) return
             processSheet(sheet)
             processedSheetCount.incrementAndGet()
         }
         processedSheetCount.set(totalSheetCount)
+        logger.log("Finished GAD processing")
     }
+
+    override fun requestCancel() {
+        cancelled.set(true)
+    }
+
+    override fun isCancelled(): Boolean = cancelled.get()
 
     override fun getProgress(): Int {
         return (processedSheetCount.get() * 100) / totalSheetCount
@@ -53,7 +65,7 @@ internal class GadRunner(
 
     private fun processTeams(teams: Teams, sheetTitle: String) {
         for (team in teams.teams) {
-
+            if (cancelled.get()) return
             logger.log("Processing team: ${team.teamName}")
             if (team.isJunior()) {
                 logger.log("${team.teamName} is junior team skipping")

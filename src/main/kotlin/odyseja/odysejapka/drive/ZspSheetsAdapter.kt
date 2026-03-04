@@ -1,7 +1,7 @@
 package odyseja.odysejapka.drive
 
-import Team
-import Teams
+import odyseja.odysejapka.gad.Team
+import odyseja.odysejapka.gad.Teams
 import com.google.api.services.sheets.v4.model.Sheet
 
 class ZspSheetsAdapter(

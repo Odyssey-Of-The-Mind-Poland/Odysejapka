@@ -1,6 +1,6 @@
 package odyseja.odysejapka.rak
 
-import Team
+import odyseja.odysejapka.gad.Team
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import odyseja.odysejapka.problem.ProblemService
 import org.springframework.stereotype.Service

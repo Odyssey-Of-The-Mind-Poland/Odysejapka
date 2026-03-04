@@ -1,3 +1,5 @@
+package odyseja.odysejapka.gad
+
 import odyseja.odysejapka.gad.TeamsGroupKey
 import odyseja.odysejapka.timetable.Performance
 import org.apache.commons.lang3.StringUtils

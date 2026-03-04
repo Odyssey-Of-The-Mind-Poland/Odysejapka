@@ -1,6 +1,6 @@
 package odyseja.odysejapka.gad
 
-import Team
+import odyseja.odysejapka.gad.Team
 
 data class TeamsGroups(val groups: List<TeamsGroup>) {
 

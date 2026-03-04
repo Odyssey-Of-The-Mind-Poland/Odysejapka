@@ -1,39 +1,37 @@
 package odyseja.odysejapka.sak
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import odyseja.odysejapka.cache.CacheKeys
+import odyseja.odysejapka.cache.CacheService
+import odyseja.odysejapka.sak.SakCityCache
+import odyseja.odysejapka.cache.ZspCityCache
 import org.springframework.stereotype.Service
 
 @Service
-class SakCommandService(
-    private val repository: SakCommandRepository,
-    private val objectMapper: ObjectMapper
-) {
+class SakCommandService(private val cacheService: CacheService) {
 
     fun saveCommand(command: GenerateSakCommand, cityId: Int?) {
-        repository.save(
-            SakCommandEntity(
-                cityId = cityId,
-                jsonData = objectMapper.writeValueAsString(command)
-            )
-        )
+        if (cityId != null) {
+            cacheService.put(CacheKeys.sakCity(cityId), SakCityCache(
+                templatesFolderId = command.templatesFolderId
+            ))
+            cacheService.put(CacheKeys.zspCity(cityId), ZspCityCache(
+                zspId = command.zspId,
+                contestName = null
+            ))
+        }
     }
 
     fun getCommand(cityId: Int?): GenerateSakCommand {
-        val entity = if (cityId != null) {
-            repository.findFirstByCityIdOrderByIdDesc(cityId)
-        } else {
-            repository.findFirstByOrderByIdDesc()
-        }
+        val sak = if (cityId != null) {
+            cacheService.get(CacheKeys.sakCity(cityId), SakCityCache::class.java)
+        } else null
+        val zsp = if (cityId != null) {
+            cacheService.get(CacheKeys.zspCity(cityId), ZspCityCache::class.java)
+        } else null
 
-        return if (entity == null) {
-            GenerateSakCommand(
-                templatesFolderId = "",
-                zspId = ""
-            )
-        } else {
-            objectMapper.readValue(entity.jsonData, GenerateSakCommand::class.java)
-        }
+        return GenerateSakCommand(
+            templatesFolderId = sak?.templatesFolderId ?: "",
+            zspId = zsp?.zspId ?: ""
+        )
     }
 }
-
-

@@ -1,6 +1,7 @@
 import IconUserCog from "@tabler/icons-svelte/icons/user-cog";
 import IconTrophy from "@tabler/icons-svelte/icons/trophy";
 import IconPaw from "@tabler/icons-svelte/icons/paw";
+import IconTrees from "@tabler/icons-svelte/icons/trees";
 import type {Role} from "$lib/userStore";
 
 export type NavItem = {
@@ -30,10 +31,17 @@ export const routes = {
             icon: IconPaw,
             requiredRoles: ['ADMINISTRATOR', 'LAPPKA'],
         },
+        {
+            title: "Zwierzyniec",
+            url: "/dashboard/zwierzyniec",
+            icon: IconTrees,
+            requiredRole: 'ADMINISTRATOR',
+        },
     ] satisfies NavItem[],
 
     adminRoutes: [
         {url: "/dashboard/editor", requiredRole: 'ADMINISTRATOR' as Role},
         {url: "/dashboard/spontan-editor", requiredRole: 'ADMINISTRATOR' as Role},
+        {url: "/dashboard/zwierzyniec", requiredRole: 'ADMINISTRATOR' as Role},
     ],
 };
