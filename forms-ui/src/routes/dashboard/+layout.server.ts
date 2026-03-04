@@ -8,7 +8,7 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 
 	// Require either an Auth0 session or a local backend token
 	if (!auth0Session && !localToken) {
-		throw redirect(302, '/auth/login');
+		throw redirect(302, '/');
 	}
 
 	return {};

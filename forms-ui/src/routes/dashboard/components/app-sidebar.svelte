@@ -15,7 +15,7 @@
                 <Sidebar.MenuButton class="data-[slot=sidebar-menu-button]:!p-1.5">
                     {#snippet child({props})}
                         <a href="##" {...props}>
-                            <span class="text-base font-semibold">Odyseja Formularze</span>
+                            <span class="text-base font-semibold">Odyseja Umysłu</span>
                         </a>
                     {/snippet}
                 </Sidebar.MenuButton>

@@ -35,7 +35,7 @@
         } catch {
             // Token expired or invalid — redirect to login
             currentUser.set(null);
-            goto("/auth/login");
+            goto("/");
         }
     }
 
