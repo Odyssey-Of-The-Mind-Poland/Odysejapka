@@ -2,6 +2,7 @@ package odyseja.odysejapka.dashboard
 
 import odyseja.odysejapka.form.FormState
 import odyseja.odysejapka.form.TeamResultEntity
+import odyseja.odysejapka.spontan.SpontanResultEntity
 import odyseja.odysejapka.timetable.Performance
 import odyseja.odysejapka.timetable.PerformanceGroup
 
@@ -22,11 +23,12 @@ data class TeamListPerformance(
     val rawStyle: Double? = null,
     val rawPenalty: Double? = null,
     val rawWeight: Double? = null,
+    val rawSpontan: Double? = null,
     val rawTotal: Double? = null,
     val ranatra: Boolean = false,
 ) {
     companion object {
-        fun from(performance: Performance, teamResult: TeamResultEntity?): TeamListPerformance {
+        fun from(performance: Performance, teamResult: TeamResultEntity?, spontanResult: SpontanResultEntity? = null): TeamListPerformance {
             val state = teamResult?.formState ?: FormState.NOT_SCORED
             return TeamListPerformance(
                 id = performance.id,
@@ -45,6 +47,7 @@ data class TeamListPerformance(
                 rawStyle = teamResult?.rawStyle,
                 rawPenalty = teamResult?.rawPenalty,
                 rawWeight = teamResult?.rawWeight,
+                rawSpontan = spontanResult?.rawSpontan,
                 rawTotal = teamResult?.rawTotal,
                 ranatra = teamResult?.ranatra ?: false,
             )

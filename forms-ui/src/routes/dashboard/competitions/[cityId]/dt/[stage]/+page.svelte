@@ -47,6 +47,7 @@
             rawStyle: number | null;
             rawPenalty: number | null;
             rawWeight: number | null;
+            rawSpontan: number | null;
             rawTotal: number | null;
             ranatra: boolean;
         }>;
@@ -69,6 +70,7 @@
         rawStyle: number | null;
         rawPenalty: number | null;
         rawWeight: number | null;
+        rawSpontan: number | null;
         rawTotal: number | null;
         ranatra: boolean;
     };
@@ -130,6 +132,7 @@
                         rawStyle: performance.rawStyle,
                         rawPenalty: performance.rawPenalty,
                         rawWeight: performance.rawWeight,
+                        rawSpontan: performance.rawSpontan,
                         rawTotal: performance.rawTotal,
                         ranatra: performance.ranatra ?? false,
                     });
@@ -293,6 +296,7 @@
                                             <Table.Head class="font-semibold">DT</Table.Head>
                                             <Table.Head class="font-semibold">Styl</Table.Head>
                                             <Table.Head class="font-semibold">Karne</Table.Head>
+                                            <Table.Head class="font-semibold">Spontan</Table.Head>
                                             {#if group.problem === 4}
                                                 <Table.Head class="font-semibold">Waga</Table.Head>
                                             {/if}
@@ -349,6 +353,13 @@
                                                 <Table.Cell class="font-mono tabular-nums text-sm">
                                                     {#if team.rawPenalty != null}
                                                         {team.rawPenalty.toFixed(2)}
+                                                    {:else}
+                                                        <span class="text-muted-foreground">—</span>
+                                                    {/if}
+                                                </Table.Cell>
+                                                <Table.Cell class="font-mono tabular-nums text-sm">
+                                                    {#if team.rawSpontan != null}
+                                                        {team.rawSpontan.toFixed(2)}
                                                     {:else}
                                                         <span class="text-muted-foreground">—</span>
                                                     {/if}
