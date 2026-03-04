@@ -250,6 +250,11 @@
                 <UsersIcon class="size-10 text-muted-foreground/40 mx-auto mb-3"/>
                 <p class="text-muted-foreground font-medium">Brak drużyn</p>
                 <p class="text-sm text-muted-foreground/70 mt-1">Na tej scenie nie ma jeszcze drużyn.</p>
+                <RequirePermission role="ADMINISTRATOR">
+                    <div class="mt-4">
+                        <CsvUploadDialog {cityId}/>
+                    </div>
+                </RequirePermission>
             </div>
         {:else}
             <div class="relative">

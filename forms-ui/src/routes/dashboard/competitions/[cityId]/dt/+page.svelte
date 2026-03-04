@@ -4,6 +4,8 @@
     import {goto} from "$app/navigation";
     import {page} from "$app/state";
     import UsersIcon from "@lucide/svelte/icons/users";
+    import RequirePermission from "$lib/components/RequirePermission.svelte";
+    import CsvUploadDialog from "../CsvUploadDialog.svelte";
 
     type City = {
         id: number;
@@ -70,5 +72,10 @@
         <UsersIcon class="size-10 text-muted-foreground/40 mx-auto mb-3"/>
         <p class="text-muted-foreground font-medium">Brak drużyn</p>
         <p class="text-sm text-muted-foreground/70 mt-1">W tym mieście nie ma jeszcze drużyn.</p>
+        <RequirePermission role="ADMINISTRATOR">
+            <div class="mt-4">
+                <CsvUploadDialog {cityId}/>
+            </div>
+        </RequirePermission>
     </div>
 {/if}
