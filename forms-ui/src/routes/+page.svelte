@@ -26,13 +26,12 @@
 			</Card.Header>
 			<Card.Content class="space-y-6">
 				<!-- Auth0 -->
-				<SignIn provider="auth0" className="w-full">
+				<form method="POST" action="/signin" class="signInButton w-full">
 					<input type="hidden" name="callbackUrl" value="/dashboard" />
-					<Button slot="submitButton" variant="secondary" class="w-full">
+					<Button type="submit" slot="submitButton" variant="secondary" class="w-full">
 						Zaloguj przez Auth0
 					</Button>
-				</SignIn>
-
+				</form>
 				<div class="relative">
 					<div class="absolute inset-0 flex items-center">
 						<span class="w-full border-t"></span>
