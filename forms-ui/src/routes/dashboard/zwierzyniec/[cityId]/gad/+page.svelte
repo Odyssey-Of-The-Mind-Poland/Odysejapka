@@ -103,7 +103,7 @@
 	<Card.Root>
 		<Card.Header>
 			<Card.Title>GAD</Card.Title>
-			<Card.Description>Generator Arkuszy z Danymi — generowanie arkuszy oceniania</Card.Description>
+			<Card.Description>Generator Arkuszy Drużynowych</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			{#if gadQuery.isPending}

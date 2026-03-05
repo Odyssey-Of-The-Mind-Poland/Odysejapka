@@ -3,6 +3,7 @@ package odyseja.odysejapka.fixer
 import odyseja.odysejapka.async.AsyncLogger
 import odyseja.odysejapka.async.CancellableRunner
 import odyseja.odysejapka.async.Log
+import com.google.api.services.drive.model.File
 import odyseja.odysejapka.drive.DriveAdapter
 import odyseja.odysejapka.drive.SheetAdapter
 import java.util.concurrent.atomic.AtomicBoolean
@@ -16,15 +17,18 @@ class FixerRunner(
     private val cells: List<FixSheetsCommand.ReplacementCell>
 ) : CancellableRunner {
 
+    companion object {
+        private const val MAX_DEPTH = 5
+        private const val FOLDER_MIME = "application/vnd.google-apps.folder"
+    }
+
     private val logger = AsyncLogger()
     private val cancelled = AtomicBoolean(false)
     private var totalFileCount = 0
     private val processedFileCount = AtomicInteger(0)
 
     override fun run() {
-        val allFiles = driveAdapter.listFiles(folderId).flatMap { folder ->
-            driveAdapter.listFiles(folder.id).filter { matchFileName(it.name, pattern) }
-        }
+        val allFiles = collectFiles(folderId, 0)
         totalFileCount = allFiles.size.coerceAtLeast(1)
         for (file in allFiles) {
             if (cancelled.get()) return
@@ -47,6 +51,15 @@ class FixerRunner(
             sheetsAdapter.writeValue(id, cell.sheetName, cell.cell, cell.value)
             Thread.sleep(500)
         }
+    }
+
+    private fun collectFiles(parentId: String, depth: Int): List<File> {
+        if (depth >= MAX_DEPTH) return emptyList()
+        val children = driveAdapter.listFiles(parentId)
+        val matched = children.filter { it.mimeType != FOLDER_MIME && matchFileName(it.name, pattern) }
+        val nested = children.filter { it.mimeType == FOLDER_MIME }
+            .flatMap { collectFiles(it.id, depth + 1) }
+        return matched + nested
     }
 
     private fun matchFileName(name: String?, pattern: String): Boolean {

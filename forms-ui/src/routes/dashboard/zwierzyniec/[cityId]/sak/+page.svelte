@@ -19,7 +19,6 @@
 		})
 	);
 
-	let folderId = $state('');
 	let zspId = $state('');
 	let sakProgress = $state<{ status: string; progress: number; logs: { logTime: string; message: string }[] }>({
 		status: 'STOPPED',
@@ -32,10 +31,11 @@
 	$effect(() => {
 		const d = sakQuery.data;
 		if (d) {
-			folderId = d.templatesFolderId ?? '';
 			zspId = d.zspId ?? '';
 		}
 	});
+
+	let folderId = $derived(sakQuery.data?.templatesFolderId ?? '');
 
 	function startSak() {
 		runSak(cityId, { templatesFolderId: folderId, zspId })
@@ -77,7 +77,7 @@
 	<Card.Root>
 		<Card.Header>
 			<Card.Title>SAK</Card.Title>
-			<Card.Description>Systemowy Arkusz Kontrolny — generowanie arkuszy z szablonów</Card.Description>
+			<Card.Description>Spontanicznych Arkuszy kreator</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			{#if sakQuery.isPending}
@@ -91,10 +91,6 @@
 				</div>
 			{:else}
 				<div class="grid gap-4 max-w-md">
-					<div class="space-y-2">
-						<Label for="folderId">Folder z arkuszami</Label>
-						<Input id="folderId" bind:value={folderId} placeholder="ID folderu" />
-					</div>
 					<div class="space-y-2">
 						<Label for="zspId">ZSP ID</Label>
 						<Input id="zspId" bind:value={zspId} placeholder="ZSP ID" />

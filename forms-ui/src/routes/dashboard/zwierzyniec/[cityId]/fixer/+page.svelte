@@ -5,6 +5,12 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Card from '$lib/components/ui/card';
+	import * as Select from '$lib/components/ui/select';
+
+	const sheetOptions = [
+		{ value: 'Arkusz Ocen Cząstkowych', label: 'Arkusz Ocen Cząstkowych' },
+		{ value: 'Arkusz Ocen Surowych', label: 'Arkusz Ocen Surowych' }
+	];
 	import ProgressPanel from '$lib/components/ProgressPanel.svelte';
 	import IconTrash from '@tabler/icons-svelte/icons/trash';
 	import { toast } from 'svelte-sonner';
@@ -12,7 +18,8 @@
 
 	let cityId = $derived(Number(page.params.cityId));
 
-	let pattern = $state('');
+	let problemNumber = $state(1);
+	let pattern = $derived(`P${problemNumber}*`);
 	let folderId = $state('');
 	let fixerProgress = $state<{ status: string; progress: number; logs: { logTime: string; message: string }[] }>({
 		status: 'STOPPED',
@@ -20,11 +27,11 @@
 		logs: []
 	});
 
-	let cells = $state<ReplacementCell[]>([{ sheetName: '', cell: '', value: '' }]);
+	let cells = $state<ReplacementCell[]>([{ sheetName: 'Arkusz Ocen Cząstkowych', cell: '', value: '' }]);
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 
 	function addCell() {
-		cells = [...cells, { sheetName: '', cell: '', value: '' }];
+		cells = [...cells, { sheetName: 'Arkusz Ocen Cząstkowych', cell: '', value: '' }];
 	}
 
 	function removeCell(index: number) {
@@ -77,8 +84,18 @@
 			<div class="flex flex-col gap-6">
 				<div class="grid gap-4 sm:grid-cols-2 max-w-2xl">
 					<div class="space-y-2">
-						<Label for="pattern">Arkusz pattern</Label>
-						<Input id="pattern" bind:value={pattern} placeholder="Wzorzec nazwy arkusza" />
+						<Label for="problemNumber">Numer problemu</Label>
+						<div class="flex gap-1.5">
+							{#each [1, 2, 3, 4, 5] as n}
+								<button
+									class="flex h-9 w-9 items-center justify-center rounded-md border text-sm font-medium transition-colors {problemNumber === n ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'}"
+									onclick={() => (problemNumber = n)}
+								>
+									{n}
+								</button>
+							{/each}
+						</div>
+						<p class="text-xs text-muted-foreground">Wzorzec: {pattern}</p>
 					</div>
 					<div class="space-y-2">
 						<Label for="folderId">Folder z arkuszami</Label>
@@ -98,7 +115,20 @@
 						{#each cells as cell, i}
 							<div class="grid grid-cols-[1fr_1fr_1fr_auto] gap-px bg-muted">
 								<div class="bg-background px-2 py-1.5">
-									<Input bind:value={cell.sheetName} placeholder="Nazwa arkusza" class="border-0 shadow-none h-8" />
+									<Select.Root
+										type="single"
+										value={cell.sheetName}
+										onValueChange={(v) => { if (v) cells[i].sheetName = v; }}
+									>
+										<Select.Trigger class="border-0 shadow-none h-8 w-full">
+											{cell.sheetName || 'Wybierz arkusz'}
+										</Select.Trigger>
+										<Select.Content>
+											{#each sheetOptions as opt}
+												<Select.Item value={opt.value} label={opt.label} />
+											{/each}
+										</Select.Content>
+									</Select.Root>
 								</div>
 								<div class="bg-background px-2 py-1.5">
 									<Input bind:value={cell.cell} placeholder="np. A1" class="border-0 shadow-none h-8" />
