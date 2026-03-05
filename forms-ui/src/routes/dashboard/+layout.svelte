@@ -9,6 +9,8 @@
     import {apiFetch} from "$lib/api";
     import type {CurrentUser} from "$lib/userStore";
     import {routes} from "./routes";
+    import {selectedCity, setCity, type City} from "$lib/cityStore";
+    import {createOdysejaQuery} from "$lib/queries";
 
     function checkRouteAccess(user: CurrentUser) {
         const currentPath = page.url.pathname;
@@ -38,6 +40,27 @@
             goto("/");
         }
     }
+
+    let citiesQuery = createOdysejaQuery<City[]>({
+        queryKey: ['dashboardCities'],
+        path: '/api/v1/dashboard/cities',
+    });
+
+    // Sync selectedCity store from URL when navigating directly
+    $effect(() => {
+        const path = page.url.pathname;
+        const match = path.match(/^\/dashboard\/(?:competitions|lappka|zwierzyniec)\/(\d+)/);
+        if (match) {
+            const cityId = Number(match[1]);
+            const current = $selectedCity;
+            if (current?.id !== cityId) {
+                const city = citiesQuery.data?.find(c => c.id === cityId);
+                if (city) {
+                    setCity(city);
+                }
+            }
+        }
+    });
 
     onMount(() => {
         fetchCurrentUser();

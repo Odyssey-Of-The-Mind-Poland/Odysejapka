@@ -2,6 +2,7 @@
     import * as Sidebar from "$lib/registry/ui/sidebar";
     import NavMain from "./nav-main.svelte";
     import NavUser from "./nav-user.svelte";
+    import CitySelector from "./city-selector.svelte";
     import type {ComponentProps} from "svelte";
     import {routes} from "../routes";
 
@@ -22,6 +23,7 @@
             </Sidebar.MenuItem>
         </Sidebar.Menu>
     </Sidebar.Header>
+    <CitySelector/>
     <Sidebar.Content>
         <NavMain items={routes.navMain}/>
     </Sidebar.Content>
