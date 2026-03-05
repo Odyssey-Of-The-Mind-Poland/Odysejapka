@@ -4,6 +4,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import * as Card from '$lib/components/ui/card';
+	import ProgressPanel from '$lib/components/ProgressPanel.svelte';
+	import IconTrash from '@tabler/icons-svelte/icons/trash';
 	import { toast } from 'svelte-sonner';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -65,60 +68,65 @@
 </script>
 
 <div class="flex flex-col gap-5">
-	<h2 class="text-xl font-semibold">Fixer</h2>
-
-	<div class="flex flex-col gap-3 max-w-2xl">
-		<div class="grid gap-2">
-			<Label for="pattern">Arkusz pattern</Label>
-			<Input id="pattern" bind:value={pattern} placeholder="Arkusz pattern" />
-		</div>
-		<div class="grid gap-2">
-			<Label for="folderId">Folder z arkuszami</Label>
-			<Input id="folderId" bind:value={folderId} placeholder="Folder z arkuszami" />
-		</div>
-
-		<div class="flex flex-col gap-2">
-			<Label>Komórki do podmiany</Label>
-			{#each cells as cell, i}
-				<div class="flex gap-2 items-center">
-					<Input bind:value={cell.sheetName} placeholder="Nazwa arkusza" class="flex-1" />
-					<Input bind:value={cell.cell} placeholder="Komórka" class="flex-1" />
-					<Input bind:value={cell.value} placeholder="Podmieniona wartość" class="flex-1" />
-					<Button variant="destructive" size="icon" onclick={() => removeCell(i)}>
-						Usuń
-					</Button>
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>Fixer</Card.Title>
+			<Card.Description>Masowa podmiana wartości w komórkach arkuszy</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			<div class="flex flex-col gap-6">
+				<div class="grid gap-4 sm:grid-cols-2 max-w-2xl">
+					<div class="space-y-2">
+						<Label for="pattern">Arkusz pattern</Label>
+						<Input id="pattern" bind:value={pattern} placeholder="Wzorzec nazwy arkusza" />
+					</div>
+					<div class="space-y-2">
+						<Label for="folderId">Folder z arkuszami</Label>
+						<Input id="folderId" bind:value={folderId} placeholder="ID folderu" />
+					</div>
 				</div>
-			{/each}
-			<Button variant="outline" onclick={addCell}>Dodaj komórkę</Button>
-		</div>
-	</div>
 
-	<div class="flex flex-col gap-3">
-		{#if fixerProgress.status === 'STOPPED'}
-			<Button onclick={fix}>Napraw</Button>
-		{:else}
-			<Button variant="destructive" onclick={stopFixing}>Zatrzymaj</Button>
-		{/if}
-		{#if fixerProgress.status !== 'STOPPED' || (fixerProgress.logs && fixerProgress.logs.length > 0)}
-			<div class="w-full">
-				<div class="h-2 rounded-full bg-muted overflow-hidden">
-					<div
-						class="h-full bg-primary transition-all"
-						style="width: {fixerProgress.progress}%"
-					></div>
+				<div class="flex flex-col gap-3">
+					<Label>Komórki do podmiany</Label>
+					<div class="rounded-lg border overflow-hidden">
+						<div class="grid grid-cols-[1fr_1fr_1fr_auto] gap-px bg-muted text-xs font-medium text-muted-foreground">
+							<div class="bg-background px-3 py-2">Arkusz</div>
+							<div class="bg-background px-3 py-2">Komórka</div>
+							<div class="bg-background px-3 py-2">Wartość</div>
+							<div class="bg-background px-3 py-2 w-10"></div>
+						</div>
+						{#each cells as cell, i}
+							<div class="grid grid-cols-[1fr_1fr_1fr_auto] gap-px bg-muted">
+								<div class="bg-background px-2 py-1.5">
+									<Input bind:value={cell.sheetName} placeholder="Nazwa arkusza" class="border-0 shadow-none h-8" />
+								</div>
+								<div class="bg-background px-2 py-1.5">
+									<Input bind:value={cell.cell} placeholder="np. A1" class="border-0 shadow-none h-8" />
+								</div>
+								<div class="bg-background px-2 py-1.5">
+									<Input bind:value={cell.value} placeholder="Nowa wartość" class="border-0 shadow-none h-8" />
+								</div>
+								<div class="bg-background px-2 py-1.5 flex items-center justify-center w-10">
+									<Button variant="ghost" size="icon" class="h-8 w-8 text-muted-foreground hover:text-destructive" onclick={() => removeCell(i)}>
+										<IconTrash class="size-4" />
+									</Button>
+								</div>
+							</div>
+						{/each}
+					</div>
+					<Button variant="outline" size="sm" onclick={addCell} class="w-fit">Dodaj komórkę</Button>
 				</div>
 			</div>
-		{/if}
-	</div>
+		</Card.Content>
+	</Card.Root>
 
-	{#if fixerProgress.logs && fixerProgress.logs.length > 0}
-		<div class="flex flex-col p-4 bg-muted rounded-lg font-mono text-sm max-h-48 overflow-y-auto">
-			{#each fixerProgress.logs as log}
-				<div class="flex gap-3">
-					<span class="text-muted-foreground shrink-0">{log.logTime}</span>
-					<span>> {log.message}</span>
-				</div>
-			{/each}
-		</div>
-	{/if}
+	<ProgressPanel
+		status={fixerProgress.status}
+		progress={fixerProgress.progress}
+		logs={fixerProgress.logs}
+		onstart={fix}
+		onstop={stopFixing}
+		startLabel="Napraw"
+		stopLabel="Zatrzymaj"
+	/>
 </div>

@@ -2,10 +2,11 @@
 	import { page } from '$app/state';
 	import { runSak, stopSak, getSakStatus } from '$lib/zwierzyniec';
 	import { createOdysejaQuery } from '$lib/queries';
-	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Spinner } from '$lib/components/ui/spinner';
+	import * as Card from '$lib/components/ui/card';
+	import ProgressPanel from '$lib/components/ProgressPanel.svelte';
 	import { toast } from 'svelte-sonner';
 	import { onMount, onDestroy } from 'svelte';
 
@@ -73,56 +74,45 @@
 </script>
 
 <div class="flex flex-col gap-5">
-	<h2 class="text-xl font-semibold">SAK</h2>
-
-	{#if sakQuery.isPending}
-		<div class="flex items-center gap-3 py-4">
-			<Spinner size="sm" />
-			<span class="text-muted-foreground">Ładowanie...</span>
-		</div>
-	{:else if sakQuery.error}
-		<div class="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
-			<p class="text-sm text-destructive">{String(sakQuery.error)}</p>
-		</div>
-	{:else}
-		<div class="flex flex-col gap-3 max-w-md">
-			<div class="grid gap-2">
-				<Label for="folderId">Folder z arkuszami</Label>
-				<Input id="folderId" bind:value={folderId} placeholder="Folder z arkuszami" />
-			</div>
-			<div class="grid gap-2">
-				<Label for="zspId">ZSP ID</Label>
-				<Input id="zspId" bind:value={zspId} placeholder="ZSP ID" />
-			</div>
-		</div>
-
-		<div class="flex flex-col gap-3">
-			{#if sakProgress.status === 'STOPPED'}
-				<Button onclick={startSak}>Generuj arkusze</Button>
+	<Card.Root>
+		<Card.Header>
+			<Card.Title>SAK</Card.Title>
+			<Card.Description>Systemowy Arkusz Kontrolny — generowanie arkuszy z szablonów</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			{#if sakQuery.isPending}
+				<div class="flex items-center gap-3 py-4">
+					<Spinner size="sm" />
+					<span class="text-muted-foreground">Ładowanie...</span>
+				</div>
+			{:else if sakQuery.error}
+				<div class="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+					<p class="text-sm text-destructive">{String(sakQuery.error)}</p>
+				</div>
 			{:else}
-				<Button variant="destructive" onclick={stopSakRun}>Zatrzymaj generowanie</Button>
-			{/if}
-			{#if sakProgress.status !== 'STOPPED' || (sakProgress.logs && sakProgress.logs.length > 0)}
-				<div class="w-full">
-					<div class="h-2 rounded-full bg-muted overflow-hidden">
-						<div
-							class="h-full bg-primary transition-all"
-							style="width: {sakProgress.progress}%"
-						></div>
+				<div class="grid gap-4 max-w-md">
+					<div class="space-y-2">
+						<Label for="folderId">Folder z arkuszami</Label>
+						<Input id="folderId" bind:value={folderId} placeholder="ID folderu" />
+					</div>
+					<div class="space-y-2">
+						<Label for="zspId">ZSP ID</Label>
+						<Input id="zspId" bind:value={zspId} placeholder="ZSP ID" />
 					</div>
 				</div>
 			{/if}
-		</div>
+		</Card.Content>
+	</Card.Root>
 
-		{#if sakProgress.logs && sakProgress.logs.length > 0}
-			<div class="flex flex-col p-4 bg-muted rounded-lg font-mono text-sm max-h-48 overflow-y-auto">
-				{#each sakProgress.logs as log}
-					<div class="flex gap-3">
-						<span class="text-muted-foreground shrink-0">{log.logTime}</span>
-						<span>> {log.message}</span>
-					</div>
-				{/each}
-			</div>
-		{/if}
+	{#if !sakQuery.isPending && !sakQuery.error}
+		<ProgressPanel
+			status={sakProgress.status}
+			progress={sakProgress.progress}
+			logs={sakProgress.logs}
+			onstart={startSak}
+			onstop={stopSakRun}
+			startLabel="Generuj arkusze"
+			stopLabel="Zatrzymaj generowanie"
+		/>
 	{/if}
 </div>

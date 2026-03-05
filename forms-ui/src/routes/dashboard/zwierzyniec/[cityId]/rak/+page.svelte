@@ -10,6 +10,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Spinner } from '$lib/components/ui/spinner';
+	import * as Card from '$lib/components/ui/card';
 	import { toast } from 'svelte-sonner';
 
 	let cityId = $derived(Number(page.params.cityId));
@@ -64,44 +65,72 @@
 	const downloadLatexPdf = () => downloadFile(downloadRakLatexPdf, 'pdf');
 </script>
 
-<div class="flex flex-col gap-5">
-	<h2 class="text-xl font-semibold">Rankingowy Analizator Końcowy</h2>
+<Card.Root>
+	<Card.Header>
+		<Card.Title>Rankingowy Analizator Końcowy</Card.Title>
+		<Card.Description>Generowanie rankingów i wyników w formacie PDF</Card.Description>
+	</Card.Header>
+	<Card.Content>
+		{#if rakQuery.isPending}
+			<div class="flex items-center gap-3 py-4">
+				<Spinner size="sm" />
+				<span class="text-muted-foreground">Ładowanie...</span>
+			</div>
+		{:else if rakQuery.error}
+			<div class="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+				<p class="text-sm text-destructive">{String(rakQuery.error)}</p>
+			</div>
+		{:else}
+			<div class="flex flex-col gap-6">
+				<div class="grid gap-4 max-w-md">
+					<div class="space-y-2">
+						<Label for="zspId">ZSP ID</Label>
+						<Input id="zspId" type="text" bind:value={zspId} placeholder="ZSP ID" />
+					</div>
+					<div class="space-y-2">
+						<Label for="contestName">Nazwa konkursu</Label>
+						<Input id="contestName" type="text" bind:value={contestName} placeholder="Nazwa konkursu" />
+					</div>
+					<div class="flex items-center gap-2">
+						<input type="checkbox" id="isRegion" bind:checked={isRegion} class="rounded" />
+						<Label for="isRegion">Region (FR)</Label>
+					</div>
+				</div>
 
-	{#if rakQuery.isPending}
-		<div class="flex items-center gap-3 py-4">
-			<Spinner size="sm" />
-			<span class="text-muted-foreground">Ładowanie...</span>
-		</div>
-	{:else if rakQuery.error}
-		<div class="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
-			<p class="text-sm text-destructive">{String(rakQuery.error)}</p>
-		</div>
-	{:else}
-		<div class="flex flex-col gap-3 max-w-md">
-			<div class="space-y-2">
-				<Label for="zspId">ZSP ID</Label>
-				<Input id="zspId" type="text" bind:value={zspId} placeholder="ZSP ID" />
-			</div>
-			<div class="space-y-2">
-				<Label for="contestName">Nazwa konkursu</Label>
-				<Input id="contestName" type="text" bind:value={contestName} placeholder="Nazwa konkursu" />
-			</div>
-			<div class="flex items-center gap-2">
-				<input type="checkbox" id="isRegion" bind:checked={isRegion} class="rounded" />
-				<Label for="isRegion">Region (FR)</Label>
-			</div>
-			<div class="flex flex-wrap gap-3 items-center">
-				<Button onclick={downloadPdf} disabled={isLoading}>Generuj PDF results</Button>
-				<Button variant="secondary" onclick={downloadShortPdf} disabled={isLoading}>
-					Generuj skrócony PDF
-				</Button>
-				<Button variant="secondary" onclick={downloadLatexPdf} disabled={isLoading}>
-					Generuj PDF (LaTeX)
-				</Button>
+				<div class="grid gap-3 sm:grid-cols-3">
+					<button
+						class="flex flex-col gap-1 rounded-lg border p-4 text-left transition-colors hover:bg-accent disabled:opacity-50"
+						onclick={downloadPdf}
+						disabled={isLoading}
+					>
+						<span class="text-sm font-medium">PDF Wyniki</span>
+						<span class="text-xs text-muted-foreground">Pełny dokument z rankingami</span>
+					</button>
+					<button
+						class="flex flex-col gap-1 rounded-lg border p-4 text-left transition-colors hover:bg-accent disabled:opacity-50"
+						onclick={downloadShortPdf}
+						disabled={isLoading}
+					>
+						<span class="text-sm font-medium">Skrócony PDF</span>
+						<span class="text-xs text-muted-foreground">Podsumowanie wyników</span>
+					</button>
+					<button
+						class="flex flex-col gap-1 rounded-lg border p-4 text-left transition-colors hover:bg-accent disabled:opacity-50"
+						onclick={downloadLatexPdf}
+						disabled={isLoading}
+					>
+						<span class="text-sm font-medium">PDF LaTeX</span>
+						<span class="text-xs text-muted-foreground">Wyniki w formacie LaTeX</span>
+					</button>
+				</div>
+
 				{#if isLoading}
-					<Spinner size="sm" />
+					<div class="flex items-center gap-2 text-muted-foreground">
+						<Spinner size="sm" />
+						<span class="text-sm">Generowanie...</span>
+					</div>
 				{/if}
 			</div>
-		</div>
-	{/if}
-</div>
+		{/if}
+	</Card.Content>
+</Card.Root>
