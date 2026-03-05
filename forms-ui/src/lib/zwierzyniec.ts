@@ -22,10 +22,18 @@ export type SakRequest = {
 	zspId: string;
 };
 
+export type LogLevel = 'INFO' | 'ERROR';
+
+export type LogEntry = {
+	logTime: string;
+	message: string;
+	level?: LogLevel;
+};
+
 export type Progress = {
 	status: 'STOPPED' | 'RUNNING' | 'CANCELLED' | 'FAILED';
 	progress: number;
-	logs?: { logTime: string; message: string }[];
+	logs?: LogEntry[];
 };
 
 export type ReplacementCell = {

@@ -26,7 +26,11 @@ class TimeTableRunner(
         totalSheetCount = sheets?.size ?: 1
         for (sheet in sheets!!) {
             if (cancelled.get()) return
-            processSheet(sheet)
+            try {
+                processSheet(sheet)
+            } catch (e: Exception) {
+                logger.error("Error processing sheet ${sheet.properties.title}: ${e.message ?: e}")
+            }
             processedSheetCount.incrementAndGet()
         }
     }
@@ -57,7 +61,11 @@ class TimeTableRunner(
     private fun processTeams(teams: Teams) {
         for (team in teams.teams) {
             if (cancelled.get()) return
-            timeTableService.addPerformance(team.toPerformance(city))
+            try {
+                timeTableService.addPerformance(team.toPerformance(city))
+            } catch (e: Exception) {
+                logger.error("Error adding performance for team ${team.teamName}: ${e.message ?: e}")
+            }
         }
     }
 }

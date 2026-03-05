@@ -8,7 +8,12 @@ class AsyncLogger {
 
     fun log(msg: String) {
         println(msg)
-        logs.add(Log(OffsetDateTime.now(), msg))
+        logs.add(Log(OffsetDateTime.now(), msg, LogLevel.INFO))
+    }
+
+    fun error(msg: String) {
+        System.err.println(msg)
+        logs.add(Log(OffsetDateTime.now(), msg, LogLevel.ERROR))
     }
 
     fun getLogs(): List<Log> {

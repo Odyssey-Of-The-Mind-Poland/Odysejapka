@@ -16,7 +16,7 @@
 	}: {
 		status: string;
 		progress: number;
-		logs: { logTime: string; message: string }[];
+		logs: { logTime: string; message: string; level?: string }[];
 		onstart: () => void;
 		onstop: () => void;
 		startLabel?: string;
@@ -49,7 +49,7 @@
 		}
 	});
 
-	let showProgress = $derived(status === 'RUNNING' || logs.length > 0);
+	let showProgress = $derived(status === 'RUNNING' || status === 'FAILED' || logs.length > 0);
 </script>
 
 <Card.Root>
@@ -81,9 +81,9 @@
 				class="flex flex-col gap-0.5 p-3 bg-muted rounded-lg font-mono text-xs max-h-48 overflow-y-auto"
 			>
 				{#each logs as log}
-					<div class="flex gap-2">
+					<div class="flex gap-2 {log.level === 'ERROR' ? 'text-destructive' : ''}">
 						<span class="text-muted-foreground shrink-0">{log.logTime}</span>
-						<span>&gt; {log.message}</span>
+						<span>{log.level === 'ERROR' ? 'ERROR: ' : '> '}{log.message}</span>
 					</div>
 				{/each}
 			</div>

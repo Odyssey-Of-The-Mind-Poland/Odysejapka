@@ -38,9 +38,13 @@ internal class SakRunner(
             if (group.group.age == "0" || group.group.problem == "0") {
                 continue
             }
-            logger.log("Started processing problem ${group.group.problem} division ${group.group.age}")
-            processGroup(group)
-            logger.log("Finished processing problem ${group.group.problem} division ${group.group.age}")
+            try {
+                logger.log("Started processing problem ${group.group.problem} division ${group.group.age}")
+                processGroup(group)
+                logger.log("Finished processing problem ${group.group.problem} division ${group.group.age}")
+            } catch (e: Exception) {
+                logger.error("Error processing problem ${group.group.problem} division ${group.group.age}: ${e.message ?: e}")
+            }
             Thread.sleep(2000) // google API needs this
         }
     }
@@ -73,7 +77,11 @@ internal class SakRunner(
 
             teamStartCell = Pair(teamStartCell.first, teamStartCell.second + 1)
             pointsCell = Pair(pointsCell.first, pointsCell.second + 1)
-            processTeam(team, sheetName, fileId, teamStartCell, pointsCell)
+            try {
+                processTeam(team, sheetName, fileId, teamStartCell, pointsCell)
+            } catch (e: Exception) {
+                logger.error("Error processing team ${team.teamName}: ${e.message ?: e}")
+            }
             Thread.sleep(5000)
         }
     }

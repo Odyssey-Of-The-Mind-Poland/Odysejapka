@@ -31,7 +31,11 @@ internal class GadRunner(
         totalSheetCount = sheets?.size ?: 1
         for (sheet in sheets!!) {
             if (cancelled.get()) return
-            processSheet(sheet)
+            try {
+                processSheet(sheet)
+            } catch (e: Exception) {
+                logger.error("Error processing sheet ${sheet.properties.title}: ${e.message ?: e}")
+            }
             processedSheetCount.incrementAndGet()
         }
         processedSheetCount.set(totalSheetCount)
@@ -66,39 +70,43 @@ internal class GadRunner(
     private fun processTeams(teams: Teams, sheetTitle: String) {
         for (team in teams.teams) {
             if (cancelled.get()) return
-            logger.log("Processing team: ${team.teamName}")
-            if (team.isJunior()) {
-                logger.log("${team.teamName} is junior team skipping")
-                continue
+            try {
+                logger.log("Processing team: ${team.teamName}")
+                if (team.isJunior()) {
+                    logger.log("${team.teamName} is junior team skipping")
+                    continue
+                }
+
+                val groupFolderId = groupFolders.computeIfAbsent(team.getGroup()) {
+                    driveAdapter.createFolder(it.getDirName(), destinationFolderId)
+                }
+
+                val template = getTemplate(team.getProblem()[0])
+
+                val file = driveAdapter.copyFile(template.id, team.getFileName(), groupFolderId)
+                templateCell(file.id, "A1", team.getAge())
+                templateCell(file.id, "A2", team.teamName)
+                templateCell(file.id, "A3", teams.judges)
+
+                val cells = problemPunctuationCells[team.getProblem()]!!
+                val values = listOf(
+                    getZspValue(file.id, cells.dt),
+                    getZspValue(file.id, cells.style),
+                    getZspValue(file.id, cells.penalty),
+                    getBalsaValue(file.id, cells.balsa),
+                    getZspValueFromAOC(file.id, cells.anomaly),
+                    getZspValueFromAOC(file.id, cells.anomalyVerify),
+                    getZspValueFromAOC(file.id, cells.actualPerformanceStartTime),
+                    "=JEŻELI(ORAZ(CZY.LICZBA(P${team.zspRow}); P5<>CZAS(0;0;0)); P${team.zspRow}-A${team.zspRow}; \"\")",
+                    "", // spontaneou
+                    "", // spontaneou
+                    "https://docs.google.com/spreadsheets/d/${file.id}"
+                )
+                sheetsAdapter.writeZsp("K${team.zspRow}:U${team.zspRow}", values, sheetTitle)
+                logger.log("Created: ${file.name}")
+            } catch (e: Exception) {
+                logger.error("Error processing team ${team.teamName}: ${e.message ?: e}")
             }
-
-            val groupFolderId = groupFolders.computeIfAbsent(team.getGroup()) {
-                driveAdapter.createFolder(it.getDirName(), destinationFolderId)
-            }
-
-            val template = getTemplate(team.getProblem()[0])
-
-            val file = driveAdapter.copyFile(template.id, team.getFileName(), groupFolderId)
-            templateCell(file.id, "A1", team.getAge())
-            templateCell(file.id, "A2", team.teamName)
-            templateCell(file.id, "A3", teams.judges)
-
-            val cells = problemPunctuationCells[team.getProblem()]!!
-            val values = listOf(
-                getZspValue(file.id, cells.dt),
-                getZspValue(file.id, cells.style),
-                getZspValue(file.id, cells.penalty),
-                getBalsaValue(file.id, cells.balsa),
-                getZspValueFromAOC(file.id, cells.anomaly),
-                getZspValueFromAOC(file.id, cells.anomalyVerify),
-                getZspValueFromAOC(file.id, cells.actualPerformanceStartTime),
-                "=JEŻELI(ORAZ(CZY.LICZBA(P${team.zspRow}); P5<>CZAS(0;0;0)); P${team.zspRow}-A${team.zspRow}; \"\")",
-                "", // spontaneou
-                "", // spontaneou
-                "https://docs.google.com/spreadsheets/d/${file.id}"
-            )
-            sheetsAdapter.writeZsp("K${team.zspRow}:U${team.zspRow}", values, sheetTitle)
-            logger.log("Created: ${file.name}")
         }
     }
 
@@ -152,7 +160,7 @@ internal class GadRunner(
         if (validateTemplateResultMap(resultMap)) {
             return resultMap
         } else {
-            logger.log("Pliki matki nie trzymają się formatu: FR_2025_P1GX_KOD_NAZWA lub brakuje plików matek dla")
+            logger.error("Pliki matki nie trzymają się formatu: FR_2025_P1GX_KOD_NAZWA lub brakuje plików matek dla")
         }
         // File name format P1GX_KOD_NAZWA
 
@@ -163,7 +171,7 @@ internal class GadRunner(
         if (validateTemplateResultMap(resultMap)) {
             return resultMap
         } else {
-            logger.log("Pliki matki nie trzymają się formatu: P1GX_KOD_NAZWA lub brakuje plików matek dla problemów")
+            logger.error("Pliki matki nie trzymają się formatu: P1GX_KOD_NAZWA lub brakuje plików matek dla problemów")
         }
         return resultMap
     }

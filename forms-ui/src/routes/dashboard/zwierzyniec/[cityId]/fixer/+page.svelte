@@ -21,7 +21,7 @@
 	let problemNumber = $state(1);
 	let pattern = $derived(`P${problemNumber}*`);
 	let folderId = $state('');
-	let fixerProgress = $state<{ status: string; progress: number; logs: { logTime: string; message: string }[] }>({
+	let fixerProgress = $state<{ status: string; progress: number; logs: { logTime: string; message: string; level?: string }[] }>({
 		status: 'STOPPED',
 		progress: 100,
 		logs: []

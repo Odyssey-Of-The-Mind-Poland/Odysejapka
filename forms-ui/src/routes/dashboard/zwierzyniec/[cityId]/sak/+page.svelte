@@ -20,7 +20,7 @@
 	);
 
 	let zspId = $state('');
-	let sakProgress = $state<{ status: string; progress: number; logs: { logTime: string; message: string }[] }>({
+	let sakProgress = $state<{ status: string; progress: number; logs: { logTime: string; message: string; level?: string }[] }>({
 		status: 'STOPPED',
 		progress: 100,
 		logs: []

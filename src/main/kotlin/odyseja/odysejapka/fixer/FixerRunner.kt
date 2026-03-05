@@ -32,8 +32,12 @@ class FixerRunner(
         totalFileCount = allFiles.size.coerceAtLeast(1)
         for (file in allFiles) {
             if (cancelled.get()) return
-            logger.log("fixSheet: ${file.name}")
-            fixSheet(file.id)
+            try {
+                logger.log("fixSheet: ${file.name}")
+                fixSheet(file.id)
+            } catch (e: Exception) {
+                logger.error("Error fixing sheet ${file.name}: ${e.message ?: e}")
+            }
             processedFileCount.incrementAndGet()
         }
         logger.log("finished fixing sheets")

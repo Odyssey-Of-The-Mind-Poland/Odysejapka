@@ -2,6 +2,7 @@ package odyseja.odysejapka.async
 
 import odyseja.odysejapka.Progress
 import odyseja.odysejapka.Status
+import java.time.OffsetDateTime
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -49,7 +50,9 @@ class ProcessRunner(private val runner: Runner) {
         val job = jobRef.get()
         val failure = failureRef.get()
         if (failure != null) {
-            return Progress(runner.getProgress(), Status.FAILED, getLogs())
+            val msg = failure.message ?: failure.toString()
+            val logsWithError = getLogs() + Log(OffsetDateTime.now(), msg, LogLevel.ERROR)
+            return Progress(runner.getProgress(), Status.FAILED, logsWithError)
         }
         if (job?.isDone == true) {
             val status = if (cancelRequested.get()) Status.CANCELLED else Status.STOPPED

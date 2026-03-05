@@ -34,7 +34,7 @@
 		problemPunctuationCells: {}
 	});
 
-	let gadProgress = $state<{ status: string; progress: number; logs: { logTime: string; message: string }[] }>({
+	let gadProgress = $state<{ status: string; progress: number; logs: { logTime: string; message: string; level?: string }[] }>({
 		status: 'STOPPED',
 		progress: 100,
 		logs: []
