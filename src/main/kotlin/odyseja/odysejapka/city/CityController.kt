@@ -35,9 +35,6 @@ class CityController(
     @Secured("ROLE_ADMINISTRATOR")
     @DeleteMapping
     fun clearCities() {
-        val cities = cityService.getCities()
-        cities.forEach {
-            cityService.deleteCity(it!!.id)
-        }
+        cityService.clearCities()
     }
 }

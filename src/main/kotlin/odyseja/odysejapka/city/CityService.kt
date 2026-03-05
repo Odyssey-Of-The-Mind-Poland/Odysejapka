@@ -52,6 +52,16 @@ class CityService(
     changeService.updateVersion()
   }
 
+  @Transactional
+  fun clearCities() {
+    val cities = getCities()
+    cities.forEach {
+      deleteCity(it!!.id)
+    }
+
+    changeService.updateVersion()
+  }
+
   fun getCityByName(cityName: String): CityEntity? {
     return cityRepository.findFirstByName(cityName)
   }
