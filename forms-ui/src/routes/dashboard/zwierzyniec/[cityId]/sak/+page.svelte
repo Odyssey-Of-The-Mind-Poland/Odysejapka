@@ -28,14 +28,15 @@
 
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 
+	let folderId = $state('');
+
 	$effect(() => {
 		const d = sakQuery.data;
 		if (d) {
 			zspId = d.zspId ?? '';
+			folderId = d.templatesFolderId ?? '';
 		}
 	});
-
-	let folderId = $derived(sakQuery.data?.templatesFolderId ?? '');
 
 	function startSak() {
 		runSak(cityId, { templatesFolderId: folderId, zspId })
@@ -91,6 +92,10 @@
 				</div>
 			{:else}
 				<div class="grid gap-4 max-w-md">
+					<div class="space-y-2">
+						<Label for="folderId">Folder z arkuszami</Label>
+						<Input id="folderId" bind:value={folderId} placeholder="ID folderu z szablonami" />
+					</div>
 					<div class="space-y-2">
 						<Label for="zspId">ZSP ID</Label>
 						<Input id="zspId" bind:value={zspId} placeholder="ZSP ID" />
