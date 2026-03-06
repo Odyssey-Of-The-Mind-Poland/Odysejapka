@@ -3,6 +3,7 @@ import IconTrophy from "@tabler/icons-svelte/icons/trophy";
 import IconPaw from "@tabler/icons-svelte/icons/paw";
 import IconTrees from "@tabler/icons-svelte/icons/trees";
 import IconBuilding from "@tabler/icons-svelte/icons/building";
+import IconCalendarEvent from "@tabler/icons-svelte/icons/calendar-event";
 import type {Role} from "$lib/userStore";
 
 export type NavChild = {
@@ -55,6 +56,17 @@ export const routes = {
                 {id: 'stages', label: 'Sceny'},
                 {id: 'sponsors', label: 'Sponsorzy'},
                 {id: 'breaking-change', label: 'Breaking Change'},
+            ],
+        },
+        {
+            title: "Harmonogram",
+            url: "/dashboard/harmonogram",
+            icon: IconCalendarEvent,
+            requiredRole: 'ADMINISTRATOR',
+            needsCity: true,
+            children: [
+                {id: 'stages', label: 'Sceny'},
+                {id: 'spontan', label: 'Spontany'},
             ],
         },
         {
