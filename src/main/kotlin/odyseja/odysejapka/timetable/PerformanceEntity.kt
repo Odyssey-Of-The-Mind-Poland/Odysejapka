@@ -52,10 +52,10 @@ class PerformanceEntity(
             stage = stageEntity.number,
             performance = performance,
             spontan = spontan,
-            part = part,
+            part = part ?: 0,
             performanceDay = performanceDay,
             spontanDay = spontanDay,
-            league = league,
+            league = league ?: "",
             zspRow = zspRow,
             zspSheet = zspSheet,
             performanceDate = getPerformanceDate()
