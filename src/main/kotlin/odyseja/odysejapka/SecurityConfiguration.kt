@@ -47,6 +47,7 @@ class SecurityConfiguration(
             allowedOriginPatterns = listOf(
                 "http://localhost:5172",
                 "http://localhost:5173",
+                "http://localhost:58085",
                 "http://grzybek.snet.ovh:3000",
                 "https://grzybek.snet.ovh",
                 "https://panel.odyseja.org",
