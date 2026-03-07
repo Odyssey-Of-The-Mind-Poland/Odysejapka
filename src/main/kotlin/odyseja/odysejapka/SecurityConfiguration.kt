@@ -48,8 +48,9 @@ class SecurityConfiguration(
                 "http://localhost:5172",
                 "http://localhost:5173",
                 "http://grzybek.snet.ovh:3000",
-                "https:/panel.odyseja.org",
-                "https:/app.odyseja.org"
+                "https://grzybek.snet.ovh",
+                "https://panel.odyseja.org",
+                "https://app.odyseja.org"
             )
             allowCredentials = true
             allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
