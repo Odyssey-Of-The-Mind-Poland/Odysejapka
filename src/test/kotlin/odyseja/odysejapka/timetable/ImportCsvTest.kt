@@ -45,10 +45,10 @@ class ImportCsvTest: OdysejaDsl() {
             stage = 1,
             performance = "08:25",
             spontan = "12:45",
-            part = null,
+            part = 0,
             performanceDay = "sobota",
             spontanDay = "niedziela",
-            league = null,
+            league = "",
             zspRow = null,
             zspSheet = null,
             performanceDate = LocalDate.of(2025, 4, 5)
