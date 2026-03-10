@@ -1,9 +1,9 @@
 package odyseja.odysejapka.form
 
 enum class FormState(val label: String) {
-    NOT_SCORED("Nie ocenione"),
+    NOT_SCORED("Nieocenione"),
     ERROR("Błędy w formularzu"),
     ANOMALY("Anomalia"),
-    APPROVED("Zatwierdzony"),
+    APPROVED("Zatwierdzone"),
     SCORED("Ocenione");
 }
