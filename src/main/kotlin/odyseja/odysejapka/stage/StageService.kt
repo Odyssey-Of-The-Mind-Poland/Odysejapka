@@ -2,6 +2,7 @@ package odyseja.odysejapka.stage
 
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.spontan.SpontanUserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -9,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional
 class StageService(
     private val stageRepository: StageRepository,
     private val cityRepository: CityRepository,
-    private val changeService: ChangeService
+    private val changeService: ChangeService,
+    private val stageUserRepository: StageUserRepository
 ) {
 
   fun getStagesByCity(city: Int): List<Stage> {
@@ -47,6 +49,7 @@ class StageService(
 
   @Transactional
   fun clearStagesByCity(cityId: Int) {
+    stageUserRepository.deleteAllByCityId(cityId)
     stageRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
     changeService.updateVersion()
   }

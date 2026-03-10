@@ -4,6 +4,8 @@ import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.form.CityFormJudgesRepository
 import odyseja.odysejapka.info.InfoRepository
 import odyseja.odysejapka.sponsor.SponsorRepository
+import odyseja.odysejapka.spontan.SpontanGroupAssignmentRepository
+import odyseja.odysejapka.spontan.SpontanUserRepository
 import odyseja.odysejapka.stage.StageRepository
 import odyseja.odysejapka.timetable.PerformanceRepository
 import org.springframework.stereotype.Service
@@ -17,7 +19,9 @@ class CityService(
   private val stageRepository: StageRepository,
   private val cityFormJudgesRepository: CityFormJudgesRepository,
   private val infoRepository: InfoRepository,
-  private val sponsorRepository: SponsorRepository
+  private val sponsorRepository: SponsorRepository,
+  private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
+  private val spontanUserRepository: SpontanUserRepository
 ) {
 
   fun getCities(): MutableIterable<CityEntity?> {
@@ -38,6 +42,8 @@ class CityService(
     cityFormJudgesRepository.deleteByCity(cityRepository.findFirstById(cityId))
     infoRepository.deleteByCityId(cityId)
     sponsorRepository.deleteByCityId(cityId)
+    spontanGroupAssignmentRepository.deleteByCityId(cityId)
+    spontanUserRepository.deleteByCityId(cityId)
     cityRepository.deleteById(cityId)
 
     changeService.updateVersion()
