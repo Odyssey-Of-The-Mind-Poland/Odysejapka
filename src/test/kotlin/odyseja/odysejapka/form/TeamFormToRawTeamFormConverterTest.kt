@@ -63,7 +63,7 @@ class TeamFormToRawTeamFormConverterTest {
         Assertions.assertThat(result.age).isEqualTo(1)
 
         Assertions.assertThat(result.dtEntries).hasSize(1)
-        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("0. DT Entry 1")
+        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("1. DT Entry 1")
         Assertions.assertThat(result.dtEntries[0].averageScore).isEqualTo(15.0) // (10 + 20 + 15) / 3
         Assertions.assertThat(result.dtEntries[0].noElement).isFalse
 
@@ -134,7 +134,7 @@ class TeamFormToRawTeamFormConverterTest {
         val result = TeamFormToRawTeamFormConverter.convert(teamForm)
 
         Assertions.assertThat(result.dtEntries).hasSize(3)
-        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("0. DT Section")
+        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("1. DT Section")
         Assertions.assertThat(result.dtEntries[0].averageScore).isNull()
         Assertions.assertThat(result.dtEntries[0].isSectionHeader).isTrue()
         Assertions.assertThat(result.dtEntries[1].name).isEqualTo("a. Nested Entry 1")
@@ -408,7 +408,7 @@ class TeamFormToRawTeamFormConverterTest {
         val result = TeamFormToRawTeamFormConverter.convert(teamForm)
 
         Assertions.assertThat(result.dtEntries).hasSize(3)
-        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("0. Level 1")
+        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("1. Level 1")
         Assertions.assertThat(result.dtEntries[0].isSectionHeader).isTrue()
         Assertions.assertThat(result.dtEntries[1].name).isEqualTo("a. Level 2")
         Assertions.assertThat(result.dtEntries[1].isSectionHeader).isTrue()
@@ -468,7 +468,7 @@ class TeamFormToRawTeamFormConverterTest {
         val result = TeamFormToRawTeamFormConverter.convert(teamForm)
 
         Assertions.assertThat(result.dtEntries).hasSize(1)
-        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("0. Scoring Group")
+        Assertions.assertThat(result.dtEntries[0].name).isEqualTo("1. Scoring Group")
         Assertions.assertThat(result.dtEntries[0].averageScore).isEqualTo(30.0) // 10 + 20
         Assertions.assertThat(result.dtEntries[0].isSectionHeader).isFalse()
     }

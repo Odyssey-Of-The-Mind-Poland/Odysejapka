@@ -3,15 +3,17 @@ package odyseja.odysejapka.stage
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class StageService(
     private val stageRepository: StageRepository,
     private val cityRepository: CityRepository,
-    private val changeService: ChangeService
+    private val changeService: ChangeService,
+    private val stageUserRepository: StageUserRepository
 ) {
 
-  fun getStages(city: Int): List<Stage> {
+  fun getStagesByCity(city: Int): List<Stage> {
     return stageRepository.findAllByCityEntity(cityRepository.findById(city)).map {
       Stage(
         it!!.id,
@@ -41,6 +43,13 @@ class StageService(
       stageRepository.save(toEdit)
     }
 
+    changeService.updateVersion()
+  }
+
+  @Transactional
+  fun clearStagesByCity(cityId: Int) {
+    stageUserRepository.deleteAllByCityId(cityId)
+    stageRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
     changeService.updateVersion()
   }
 }

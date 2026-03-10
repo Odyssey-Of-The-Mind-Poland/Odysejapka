@@ -19,7 +19,7 @@ class ImportTimetableService(
         clearTimeTable(cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val cityName = cityRepository.findFirstById(cityId).name
-        performanceService.deleteCity(cityId)
+        performanceService.deleteByCity(cityId)
 
         backgroundJobService.start(
             jobType,
@@ -28,7 +28,7 @@ class ImportTimetableService(
     }
 
     fun clearTimeTable(cityId: Int) {
-        performanceService.deleteCity(cityId)
+        performanceService.deleteByCity(cityId)
     }
 
     fun stop() {

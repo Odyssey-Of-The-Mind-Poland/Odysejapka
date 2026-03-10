@@ -95,6 +95,19 @@ class TimeTableService(
         changeService.updateVersion()
     }
 
+    @Transactional
+    fun clearTimetable() {
+        timeTableRepository.deleteAll()
+        changeService.updateVersion()
+    }
+
+    @Transactional
+    fun clearTimetableByCity(cityId: Int) {
+        timeTableRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
+        changeService.updateVersion()
+    }
+
+
     fun getAge(age: Int): AgeEntity {
         return ageRepository.findFirstById(age) ?: ageRepository.save(
             AgeEntity(
@@ -131,7 +144,7 @@ class TimeTableService(
         return timeTableRepository.findAllByCityEntity_Id(cityId).map { it.toPerformance() }
     }
 
-    fun deleteCity(cityId: Int) {
+    fun deleteByCity(cityId: Int) {
         timeTableRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
     }
 

@@ -121,10 +121,10 @@ class OdysejaDsl {
         problem: Int = 1,
         age: Int = 1,
         stage: Int = 1,
-        spontan: String = "",
-        spontanDay: String = "",
-        performance: String = "",
-        performanceDay: String = "",
+        spontan: String = "11:11",
+        spontanDay: String = "sobota",
+        performance: String = "11:11",
+        performanceDay: String = "niedziela",
         league: String? = ""
     ): Int {
         val cityName = cityClient.getCities().firstOrNull { it?.id == cityId }?.name ?: "Unknown"

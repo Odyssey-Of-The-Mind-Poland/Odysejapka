@@ -5,7 +5,6 @@ import odyseja.odysejapka.OdysejaDsl
 import odyseja.odysejapka.city.CityEntity
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.test.context.support.WithMockUser
 import java.time.LocalDate
@@ -18,11 +17,11 @@ class ImportCsvTest: OdysejaDsl() {
 
     @BeforeEach
     fun csvSetUp() {
+        cityClient.clearCities()
         city = createCity("finał")
     }
 
     @Test
-    @Disabled
     fun `should import csv file`() {
         val content = this.javaClass.getResourceAsStream("/import-csv-test-cases/fo2025.csv")
             ?: throw IllegalArgumentException("Brakuje pliku fo2025.csv.")
@@ -36,9 +35,9 @@ class ImportCsvTest: OdysejaDsl() {
 
         Assertions.assertThat(timeTableClient.getPerformances(city.id)).hasSize(280)
 
-        val realPerformance = timeTableClient.getPerformance(1)
+        val realPerformance = timeTableClient.getPerformances(city.id)[0]
         val mockPerformance = Performance(
-            id = 1,
+            id = realPerformance.id,
             city = "finał",
             team = "Zespół Szkół Zawodowych i Ogólnokształcących - Kartuzy",
             problem = 3,
@@ -46,10 +45,10 @@ class ImportCsvTest: OdysejaDsl() {
             stage = 1,
             performance = "08:25",
             spontan = "12:45",
-            part = null,
+            part = 0,
             performanceDay = "sobota",
             spontanDay = "niedziela",
-            league = null,
+            league = "",
             zspRow = null,
             zspSheet = null,
             performanceDate = LocalDate.of(2025, 4, 5)
