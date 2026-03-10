@@ -2,7 +2,6 @@ package odyseja.odysejapka.stage
 
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityRepository
-import odyseja.odysejapka.spontan.SpontanUserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
