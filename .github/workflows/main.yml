@@ -12,6 +12,17 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
+      - name: Run test
+        uses: appleboy/ssh-action@master
+        with:
+          host: 37.27.71.201
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          script: |
+            cd Odysejapka
+            git pull
+            ./gradlew test 
+
       - name: Deploy app
         uses: appleboy/ssh-action@master
         with:

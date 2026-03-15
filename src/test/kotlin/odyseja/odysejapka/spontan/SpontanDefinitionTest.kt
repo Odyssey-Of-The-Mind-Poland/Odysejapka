@@ -3,7 +3,6 @@ package odyseja.odysejapka.spontan
 import odyseja.odysejapka.OdysejaDsl
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
 
@@ -142,10 +141,10 @@ class SpontanDefinitionTest : OdysejaDsl() {
     }
 
     @Test
-    @Disabled
     fun `should reject invalid expression`() {
-        assertThatThrownBy {
-            spontanClient.create(
+        val spontanRespondingClient = controllerClientFactory.respondingClient(SpontanController::class.java)
+        val response = spontanRespondingClient.executeConsumer{ controller ->
+            controller.create(
                 SpontanDefinition(
                     name = "Nieprawidłowy",
                     type = SpontanType.MANUAL,
@@ -158,6 +157,8 @@ class SpontanDefinitionTest : OdysejaDsl() {
                     )
                 )
             )
-        }.hasMessageContaining("nieprawidłowe wyrażenie")
+        }
+        assertThat(response.statusCode()).isEqualTo(400)
+        assertThat(response.mockHttpServletResponse().errorMessage).contains("nieprawidłowe wyrażenie")
     }
 }
