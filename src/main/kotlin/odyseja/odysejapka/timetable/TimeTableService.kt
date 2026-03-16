@@ -5,6 +5,7 @@ import odyseja.odysejapka.age.AgeRepository
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.exceptions.CityNotFoundException
 import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.problem.ProblemRepository
 import odyseja.odysejapka.stage.StageEntity
@@ -103,7 +104,8 @@ class TimeTableService(
 
     @Transactional
     fun clearTimetableByCity(cityId: Int) {
-        timeTableRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
+        val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId)
+        timeTableRepository.deleteByCityEntity(city)
         changeService.updateVersion()
     }
 
@@ -145,7 +147,8 @@ class TimeTableService(
     }
 
     fun deleteByCity(cityId: Int) {
-        timeTableRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
+        val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId)
+        timeTableRepository.deleteByCityEntity(city)
     }
 
     fun getPerformance(performanceId: Int): Performance {

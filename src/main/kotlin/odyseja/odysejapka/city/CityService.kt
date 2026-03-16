@@ -1,6 +1,7 @@
 package odyseja.odysejapka.city
 
 import odyseja.odysejapka.change.ChangeService
+import odyseja.odysejapka.exceptions.CityNotFoundException
 import odyseja.odysejapka.form.CityFormJudgesRepository
 import odyseja.odysejapka.info.InfoRepository
 import odyseja.odysejapka.sponsor.SponsorRepository
@@ -37,9 +38,12 @@ class CityService(
 
   @Transactional
   fun deleteCity(cityId: Int) {
-    performanceRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
-    stageRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
-    cityFormJudgesRepository.deleteByCity(cityRepository.findFirstById(cityId))
+
+    val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId = cityId)
+
+    performanceRepository.deleteByCityEntity(city)
+    stageRepository.deleteByCityEntity(city)
+    cityFormJudgesRepository.deleteByCity(city)
     infoRepository.deleteByCityId(cityId)
     sponsorRepository.deleteByCityId(cityId)
     spontanGroupAssignmentRepository.deleteByCityId(cityId)
@@ -59,7 +63,7 @@ class CityService(
     changeService.updateVersion()
   }
 
-  fun getCityByName(cityName: String): CityEntity? {
-    return cityRepository.findFirstByName(cityName)
+  fun getCityByName(cityName: String): CityEntity {
+    return cityRepository.findFirstByName(cityName) ?: throw CityNotFoundException(cityName = cityName)
   }
 }

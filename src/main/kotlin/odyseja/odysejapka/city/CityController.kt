@@ -17,7 +17,6 @@ class CityController(
     @GetMapping("/name/{cityName}")
     fun getCityByName(@PathVariable cityName: String): CityEntity {
         return cityService.getCityByName(cityName)
-            ?: throw IllegalArgumentException("Nie ma miasta o nazwie $cityName.")
     }
 
     @Secured("ROLE_ADMINISTRATOR")

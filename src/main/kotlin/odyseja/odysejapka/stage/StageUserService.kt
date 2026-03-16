@@ -1,6 +1,7 @@
 package odyseja.odysejapka.stage
 
 import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.exceptions.CityNotFoundException
 import odyseja.odysejapka.users.UserEntity
 import odyseja.odysejapka.users.UserRepository
 import org.slf4j.LoggerFactory
@@ -23,7 +24,7 @@ class StageUserService(
 
     @Transactional
     fun createStageUsers(cityId: Int, stages: Set<Int>) {
-        val city = cityRepository.findFirstById(cityId)
+        val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId)
         val citySlug = slugify(city.name)
         stageUserRepository.deleteAllByCityId(cityId)
 

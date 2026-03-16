@@ -4,6 +4,7 @@ import odyseja.odysejapka.Progress
 import odyseja.odysejapka.async.BackgroundJobService
 import odyseja.odysejapka.city.CityRepository
 import odyseja.odysejapka.drive.ZspSheetsAdapter
+import odyseja.odysejapka.exceptions.CityNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,12 +19,12 @@ class ImportTimetableService(
     fun import(zspId: String, cityId: Int) {
         clearTimeTable(cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
-        val cityName = cityRepository.findFirstById(cityId).name
+        val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId)
         performanceService.deleteByCity(cityId)
 
         backgroundJobService.start(
             jobType,
-            TimeTableRunner(performanceService, sheetsAdapter, cityName)
+            TimeTableRunner(performanceService, sheetsAdapter, city.name)
         )
     }
 

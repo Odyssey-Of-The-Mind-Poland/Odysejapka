@@ -2,6 +2,7 @@ package odyseja.odysejapka.stage
 
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.exceptions.CityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -38,7 +39,8 @@ class StageService(
   fun updateStage(stages: List<Stage>) {
     for (stage in stages) {
       val toEdit: StageEntity = stageRepository.findFirstByNumberAndCityEntity(stage.number, cityRepository.findFirstById(stage.city))
-        ?: stageRepository.save(StageEntity(0, stage.number, stage.name, cityRepository.findFirstById(stage.city)))
+        ?: stageRepository.save(StageEntity(0, stage.number, stage.name, cityRepository.findFirstById(stage.city)
+          ?: throw CityNotFoundException(stage.city)))
       toEdit.name = stage.name
       stageRepository.save(toEdit)
     }
@@ -48,8 +50,9 @@ class StageService(
 
   @Transactional
   fun clearStagesByCity(cityId: Int) {
+    val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId)
     stageUserRepository.deleteAllByCityId(cityId)
-    stageRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
+    stageRepository.deleteByCityEntity(city)
     changeService.updateVersion()
   }
 }

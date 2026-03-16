@@ -2,6 +2,7 @@ package odyseja.odysejapka.info
 
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.exceptions.CityNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
@@ -13,7 +14,9 @@ class InfoService(
 ) {
 
   fun getInfo(city: Int): Iterable<Info?>? {
-    return infoRepository.findByCity(cityRepository.findFirstById(city)).map { it.toInfo() }
+    return infoRepository.findByCity(cityRepository.findFirstById(city)
+      ?: throw CityNotFoundException(city)
+    ).map { it.toInfo() }
       .sortedByDescending { it.sortNumber }
   }
 
@@ -31,7 +34,7 @@ class InfoService(
         info.id,
         info.infoName,
         info.infoText,
-        cityRepository.findFirstById(info.city),
+        cityRepository.findFirstById(info.city) ?: throw CityNotFoundException(info.city),
         infoCategoryRepository.findFirstById(info.category),
         info.sortNumber,
         info.icon,

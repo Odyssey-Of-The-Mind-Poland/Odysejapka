@@ -3,6 +3,7 @@ package odyseja.odysejapka.sponsor
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.exceptions.CityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -51,7 +52,7 @@ class SponsorService(
       throw RuntimeException("Provided invalid file type")
     }
 
-    val city = cityRepository.findFirstById(cityId)
+    val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId)
     val sponsor = sponsorRepository.save(toSponsorEntity(file.bytes, city, uploadSponsorRequest.row))
 
     changeService.updateVersion()

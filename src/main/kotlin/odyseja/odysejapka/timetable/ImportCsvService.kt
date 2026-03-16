@@ -5,6 +5,7 @@ import com.opencsv.bean.CsvToBeanBuilder
 import com.opencsv.enums.CSVReaderNullFieldIndicator
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.exceptions.CityNotFoundException
 import odyseja.odysejapka.stage.StageUserService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,12 +22,7 @@ class ImportCsvService(
 ) {
     @Transactional
     fun uploadCsvFile(file: MultipartFile, cityId: Int) {
-        val city: CityEntity
-        try {
-            city = cityRepository.findFirstById(cityId)
-        } catch (_: Exception) {
-            throw IllegalArgumentException("Nie ma konkursu o ID ${cityId}.")
-        }
+        val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId)
 
         BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8)).use { reader ->
             val beans = createCSVToBean(reader)

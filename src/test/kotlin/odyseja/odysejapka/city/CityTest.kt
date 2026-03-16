@@ -1,12 +1,14 @@
 package odyseja.odysejapka.city
 
 import odyseja.odysejapka.OdysejaDsl
+import odyseja.odysejapka.exceptions.CityNotFoundException
 import org.assertj.core.api.Assertions
 import org.springframework.security.test.context.support.WithMockUser
 import kotlin.test.Test
 
 @WithMockUser(username = "testuser", roles = ["ADMIN"])
 class CityTest: OdysejaDsl() {
+
 
     @Test
     fun `should create city`() {
@@ -37,21 +39,24 @@ class CityTest: OdysejaDsl() {
         Assertions.assertThatThrownBy {
             cityClient.getCityByName("Usuwisko Dolne")
         }
-            .hasRootCauseInstanceOf(IllegalArgumentException::class.java)
-            .hasMessageContaining("Nie ma miasta o nazwie Usuwisko Dolne.")
+            .hasRootCauseInstanceOf(CityNotFoundException::class.java)
+            .hasMessageContaining("Nie znaleziono miasta o nazwie Usuwisko Dolne.")
     }
 
     @Test
     fun `should delete city tied to performances`() {
+        val cityRespondingClient = controllerClientFactory.respondingClient(CityController::class.java)
         val city = createCity("Konkurs")
         createPerformance(city.id)
         cityClient.deleteCity(city.id)
 
-        Assertions.assertThatThrownBy {
-            cityClient.getCityByName("Konkurs")
+        val response = cityRespondingClient.executeConsumer {
+            controller -> controller.getCityByName("Konkurs")
         }
-            .hasRootCauseInstanceOf(IllegalArgumentException::class.java)
-            .hasMessageContaining("Nie ma miasta o nazwie Konkurs.")
+
+        println(response)
+        Assertions.assertThat(response.statusCode).isEqualTo(404)
+        Assertions.assertThat(response).isEqualTo("Nie znaleziono miasta o nazwie Konkurs.")
     }
 
     @Test
