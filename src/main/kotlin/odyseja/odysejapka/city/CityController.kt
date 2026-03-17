@@ -14,6 +14,11 @@ class CityController(
         return cityService.getCities()
     }
 
+    @GetMapping("/{cityId}")
+    fun getCity(@PathVariable cityId: Int): CityEntity {
+        return cityService.getCity(cityId)
+    }
+
     @GetMapping("/name/{cityName}")
     fun getCityByName(@PathVariable cityName: String): CityEntity {
         return cityService.getCityByName(cityName)

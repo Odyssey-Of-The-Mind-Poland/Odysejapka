@@ -114,11 +114,14 @@ class ImportCsvTest: OdysejaDsl() {
 
     @Test
     fun `should reject imports with invalid city ID`() {
-        Assertions.assertThatThrownBy {
-            timeTableClient.importPerformances(mockCsv(), 123456789)
+        val timetableRespondingClient = controllerClientFactory.respondingClient(TimeTableController::class.java)
+        val response = timetableRespondingClient.executeConsumer { controller ->
+            controller.importPerformances(mockCsv(), 123456789)
         }
-            .hasRootCauseInstanceOf(IllegalArgumentException::class.java)
-            .hasMessageContaining("Nie ma konkursu o ID 123456789.")
+
+        Assertions.assertThat(response.statusCode).isEqualTo(404)
+        Assertions.assertThat(response.mockHttpServletResponse.contentAsString)
+            .isEqualTo("Nie znaleziono miasta o ID 123456789")
     }
 
     @Test

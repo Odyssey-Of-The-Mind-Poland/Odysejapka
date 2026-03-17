@@ -66,4 +66,8 @@ class CityService(
   fun getCityByName(cityName: String): CityEntity {
     return cityRepository.findFirstByName(cityName) ?: throw CityNotFoundException(cityName = cityName)
   }
+
+  fun getCity(cityId: Int): CityEntity {
+    return cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId = cityId)
+  }
 }
