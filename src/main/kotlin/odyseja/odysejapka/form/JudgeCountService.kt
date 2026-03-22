@@ -25,11 +25,20 @@ class JudgeCountService(
         cityFormJudgesRepository.save(judgeEntity)
     }
 
-    fun getJudgeCount(problem: Int, cityId: Int): JudgeCountResponse {
+    fun getJudgeCountByProblemAndCity(problem: Int, cityId: Int): JudgeCountResponse {
         val city = cityService.getCity(cityId)
         val judgeEntity = cityFormJudgesRepository.findByProblemAndCity(problem, city)
-            ?: throw EntityNotFoundException("No judge count set for problem $problem and city $cityId")
-        return JudgeCountResponse(judgeCount = judgeEntity.judgeCount)
+            ?: CityFormJudgesEntity()
+                .apply { this.problem = problem; this.city = city; this.judgeCount = 1 }
+        return JudgeCountResponse(judgeEntity.judgeCount)
+    }
+
+    fun getJudgeCountByProblem(problem: Int): List<CityFormJudgesEntity?> {
+        return cityFormJudgesRepository.findByProblem(problem)
+    }
+
+    fun deleteJudgeCountsByCity(cityId: Int) {
+        cityFormJudgesRepository.deleteByCity(cityService.getCity(cityId))
     }
 }
 

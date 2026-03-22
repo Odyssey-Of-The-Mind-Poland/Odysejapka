@@ -9,7 +9,7 @@ class TeamFormService(
     private val teamResultRepository: TeamResultRepository,
     private val timeTableService: TimeTableService,
     private val formProblemRepository: FormProblemRepository,
-    private val cityFormJudgesRepository: CityFormJudgesRepository,
+    private val judgeCountService: JudgeCountService
 ) {
 
     @Transactional
@@ -23,7 +23,7 @@ class TeamFormService(
         val problem = performance.problemEntity.id
         val city = performance.cityEntity
 
-        val judgeCount = cityFormJudgesRepository.findByProblemAndCity(problem, city)?.judgeCount ?: 1
+        val judgeCount = judgeCountService.getJudgeCountByProblemAndCity(problem, city.id).judgeCount
 
         val emptyForm = TeamForm(
             performanceId = performanceId,

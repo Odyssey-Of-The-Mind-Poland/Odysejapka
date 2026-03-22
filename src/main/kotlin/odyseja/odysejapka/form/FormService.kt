@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class FormService(
     private val formProblemRepository: FormProblemRepository,
-    private val cityFormJudgesRepository: CityFormJudgesRepository,
     private val teamFormService: TeamFormService,
     private val judgeCountService: JudgeCountService,
     private val teamResultService: TeamResultService,
@@ -37,7 +36,7 @@ class FormService(
             penaltyEntries = emptyList()
         )
 
-        val judgeEntities = cityFormJudgesRepository.findByProblem(problem)
+        val judgeEntities = judgeCountService.getJudgeCountByProblem(problem)
         val smallJudgesTeams = extractJudgeTeamIds(judgeEntities, 1)
         val bigJudgesTeams = extractJudgeTeamIds(judgeEntities, 2)
 
@@ -47,15 +46,15 @@ class FormService(
         )
     }
 
-    private fun extractJudgeTeamIds(judgeEntities: List<CityFormJudgesEntity>, judgeCount: Int): List<Int>? {
+    private fun extractJudgeTeamIds(judgeEntities: List<CityFormJudgesEntity?>, judgeCount: Int): List<Int>? {
         val ids = judgeEntities
-            .filter { it.judgeCount == judgeCount }
-            .mapNotNull { it.city?.id }
+            .filter { it?.judgeCount == judgeCount }
+            .mapNotNull { it?.city?.id }
         return ids.ifEmpty { null }
     }
 
     fun getJudgeCount(problem: Int, cityId: Int): JudgeCountResponse {
-        return judgeCountService.getJudgeCount(problem, cityId)
+        return judgeCountService.getJudgeCountByProblemAndCity(problem, cityId)
     }
 
     @Transactional
