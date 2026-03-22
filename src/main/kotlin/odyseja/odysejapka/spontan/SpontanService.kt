@@ -2,7 +2,7 @@ package odyseja.odysejapka.spontan
 
 import com.ezylang.evalex.Expression
 import odyseja.odysejapka.city.CityService
-import odyseja.odysejapka.timetable.PerformanceRepository
+import odyseja.odysejapka.timetable.TimeTableService
 import odyseja.odysejapka.users.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -14,7 +14,7 @@ class SpontanService(
     private val spontanDefinitionRepository: SpontanDefinitionRepository,
     private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
     private val cityService: CityService,
-    private val performanceRepository: PerformanceRepository,
+    private val timeTableService: TimeTableService,
     private val spontanUserRepository: SpontanUserRepository,
     private val userRepository: UserRepository,
     private val spontanAccessService: SpontanAccessService
@@ -87,7 +87,7 @@ class SpontanService(
 
         val accessibleIds = spontanAccessService.accessibleAssignmentIds(cityId)
 
-        val groupIds = performanceRepository.findAllByCityEntity_Id(cityId)
+        val groupIds = timeTableService.getPerformanceEntitiesByCity(cityId)
             .filter { !it.isExcludedFromScoring() }
             .map { GroupId(it.problemEntity.id, it.ageEntity.id, it.league ?: "") }
             .distinct()

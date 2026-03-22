@@ -1,0 +1,53 @@
+package odyseja.odysejapka.city
+
+import odyseja.odysejapka.change.ChangeService
+import odyseja.odysejapka.form.CityFormJudgesRepository
+import odyseja.odysejapka.info.InfoRepository
+import odyseja.odysejapka.sponsor.SponsorRepository
+import odyseja.odysejapka.spontan.SpontanGroupAssignmentRepository
+import odyseja.odysejapka.spontan.SpontanUserRepository
+import odyseja.odysejapka.stage.StageRepository
+import odyseja.odysejapka.timetable.TimeTableService
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+
+@Service
+open class CityDeletionService(
+    private val cityService: CityService,
+    private val cityRepository: CityRepository,
+    private val changeService: ChangeService,
+    private val timeTableService: TimeTableService,
+    private val stageRepository: StageRepository,
+    private val cityFormJudgesRepository: CityFormJudgesRepository,
+    private val infoRepository: InfoRepository,
+    private val sponsorRepository: SponsorRepository,
+    private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
+    private val spontanUserRepository: SpontanUserRepository
+) {
+    @Transactional
+    fun deleteCity(cityId: Int) {
+
+        val city = cityService.getCity(cityId)
+
+        timeTableService.clearTimetableByCity(cityId)
+        stageRepository.deleteByCityEntity(city)
+        cityFormJudgesRepository.deleteByCity(city)
+        infoRepository.deleteByCityId(cityId)
+        sponsorRepository.deleteByCityId(cityId)
+        spontanGroupAssignmentRepository.deleteByCityId(cityId)
+        spontanUserRepository.deleteByCityId(cityId)
+        cityRepository.deleteById(cityId)
+
+        changeService.updateVersion()
+    }
+
+    @Transactional
+    fun clearCities() {
+        val cities = cityService.getCities()
+        cities.forEach {
+            deleteCity(it!!.id)
+        }
+
+        changeService.updateVersion()
+    }
+}

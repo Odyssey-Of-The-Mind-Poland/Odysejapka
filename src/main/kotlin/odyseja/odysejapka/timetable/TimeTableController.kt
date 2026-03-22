@@ -2,7 +2,6 @@ package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.Progress
 import odyseja.odysejapka.util.GoogleIdExtractor
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -17,7 +16,7 @@ class TimeTableController(
 
     @GetMapping
     fun getPerformances(@RequestParam(required = false) cityId: Int?): List<Performance> {
-        return cityId?.let { timeTableService.getByCity(cityId) } ?: timeTableService.getFinals()
+        return cityId?.let { timeTableService.getPerformancesByCity(cityId) } ?: timeTableService.getFinals()
     }
 
     @GetMapping("/{performanceId}")
@@ -49,8 +48,8 @@ class TimeTableController(
 
     @Secured("ROLE_ADMINISTRATOR")
     @DeleteMapping("/{performanceId}")
-    fun delPerformance(@PathVariable performanceId: Int) {
-        timeTableService.delPerformance(performanceId)
+    fun deletePerformance(@PathVariable performanceId: Int) {
+        timeTableService.deletePerformance(performanceId)
     }
 
     @Secured("ROLE_ADMINISTRATOR")

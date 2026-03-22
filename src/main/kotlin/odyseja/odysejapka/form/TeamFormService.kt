@@ -1,13 +1,13 @@
 package odyseja.odysejapka.form
 
 import jakarta.transaction.Transactional
-import odyseja.odysejapka.timetable.PerformanceRepository
+import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 
 @Service
 class TeamFormService(
     private val teamResultRepository: TeamResultRepository,
-    private val performanceRepository: PerformanceRepository,
+    private val timeTableService: TimeTableService,
     private val formProblemRepository: FormProblemRepository,
     private val cityFormJudgesRepository: CityFormJudgesRepository,
 ) {
@@ -19,7 +19,7 @@ class TeamFormService(
         val ranatra = resultEntity?.ranatra ?: false
         val results = resultEntity?.results?.results ?: emptyList()
         val weightHeldResults = resultEntity?.results?.weightHeldResults ?: emptyMap()
-        val performance = performanceRepository.findById(performanceId).get()
+        val performance = timeTableService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         val city = performance.cityEntity
 

@@ -8,6 +8,6 @@ import org.springframework.transaction.annotation.Transactional
 interface PerformanceRepository : CrudRepository<PerformanceEntity?, Int?> {
     @Transactional
     fun deleteByCityEntity(cityEntity: CityEntity)
-
-    fun findAllByCityEntity_Id(cityId: Int): List<PerformanceEntity>
+    fun findFirstById(id: Int): PerformanceEntity?
+    fun findAllByCityEntityId(cityId: Int): List<PerformanceEntity>
 }

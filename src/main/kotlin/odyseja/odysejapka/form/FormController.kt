@@ -3,7 +3,7 @@ package odyseja.odysejapka.form
 import odyseja.odysejapka.dashboard.PerformanceAccessService
 import odyseja.odysejapka.dashboard.UserAccessService
 import odyseja.odysejapka.dashboard.extractUserId
-import odyseja.odysejapka.timetable.PerformanceRepository
+import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -26,7 +26,7 @@ class FormController(
     private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService?,
     private val performanceAccessService: PerformanceAccessService,
     private val userAccessService: UserAccessService,
-    private val performanceRepository: PerformanceRepository
+    private val timeTableService: TimeTableService
 ) {
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
@@ -84,8 +84,7 @@ class FormController(
     ) {
         val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         performanceAccessService.checkAccess(userId, performanceId)
-        val performance = performanceRepository.findById(performanceId).orElse(null)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val performance = timeTableService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN)
@@ -100,8 +99,7 @@ class FormController(
     ): Map<String, Boolean> {
         val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         performanceAccessService.checkAccess(userId, performanceId)
-        val performance = performanceRepository.findById(performanceId).orElse(null)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val performance = timeTableService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN)

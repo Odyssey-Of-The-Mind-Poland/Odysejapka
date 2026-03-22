@@ -3,10 +3,10 @@ package odyseja.odysejapka.timetable
 import org.springframework.stereotype.Service
 
 @Service
-class PerformanceGroupService(private val performanceRepository: PerformanceRepository) {
+class PerformanceGroupService(private val timeTableService: TimeTableService) {
     fun getPerformanceGroups(cityId: Int?): List<PerformanceGroup> {
         val performances =
-            cityId?.let { performanceRepository.findAllByCityEntity_Id(cityId) } ?: performanceRepository.findAll()
+            cityId?.let { timeTableService.getPerformanceEntitiesByCity(cityId) } ?: timeTableService.getAllPerformanceEntities()
         return performances
             .filter { it != null && !it.isExcludedFromScoring() }
             .groupBy { it?.toGroup() }.map { (group, performances) ->

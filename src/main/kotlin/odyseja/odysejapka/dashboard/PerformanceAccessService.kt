@@ -1,7 +1,7 @@
 package odyseja.odysejapka.dashboard
 
 import odyseja.odysejapka.stage.StageUserRepository
-import odyseja.odysejapka.timetable.PerformanceRepository
+import odyseja.odysejapka.timetable.TimeTableService
 import odyseja.odysejapka.users.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -10,7 +10,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class PerformanceAccessService(
-    private val performanceRepository: PerformanceRepository,
+    private val timeTableService: TimeTableService,
     private val userAccessService: UserAccessService,
     private val userRepository: UserRepository,
     private val stageUserRepository: StageUserRepository
@@ -20,8 +20,7 @@ class PerformanceAccessService(
     fun checkAccess(principalUserId: String, performanceId: Int) {
         if (userAccessService.isAdmin()) return
 
-        val performance = performanceRepository.findById(performanceId).orElse(null)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val performance = timeTableService.getPerformanceEntity(performanceId)
 
         if (userAccessService.hasProblemRole(performance.problemEntity.id)) return
 

@@ -8,7 +8,7 @@ import odyseja.odysejapka.form.TeamResultRepository
 import odyseja.odysejapka.spontan.SpontanResultEntity
 import odyseja.odysejapka.spontan.SpontanResultRepository
 import odyseja.odysejapka.timetable.PerformanceEntity
-import odyseja.odysejapka.timetable.PerformanceRepository
+import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 
 data class ResultsStatusResponse(
@@ -19,7 +19,7 @@ data class ResultsStatusResponse(
 
 @Service
 class CityResultsService(
-    private val performanceRepository: PerformanceRepository,
+    private val timeTableService: TimeTableService,
     private val teamResultRepository: TeamResultRepository,
     private val spontanResultRepository: SpontanResultRepository,
     private val cityService: CityService,
@@ -27,7 +27,7 @@ class CityResultsService(
 ) {
 
     fun getResultsStatus(cityId: Int): ResultsStatusResponse {
-        val performances = performanceRepository.findAllByCityEntity_Id(cityId)
+        val performances = timeTableService.getPerformanceEntitiesByCity(cityId)
             .filter { !it.isExcludedFromScoring() }
         val performanceIds = performances.map { it.id }
 
@@ -61,7 +61,7 @@ class CityResultsService(
     }
 
     private fun buildTeamsFromDb(cityId: Int, cityName: String): List<Team> {
-        val performances = performanceRepository.findAllByCityEntity_Id(cityId)
+        val performances = timeTableService.getPerformanceEntitiesByCity(cityId)
             .filter { !it.isExcludedFromScoring() }
         val performanceIds = performances.map { it.id }
 

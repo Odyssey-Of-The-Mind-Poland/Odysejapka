@@ -20,8 +20,6 @@ class ImportCsvService(
 ) {
     @Transactional
     fun uploadCsvFile(file: MultipartFile, cityId: Int) {
-        val city = cityService.getCity(cityId)
-
         BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8)).use { reader ->
             val beans = createCSVToBean(reader)
             val parsed = beans.parse()
@@ -33,7 +31,7 @@ class ImportCsvService(
                 it.validate()
             }
 
-            timeTableService.addPerformances(parsed, city)
+            timeTableService.addPerformances(parsed, cityId)
 
             val stages = parsed.map { it.stage }.toSet()
             stageUserService.createStageUsers(cityId, stages)

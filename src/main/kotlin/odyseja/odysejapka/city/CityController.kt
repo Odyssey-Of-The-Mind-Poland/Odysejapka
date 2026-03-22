@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(value = ["/city", "/api/v1/city"])
 class CityController(
-    private val cityService: CityService
+    private val cityService: CityService,
+    private val cityDeletionService: CityDeletionService
 ) {
 
     @GetMapping()
@@ -33,12 +34,12 @@ class CityController(
     @Secured("ROLE_ADMINISTRATOR")
     @DeleteMapping("/{cityId}")
     fun deleteCity(@PathVariable cityId: Int) {
-        cityService.deleteCity(cityId)
+        cityDeletionService.deleteCity(cityId)
     }
 
     @Secured("ROLE_ADMINISTRATOR")
     @DeleteMapping
     fun clearCities() {
-        cityService.clearCities()
+        cityDeletionService.clearCities()
     }
 }

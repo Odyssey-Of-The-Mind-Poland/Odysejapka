@@ -1,14 +1,13 @@
 package odyseja.odysejapka.spontan
 
 import odyseja.odysejapka.dashboard.UserAccessService
-import odyseja.odysejapka.timetable.PerformanceRepository
+import odyseja.odysejapka.timetable.TimeTableService
 import odyseja.odysejapka.users.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 
 /**
@@ -23,7 +22,7 @@ class SpontanAccessService(
     private val userRepository: UserRepository,
     private val spontanUserRepository: SpontanUserRepository,
     private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
-    private val performanceRepository: PerformanceRepository
+    private val timeTableRepository: TimeTableService
 ) {
 
     /**
@@ -67,8 +66,7 @@ class SpontanAccessService(
      */
     fun verifyPerformanceAccess(performanceId: Int) {
         val spontanUser = currentSpontanUser() ?: return
-        val performance = performanceRepository.findById(performanceId).orElse(null)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Performance not found")
+        val performance = timeTableRepository.getPerformanceEntity(performanceId)
 
         val cityId = performance.cityEntity.id
         val groupId = GroupId(

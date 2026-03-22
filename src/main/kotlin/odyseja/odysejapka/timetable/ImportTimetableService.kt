@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class ImportTimetableService(
-    private val performanceService: TimeTableService,
+    private val timeTableService: TimeTableService,
     private val cityService: CityService,
     private val backgroundJobService: BackgroundJobService
 ) {
@@ -19,16 +19,16 @@ class ImportTimetableService(
         clearTimeTable(cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val city = cityService.getCity(cityId)
-        performanceService.deleteByCity(cityId)
+        timeTableService.clearTimetableByCity(cityId)
 
         backgroundJobService.start(
             jobType,
-            TimeTableRunner(performanceService, sheetsAdapter, city.name)
+            TimeTableRunner(timeTableService, sheetsAdapter, city.name)
         )
     }
 
     fun clearTimeTable(cityId: Int) {
-        performanceService.deleteByCity(cityId)
+        timeTableService.clearTimetableByCity(cityId)
     }
 
     fun stop() {
