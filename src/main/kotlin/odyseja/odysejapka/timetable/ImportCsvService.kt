@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets
 @Service
 class ImportCsvService(
     private val timeTableService: TimeTableService,
-    private val cityService: CityService,
     private val stageUserService: StageUserService
 ) {
     @Transactional

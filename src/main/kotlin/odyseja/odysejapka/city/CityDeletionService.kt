@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-open class CityDeletionService(
+class CityDeletionService(
     private val cityService: CityService,
     private val cityRepository: CityRepository,
     private val changeService: ChangeService,

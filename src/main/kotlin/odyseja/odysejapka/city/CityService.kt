@@ -2,13 +2,6 @@ package odyseja.odysejapka.city
 
 import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
-import odyseja.odysejapka.form.CityFormJudgesRepository
-import odyseja.odysejapka.info.InfoRepository
-import odyseja.odysejapka.sponsor.SponsorRepository
-import odyseja.odysejapka.spontan.SpontanGroupAssignmentRepository
-import odyseja.odysejapka.spontan.SpontanUserRepository
-import odyseja.odysejapka.stage.StageRepository
-import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
