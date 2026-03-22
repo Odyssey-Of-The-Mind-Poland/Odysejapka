@@ -118,10 +118,11 @@ class ImportCsvTest: OdysejaDsl() {
         val response = timetableRespondingClient.executeConsumer { controller ->
             controller.importPerformances(mockCsv(), 123456789)
         }
+        val detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
 
-        Assertions.assertThat(response.statusCode).isEqualTo(404)
-        Assertions.assertThat(response.mockHttpServletResponse.contentAsString)
-            .isEqualTo("Nie znaleziono miasta o ID 123456789")
+        Assertions.assertThat(detail.status).isEqualTo(404)
+        Assertions.assertThat(detail.title).isEqualTo("ENTITY NOT FOUND")
+        Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o ID 123456789")
     }
 
     @Test

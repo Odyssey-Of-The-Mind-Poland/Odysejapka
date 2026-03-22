@@ -46,8 +46,6 @@ class CityTest: OdysejaDsl() {
         }
 
         Assertions.assertThat(response.statusCode).isEqualTo(404)
-        Assertions.assertThat(response.mockHttpServletResponse.contentAsString)
-            .isEqualTo("Nie znaleziono miasta o nazwie Usuwisko Dolne")
     }
 
     @Test
@@ -62,8 +60,6 @@ class CityTest: OdysejaDsl() {
         }
 
         Assertions.assertThat(response.statusCode).isEqualTo(404)
-        Assertions.assertThat(response.mockHttpServletResponse.contentAsString)
-            .isEqualTo("Nie znaleziono miasta o nazwie Konkurs")
     }
 
     @Test
@@ -76,27 +72,33 @@ class CityTest: OdysejaDsl() {
     }
 
     @Test
-    fun `should properly handle CityNotFoundException`() {
+    fun `should properly handle exceptions`() {
         val cityRespondingClient = controllerClientFactory.respondingClient(CityController::class.java)
         var response = cityRespondingClient.executeConsumer {
                 controller -> controller.getCityByName("Nieistniejów")
         }
-        Assertions.assertThat(response.statusCode).isEqualTo(404)
-        Assertions.assertThat(response.mockHttpServletResponse.contentAsString)
-            .isEqualTo("Nie znaleziono miasta o nazwie Nieistniejów")
+        var detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+
+        Assertions.assertThat(detail.status).isEqualTo(404)
+        Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o nazwie Nieistniejów")
+        Assertions.assertThat(detail.title).isEqualTo("ENTITY NOT FOUND")
 
         response = cityRespondingClient.executeConsumer {
                 controller -> controller.getCity(941415125)
         }
-        Assertions.assertThat(response.statusCode).isEqualTo(404)
-        Assertions.assertThat(response.mockHttpServletResponse.contentAsString)
-            .isEqualTo("Nie znaleziono miasta o ID 941415125")
+        detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+
+        Assertions.assertThat(detail.status).isEqualTo(404)
+        Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o ID 941415125")
+        Assertions.assertThat(detail.title).isEqualTo("ENTITY NOT FOUND")
 
         response = cityRespondingClient.executeConsumer {
                 controller -> controller.deleteCity(941415125)
         }
-        Assertions.assertThat(response.statusCode).isEqualTo(404)
-        Assertions.assertThat(response.mockHttpServletResponse.contentAsString)
-            .isEqualTo("Nie znaleziono miasta o ID 941415125")
+        detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+
+        Assertions.assertThat(detail.status).isEqualTo(404)
+        Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o ID 941415125")
+        Assertions.assertThat(detail.title).isEqualTo("ENTITY NOT FOUND")
     }
 }

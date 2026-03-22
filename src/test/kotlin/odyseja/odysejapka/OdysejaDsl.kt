@@ -1,5 +1,6 @@
 package odyseja.odysejapka
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import odyseja.odysejapka.city.CityController
 import odyseja.odysejapka.city.CreateCityRequest
 import odyseja.odysejapka.form.FormController
@@ -11,9 +12,6 @@ import odyseja.odysejapka.form.PerformanceResultsRequest
 import odyseja.odysejapka.form.ProblemForm
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.spontan.SpontanController
-import odyseja.odysejapka.spontan.SpontanDefinition
-import odyseja.odysejapka.spontan.SpontanFieldEntry
-import odyseja.odysejapka.spontan.SpontanType
 import odyseja.odysejapka.timetable.Performance
 import odyseja.odysejapka.timetable.TimeTableController
 import odyseja.odysejapka.users.CreateUserRequest
@@ -25,6 +23,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
+import org.springframework.http.ProblemDetail
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import ovh.snet.grzybek.controller.client.core.ControllerClientFactory
@@ -178,6 +177,11 @@ class OdysejaDsl {
             content.toByteArray())
 
         return csvFile
+    }
+
+    fun parseProblemDetail(response: String): ProblemDetail {
+        val mapper = ObjectMapper()
+        return mapper.readValue(response, ProblemDetail::class.java)
     }
 
 }
