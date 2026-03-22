@@ -3,8 +3,7 @@ package odyseja.odysejapka.timetable
 import com.opencsv.bean.CsvToBean
 import com.opencsv.bean.CsvToBeanBuilder
 import com.opencsv.enums.CSVReaderNullFieldIndicator
-import odyseja.odysejapka.city.CityEntity
-import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.stage.StageUserService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,17 +15,12 @@ import java.nio.charset.StandardCharsets
 @Service
 class ImportCsvService(
     private val timeTableService: TimeTableService,
-    private val cityRepository: CityRepository,
+    private val cityService: CityService,
     private val stageUserService: StageUserService
 ) {
     @Transactional
     fun uploadCsvFile(file: MultipartFile, cityId: Int) {
-        val city: CityEntity
-        try {
-            city = cityRepository.findFirstById(cityId)
-        } catch (_: Exception) {
-            throw IllegalArgumentException("Nie ma konkursu o ID ${cityId}.")
-        }
+        val city = cityService.getCity(cityId)
 
         BufferedReader(InputStreamReader(file.inputStream, StandardCharsets.UTF_8)).use { reader ->
             val beans = createCSVToBean(reader)

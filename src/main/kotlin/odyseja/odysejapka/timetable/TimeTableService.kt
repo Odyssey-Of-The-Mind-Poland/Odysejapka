@@ -4,7 +4,7 @@ import odyseja.odysejapka.age.AgeEntity
 import odyseja.odysejapka.age.AgeRepository
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityEntity
-import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.problem.ProblemRepository
 import odyseja.odysejapka.stage.StageEntity
@@ -19,7 +19,7 @@ class TimeTableService(
     private val problemRepository: ProblemRepository,
     private val stageRepository: StageRepository,
     private val ageRepository: AgeRepository,
-    private val cityRepository: CityRepository,
+    private val cityService: CityService,
     private val changeService: ChangeService
 ) {
 
@@ -103,7 +103,8 @@ class TimeTableService(
 
     @Transactional
     fun clearTimetableByCity(cityId: Int) {
-        timeTableRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
+        val city = cityService.getCity(cityId)
+        timeTableRepository.deleteByCityEntity(city)
         changeService.updateVersion()
     }
 
@@ -128,7 +129,7 @@ class TimeTableService(
     }
 
     fun getCity(city: String): CityEntity {
-        return cityRepository.findFirstByName(city) ?: cityRepository.save(CityEntity(0, city))
+        return cityService.getCityByName(city)
     }
 
     fun getProblem(problem: Int): ProblemEntity {
@@ -145,7 +146,8 @@ class TimeTableService(
     }
 
     fun deleteByCity(cityId: Int) {
-        timeTableRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
+        val city = cityService.getCity(cityId)
+        timeTableRepository.deleteByCityEntity(city)
     }
 
     fun getPerformance(performanceId: Int): Performance {

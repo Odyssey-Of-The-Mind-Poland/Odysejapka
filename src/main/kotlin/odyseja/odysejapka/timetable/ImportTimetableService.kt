@@ -2,14 +2,14 @@ package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.Progress
 import odyseja.odysejapka.async.BackgroundJobService
-import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.stereotype.Service
 
 @Service
 class ImportTimetableService(
     private val performanceService: TimeTableService,
-    private val cityRepository: CityRepository,
+    private val cityService: CityService,
     private val backgroundJobService: BackgroundJobService
 ) {
 
@@ -18,12 +18,12 @@ class ImportTimetableService(
     fun import(zspId: String, cityId: Int) {
         clearTimeTable(cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
-        val cityName = cityRepository.findFirstById(cityId).name
+        val city = cityService.getCity(cityId)
         performanceService.deleteByCity(cityId)
 
         backgroundJobService.start(
             jobType,
-            TimeTableRunner(performanceService, sheetsAdapter, cityName)
+            TimeTableRunner(performanceService, sheetsAdapter, city.name)
         )
     }
 

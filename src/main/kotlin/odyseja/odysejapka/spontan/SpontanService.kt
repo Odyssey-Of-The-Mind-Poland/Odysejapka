@@ -1,7 +1,7 @@
 package odyseja.odysejapka.spontan
 
 import com.ezylang.evalex.Expression
-import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.timetable.PerformanceRepository
 import odyseja.odysejapka.users.UserRepository
 import org.springframework.http.HttpStatus
@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException
 class SpontanService(
     private val spontanDefinitionRepository: SpontanDefinitionRepository,
     private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
-    private val cityRepository: CityRepository,
+    private val cityService: CityService,
     private val performanceRepository: PerformanceRepository,
     private val spontanUserRepository: SpontanUserRepository,
     private val userRepository: UserRepository,
@@ -83,9 +83,7 @@ class SpontanService(
     }
 
     fun getGroupAssignments(cityId: Int): List<SpontanGroupAssignment> {
-        if (!cityRepository.existsById(cityId)) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "City not found")
-        }
+        cityService.getCity(cityId)
 
         val accessibleIds = spontanAccessService.accessibleAssignmentIds(cityId)
 
@@ -142,8 +140,7 @@ class SpontanService(
         return spontanGroupAssignmentRepository
             .findByCityIdAndProblemAndAgeAndLeague(cityId, groupId.problem, groupId.age, groupId.league)
             ?: SpontanGroupAssignmentEntity().apply {
-                this.city = cityRepository.findById(cityId).orElse(null)
-                    ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "City not found")
+                this.city = cityService.getCity(cityId)
                 this.problem = groupId.problem
                 this.age = groupId.age
                 this.league = groupId.league

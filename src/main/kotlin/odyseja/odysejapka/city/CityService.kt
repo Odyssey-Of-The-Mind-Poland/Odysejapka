@@ -1,5 +1,6 @@
 package odyseja.odysejapka.city
 
+import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.form.CityFormJudgesRepository
 import odyseja.odysejapka.info.InfoRepository
@@ -37,9 +38,12 @@ class CityService(
 
   @Transactional
   fun deleteCity(cityId: Int) {
-    performanceRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
-    stageRepository.deleteByCityEntity(cityRepository.findFirstById(cityId))
-    cityFormJudgesRepository.deleteByCity(cityRepository.findFirstById(cityId))
+
+    val city = getCity(cityId)
+
+    performanceRepository.deleteByCityEntity(city)
+    stageRepository.deleteByCityEntity(city)
+    cityFormJudgesRepository.deleteByCity(city)
     infoRepository.deleteByCityId(cityId)
     sponsorRepository.deleteByCityId(cityId)
     spontanGroupAssignmentRepository.deleteByCityId(cityId)
@@ -59,7 +63,11 @@ class CityService(
     changeService.updateVersion()
   }
 
-  fun getCityByName(cityName: String): CityEntity? {
-    return cityRepository.findFirstByName(cityName)
+  fun getCityByName(cityName: String): CityEntity {
+    return cityRepository.findFirstByName(cityName) ?: throw EntityNotFoundException("Nie znaleziono miasta o nazwie $cityName")
+  }
+
+  fun getCity(cityId: Int): CityEntity {
+    return cityRepository.findFirstById(cityId) ?: throw EntityNotFoundException("Nie znaleziono miasta o ID $cityId")
   }
 }
