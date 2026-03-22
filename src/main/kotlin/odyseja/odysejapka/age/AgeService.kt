@@ -1,5 +1,6 @@
 package odyseja.odysejapka.age
 
+import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
 import org.springframework.stereotype.Service
 
@@ -9,8 +10,12 @@ class AgeService(
   private val changeService: ChangeService
 ) {
 
-  fun getAge(): MutableIterable<AgeEntity?> {
+  fun getAges(): MutableIterable<AgeEntity?> {
     return ageRepository.findAll()
+  }
+
+  fun getAge(ageId: Int): AgeEntity {
+    return ageRepository.findFirstById(ageId) ?: throw EntityNotFoundException("Nie znaleziono grupy wiekowej $ageId")
   }
 
   fun updateAge(ageEntities: List<AgeEntity>) {

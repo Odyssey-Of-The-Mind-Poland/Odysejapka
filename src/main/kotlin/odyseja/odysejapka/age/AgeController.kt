@@ -10,7 +10,7 @@ class AgeController(private val ageService: AgeService) {
 
   @GetMapping
   fun getAge(principal: Principal): MutableIterable<AgeEntity?> {
-    return ageService.getAge()
+    return ageService.getAges()
   }
 
   @Secured("ROLE_ADMINISTRATOR")

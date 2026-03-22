@@ -1,8 +1,7 @@
 package odyseja.odysejapka.timetable
 
 import jakarta.persistence.EntityNotFoundException
-import odyseja.odysejapka.age.AgeEntity
-import odyseja.odysejapka.age.AgeRepository
+import odyseja.odysejapka.age.AgeService
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.problem.ProblemEntity
@@ -18,7 +17,7 @@ class TimeTableService(
     private val timeTableRepository: PerformanceRepository,
     private val problemRepository: ProblemRepository,
     private val stageRepository: StageRepository,
-    private val ageRepository: AgeRepository,
+    private val ageService: AgeService,
     private val cityService: CityService,
     private val changeService: ChangeService
 ) {
@@ -36,7 +35,7 @@ class TimeTableService(
                 cityService.getCity(cityId),
                 it.team,
                 getProblem(it.problem),
-                getAge(it.age),
+                ageService.getAge(it.age),
                 getStage(it.stage, it.city),
                 it.performance,
                 it.spontan,
@@ -61,7 +60,7 @@ class TimeTableService(
             cityService.getCityByName(performance.city),
             performance.team,
             getProblem(performance.problem),
-            getAge(performance.age),
+            ageService.getAge(performance.age),
             getStage(performance.stage, performance.city),
             performance.performance,
             performance.spontan,
@@ -85,7 +84,7 @@ class TimeTableService(
         pToEdit.cityEntity = cityService.getCityByName(performance.city)
         pToEdit.team = performance.team
         pToEdit.problemEntity = getProblem(performance.problem)
-        pToEdit.ageEntity = getAge(performance.age)
+        pToEdit.ageEntity = ageService.getAge(performance.age)
         pToEdit.stageEntity = getStage(performance.stage, performance.city)
         pToEdit.performance = performance.performance
         pToEdit.spontan = performance.spontan
@@ -113,15 +112,6 @@ class TimeTableService(
         changeService.updateVersion()
     }
 
-
-    fun getAge(age: Int): AgeEntity {
-        return ageRepository.findFirstById(age) ?: ageRepository.save(
-            AgeEntity(
-                age,
-                age.toString()
-            )
-        )
-    }
 
     fun getStage(stageNumber: Int, cityName: String): StageEntity {
         val city = cityService.getCityByName(cityName)

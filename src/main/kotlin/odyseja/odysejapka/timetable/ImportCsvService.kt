@@ -3,7 +3,6 @@ package odyseja.odysejapka.timetable
 import com.opencsv.bean.CsvToBean
 import com.opencsv.bean.CsvToBeanBuilder
 import com.opencsv.enums.CSVReaderNullFieldIndicator
-import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.stage.StageUserService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
