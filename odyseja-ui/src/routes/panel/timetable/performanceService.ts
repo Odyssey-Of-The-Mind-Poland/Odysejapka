@@ -11,7 +11,7 @@ export async function savePerformance(performance: Performance) {
 }
 
 export async function importZsp(zspId: string, cityId: number) {
-    await post({zspId: zspId}, `/timeTable/import?cityId=${cityId}`, 'Rozpoczęto import');
+    await post({zspId: zspId}, `/timeTable/import`, 'Rozpoczęto import');
 }
 
 export async function stopImport() {
