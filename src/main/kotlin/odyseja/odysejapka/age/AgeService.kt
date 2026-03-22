@@ -12,12 +12,6 @@ class AgeService(
   private val changeService: ChangeService
 ) {
 
-  @Transactional
-  fun addAge(age: Int) {
-    ageRepository.save(AgeEntity(age, age.toString()))
-    changeService.updateVersion()
-  }
-
   fun getAges(): MutableIterable<AgeEntity?> {
     return ageRepository.findAll()
   }
