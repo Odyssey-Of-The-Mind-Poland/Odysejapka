@@ -48,7 +48,7 @@ class CityService(
     sponsorRepository.deleteByCityId(cityId)
     spontanGroupAssignmentRepository.deleteByCityId(cityId)
     spontanUserRepository.deleteByCityId(cityId)
-    cityRepository.deleteFirstById(cityId)
+    cityRepository.deleteById(cityId)
 
     changeService.updateVersion()
   }
