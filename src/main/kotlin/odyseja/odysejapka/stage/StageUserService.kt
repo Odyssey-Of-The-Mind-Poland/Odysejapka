@@ -1,7 +1,6 @@
 package odyseja.odysejapka.stage
 
-import odyseja.odysejapka.city.CityRepository
-import odyseja.odysejapka.exceptions.CityNotFoundException
+import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.users.UserEntity
 import odyseja.odysejapka.users.UserRepository
 import org.slf4j.LoggerFactory
@@ -18,13 +17,13 @@ data class StageUserCredentials(
 class StageUserService(
     private val stageUserRepository: StageUserRepository,
     private val userRepository: UserRepository,
-    private val cityRepository: CityRepository
+    private val cityService: CityService
 ) {
     private val logger = LoggerFactory.getLogger(StageUserService::class.java)
 
     @Transactional
     fun createStageUsers(cityId: Int, stages: Set<Int>) {
-        val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId)
+        val city = cityService.getCity(cityId)
         val citySlug = slugify(city.name)
         stageUserRepository.deleteAllByCityId(cityId)
 

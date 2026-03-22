@@ -1,8 +1,7 @@
 package odyseja.odysejapka.rak
 
 import odyseja.odysejapka.gad.Team
-import odyseja.odysejapka.city.CityRepository
-import odyseja.odysejapka.exceptions.CityNotFoundException
+import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.form.FormState
 import odyseja.odysejapka.form.TeamResultEntity
 import odyseja.odysejapka.form.TeamResultRepository
@@ -23,7 +22,7 @@ class CityResultsService(
     private val performanceRepository: PerformanceRepository,
     private val teamResultRepository: TeamResultRepository,
     private val spontanResultRepository: SpontanResultRepository,
-    private val cityRepository: CityRepository,
+    private val cityService: CityService,
     private val latexGeneratorService: LatexGeneratorService
 ) {
 
@@ -55,7 +54,7 @@ class CityResultsService(
     }
 
     fun generateResultsPdf(cityId: Int): ByteArray {
-        val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId)
+        val city = cityService.getCity(cityId)
         val isRegion = !city.name.equals("finał", ignoreCase = true)
         val teams = buildTeamsFromDb(cityId, city.name)
         return latexGeneratorService.generatePdf(teams, isRegion, city.name)

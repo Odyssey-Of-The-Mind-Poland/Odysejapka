@@ -1,15 +1,14 @@
 package odyseja.odysejapka.form
 
 import jakarta.persistence.EntityNotFoundException
-import odyseja.odysejapka.city.CityRepository
-import odyseja.odysejapka.exceptions.CityNotFoundException
+import odyseja.odysejapka.city.CityService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class JudgeCountService(
     private val cityFormJudgesRepository: CityFormJudgesRepository,
-    private val cityRepository: CityRepository,
+    private val cityService: CityService,
 ) {
 
     @Transactional
@@ -19,7 +18,7 @@ class JudgeCountService(
     }
 
     private fun setJudgeCountForCity(problem: Int, cityId: Int, judgeCount: Int) {
-        val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId = cityId)
+        val city = cityService.getCity(cityId)
         val judgeEntity = cityFormJudgesRepository.findByProblemAndCity(problem, city)
             ?: CityFormJudgesEntity.create(problem, city)
         judgeEntity.judgeCount = judgeCount
@@ -27,7 +26,7 @@ class JudgeCountService(
     }
 
     fun getJudgeCount(problem: Int, cityId: Int): JudgeCountResponse {
-        val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId = cityId)
+        val city = cityService.getCity(cityId)
         val judgeEntity = cityFormJudgesRepository.findByProblemAndCity(problem, city)
             ?: throw EntityNotFoundException("No judge count set for problem $problem and city $cityId")
         return JudgeCountResponse(judgeCount = judgeEntity.judgeCount)

@@ -1,7 +1,7 @@
 package odyseja.odysejapka.dashboard
 
 import odyseja.odysejapka.city.CityEntity
-import odyseja.odysejapka.city.CityRepository
+import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.spontan.SpontanUserRepository
 import odyseja.odysejapka.stage.StageUserRepository
 import odyseja.odysejapka.users.UserRepository
@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CityAccessService(
-    private val cityRepository: CityRepository,
+    private val cityService: CityService,
     private val userRepository: UserRepository,
     private val userAccessService: UserAccessService,
     private val stageUserRepository: StageUserRepository,
@@ -20,19 +20,19 @@ class CityAccessService(
     @Transactional(readOnly = true)
     fun getAccessibleCities(principalUserId: String): List<CityEntity> {
         if (userAccessService.isAdmin() || userAccessService.isKapitan()) {
-            return cityRepository.findAll().filterNotNull()
+            return cityService.getCities().filterNotNull()
         }
 
         val user = userRepository.findByUserId(principalUserId) ?: return emptyList()
 
         val stageUser = stageUserRepository.findByUserId(user.id!!)
         if (stageUser != null) {
-            return listOfNotNull(cityRepository.findById(stageUser.cityId).orElse(null))
+            return listOfNotNull(cityService.getCity(stageUser.cityId))
         }
 
         val spontanUser = spontanUserRepository.findByUserId(user.id!!)
         if (spontanUser != null) {
-            return listOfNotNull(cityRepository.findById(spontanUser.cityId).orElse(null))
+            return listOfNotNull(cityService.getCity(spontanUser.cityId))
         }
 
         return emptyList()

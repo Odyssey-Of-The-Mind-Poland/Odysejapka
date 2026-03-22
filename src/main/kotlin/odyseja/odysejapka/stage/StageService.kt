@@ -1,21 +1,20 @@
 package odyseja.odysejapka.stage
 
 import odyseja.odysejapka.change.ChangeService
-import odyseja.odysejapka.city.CityRepository
-import odyseja.odysejapka.exceptions.CityNotFoundException
+import odyseja.odysejapka.city.CityService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class StageService(
-    private val stageRepository: StageRepository,
-    private val cityRepository: CityRepository,
-    private val changeService: ChangeService,
-    private val stageUserRepository: StageUserRepository
+  private val stageRepository: StageRepository,
+  private val cityService: CityService,
+  private val changeService: ChangeService,
+  private val stageUserRepository: StageUserRepository
 ) {
 
-  fun getStagesByCity(city: Int): List<Stage> {
-    return stageRepository.findAllByCityEntity(cityRepository.findById(city)).map {
+  fun getStagesByCity(cityId: Int): List<Stage> {
+    return stageRepository.findAllByCityEntity(cityService.getCity(cityId)).map {
       Stage(
         it!!.id,
         it.number,
@@ -38,9 +37,8 @@ class StageService(
 
   fun updateStage(stages: List<Stage>) {
     for (stage in stages) {
-      val toEdit: StageEntity = stageRepository.findFirstByNumberAndCityEntity(stage.number, cityRepository.findFirstById(stage.city))
-        ?: stageRepository.save(StageEntity(0, stage.number, stage.name, cityRepository.findFirstById(stage.city)
-          ?: throw CityNotFoundException(stage.city)))
+      val toEdit: StageEntity = stageRepository.findFirstByNumberAndCityEntity(stage.number, cityService.getCity(stage.city))
+        ?: stageRepository.save(StageEntity(0, stage.number, stage.name, cityService.getCity(stage.city)))
       toEdit.name = stage.name
       stageRepository.save(toEdit)
     }
@@ -50,7 +48,7 @@ class StageService(
 
   @Transactional
   fun clearStagesByCity(cityId: Int) {
-    val city = cityRepository.findFirstById(cityId) ?: throw CityNotFoundException(cityId)
+    val city = cityService.getCity(cityId)
     stageUserRepository.deleteAllByCityId(cityId)
     stageRepository.deleteByCityEntity(city)
     changeService.updateVersion()
