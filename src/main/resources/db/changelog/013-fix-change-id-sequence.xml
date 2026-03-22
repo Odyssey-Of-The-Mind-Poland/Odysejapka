@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+      Hibernate inserts explicit ids from a PostgreSQL sequence. After restores or manual inserts,
+      the sequence can lag behind MAX(id) and cause duplicate key on change_pkey.
+    -->
+    <changeSet id="013-fix-change-id-sequence" author="odysejapka">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="change"/>
+        </preConditions>
+        <sql dbms="postgresql" splitStatements="false">
+            DO $$
+            DECLARE
+                max_id bigint;
+                seq_name text;
+            BEGIN
+                SELECT COALESCE(MAX(id), 0) INTO max_id FROM change;
+                seq_name := pg_get_serial_sequence('change', 'id');
+                IF seq_name IS NULL THEN
+                    SELECT ('public.' || c.relname)::text INTO seq_name
+                    FROM pg_class c
+                    JOIN pg_namespace n ON n.oid = c.relnamespace
+                    WHERE c.relkind = 'S' AND n.nspname = 'public'
+                      AND c.relname IN (
+                          'change_seq',
+                          'change_id_seq',
+                          'changeentity_seq',
+                          'change_entity_seq'
+                      )
+                    LIMIT 1;
+                END IF;
+                IF seq_name IS NOT NULL THEN
+                    IF max_id &lt; 1 THEN
+                        EXECUTE format('SELECT setval(%L::regclass, 1, false)', seq_name);
+                    ELSE
+                        EXECUTE format('SELECT setval(%L::regclass, %s)', seq_name, max_id);
+                    END IF;
+                END IF;
+            END $$;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

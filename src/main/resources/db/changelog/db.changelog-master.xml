@@ -13,5 +13,6 @@
     <include file="db/changelog/006-create-chat-messages-table.xml"/>
     <include file="db/changelog/008-create-spontan-definitions-table.xml"/>
     <include file="db/changelog/012-insert-gad-cache-from-backup.xml"/>
+    <include file="db/changelog/013-fix-change-id-sequence.xml"/>
 
 </databaseChangeLog>
