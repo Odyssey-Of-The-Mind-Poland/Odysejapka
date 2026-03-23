@@ -31,7 +31,7 @@ class SpontanUserService(
     private val userRepository: UserRepository,
     private val userService: UserService,
     private val userRolesRepository: UserRolesRepository,
-    private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository
+    private val spontanGroupAssignmentService: SpontanGroupAssignmentService
 ) {
     private val logger = LoggerFactory.getLogger(SpontanUserService::class.java)
 
@@ -93,11 +93,11 @@ class SpontanUserService(
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Spontan user not found")
 
         // Clear group assignments referencing this spontan user
-        val assignments = spontanGroupAssignmentRepository.findByCityId(cityId)
+        val assignments = spontanGroupAssignmentService.getAssignmentEntitiesByCity(cityId)
         for (assignment in assignments) {
             if (assignment.spontanUser?.id == spontanUser.id) {
                 assignment.spontanUser = null
-                spontanGroupAssignmentRepository.save(assignment)
+                spontanGroupAssignmentService.addAssignmentEntity(assignment)
             }
         }
 
@@ -114,15 +114,14 @@ class SpontanUserService(
 
     @Transactional
     fun assignUserToGroup(assignmentId: Long, spontanUserId: Long?) {
-        val assignment = spontanGroupAssignmentRepository.findById(assignmentId).orElse(null)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Group assignment not found")
+        val assignment = spontanGroupAssignmentService.getAssignmentEntityById(assignmentId)
 
         assignment.spontanUser = spontanUserId?.let {
             spontanUserRepository.findById(it).orElse(null)
                 ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Spontan user not found")
         }
 
-        spontanGroupAssignmentRepository.save(assignment)
+        spontanGroupAssignmentService.addAssignmentEntity(assignment)
     }
 
     private fun generatePassword(): String {

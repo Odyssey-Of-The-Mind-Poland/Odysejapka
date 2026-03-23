@@ -19,30 +19,30 @@ class SpontanController(
 
     @GetMapping
     fun getAll(): List<SpontanDefinition> {
-        return spontanService.getAll()
+        return spontanService.getAllSpontans()
     }
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): SpontanDefinition {
-        return spontanService.getById(id)
+        return spontanService.getSpontanById(id)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @PostMapping
     fun create(@RequestBody definition: SpontanDefinition): SpontanDefinition {
-        return spontanService.create(definition)
+        return spontanService.createSpontan(definition)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @RequestBody definition: SpontanDefinition): SpontanDefinition {
-        return spontanService.update(id, definition)
+        return spontanService.updateSpontan(id, definition)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) {
-        spontanService.delete(id)
+        spontanService.deleteSpontan(id)
     }
 
     @GetMapping("/group/{cityId}")

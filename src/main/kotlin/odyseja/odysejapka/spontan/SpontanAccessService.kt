@@ -21,8 +21,8 @@ class SpontanAccessService(
     private val userAccessService: UserAccessService,
     private val userRepository: UserRepository,
     private val spontanUserRepository: SpontanUserRepository,
-    private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
-    private val timeTableRepository: TimeTableService
+    private val timeTableRepository: TimeTableService,
+    private val spontanGroupAssignmentService: SpontanGroupAssignmentService
 ) {
 
     /**
@@ -42,8 +42,8 @@ class SpontanAccessService(
      */
     fun accessibleAssignmentIds(cityId: Int): Set<Long>? {
         val spontanUser = currentSpontanUser() ?: return null
-        return spontanGroupAssignmentRepository
-            .findByCityIdAndSpontanUserId(cityId, spontanUser.id!!)
+        return spontanGroupAssignmentService
+            .getAssignmentEntitiesByUser(cityId, spontanUser.id!!)
             .map { it.id }
             .toSet()
     }
@@ -53,9 +53,9 @@ class SpontanAccessService(
      */
     fun verifyGroupAccess(cityId: Int, groupId: GroupId) {
         val spontanUser = currentSpontanUser() ?: return
-        val assignment = spontanGroupAssignmentRepository
-            .findByCityIdAndProblemAndAgeAndLeague(cityId, groupId.problem, groupId.age, groupId.league)
-        if (assignment?.spontanUser?.id != spontanUser.id) {
+        val assignment = spontanGroupAssignmentService
+            .getAssignmentEntity(cityId, groupId.problem, groupId.age, groupId.league)
+        if (assignment.spontanUser?.id != spontanUser.id) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "No access to this group")
         }
     }
@@ -75,9 +75,9 @@ class SpontanAccessService(
             league = performance.league ?: ""
         )
 
-        val assignment = spontanGroupAssignmentRepository
-            .findByCityIdAndProblemAndAgeAndLeague(cityId, groupId.problem, groupId.age, groupId.league)
-        if (assignment?.spontanUser?.id != spontanUser.id) {
+        val assignment = spontanGroupAssignmentService
+            .getAssignmentEntity(cityId, groupId.problem, groupId.age, groupId.league)
+        if (assignment.spontanUser?.id != spontanUser.id) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "No access to this group")
         }
     }

@@ -9,16 +9,15 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 class SpontanResultService(
     private val spontanResultRepository: SpontanResultRepository,
-    private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
+    private val spontanGroupAssignmentService: SpontanGroupAssignmentService,
     private val timeTableService: TimeTableService
 ) {
 
     private val scoreCalculator = SpontanScoreCalculator()
 
     fun getGroupTeams(cityId: Int, groupId: GroupId): SpontanGroupTeams {
-        val assignment = spontanGroupAssignmentRepository
-            .findByCityIdAndProblemAndAgeAndLeague(cityId, groupId.problem, groupId.age, groupId.league)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No spontan assignment for this group")
+        val assignment = spontanGroupAssignmentService
+            .getAssignmentEntity(cityId, groupId.problem, groupId.age, groupId.league)
 
         val definition = assignment.spontanDefinition
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No spontan definition assigned")
@@ -70,9 +69,8 @@ class SpontanResultService(
             league = performance.league ?: ""
         )
 
-        val assignment = spontanGroupAssignmentRepository
-            .findByCityIdAndProblemAndAgeAndLeague(cityId, groupId.problem, groupId.age, groupId.league)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No spontan assignment for this group")
+        val assignment = spontanGroupAssignmentService
+            .getAssignmentEntity(cityId, groupId.problem, groupId.age, groupId.league)
 
         val definition = assignment.spontanDefinition
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No spontan definition assigned")
