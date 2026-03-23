@@ -1,6 +1,5 @@
 package odyseja.odysejapka.form
 
-import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.city.CityService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

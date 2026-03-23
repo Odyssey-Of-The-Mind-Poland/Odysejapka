@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 class TeamFormService(
     private val teamResultRepository: TeamResultRepository,
     private val timeTableService: TimeTableService,
-    private val formProblemRepository: FormProblemRepository,
+    private val formProblemService: FormProblemService,
     private val judgeCountService: JudgeCountService
 ) {
 
@@ -42,7 +42,7 @@ class TeamFormService(
             ranatra = ranatra
         )
 
-        val formEntity = formProblemRepository.findByProblem(problem) ?: return emptyForm
+        val formEntity = formProblemService.findByProblem(problem)
         val form = formEntity.form ?: return emptyForm
 
         val dtEntries = getDtResults(form.dtEntries, results, judgeCount)
