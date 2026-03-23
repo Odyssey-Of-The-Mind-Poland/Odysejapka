@@ -1,5 +1,6 @@
 package odyseja.odysejapka.spontan
 
+import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.users.UserEntity
 import odyseja.odysejapka.users.UserRepository
@@ -7,10 +8,8 @@ import odyseja.odysejapka.users.UserRoles
 import odyseja.odysejapka.users.UserRolesRepository
 import odyseja.odysejapka.users.UserService
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 import java.text.Normalizer
 
 data class SpontanUserCredentials(
@@ -63,8 +62,8 @@ class SpontanUserService(
     }
 
     @Transactional(readOnly = true)
-    fun getSpontanUsers(cityId: Int): List<SpontanUserInfo> {
-        return spontanUserRepository.findAllByCityId(cityId).mapNotNull { spontanUser ->
+    fun getSpontanUsersInfo(cityId: Int): List<SpontanUserInfo> {
+        return getSpontanUsersByCity(cityId).mapNotNull { spontanUser ->
             val user = userRepository.findById(spontanUser.userId).orElse(null) ?: return@mapNotNull null
             SpontanUserInfo(
                 id = spontanUser.id!!,
@@ -77,7 +76,7 @@ class SpontanUserService(
 
     @Transactional(readOnly = true)
     fun getCredentials(cityId: Int, userId: Long): SpontanUserCredentials? {
-        val spontanUsers = spontanUserRepository.findAllByCityId(cityId)
+        val spontanUsers = getSpontanUsersByCity(cityId)
         val spontanUser = spontanUsers.find { it.userId == userId } ?: return null
         val user = userRepository.findById(spontanUser.userId).orElse(null) ?: return null
         return SpontanUserCredentials(
@@ -88,9 +87,7 @@ class SpontanUserService(
 
     @Transactional
     fun deleteSpontanUser(cityId: Int, userId: Long) {
-        val spontanUsers = spontanUserRepository.findAllByCityId(cityId)
-        val spontanUser = spontanUsers.find { it.userId == userId }
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Spontan user not found")
+        val spontanUser = getSpontanUserByUserId(userId)
 
         // Clear group assignments referencing this spontan user
         val assignments = spontanGroupAssignmentService.getAssignmentEntitiesByCity(cityId)
@@ -117,11 +114,38 @@ class SpontanUserService(
         val assignment = spontanGroupAssignmentService.getAssignmentEntityById(assignmentId)
 
         assignment.spontanUser = spontanUserId?.let {
-            spontanUserRepository.findById(it).orElse(null)
-                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Spontan user not found")
+            getSpontanUser(it)
         }
 
         spontanGroupAssignmentService.addAssignmentEntity(assignment)
+    }
+
+    fun getSpontanUsersByCity(cityId: Int): List<SpontanUserEntity> {
+        return spontanUserRepository.findAllByCityId(cityId)
+    }
+
+    fun getSpontanUser(spontanUserId: Long): SpontanUserEntity {
+        return spontanUserRepository.findFirstById(spontanUserId)
+            ?: throw EntityNotFoundException("Nie znaleziono użytkownika o Spontan-ID $spontanUserId")
+    }
+
+    fun getSpontanUserByUserId(userId: Long): SpontanUserEntity {
+        return spontanUserRepository.findByUserId(userId)
+            ?: throw EntityNotFoundException ("Nie znaleziono użytkownika o ID $userId w bazie danych spontanów")
+    }
+
+    fun getSpontanUserByUserIdOrNull(userId: Long): SpontanUserEntity? {
+        return spontanUserRepository.findByUserId(userId)
+    }
+
+    @Transactional
+    fun deleteSpontanUsersByCity(cityId: Int) {
+        val userIds = getSpontanUsersByCity(cityId)
+            .map { it.userId }
+
+        userIds.forEach { userId ->
+            deleteSpontanUser(cityId, userId)
+        }
     }
 
     private fun generatePassword(): String {

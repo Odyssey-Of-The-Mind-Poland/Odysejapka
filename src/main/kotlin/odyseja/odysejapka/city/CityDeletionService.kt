@@ -5,7 +5,7 @@ import odyseja.odysejapka.form.JudgeCountService
 import odyseja.odysejapka.info.InfoRepository
 import odyseja.odysejapka.sponsor.SponsorService
 import odyseja.odysejapka.spontan.SpontanGroupAssignmentService
-import odyseja.odysejapka.spontan.SpontanUserRepository
+import odyseja.odysejapka.spontan.SpontanUserService
 import odyseja.odysejapka.stage.StageRepository
 import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
@@ -22,7 +22,7 @@ class CityDeletionService(
     private val infoRepository: InfoRepository,
     private val sponsorService: SponsorService,
     private val spontanGroupAssignmentService: SpontanGroupAssignmentService,
-    private val spontanUserRepository: SpontanUserRepository
+    private val spontanUserService: SpontanUserService
 ) {
     @Transactional
     fun deleteCity(cityId: Int) {
@@ -35,7 +35,7 @@ class CityDeletionService(
         infoRepository.deleteByCityId(cityId)
         sponsorService.deleteSponsorsByCity(cityId)
         spontanGroupAssignmentService.deleteAssignmentEntitiesByCity(cityId)
-        spontanUserRepository.deleteByCityId(cityId)
+        spontanUserService.deleteSpontanUsersByCity(cityId)
         cityRepository.deleteById(cityId)
 
         changeService.updateVersion()

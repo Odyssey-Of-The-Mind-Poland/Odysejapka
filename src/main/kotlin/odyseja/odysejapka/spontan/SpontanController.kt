@@ -111,7 +111,7 @@ class SpontanController(
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @GetMapping("/user/{cityId}")
     fun getSpontanUsers(@PathVariable cityId: Int): List<SpontanUserInfo> {
-        return spontanUserService.getSpontanUsers(cityId)
+        return spontanUserService.getSpontanUsersInfo(cityId)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")

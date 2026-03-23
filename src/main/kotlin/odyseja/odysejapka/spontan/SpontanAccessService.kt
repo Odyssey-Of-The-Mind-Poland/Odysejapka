@@ -19,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 class SpontanAccessService(
     private val userAccessService: UserAccessService,
     private val userRepository: UserRepository,
-    private val spontanUserRepository: SpontanUserRepository,
+    private val spontanUserService: SpontanUserService,
     private val spontanGroupAssignmentService: SpontanGroupAssignmentService
 ) {
 
@@ -30,7 +30,7 @@ class SpontanAccessService(
         if (!userAccessService.isSpontan()) return null
         val principalUserId = extractCurrentPrincipalUserId() ?: return null
         val user = userRepository.findByUserId(principalUserId) ?: return null
-        return spontanUserRepository.findByUserId(user.id!!)
+        return spontanUserService.getSpontanUserByUserIdOrNull(user.id!!)
     }
 
     /**

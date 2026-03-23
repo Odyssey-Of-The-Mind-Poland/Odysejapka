@@ -14,7 +14,7 @@ class SpontanService(
     private val spontanDefinitionRepository: SpontanDefinitionRepository,
     private val cityService: CityService,
     private val timeTableService: TimeTableService,
-    private val spontanUserRepository: SpontanUserRepository,
+    private val spontanUserService: SpontanUserService,
     private val userRepository: UserRepository,
     private val spontanAccessService: SpontanAccessService,
     private val spontanGroupAssignmentService: SpontanGroupAssignmentService
@@ -133,7 +133,7 @@ class SpontanService(
     }
 
     private fun buildSpontanUserNameMap(cityId: Int): Map<Long, String> {
-        val spontanUsers = spontanUserRepository.findAllByCityId(cityId)
+        val spontanUsers = spontanUserService.getSpontanUsersByCity(cityId)
         return spontanUsers.mapNotNull { su ->
             val user = userRepository.findById(su.userId).orElse(null)
             if (su.id != null && user?.name != null) su.id!! to user.name!! else null
