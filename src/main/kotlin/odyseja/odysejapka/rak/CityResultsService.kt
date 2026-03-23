@@ -6,7 +6,7 @@ import odyseja.odysejapka.form.FormState
 import odyseja.odysejapka.form.TeamResultEntity
 import odyseja.odysejapka.form.TeamResultService
 import odyseja.odysejapka.spontan.SpontanResultEntity
-import odyseja.odysejapka.spontan.SpontanResultRepository
+import odyseja.odysejapka.spontan.SpontanResultService
 import odyseja.odysejapka.timetable.PerformanceEntity
 import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
@@ -21,7 +21,7 @@ data class ResultsStatusResponse(
 class CityResultsService(
     private val timeTableService: TimeTableService,
     private val teamResultService: TeamResultService,
-    private val spontanResultRepository: SpontanResultRepository,
+    private val spontanResultService: SpontanResultService,
     private val cityService: CityService,
     private val latexGeneratorService: LatexGeneratorService
 ) {
@@ -70,7 +70,7 @@ class CityResultsService(
 
         val teamResults = teamResultService.getTeamResults(performanceIds)
             .associateBy { it.performanceId }
-        val spontanResults = spontanResultRepository.findAllByPerformanceIdIn(performanceIds)
+        val spontanResults = spontanResultService.getSpontanResults(performanceIds)
             .associateBy { it.performanceId }
         return Triple(performances, teamResults, spontanResults)
     }

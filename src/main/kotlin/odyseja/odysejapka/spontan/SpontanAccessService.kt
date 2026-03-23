@@ -1,7 +1,6 @@
 package odyseja.odysejapka.spontan
 
 import odyseja.odysejapka.dashboard.UserAccessService
-import odyseja.odysejapka.timetable.TimeTableService
 import odyseja.odysejapka.users.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
@@ -21,7 +20,6 @@ class SpontanAccessService(
     private val userAccessService: UserAccessService,
     private val userRepository: UserRepository,
     private val spontanUserRepository: SpontanUserRepository,
-    private val timeTableRepository: TimeTableService,
     private val spontanGroupAssignmentService: SpontanGroupAssignmentService
 ) {
 
@@ -66,17 +64,8 @@ class SpontanAccessService(
      */
     fun verifyPerformanceAccess(performanceId: Int) {
         val spontanUser = currentSpontanUser() ?: return
-        val performance = timeTableRepository.getPerformanceEntity(performanceId)
+        val assignment = spontanGroupAssignmentService.getAssignmentEntityFromPerformance(performanceId)
 
-        val cityId = performance.cityEntity.id
-        val groupId = GroupId(
-            problem = performance.problemEntity.id,
-            age = performance.ageEntity.id,
-            league = performance.league ?: ""
-        )
-
-        val assignment = spontanGroupAssignmentService
-            .getAssignmentEntity(cityId, groupId.problem, groupId.age, groupId.league)
         if (assignment.spontanUser?.id != spontanUser.id) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "No access to this group")
         }

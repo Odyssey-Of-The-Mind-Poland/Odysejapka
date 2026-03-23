@@ -2,13 +2,15 @@ package odyseja.odysejapka.spontan
 
 import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.city.CityService
+import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SpontanGroupAssignmentService(
     private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
-    private val cityService: CityService
+    private val cityService: CityService,
+    private val timeTableService: TimeTableService
 ) {
     fun getAssignmentEntity(cityId: Int, problem: Int, age: Int, league: String): SpontanGroupAssignmentEntity {
         return spontanGroupAssignmentRepository.findByCityIdAndProblemAndAgeAndLeague(cityId, problem, age, league)
@@ -18,6 +20,20 @@ class SpontanGroupAssignmentService(
     fun getAssignmentEntityById(assignmentId: Long): SpontanGroupAssignmentEntity {
         return spontanGroupAssignmentRepository.findFirstById(assignmentId)
             ?: throw EntityNotFoundException("Nie znaleziono przypisania spontana o ID $assignmentId")
+    }
+
+    fun getAssignmentEntityFromPerformance(performanceId: Int): SpontanGroupAssignmentEntity {
+        val performance = timeTableService.getPerformanceEntity(performanceId)
+
+        val cityId = performance.cityEntity.id
+        val groupId = GroupId(
+            problem = performance.problemEntity.id,
+            age = performance.ageEntity.id,
+            league = performance.league ?: ""
+        )
+
+        return getAssignmentEntity(cityId, groupId.problem, groupId.age, groupId.league)
+
     }
 
     fun getAssignmentEntitiesByCity(cityId: Int): List<SpontanGroupAssignmentEntity> {

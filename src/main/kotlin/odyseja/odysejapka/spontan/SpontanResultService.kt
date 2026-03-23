@@ -32,7 +32,7 @@ class SpontanResultService(
             .map { it.toPerformance() }
 
         val performanceIds = performances.map { it.id }
-        val resultsMap = spontanResultRepository.findAllByPerformanceIdIn(performanceIds)
+        val resultsMap = getSpontanResults(performanceIds)
             .associateBy { it.performanceId }
 
         val teams = performances
@@ -60,17 +60,8 @@ class SpontanResultService(
 
     @Transactional
     fun setResults(performanceId: Int, request: SpontanResultsRequest): SpontanTeamResult {
-        val performance = timeTableService.getPerformanceEntity(performanceId)
-
-        val cityId = performance.cityEntity.id
-        val groupId = GroupId(
-            problem = performance.problemEntity.id,
-            age = performance.ageEntity.id,
-            league = performance.league ?: ""
-        )
-
-        val assignment = spontanGroupAssignmentService
-            .getAssignmentEntity(cityId, groupId.problem, groupId.age, groupId.league)
+        val performance = timeTableService.getPerformance(performanceId)
+        val assignment = spontanGroupAssignmentService.getAssignmentEntityFromPerformance(performanceId)
 
         val definition = assignment.spontanDefinition
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No spontan definition assigned")
@@ -99,6 +90,10 @@ class SpontanResultService(
             manualEntries = request.manualEntries,
             rawSpontan = score
         )
+    }
+
+    fun getSpontanResults(performanceIds: List<Int>): List<SpontanResultEntity> {
+        return spontanResultRepository.findAllByPerformanceIdIn(performanceIds)
     }
 
 }
