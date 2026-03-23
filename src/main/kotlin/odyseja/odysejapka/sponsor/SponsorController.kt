@@ -43,7 +43,7 @@ class SponsorController(private val sponsorService: SponsorService) {
 
     @DeleteMapping(value = ["/{imageId}"])
     fun deleteImage(@PathVariable imageId: Int) {
-        sponsorService.deleteImage(imageId)
+        sponsorService.deleteSponsor(imageId)
     }
 
     data class UploadSponsorRequest(
