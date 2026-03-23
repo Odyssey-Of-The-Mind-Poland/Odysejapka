@@ -5,8 +5,7 @@ import odyseja.odysejapka.age.AgeService
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.problem.ProblemService
-import odyseja.odysejapka.stage.StageEntity
-import odyseja.odysejapka.stage.StageRepository
+import odyseja.odysejapka.stage.StageService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -15,10 +14,10 @@ import org.springframework.transaction.annotation.Transactional
 class TimeTableService(
     private val timeTableRepository: PerformanceRepository,
     private val problemService: ProblemService,
-    private val stageRepository: StageRepository,
     private val ageService: AgeService,
     private val cityService: CityService,
-    private val changeService: ChangeService
+    private val changeService: ChangeService,
+    private val stageService: StageService
 ) {
 
     fun getFinals(): List<Performance> {
@@ -35,7 +34,7 @@ class TimeTableService(
                 it.team,
                 problemService.getProblem(it.problem),
                 ageService.getAge(it.age),
-                getStage(it.stage, it.city),
+                stageService.getOrCreateStageByNumber(it.city, it.stage),
                 it.performance,
                 it.spontan,
                 it.part,
@@ -60,7 +59,7 @@ class TimeTableService(
             performance.team,
             problemService.getProblem(performance.problem),
             ageService.getAge(performance.age),
-            getStage(performance.stage, performance.city),
+            stageService.getOrCreateStageByNumber(performance.city, performance.stage),
             performance.performance,
             performance.spontan,
             performance.part,
@@ -84,7 +83,7 @@ class TimeTableService(
         pToEdit.team = performance.team
         pToEdit.problemEntity = problemService.getProblem(performance.problem)
         pToEdit.ageEntity = ageService.getAge(performance.age)
-        pToEdit.stageEntity = getStage(performance.stage, performance.city)
+        pToEdit.stageEntity = stageService.getOrCreateStageByNumber(performance.city, performance.stage)
         pToEdit.performance = performance.performance
         pToEdit.spontan = performance.spontan
         timeTableRepository.save(pToEdit)
@@ -109,17 +108,6 @@ class TimeTableService(
         val city = cityService.getCity(cityId)
         timeTableRepository.deleteByCityEntity(city)
         changeService.updateVersion()
-    }
-
-
-    fun getStage(stageNumber: Int, cityName: String): StageEntity {
-        val city = cityService.getCityByName(cityName)
-        val stage = stageRepository.findFirstByNumberAndCityEntity(
-            stageNumber,
-            city
-        )
-
-        return stage ?: stageRepository.save(StageEntity(0, stageNumber, "Scena nr. $stage", city))
     }
 
     fun getPerformanceEntitiesByCity(cityId: Int): List<PerformanceEntity> {
