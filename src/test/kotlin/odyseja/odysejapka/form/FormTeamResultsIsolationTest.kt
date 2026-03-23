@@ -15,7 +15,7 @@ class FormTeamResultsIsolationTest : OdysejaDsl() {
         val cityB = createCity("Kraków")
 
         val existingForm = form()
-        formClient.setProblemForm(
+        formClient.setFormData(
             PROBLEM_ID,
             existingForm.copy(
                 smallJudgesTeam = listOf(cityA.id),

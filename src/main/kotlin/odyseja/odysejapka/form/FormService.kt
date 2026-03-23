@@ -14,7 +14,7 @@ class FormService(
 ) {
 
     @Transactional
-    fun setFormEntries(problem: Int, form: ProblemForm) {
+    fun setFormEntries(problem: Int, form: FormData) {
         val existingEntity = formProblemRepository.findByProblem(problem)
         val existingForm = existingEntity?.form
 
@@ -28,9 +28,9 @@ class FormService(
     }
 
 
-    fun getProblemForm(problem: Int): ProblemForm {
+    fun getFormData(problem: Int): FormData {
         val entity = formProblemRepository.findByProblem(problem)
-        val form = entity?.form ?: ProblemForm(
+        val form = entity?.form ?: FormData(
             dtEntries = emptyList(),
             styleEntries = emptyList(),
             penaltyEntries = emptyList()

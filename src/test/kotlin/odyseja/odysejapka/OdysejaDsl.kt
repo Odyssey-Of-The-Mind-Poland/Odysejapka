@@ -11,7 +11,7 @@ import odyseja.odysejapka.form.LongTermFormEntry
 import odyseja.odysejapka.form.StyleFormEntry
 import odyseja.odysejapka.form.PenaltyFormEntry
 import odyseja.odysejapka.form.PerformanceResultsRequest
-import odyseja.odysejapka.form.ProblemForm
+import odyseja.odysejapka.form.FormData
 import odyseja.odysejapka.problem.ProblemController
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.spontan.SpontanController
@@ -81,10 +81,10 @@ class OdysejaDsl {
         style: List<StyleFormEntry>,
         penalty: List<PenaltyFormEntry>
     ) {
-        formClient.setProblemForm(PROBLEM_ID, ProblemForm(dt, style, penalty))
+        formClient.setFormData(PROBLEM_ID, FormData(dt, style, penalty))
     }
 
-    fun form() = formClient.getProblemForm(PROBLEM_ID)
+    fun form() = formClient.getFormData(PROBLEM_ID)
 
     fun seedDefault(): Unit = setForm(
         dt = listOf(LongTermFormEntry(

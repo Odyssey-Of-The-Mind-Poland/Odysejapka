@@ -31,14 +31,14 @@ class FormController(
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @PutMapping("/{problem}")
-    fun setProblemForm(@PathVariable problem: Int, @RequestBody problemForm: ProblemForm) {
-        formService.setFormEntries(problem, problemForm)
+    fun setFormData(@PathVariable problem: Int, @RequestBody formData: FormData) {
+        formService.setFormEntries(problem, formData)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @GetMapping("/{problem}")
-    fun getProblemForm(@PathVariable problem: Int): ProblemForm {
-        return formService.getProblemForm(problem)
+    fun getFormData(@PathVariable problem: Int): FormData {
+        return formService.getFormData(problem)
     }
 
     @GetMapping("/{problem}/judge-count")

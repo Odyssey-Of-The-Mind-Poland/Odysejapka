@@ -17,6 +17,6 @@ class FormProblemEntity {
 
     @Column(name = "form_data", columnDefinition = "jsonb", nullable = true)
     @JdbcTypeCode(SqlTypes.JSON)
-    @Convert(converter = ProblemFormConverter::class)
-    var form: ProblemForm? = null
+    @Convert(converter = FormDataConverter::class)
+    var form: FormData? = null
 }
