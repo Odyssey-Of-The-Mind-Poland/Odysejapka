@@ -4,13 +4,15 @@ import odyseja.odysejapka.Progress
 import odyseja.odysejapka.async.BackgroundJobService
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.drive.ZspSheetsAdapter
+import odyseja.odysejapka.form.TeamResultService
 import org.springframework.stereotype.Service
 
 @Service
 class ImportTimetableService(
     private val performanceService: TimeTableService,
     private val cityService: CityService,
-    private val backgroundJobService: BackgroundJobService
+    private val backgroundJobService: BackgroundJobService,
+    private val teamResultService: TeamResultService
 ) {
 
     private val jobType = "timetable"
@@ -19,7 +21,6 @@ class ImportTimetableService(
         clearTimeTable(cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val city = cityService.getCity(cityId)
-        performanceService.deleteByCity(cityId)
 
         backgroundJobService.start(
             jobType,

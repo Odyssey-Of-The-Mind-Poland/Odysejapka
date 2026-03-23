@@ -5,8 +5,10 @@ import odyseja.odysejapka.age.AgeRepository
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityService
+import odyseja.odysejapka.form.TeamResultRepository
 import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.problem.ProblemRepository
+import odyseja.odysejapka.spontan.SpontanResultRepository
 import odyseja.odysejapka.stage.StageEntity
 import odyseja.odysejapka.stage.StageRepository
 import org.springframework.stereotype.Service
@@ -19,6 +21,8 @@ class TimeTableService(
     private val problemRepository: ProblemRepository,
     private val stageRepository: StageRepository,
     private val ageRepository: AgeRepository,
+    private val teamResultRepository: TeamResultRepository,
+    private val spontanResultRepository: SpontanResultRepository,
     private val cityService: CityService,
     private val changeService: ChangeService
 ) {
@@ -28,6 +32,8 @@ class TimeTableService(
     }
 
     fun addPerformances(performances: List<Performance>, cityEntity: CityEntity): List<PerformanceEntity> {
+        val performanceIdsToDelete = timeTableRepository.findAllByCityEntity_Id(cityEntity.id).map { it.id }
+        deleteResultsForPerformances(performanceIdsToDelete)
         timeTableRepository.deleteByCityEntity(cityEntity)
         val per: List<PerformanceEntity> = performances.map {
             PerformanceEntity(
@@ -90,6 +96,7 @@ class TimeTableService(
     }
 
     fun delPerformance(id: Int) {
+        deleteResultsForPerformance(id)
         timeTableRepository.deleteById(id)
 
         changeService.updateVersion()
@@ -97,6 +104,8 @@ class TimeTableService(
 
     @Transactional
     fun clearTimetable() {
+        val performanceIds = timeTableRepository.findAll().mapNotNull { it?.id }
+        deleteResultsForPerformances(performanceIds)
         timeTableRepository.deleteAll()
         changeService.updateVersion()
     }
@@ -104,6 +113,8 @@ class TimeTableService(
     @Transactional
     fun clearTimetableByCity(cityId: Int) {
         val city = cityService.getCity(cityId)
+        val performanceIds = timeTableRepository.findAllByCityEntity_Id(cityId).map { it.id }
+        deleteResultsForPerformances(performanceIds)
         timeTableRepository.deleteByCityEntity(city)
         changeService.updateVersion()
     }
@@ -145,8 +156,11 @@ class TimeTableService(
         return timeTableRepository.findAllByCityEntity_Id(cityId).map { it.toPerformance() }
     }
 
+    @Transactional
     fun deleteByCity(cityId: Int) {
         val city = cityService.getCity(cityId)
+        val performanceIds = timeTableRepository.findAllByCityEntity_Id(cityId).map { it.id }
+        deleteResultsForPerformances(performanceIds)
         timeTableRepository.deleteByCityEntity(city)
     }
 
@@ -154,5 +168,19 @@ class TimeTableService(
         return (timeTableRepository.findById(performanceId)
             .orElseThrow { IllegalArgumentException("Performance $performanceId not found") }
             ?.toPerformance() ?: IllegalArgumentException("Performance $performanceId not found")) as Performance
+    }
+
+    private fun deleteResultsForPerformance(performanceId: Int) {
+        teamResultRepository.deleteByPerformanceId(performanceId)
+        spontanResultRepository.deleteByPerformanceId(performanceId)
+    }
+
+    private fun deleteResultsForPerformances(performanceIds: List<Int>) {
+        if (performanceIds.isEmpty()) {
+            return
+        }
+
+        teamResultRepository.deleteAllByPerformanceIdIn(performanceIds)
+        spontanResultRepository.deleteAllByPerformanceIdIn(performanceIds)
     }
 }

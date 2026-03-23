@@ -42,7 +42,6 @@ class ZspSheetsAdapter(
             }
 
         } catch (e: Exception) {
-            println("Could not convert ${row[size]}")
         }
         return 0f
 
@@ -81,7 +80,7 @@ class ZspSheetsAdapter(
             }
 
             if (row.size > 0 && isDay(row[0])) {
-                day = row[0]
+                day = row[0].split(",")[0]
             }
 
             if (row.size > 0 && isStage(row[0])) {
