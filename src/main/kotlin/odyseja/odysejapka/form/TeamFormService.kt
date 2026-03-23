@@ -1,12 +1,13 @@
 package odyseja.odysejapka.form
 
+import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 
 @Service
 class TeamFormService(
-    private val teamResultRepository: TeamResultRepository,
+    private val teamResultService: TeamResultService,
     private val timeTableService: TimeTableService,
     private val formProblemService: FormProblemService,
     private val judgeCountService: JudgeCountService
@@ -14,11 +15,15 @@ class TeamFormService(
 
     @Transactional
     fun getTeamForm(performanceId: Int): TeamForm {
-        val resultEntity = teamResultRepository.findByPerformanceId(performanceId)
-        val approved = resultEntity?.approved ?: false
-        val ranatra = resultEntity?.ranatra ?: false
-        val results = resultEntity?.results?.results ?: emptyList()
-        val weightHeldResults = resultEntity?.results?.weightHeldResults ?: emptyMap()
+        val resultEntity = try {
+            teamResultService.getTeamResult(performanceId)
+        } catch (_: EntityNotFoundException) {
+            TeamResultEntity().apply { this.performanceId = performanceId }
+        }
+        val approved = resultEntity.approved
+        val ranatra = resultEntity.ranatra
+        val results = resultEntity.results?.results ?: emptyList()
+        val weightHeldResults = resultEntity.results?.weightHeldResults ?: emptyMap()
         val performance = timeTableService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         val city = performance.cityEntity
@@ -52,8 +57,8 @@ class TeamFormService(
 
         val isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final")
 
-        val performanceAt = resultEntity?.performanceAt ?: ""
-        val performanceTime = resultEntity?.performanceTime ?: ""
+        val performanceAt = resultEntity.performanceAt ?: ""
+        val performanceTime = resultEntity.performanceTime ?: ""
 
         return TeamForm(
             performanceId = performanceId,
