@@ -3,6 +3,7 @@ package odyseja.odysejapka.info
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class InfoService(
@@ -26,6 +27,7 @@ class InfoService(
     return infoCategoryRepository.findAll()
   }
 
+  @Transactional
   fun addInfo(info: Info): Info {
     val savedInfo = infoRepository.save(
       InfoEntity(
@@ -45,6 +47,7 @@ class InfoService(
     return savedInfo.toInfo()
   }
 
+  @Transactional
   fun updateInfo(info: Info): Info {
     val infoEntity = infoRepository.findById(info.id).get()
     infoEntity.infoText = info.infoText
@@ -58,11 +61,16 @@ class InfoService(
     return info
   }
 
+  @Transactional
   fun deleteInfo(id: Int) {
-
-    changeService.updateVersion()
-
     infoRepository.deleteById(id)
+    changeService.updateVersion()
+  }
+
+  @Transactional
+  fun deleteInfoByCity(cityId: Int) {
+    infoRepository.deleteByCityId(cityId)
+    changeService.updateVersion()
   }
 
   fun getInfoById(info: Int): Info {

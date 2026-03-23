@@ -2,7 +2,7 @@ package odyseja.odysejapka.city
 
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.form.JudgeCountService
-import odyseja.odysejapka.info.InfoRepository
+import odyseja.odysejapka.info.InfoService
 import odyseja.odysejapka.sponsor.SponsorService
 import odyseja.odysejapka.spontan.SpontanGroupAssignmentService
 import odyseja.odysejapka.spontan.SpontanUserService
@@ -19,7 +19,7 @@ class CityDeletionService(
     private val timeTableService: TimeTableService,
     private val stageRepository: StageRepository,
     private val judgeCountService: JudgeCountService,
-    private val infoRepository: InfoRepository,
+    private val infoService: InfoService,
     private val sponsorService: SponsorService,
     private val spontanGroupAssignmentService: SpontanGroupAssignmentService,
     private val spontanUserService: SpontanUserService
@@ -32,7 +32,7 @@ class CityDeletionService(
         timeTableService.clearTimetableByCity(cityId)
         stageRepository.deleteByCityEntity(city)
         judgeCountService.deleteJudgeCountsByCity(cityId)
-        infoRepository.deleteByCityId(cityId)
+        infoService.deleteInfoByCity(cityId)
         sponsorService.deleteSponsorsByCity(cityId)
         spontanGroupAssignmentService.deleteAssignmentEntitiesByCity(cityId)
         spontanUserService.deleteSpontanUsersByCity(cityId)
