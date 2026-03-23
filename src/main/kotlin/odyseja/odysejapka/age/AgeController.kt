@@ -15,7 +15,7 @@ class AgeController(private val ageService: AgeService) {
   @Secured("ROLE_ADMINISTRATOR")
   @PutMapping
   fun updateAge(@RequestBody ageEntities: List<AgeEntity>) {
-    return ageService.updateAge(ageEntities)
+    return ageService.updateAges(ageEntities)
   }
 
   @Secured("ROLE_ADMINISTRATOR")

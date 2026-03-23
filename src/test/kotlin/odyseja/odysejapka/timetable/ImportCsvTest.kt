@@ -23,6 +23,7 @@ class ImportCsvTest: OdysejaDsl() {
 
     @Test
     fun `should import csv file`() {
+        ensureAgeAndProblemExist()
         val content = this.javaClass.getResourceAsStream("/import-csv-test-cases/fo2025.csv")
             ?: throw IllegalArgumentException("Brakuje pliku fo2025.csv.")
         val csvFile = MockMultipartFile(
@@ -59,6 +60,8 @@ class ImportCsvTest: OdysejaDsl() {
 
     @Test
     fun `should reject imports with improper data`() {
+        ensureAgeAndProblemExist()
+
         val testCases = listOf(
             mockCsv(performanceDay = "wtorek") to "Dozwolone dni występu to sobota lub niedziela.",
             mockCsv(spontanDay = "2") to "Dozwolone dni spontana to sobota lub niedziela.",

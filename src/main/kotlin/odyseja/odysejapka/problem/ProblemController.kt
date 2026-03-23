@@ -14,8 +14,8 @@ class ProblemController(private val problemService: ProblemService) {
 
     @Secured("ROLE_ADMINISTRATOR")
     @PutMapping
-    fun updateProblem(@RequestBody problemEntities: List<ProblemEntity>) {
-        return problemService.updateProblem(problemEntities)
+    fun updateProblems(@RequestBody problemEntities: List<ProblemEntity>) {
+        return problemService.updateProblems(problemEntities)
     }
 
     @Secured("ROLE_ADMINISTRATOR")

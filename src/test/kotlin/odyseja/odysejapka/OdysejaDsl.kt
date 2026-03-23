@@ -13,6 +13,7 @@ import odyseja.odysejapka.form.PenaltyFormEntry
 import odyseja.odysejapka.form.PerformanceResultsRequest
 import odyseja.odysejapka.form.FormData
 import odyseja.odysejapka.problem.ProblemController
+import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.spontan.SpontanController
 import odyseja.odysejapka.timetable.Performance
@@ -193,9 +194,14 @@ class OdysejaDsl {
         val problemClient = controllerClientFactory.create(ProblemController::class.java)
 
         val ageEntities = listOf(0, 1, 2, 3, 4).map {
-                AgeEntity(it, it.toString())
-            }
+            AgeEntity(it, it.toString())
+        }
         ageClient.updateAge(ageEntities)
+
+        val problemEntities = listOf(0, 1, 2, 3, 4, 5).map {
+            ProblemEntity(it, it.toString())
+        }
+        problemClient.updateProblems(problemEntities)
     }
 
 }

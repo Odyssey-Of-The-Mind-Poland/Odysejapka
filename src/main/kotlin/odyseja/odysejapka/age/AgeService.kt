@@ -21,7 +21,7 @@ class AgeService(
   }
 
   @Transactional
-  fun updateAge(ageEntities: List<AgeEntity>) {
+  fun updateAges(ageEntities: List<AgeEntity>) {
     for (age in ageEntities) {
       val toEdit: AgeEntity = ageRepository.findById(age.id).getOrElse { AgeEntity(age.id, age.name) }
       toEdit.name = age.name

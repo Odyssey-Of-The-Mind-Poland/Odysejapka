@@ -4,8 +4,7 @@ import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.age.AgeService
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
-import odyseja.odysejapka.problem.ProblemEntity
-import odyseja.odysejapka.problem.ProblemRepository
+import odyseja.odysejapka.problem.ProblemService
 import odyseja.odysejapka.stage.StageEntity
 import odyseja.odysejapka.stage.StageRepository
 import org.springframework.stereotype.Service
@@ -15,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class TimeTableService(
     private val timeTableRepository: PerformanceRepository,
-    private val problemRepository: ProblemRepository,
+    private val problemService: ProblemService,
     private val stageRepository: StageRepository,
     private val ageService: AgeService,
     private val cityService: CityService,
@@ -34,7 +33,7 @@ class TimeTableService(
                 it.id,
                 cityService.getCity(cityId),
                 it.team,
-                getProblem(it.problem),
+                problemService.getProblem(it.problem),
                 ageService.getAge(it.age),
                 getStage(it.stage, it.city),
                 it.performance,
@@ -59,7 +58,7 @@ class TimeTableService(
             performance.id,
             cityService.getCityByName(performance.city),
             performance.team,
-            getProblem(performance.problem),
+            problemService.getProblem(performance.problem),
             ageService.getAge(performance.age),
             getStage(performance.stage, performance.city),
             performance.performance,
@@ -83,7 +82,7 @@ class TimeTableService(
 
         pToEdit.cityEntity = cityService.getCityByName(performance.city)
         pToEdit.team = performance.team
-        pToEdit.problemEntity = getProblem(performance.problem)
+        pToEdit.problemEntity = problemService.getProblem(performance.problem)
         pToEdit.ageEntity = ageService.getAge(performance.age)
         pToEdit.stageEntity = getStage(performance.stage, performance.city)
         pToEdit.performance = performance.performance
@@ -121,15 +120,6 @@ class TimeTableService(
         )
 
         return stage ?: stageRepository.save(StageEntity(0, stageNumber, "Scena nr. $stage", city))
-    }
-
-    fun getProblem(problem: Int): ProblemEntity {
-        return problemRepository.findFirstById(problem) ?: problemRepository.save(
-            ProblemEntity(
-                problem,
-                problem.toString()
-            )
-        )
     }
 
     fun getPerformanceEntitiesByCity(cityId: Int): List<PerformanceEntity> {
