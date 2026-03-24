@@ -57,18 +57,22 @@
 
 <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-3">
+        <div class="flex items-stretch gap-3 w-full">
             <div class="flex items-center justify-center size-10 rounded-lg bg-primary/10">
                 <IconForms class="size-5 text-primary"/>
             </div>
-            <div>
+            <div class="flex-1">
                 <h1 class="text-2xl font-semibold tracking-tight">Problemy</h1>
-                <p class="text-sm text-muted-foreground">
-                    Słownik globalny (nie jest przypisany do miasta).
-                    API <span class="font-medium text-foreground">ProblemController</span>:
-                    <code class="text-xs bg-muted px-1 py-0.5 rounded">GET</code> lista,
-                    <code class="text-xs bg-muted px-1 py-0.5 rounded">PUT</code> nazwy.
-                </p>
+            </div>
+            <div class="flex flex-wrap items-center justify-end gap-2">
+                {#if draftProblems.length > 0}
+                    <Button
+                            onclick={saveProblems}
+                            disabled={!isDirty || saveProblemsMutation.isPending}
+                    >
+                        Zapisz zmiany
+                    </Button>
+                {/if}
             </div>
         </div>
     </div>
@@ -78,20 +82,10 @@
     {:else if problemsQuery.isPending}
         <Spinner size="sm"/>
     {:else}
-        <div class="flex flex-wrap items-center justify-end gap-2">
-            {#if draftProblems.length > 0}
-                <Button
-                        onclick={saveProblems}
-                        disabled={!isDirty || saveProblemsMutation.isPending}
-                >
-                    Zapisz zmiany (PUT)
-                </Button>
-            {/if}
-        </div>
 
         {#if problems.length === 0}
             <div class="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-                Na liście nie ma problemów (<code class="text-xs">GET /api/problem</code> zwróciło pustą listę).
+                Na liście nie ma problemów.
             </div>
         {:else}
             <div class="rounded-md border overflow-x-auto">
