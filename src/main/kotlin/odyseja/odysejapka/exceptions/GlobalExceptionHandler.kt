@@ -13,9 +13,27 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException::class)
     fun handleEntityNotFound(e: EntityNotFoundException, request: HttpServletRequest): ProblemDetail {
-        val response = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.message)
-        response.title = "ENTITY NOT FOUND"
-        response.instance = URI.create(request.requestURI)
+        val response = ProblemDetail.forStatusAndDetail(
+            HttpStatus.NOT_FOUND,
+            e.message
+        )
+        response.apply {
+            title = "ENTITY NOT FOUND"
+            instance = URI.create(request.requestURI)
+        }
+        return response
+    }
+
+    @ExceptionHandler(NoAccessException::class)
+    fun handleNoAccess(e: NoAccessException, request: HttpServletRequest): ProblemDetail {
+        val response = ProblemDetail.forStatusAndDetail(
+            HttpStatus.FORBIDDEN,
+            e.message
+        )
+        response.apply {
+            title = "NO ACCESS"
+            instance = URI.create(request.requestURI)
+        }
         return response
     }
 }
