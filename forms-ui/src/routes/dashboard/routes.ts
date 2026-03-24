@@ -3,6 +3,7 @@ import IconTrophy from "@tabler/icons-svelte/icons/trophy";
 import IconPaw from "@tabler/icons-svelte/icons/paw";
 import IconTrees from "@tabler/icons-svelte/icons/trees";
 import IconBuilding from "@tabler/icons-svelte/icons/building";
+import IconListNumbers from "@tabler/icons-svelte/icons/list-numbers";
 import type {Role} from "$lib/userStore";
 
 export type NavChild = {
@@ -32,6 +33,12 @@ export const routes = {
             title: "Miasta",
             url: "/dashboard/cities",
             icon: IconBuilding,
+            requiredRole: 'ADMINISTRATOR',
+        },
+        {
+            title: "Problemy",
+            url: "/dashboard/problems",
+            icon: IconListNumbers,
             requiredRole: 'ADMINISTRATOR',
         },
         {
@@ -73,6 +80,7 @@ export const routes = {
     ] satisfies NavItem[],
 
     adminRoutes: [
+        {url: "/problems", requiredRole: 'ADMINISTRATOR' as Role},
         {url: "/dashboard/editor", requiredRole: 'ADMINISTRATOR' as Role},
         {url: "/dashboard/spontan-editor", requiredRole: 'ADMINISTRATOR' as Role},
         {url: "/dashboard/zwierzyniec", requiredRole: 'ADMINISTRATOR' as Role},
