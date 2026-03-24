@@ -30,7 +30,7 @@ class SpontanAccessService(
         if (!userAccessService.isSpontan()) return null
         val principalUserId = extractCurrentPrincipalUserId() ?: return null
         val user = userRepository.findByUserId(principalUserId) ?: return null
-        return spontanUserService.getSpontanUserByUserIdOrNull(user.id!!)
+        return spontanUserService.getSpontanUserOrNullByUserId(user.id!!)
     }
 
     /**

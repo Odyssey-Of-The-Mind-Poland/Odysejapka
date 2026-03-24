@@ -134,7 +134,7 @@ class SpontanUserService(
             ?: throw EntityNotFoundException ("Nie znaleziono użytkownika o ID $userId w bazie danych spontanów")
     }
 
-    fun getSpontanUserByUserIdOrNull(userId: Long): SpontanUserEntity? {
+    fun getSpontanUserOrNullByUserId(userId: Long): SpontanUserEntity? {
         return spontanUserRepository.findByUserId(userId)
     }
 

@@ -3,7 +3,7 @@ package odyseja.odysejapka.dashboard
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.spontan.SpontanUserService
-import odyseja.odysejapka.stage.StageUserRepository
+import odyseja.odysejapka.stage.StageUserService
 import odyseja.odysejapka.users.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,7 +13,7 @@ class CityAccessService(
     private val cityService: CityService,
     private val userRepository: UserRepository,
     private val userAccessService: UserAccessService,
-    private val stageUserRepository: StageUserRepository,
+    private val stageUserService: StageUserService,
     private val spontanUserService: SpontanUserService
 ) {
 
@@ -25,12 +25,12 @@ class CityAccessService(
 
         val user = userRepository.findByUserId(principalUserId) ?: return emptyList()
 
-        val stageUser = stageUserRepository.findByUserId(user.id!!)
+        val stageUser = stageUserService.getStageUserOrNullByUserId(user.id!!)
         if (stageUser != null) {
             return listOfNotNull(cityService.getCity(stageUser.cityId))
         }
 
-        val spontanUser = spontanUserService.getSpontanUserByUserIdOrNull(user.id!!)
+        val spontanUser = spontanUserService.getSpontanUserOrNullByUserId(user.id!!)
         if (spontanUser != null) {
             return listOfNotNull(cityService.getCity(spontanUser.cityId))
         }

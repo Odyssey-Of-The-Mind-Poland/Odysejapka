@@ -11,7 +11,7 @@ class StageService(
     private val stageRepository: StageRepository,
     private val cityService: CityService,
     private val changeService: ChangeService,
-    private val stageUserRepository: StageUserRepository
+    private val stageUserService: StageUserService
 ) {
 
     fun getStageByNumber(cityName: String, stageNumber: Int): StageEntity {
@@ -53,7 +53,7 @@ class StageService(
     @Transactional
     fun deleteStagesByCity(cityId: Int) {
         val city = cityService.getCity(cityId)
-        stageUserRepository.deleteAllByCityId(cityId)
+        stageUserService.deleteStageUsersByCity(cityId)
         stageRepository.deleteByCityEntity(city)
         changeService.updateVersion()
     }

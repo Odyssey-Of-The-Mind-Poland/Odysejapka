@@ -25,10 +25,10 @@ class StageUserService(
     fun createStageUsers(cityId: Int, stages: Set<Int>) {
         val city = cityService.getCity(cityId)
         val citySlug = slugify(city.name)
-        stageUserRepository.deleteAllByCityId(cityId)
+        deleteStageUsersByCity(cityId)
 
         for (stage in stages) {
-            val existing = stageUserRepository.findByCityIdAndStage(cityId, stage)
+            val existing = getStageUserOrNull(cityId, stage)
             if (existing != null) {
                 logger.info("Stage user already exists for city {} stage {}", cityId, stage)
                 continue
@@ -54,12 +54,25 @@ class StageUserService(
 
     @Transactional(readOnly = true)
     fun getCredentials(cityId: Int, stage: Int): StageUserCredentials? {
-        val stageUser = stageUserRepository.findByCityIdAndStage(cityId, stage) ?: return null
+        val stageUser = getStageUserOrNull(cityId, stage) ?: return null
         val user = userRepository.findById(stageUser.userId).orElse(null) ?: return null
         return StageUserCredentials(
             email = user.email ?: return null,
             password = user.password ?: return null
         )
+    }
+
+    fun getStageUserOrNullByUserId(userId: Long): StageUserEntity? {
+        return stageUserRepository.findByUserId(userId)
+    }
+
+    @Transactional
+    fun deleteStageUsersByCity(cityId: Int) {
+        stageUserRepository.deleteAllByCityId(cityId)
+    }
+
+    private fun getStageUserOrNull(cityId: Int, stage: Int): StageUserEntity? {
+        return stageUserRepository.findByCityIdAndStage(cityId, stage)
     }
 
     private fun generatePassword(): String {
