@@ -21,7 +21,7 @@ class TimeTableService(
 ) {
 
     fun getFinals(): List<Performance> {
-        return timeTableRepository.findAllByCityEntityId(0).map { it.toPerformance() }
+        return getPerformanceEntitiesByCity(0).map { it.toPerformance() }
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
