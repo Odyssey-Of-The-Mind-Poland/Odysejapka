@@ -8,7 +8,6 @@ class PerformanceGroupService(private val performanceRepository: PerformanceRepo
         val performances =
             cityId?.let { performanceRepository.findAllByCityEntity_Id(cityId) } ?: performanceRepository.findAll()
         return performances
-            .filter { it != null && !it.isExcludedFromScoring() }
             .groupBy { it?.toGroup() }.map { (group, performances) ->
                 PerformanceGroup(
                     group = group!!,
