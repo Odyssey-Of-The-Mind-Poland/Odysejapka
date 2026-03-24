@@ -37,7 +37,7 @@ class UserService(
     fun getUserByUserId(userId: String): User? {
         val entity = getUserEntityOrNullByUserId(userId)
         if (entity != null) {
-            val roles = userRolesRepository.findByUserId(userId).map { it.toUserRole() }
+            val roles = getRolesEntities(userId).map { it.toUserRole() }
             return entity.toUser(roles)
         }
         return null
@@ -48,7 +48,7 @@ class UserService(
         val entity = getUserEntity(id)
         return entity.let { userEntity ->
             val userId = userEntity.userId ?: return null
-            val roles = userRolesRepository.findByUserId(userId).map { it.toUserRole() }
+            val roles = getRolesEntities(userId).map { it.toUserRole() }
             userEntity.toUser(roles)
         }
     }
@@ -57,7 +57,7 @@ class UserService(
     fun listUsers(): List<User> {
         return userRepository.findAll().map { entity ->
             val roles =
-                entity.userId?.let { userRolesRepository.findByUserId(it).map { it.toUserRole() } } ?: emptyList()
+                entity.userId?.let { getRolesEntities(it).map { it.toUserRole() } } ?: emptyList()
             entity.toUser(roles)
         }
     }
@@ -81,7 +81,7 @@ class UserService(
     @Transactional
     fun assignRolesToUser(userRoles: UserRoles): UserRoles {
         val user = getUserEntity(userRoles.userId)
-        userRolesRepository.deleteByUserId(user.userId!!)
+        deleteRoleEntities(user.userId!!)
 
         val roleEntities = UserRolesEntity.from(userRoles, user.userId!!)
         userRolesRepository.saveAll(roleEntities)
@@ -92,7 +92,7 @@ class UserService(
     @Transactional(readOnly = true)
     fun getUserRoles(id: Long): UserRoles {
         val user = getUserEntity(id)
-        val roleEntities = userRolesRepository.findByUserId(user.userId!!)
+        val roleEntities = getRolesEntities(user.userId!!)
         val roles = roleEntities.map { it.toUserRole() }
         return UserRoles(id, roles)
     }
@@ -122,5 +122,15 @@ class UserService(
     @Transactional
     fun deleteUser(id: Long) {
         userRepository.deleteById(id)
+    }
+
+    @Transactional(readOnly = true)
+    fun getRolesEntities(userId: String): List<UserRolesEntity> {
+        return userRolesRepository.findByUserId(userId)
+    }
+
+    @Transactional
+    fun deleteRoleEntities(userId: String) {
+        userRolesRepository.deleteByUserId(userId)
     }
 }

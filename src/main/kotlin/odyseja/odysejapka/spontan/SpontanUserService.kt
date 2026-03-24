@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.users.UserEntity
 import odyseja.odysejapka.users.UserRoles
-import odyseja.odysejapka.users.UserRolesRepository
 import odyseja.odysejapka.users.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -27,7 +26,6 @@ data class SpontanUserInfo(
 class SpontanUserService(
     private val spontanUserRepository: SpontanUserRepository,
     private val userService: UserService,
-    private val userRolesRepository: UserRolesRepository,
     private val spontanGroupAssignmentService: SpontanGroupAssignmentService
 ) {
     private val logger = LoggerFactory.getLogger(SpontanUserService::class.java)
@@ -100,7 +98,7 @@ class SpontanUserService(
 
         val user = userService.getUserEntityOrNull(spontanUser.userId)
         if (user != null) {
-            userRolesRepository.deleteByUserId(user.userId!!)
+            userService.deleteRoleEntities(user.userId!!)
             userService.deleteUser(user.id!!)
         }
 
