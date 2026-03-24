@@ -3,17 +3,15 @@ package odyseja.odysejapka.dashboard
 import odyseja.odysejapka.exceptions.NoAccessException
 import odyseja.odysejapka.stage.StageUserService
 import odyseja.odysejapka.timetable.TimeTableService
-import odyseja.odysejapka.users.UserRepository
-import org.springframework.http.HttpStatus
+import odyseja.odysejapka.users.UserService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 
 @Service
 class PerformanceAccessService(
     private val timeTableService: TimeTableService,
     private val userAccessService: UserAccessService,
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val stageUserService: StageUserService
 ) {
 
@@ -25,8 +23,8 @@ class PerformanceAccessService(
 
         if (userAccessService.hasProblemRole(performance.problemEntity.id)) return
 
-        val user = userRepository.findByUserId(principalUserId)
-            ?: throw ResponseStatusException(HttpStatus.FORBIDDEN)
+        val user = userService.getUserEntityOrNullByUserId(principalUserId)
+            ?: throw NoAccessException("Brak uprawnień do wyświetlania przedstawień")
         val stageUser = stageUserService.getStageUserOrNullByUserId(user.id!!)
             ?: throw NoAccessException("Brak uprawnień do wyświetlania przedstawień")
 

@@ -3,7 +3,7 @@ package odyseja.odysejapka.spontan
 import com.ezylang.evalex.Expression
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.timetable.TimeTableService
-import odyseja.odysejapka.users.UserRepository
+import odyseja.odysejapka.users.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -15,7 +15,7 @@ class SpontanService(
     private val cityService: CityService,
     private val timeTableService: TimeTableService,
     private val spontanUserService: SpontanUserService,
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val spontanAccessService: SpontanAccessService,
     private val spontanGroupAssignmentService: SpontanGroupAssignmentService
 ) {
@@ -135,7 +135,7 @@ class SpontanService(
     private fun buildSpontanUserNameMap(cityId: Int): Map<Long, String> {
         val spontanUsers = spontanUserService.getSpontanUsersByCity(cityId)
         return spontanUsers.mapNotNull { su ->
-            val user = userRepository.findById(su.userId).orElse(null)
+            val user = userService.getUserEntityOrNull(su.userId)
             if (su.id != null && user?.name != null) su.id!! to user.name!! else null
         }.toMap()
     }

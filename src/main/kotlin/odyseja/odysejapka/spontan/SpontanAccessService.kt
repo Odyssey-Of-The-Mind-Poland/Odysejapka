@@ -1,7 +1,7 @@
 package odyseja.odysejapka.spontan
 
 import odyseja.odysejapka.dashboard.UserAccessService
-import odyseja.odysejapka.users.UserRepository
+import odyseja.odysejapka.users.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
@@ -18,7 +18,7 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 class SpontanAccessService(
     private val userAccessService: UserAccessService,
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val spontanUserService: SpontanUserService,
     private val spontanGroupAssignmentService: SpontanGroupAssignmentService
 ) {
@@ -29,7 +29,7 @@ class SpontanAccessService(
     fun currentSpontanUser(): SpontanUserEntity? {
         if (!userAccessService.isSpontan()) return null
         val principalUserId = extractCurrentPrincipalUserId() ?: return null
-        val user = userRepository.findByUserId(principalUserId) ?: return null
+        val user = userService.getUserEntityOrNullByUserId(principalUserId) ?: return null
         return spontanUserService.getSpontanUserOrNullByUserId(user.id!!)
     }
 

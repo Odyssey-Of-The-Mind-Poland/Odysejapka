@@ -2,7 +2,7 @@ package odyseja.odysejapka.chat
 
 import odyseja.odysejapka.dashboard.PerformanceAccessService
 import odyseja.odysejapka.dashboard.extractUserId
-import odyseja.odysejapka.users.UserRepository
+import odyseja.odysejapka.users.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -19,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 class ChatController(
     private val chatService: ChatService,
     private val performanceAccessService: PerformanceAccessService,
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val wsTicketStore: WsTicketStore,
     private val messagingTemplate: SimpMessagingTemplate,
 ) {
@@ -47,8 +47,7 @@ class ChatController(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Message cannot be empty")
         }
 
-        val user = userRepository.findByUserId(userId)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        val user = userService.getUserEntityByUserId(userId)
 
         val message = chatService.sendMessage(
             performanceId = performanceId,
@@ -70,8 +69,7 @@ class ChatController(
         val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         performanceAccessService.checkAccess(userId, performanceId)
 
-        val user = userRepository.findByUserId(userId)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        val user = userService.getUserEntityByUserId(userId)
 
         val ticket = wsTicketStore.createTicket(userId, user.name ?: "Nieznany")
         return WsTicketResponse(ticket)

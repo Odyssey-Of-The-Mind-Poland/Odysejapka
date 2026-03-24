@@ -2,6 +2,7 @@ package odyseja.odysejapka.exceptions
 
 import jakarta.persistence.EntityNotFoundException
 import jakarta.servlet.http.HttpServletRequest
+import org.apache.http.auth.InvalidCredentialsException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -32,6 +33,19 @@ class GlobalExceptionHandler {
         )
         response.apply {
             title = "NO ACCESS"
+            instance = URI.create(request.requestURI)
+        }
+        return response
+    }
+
+    @ExceptionHandler(InvalidCredentialsException::class)
+    fun handleInvalidCredentials(e: InvalidCredentialsException, request: HttpServletRequest): ProblemDetail {
+        val response = ProblemDetail.forStatusAndDetail(
+            HttpStatus.UNAUTHORIZED,
+            e.message
+        )
+        response.apply {
+            title = "INVALID CREDENTIALS"
             instance = URI.create(request.requestURI)
         }
         return response

@@ -3,7 +3,6 @@ package odyseja.odysejapka.spontan
 import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.users.UserEntity
-import odyseja.odysejapka.users.UserRepository
 import odyseja.odysejapka.users.UserRoles
 import odyseja.odysejapka.users.UserRolesRepository
 import odyseja.odysejapka.users.UserService
@@ -27,7 +26,6 @@ data class SpontanUserInfo(
 @Service
 class SpontanUserService(
     private val spontanUserRepository: SpontanUserRepository,
-    private val userRepository: UserRepository,
     private val userService: UserService,
     private val userRolesRepository: UserRolesRepository,
     private val spontanGroupAssignmentService: SpontanGroupAssignmentService
@@ -41,7 +39,7 @@ class SpontanUserService(
         val password = generatePassword()
 
         val userEntity = UserEntity.forLocalAuth(username, email, password)
-        val savedUser = userRepository.save(userEntity)
+        val savedUser = userService.addUserEntity(userEntity)
 
         userService.assignRolesToUser(
             UserRoles(
@@ -64,7 +62,7 @@ class SpontanUserService(
     @Transactional(readOnly = true)
     fun getSpontanUsersInfo(cityId: Int): List<SpontanUserInfo> {
         return getSpontanUsersByCity(cityId).mapNotNull { spontanUser ->
-            val user = userRepository.findById(spontanUser.userId).orElse(null) ?: return@mapNotNull null
+            val user = userService.getUserEntityOrNull(spontanUser.userId) ?: return@mapNotNull null
             SpontanUserInfo(
                 id = spontanUser.id!!,
                 userId = spontanUser.userId,
@@ -78,7 +76,7 @@ class SpontanUserService(
     fun getCredentials(cityId: Int, userId: Long): SpontanUserCredentials? {
         val spontanUsers = getSpontanUsersByCity(cityId)
         val spontanUser = spontanUsers.find { it.userId == userId } ?: return null
-        val user = userRepository.findById(spontanUser.userId).orElse(null) ?: return null
+        val user = userService.getUserEntityOrNull(spontanUser.userId) ?: return null
         return SpontanUserCredentials(
             email = user.email ?: return null,
             password = user.password ?: return null
@@ -100,10 +98,10 @@ class SpontanUserService(
 
         spontanUserRepository.delete(spontanUser)
 
-        val user = userRepository.findById(spontanUser.userId).orElse(null)
+        val user = userService.getUserEntityOrNull(spontanUser.userId)
         if (user != null) {
             userRolesRepository.deleteByUserId(user.userId!!)
-            userRepository.delete(user)
+            userService.deleteUser(user.id!!)
         }
 
         logger.info("Deleted spontan user {} for city {}", userId, cityId)
