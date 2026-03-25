@@ -77,7 +77,8 @@ class PerformanceEntity(
             stage = stageEntity.number,
             part = part,
             league = league,
-            guest = isForeignTeam()
+            guest = isForeignTeam(),
+            day = performanceDay
         )
     }
 

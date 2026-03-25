@@ -13,6 +13,7 @@
             performance.stage = performanceGroup.group.stage;
             performance.part = performanceGroup.group.part;
             performance.league = performanceGroup.group.league;
+            performance.performanceDay = performanceGroup.group.day;
             await savePerformance(performance);
         }
         onSave();
@@ -85,6 +86,14 @@
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="C">C</option>
+            </select>
+        </label>
+
+        <label class="label flex-grow">
+            <span>Dzień występu</span>
+            <select class="select" bind:value={performanceGroup.group.day}>
+                <option value="Sobota">Sobota</option>
+                <option value="Niedziela">Niedziela</option>
             </select>
         </label>
     </div>
