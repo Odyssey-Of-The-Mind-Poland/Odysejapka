@@ -69,12 +69,12 @@ class ZspSheetsAdapter(
         var stage = 1
         for ((i, row) in values.withIndex()) {
             if (row.size > 0 && isJudge(row[0])) {
-                if (row.size == 1) {
+                if (row[0].split(":").size == 1) {
                     judges =
                         "" // For Regional Finals Judges names are not printed onto the scoring sheet => Judges section is empty = we don't print it
                     break
-                } else if (row.size > 1) {
-                    judges = row[1] // For Country Finals Judges names will be used
+                } else {
+                    judges = row[0].split(":")[1].trim()
                     break
                 }
             }
