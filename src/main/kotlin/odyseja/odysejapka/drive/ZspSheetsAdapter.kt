@@ -130,7 +130,7 @@ class ZspSheetsAdapter(
     }
 
     private fun isJudge(judge: String): Boolean {
-        return judge.contains("SĘDZIOWIE")
+        return judge.contains("SĘDZIOWIE") || judge.contains("jury")
     }
 
     private fun isTime(cell: String): Boolean {
