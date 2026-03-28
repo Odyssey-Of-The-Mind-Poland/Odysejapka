@@ -96,7 +96,7 @@ export async function downloadRakShortPdf(
 ): Promise<ArrayBuffer> {
 	const params: Record<string, string> = { cityId: String(cityId) };
 	if (isRegion) params.isRegion = 'true';
-	const url = proxyPath('/api/v1/rak/download-short-pdf', params);
+	const url = proxyPath('/api/v1/rak/download-short-latex-pdf', params);
 	const res = await fetch(url, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },

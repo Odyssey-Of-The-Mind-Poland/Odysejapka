@@ -60,7 +60,6 @@
 		}
 	}
 
-	const downloadPdf = () => downloadFile(downloadRakPdf, 'pdf');
 	const downloadShortPdf = () => downloadFile(downloadRakShortPdf, 'pdf');
 	const downloadLatexPdf = () => downloadFile(downloadRakLatexPdf, 'pdf');
 </script>
@@ -99,12 +98,12 @@
 
 				<div class="grid gap-3 sm:grid-cols-3">
 					<button
-						class="flex flex-col gap-1 rounded-lg border p-4 text-left transition-colors hover:bg-accent disabled:opacity-50"
-						onclick={downloadPdf}
-						disabled={isLoading}
+							class="flex flex-col gap-1 rounded-lg border p-4 text-left transition-colors hover:bg-accent disabled:opacity-50"
+							onclick={downloadLatexPdf}
+							disabled={isLoading}
 					>
-						<span class="text-sm font-medium">PDF Wyniki</span>
-						<span class="text-xs text-muted-foreground">Pełny dokument z rankingami</span>
+						<span class="text-sm font-medium">Pełne wyniki PDF</span>
+						<span class="text-xs text-muted-foreground">Pełne wyniki</span>
 					</button>
 					<button
 						class="flex flex-col gap-1 rounded-lg border p-4 text-left transition-colors hover:bg-accent disabled:opacity-50"
@@ -112,15 +111,7 @@
 						disabled={isLoading}
 					>
 						<span class="text-sm font-medium">Skrócony PDF</span>
-						<span class="text-xs text-muted-foreground">Podsumowanie wyników</span>
-					</button>
-					<button
-						class="flex flex-col gap-1 rounded-lg border p-4 text-left transition-colors hover:bg-accent disabled:opacity-50"
-						onclick={downloadLatexPdf}
-						disabled={isLoading}
-					>
-						<span class="text-sm font-medium">PDF LaTeX</span>
-						<span class="text-xs text-muted-foreground">Wyniki w formacie LaTeX</span>
+						<span class="text-xs text-muted-foreground">Skrócone wyniki na ceremonie zakończęcia</span>
 					</button>
 				</div>
 

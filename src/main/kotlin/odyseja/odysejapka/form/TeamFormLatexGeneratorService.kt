@@ -92,7 +92,7 @@ class TeamFormLatexGeneratorService(
     }
 
     private fun loadFontFiles(): List<Pair<String, ByteArray>> {
-        val fontNames = listOf("Ubuntu-Regular.ttf", "Ubuntu-Bold.ttf", "Ubuntu-Italic.ttf", "Ubuntu-BoldItalic.ttf")
+        val fontNames = listOf("Ubuntu-Regular.ttf", "Ubuntu-Bold.ttf", "Ubuntu-Italic.ttf", "Ubuntu-BoldItalic.ttf", "UbuntuCondensed-Regular.ttf")
         return fontNames.mapNotNull { name ->
             val resource = ClassPathResource("static/fonts/$name")
             if (!resource.exists()) return@mapNotNull null

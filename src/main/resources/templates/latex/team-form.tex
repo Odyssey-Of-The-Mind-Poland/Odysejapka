@@ -22,6 +22,7 @@
   BoldItalicFont = Ubuntu-BoldItalic.ttf,
   LetterSpace=-3.5
 ]
+\newfontfamily\ubuntucondensed{UbuntuCondensed-Regular.ttf}
 
 \newgeometry{
     top=30mm,
@@ -46,7 +47,7 @@
 \microtypesetup{protrusion=true, expansion=true}
 
 \fancyhead{}%
-\fancyhead[C]{\fontsize{14}{16}\selectfont \textbf{<%teamName%>} \hspace{2mm} | \hspace{2mm} \textbf{P}roblem \textbf{<%problem%>} \hspace{2mm} | \hspace{2mm} \textbf{G}rupa wiekowa \textbf{<%age%>}}
+\fancyhead[C]{{\ubuntucondensed\fontsize{14}{16}\selectfont \textbf{<%teamName%>} \hspace{2mm} | \hspace{2mm} \textbf{P}roblem \textbf{<%problem%>} \hspace{2mm} | \hspace{2mm} \textbf{G}rupa wiekowa \textbf{<%age%>}}}
 
 <%#performanceAt%>
 \begin{center}

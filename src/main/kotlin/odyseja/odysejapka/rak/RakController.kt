@@ -116,6 +116,22 @@ class RakController(
             .body(pdfBytes)
     }
 
+    @PostMapping("/download-short-latex-pdf")
+    fun downloadShortLatexPdf(
+        @RequestBody request: ZspIdRequest,
+        @RequestParam(required = false) cityId: Int?,
+        @RequestParam(required = false, defaultValue = "false") isRegion: Boolean
+    ): ResponseEntity<ByteArray> {
+        val zspId = GoogleIdExtractor.extractGoogleId(request.zspId)
+        rakCommandService.saveCommand(zspId, request.contestName, cityId)
+        val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
+        val pdfBytes = latexGeneratorService.generateShortPdf(sheetsAdapter.getAllTeams(), isRegion, request.contestName)
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"results-latex.pdf\"")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdfBytes)
+    }
+
     @PostMapping("/download-mocked-pdf")
     fun downloadMockedPdf(): ResponseEntity<ByteArray> {
         val pdfBytes = mockedPdfService.generatePdf()
