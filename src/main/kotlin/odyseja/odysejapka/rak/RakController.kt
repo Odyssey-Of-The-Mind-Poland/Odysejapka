@@ -145,6 +145,4 @@ class RakController(
     fun getLastZspId(@RequestParam(required = false) cityId: Int?): ZspIdRequest {
         return rakCommandService.getLastCommand(cityId)
     }
-
-
 }
