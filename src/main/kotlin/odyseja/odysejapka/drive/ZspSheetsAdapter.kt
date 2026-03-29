@@ -62,7 +62,7 @@ class ZspSheetsAdapter(
     }
 
     fun getTeams(sheetName: String): Teams {
-        val values = sheetAdapter.getValue(zspId, sheetName, "A1:U")
+        val values = sheetAdapter.getValue(zspId, sheetName, "A1:V")
         val teams = mutableListOf<Team>()
         var judges = ""
         var day = ""
@@ -123,10 +123,11 @@ class ZspSheetsAdapter(
     }
 
     private fun getRanatra(row: MutableList<String>): Boolean {
-        if (row.size <= 21) {
+        val ranatraIndex = 22 // V
+        if (row.size <= ranatraIndex) {
             return false
         }
-        return row[21] == "PRAWDA" || row[21] == "TRUE"
+        return row[ranatraIndex] == "PRAWDA" || row[ranatraIndex] == "TRUE"
     }
 
     private fun isJudge(judge: String): Boolean {
