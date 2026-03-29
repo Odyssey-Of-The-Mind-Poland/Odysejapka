@@ -17,13 +17,9 @@
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand\tabularxcolumn[1]{m{#1}}
 
-\setmainfont{Ubuntu-Regular.ttf}[
-  BoldFont = Ubuntu-Bold.ttf,
-  ItalicFont = Ubuntu-Italic.ttf,
-  BoldItalicFont = Ubuntu-BoldItalic.ttf,
+\setmainfont{UbuntuCondensed-Regular.ttf}[
   LetterSpace=-3.5
 ]
-\newfontfamily\ubuntucondensed{UbuntuCondensed-Regular.ttf}
 
 \newgeometry{
     top=30mm,
@@ -50,7 +46,7 @@
 <%#groups%>
 \newpage
 \fancyhead{}%
-\fancyhead[C]{{\ubuntucondensed\fontsize{16}{18}\selectfont \textbf{P}roblem \textbf{<%problem%>}: <%problemName%> \hspace{2mm} | \hspace{2mm} \textbf{G}rupa wiekowa \textbf{<%division%>}}}
+\fancyhead[C]{{\fontsize{16}{18}\selectfont \textbf{P}roblem \textbf{<%problem%>}: <%problemName%> \hspace{2mm} | \hspace{2mm} \textbf{G}rupa wiekowa \textbf{<%division%>}}}
 \begin{table}[H]
     \centering
     \setlength{\extrarowheight}{2pt}
