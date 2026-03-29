@@ -440,6 +440,22 @@ class RakCalculatorTest {
         assertEquals(1, result[0].teamScores.count { !it.isWinner })
     }
 
+    @Test
+    fun `age 4 has only one winner`() {
+        val teams = listOf(
+            createTeam(division = 4, longTermScore = 150f, spontaneousScore = 70f, styleScore = 35f, teamName = "First"),
+            createTeam(division = 4, longTermScore = 140f, spontaneousScore = 65f, styleScore = 30f, teamName = "Second"),
+            createTeam(division = 4, longTermScore = 130f, spontaneousScore = 60f, styleScore = 25f, teamName = "Third")
+        )
+
+        val result = rakCalculator.calculateScores(teams)
+
+        val scores = result[0].teamScores.sortedBy { it.place }
+        assertTrue(scores[0].isWinner, "Place 1 should be winner")
+        assertFalse(scores[1].isWinner, "Place 2 should not be winner for age 4")
+        assertFalse(scores[2].isWinner, "Place 3 should not be winner for age 4")
+    }
+
     private fun createTeam(
         longTermScore: Float? = null,
         spontaneousScore: Float? = null,

@@ -1,5 +1,7 @@
 package odyseja.odysejapka.rak
 
+import org.checkerframework.checker.units.qual.s
+
 internal class PlaceAssigment(private val computedScores: List<ComputedTeamScores>) {
 
     private var currentPlace = 0
@@ -10,7 +12,7 @@ internal class PlaceAssigment(private val computedScores: List<ComputedTeamScore
             setCurrentPlace(it)
             FinalTeamScore(
                 place = currentPlace,
-                isWinner = if (isRegion) false else (currentPlace <= 2 || it.team.ranatra),
+                isWinner = isWinner(isRegion,  it),
                 longTermScore = it.scaledLongTerm,
                 spontaneousScore = it.scaledSpontaneous,
                 styleScore = it.scaledStyle,
@@ -22,6 +24,15 @@ internal class PlaceAssigment(private val computedScores: List<ComputedTeamScore
             )
         }
         return if (isRegion) applyRegionWinnerRules(list) else list
+    }
+
+    private fun isWinner(
+        isRegion: Boolean,
+        scores: ComputedTeamScores,
+    ): Boolean {
+        if (isRegion) return false
+        if (scores.team.getAge() == "4") return currentPlace == 1
+        return currentPlace <= 2 || scores.team.ranatra
     }
 
     /**
