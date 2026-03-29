@@ -19,7 +19,7 @@ class ProblemService(
     fun getProblems(): List<ProblemEntity?> {
         return problemRepository.findAll().sortedBy { it.id }.map { problem ->
             problem?.let { ProblemEntity(it.id, it.name
-                .replace(Regex("\\n"), "")
+                .replace("\\n", "")
                 .replace("\n", "")) }
         }
     }
