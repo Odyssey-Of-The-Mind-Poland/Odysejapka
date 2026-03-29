@@ -94,8 +94,8 @@ class LatexGeneratorService(
     }
 
     private fun toLatexRow(score: FinalTeamScore, problem: Int): LatexRow {
-        val placeContent = if (score.team.ranatra) "\\shortstack{${score.place}\\\\{\\color{orange}\\scriptsize[RF]}}" else "${score.place}"
-        val placeStyle = if (score.isWinner) "{\\color{blue}\\bfseries $placeContent}" else placeContent
+        val placeNumber = if (score.isWinner) "{\\color{blue}\\bfseries ${score.place}}" else "${score.place}"
+        val placeStyle = if (score.team.ranatra) "\\shortstack{$placeNumber\\\\{\\color{orange}\\scriptsize[RF]}}" else placeNumber
         val teamStyle = if (score.isWinner) "{\\color{blue}\\bfseries ${escapeLatex(score.team.shortTeamName)}}" else escapeLatex(score.team.shortTeamName)
         val cityStyle = if (score.isWinner) "{\\color{blue}\\bfseries ${escapeLatex(score.team.city)}}" else "{\\color{gray} ${escapeLatex(score.team.city)}}"
         val penaltyStyle = if ((score.team.penaltyScore ?: 0f) != 0f) "\\textcolor{red}{${formatInt(score.team.penaltyScore!!)}}" else "{\\color{gray} ${formatInt(score.team.penaltyScore ?: 0f)}}"
