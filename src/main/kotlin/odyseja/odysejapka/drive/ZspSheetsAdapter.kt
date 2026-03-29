@@ -123,7 +123,7 @@ class ZspSheetsAdapter(
     }
 
     private fun getRanatra(row: MutableList<String>): Boolean {
-        val ranatraIndex = 22 // V
+        val ranatraIndex = 21 // V
         if (row.size <= ranatraIndex) {
             return false
         }
