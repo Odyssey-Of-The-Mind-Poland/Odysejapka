@@ -58,7 +58,7 @@
     }
 
     const downloadShortPdf = () => downloadFile(downloadRakShortPdf, 'pdf');
-    const downloadCsv = () => downloadFile(downloadCsvFile, 'pdf');
+    const downloadCsv = () => downloadFile(downloadCsvFile, 'csv');
     const downloadLatexPdf = () => downloadFile(downloadRakLatexPdf, 'pdf');
 </script>
 
