@@ -66,7 +66,9 @@ function proxyPath(path: string, params?: Record<string, string>): string {
 	return base;
 }
 
-export async function getRakInitial(cityId: number): Promise<{ zspId: string; contestName?: string }> {
+export async function getRakInitial(
+	cityId: number
+): Promise<{ zspId: string; contestName?: string }> {
 	return apiFetch(apiPath('/api/v1/rak', { cityId: String(cityId) }));
 }
 
@@ -97,6 +99,24 @@ export async function downloadRakShortPdf(
 	const params: Record<string, string> = { cityId: String(cityId) };
 	if (isRegion) params.isRegion = 'true';
 	const url = proxyPath('/api/v1/rak/download-short-latex-pdf', params);
+	const res = await fetch(url, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ zspId, contestName: contestName ?? null })
+	});
+	if (!res.ok) throw new Error(`HTTP ${res.status}`);
+	return res.arrayBuffer();
+}
+
+export async function downloadCsv(
+	cityId: number,
+	zspId: string,
+	isRegion: boolean,
+	contestName?: string
+): Promise<ArrayBuffer> {
+	const params: Record<string, string> = { cityId: String(cityId) };
+	if (isRegion) params.isRegion = 'true';
+	const url = proxyPath('/api/v1/rak/generate', params);
 	const res = await fetch(url, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },

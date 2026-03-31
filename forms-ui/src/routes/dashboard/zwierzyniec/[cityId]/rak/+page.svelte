@@ -1,16 +1,10 @@
 <script lang="ts">
     import {page} from '$app/state';
-    import {
-        downloadRakPdf,
-        downloadRakShortPdf,
-        downloadRakLatexPdf
-    } from '$lib/zwierzyniec';
+    import {downloadRakLatexPdf, downloadRakShortPdf} from '$lib/zwierzyniec';
     import {createOdysejaQuery} from '$lib/queries';
-    import {Button} from '$lib/components/ui/button';
     import {Input} from '$lib/components/ui/input';
     import {Label} from '$lib/components/ui/label';
     import {Spinner} from '$lib/components/ui/spinner';
-    import * as Card from '$lib/components/ui/card';
     import {toast} from 'svelte-sonner';
 
     let cityId = $derived(Number(page.params.cityId));
@@ -63,6 +57,7 @@
     }
 
     const downloadShortPdf = () => downloadFile(downloadRakShortPdf, 'pdf');
+    const downloadCsv = () => downloadFile(downloadCsv, 'pdf');
     const downloadLatexPdf = () => downloadFile(downloadRakLatexPdf, 'pdf');
 </script>
 
@@ -114,6 +109,14 @@
                     >
                         <span class="text-sm font-medium">Skrócony PDF</span>
                         <span class="text-xs text-muted-foreground">Skrócone wyniki na ceremonie zakończęcia</span>
+                    </button>
+                    <button
+                            class="flex flex-col gap-1 rounded-lg border p-4 text-left transition-colors hover:bg-accent disabled:opacity-50"
+                            onclick={downloadCsv}
+                            disabled={isLoading}
+                    >
+                        <span class="text-sm font-medium">CSV</span>
+                        <span class="text-xs text-muted-foreground">Generuj CSV z wynikami</span>
                     </button>
                 </div>
 
