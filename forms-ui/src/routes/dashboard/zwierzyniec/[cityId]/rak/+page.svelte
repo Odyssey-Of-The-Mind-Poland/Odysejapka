@@ -6,6 +6,7 @@
     import {Label} from '$lib/components/ui/label';
     import {Spinner} from '$lib/components/ui/spinner';
     import {toast} from 'svelte-sonner';
+    import * as Card from '$lib/components/ui/card';
 
     let cityId = $derived(Number(page.params.cityId));
 
