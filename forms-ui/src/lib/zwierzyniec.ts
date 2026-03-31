@@ -108,7 +108,7 @@ export async function downloadRakShortPdf(
 	return res.arrayBuffer();
 }
 
-export async function downloadCsv(
+export async function downloadCsvFile(
 	cityId: number,
 	zspId: string,
 	isRegion: boolean,

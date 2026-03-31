@@ -1,6 +1,6 @@
 <script lang="ts">
     import {page} from '$app/state';
-    import {downloadRakLatexPdf, downloadRakShortPdf} from '$lib/zwierzyniec';
+    import {downloadCsvFile, downloadRakLatexPdf, downloadRakShortPdf} from '$lib/zwierzyniec';
     import {createOdysejaQuery} from '$lib/queries';
     import {Input} from '$lib/components/ui/input';
     import {Label} from '$lib/components/ui/label';
@@ -58,7 +58,7 @@
     }
 
     const downloadShortPdf = () => downloadFile(downloadRakShortPdf, 'pdf');
-    const downloadCsv = () => downloadFile(downloadCsv, 'pdf');
+    const downloadCsv = () => downloadFile(downloadCsvFile, 'pdf');
     const downloadLatexPdf = () => downloadFile(downloadRakLatexPdf, 'pdf');
 </script>
 
