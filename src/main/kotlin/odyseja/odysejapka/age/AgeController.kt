@@ -13,6 +13,12 @@ class AgeController(private val ageService: AgeService) {
     }
 
     @Secured("ROLE_ADMINISTRATOR")
+    @PostMapping
+    fun addAge(@RequestBody age: AgeEntity) {
+        ageService.addAge(age)
+    }
+
+    @Secured("ROLE_ADMINISTRATOR")
     @PutMapping
     fun setUpDefaultAges() {
         return ageService.setUpDefaultAges()

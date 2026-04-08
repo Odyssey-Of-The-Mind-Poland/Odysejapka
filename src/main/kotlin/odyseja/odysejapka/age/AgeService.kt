@@ -16,7 +16,15 @@ class AgeService(
     }
 
     fun getAge(ageId: Int): AgeEntity {
-        return ageRepository.findFirstById(ageId) ?: throw EntityNotFoundException("Nie znaleziono grupy wiekowej $ageId")
+        return ageRepository.findFirstById(ageId)
+            ?: throw EntityNotFoundException("Nie znaleziono grupy wiekowej $ageId")
+    }
+
+    @Transactional
+    fun addAge(age: AgeEntity) {
+        age.validate()
+        ageRepository.save(age)
+        changeService.updateVersion()
     }
 
     @Transactional
@@ -24,13 +32,13 @@ class AgeService(
         try {
             getAge(ageId)
         } catch (_: EntityNotFoundException) {
-            ageRepository.save(AgeEntity(ageId, ageId.toString()))
+            addAge(AgeEntity(ageId, ageId.toString()))
         }
     }
 
     @Transactional
     fun setUpDefaultAges() {
-        mutableListOf(0, 1, 2, 3, 4)
+        arrayOf(0, 1, 2, 3, 4)
             .forEach {ensureAgeExists(it)}
         changeService.updateVersion()
     }
