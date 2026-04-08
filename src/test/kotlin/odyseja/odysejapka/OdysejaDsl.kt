@@ -1,7 +1,6 @@
 package odyseja.odysejapka
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import odyseja.odysejapka.age.AgeController
 import odyseja.odysejapka.city.CityController
 import odyseja.odysejapka.city.CreateCityRequest
 import odyseja.odysejapka.form.FormController
@@ -11,8 +10,6 @@ import odyseja.odysejapka.form.StyleFormEntry
 import odyseja.odysejapka.form.PenaltyFormEntry
 import odyseja.odysejapka.form.PerformanceResultsRequest
 import odyseja.odysejapka.form.FormData
-import odyseja.odysejapka.problem.ProblemController
-import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.spontan.SpontanController
 import odyseja.odysejapka.timetable.Performance
@@ -129,7 +126,6 @@ class OdysejaDsl {
         performanceDay: String = "niedziela",
         league: String? = ""
     ): Int {
-        ensureAgeAndProblemExist()
         val cityName = cityClient.getCities().firstOrNull { it?.id == cityId }?.name ?: "Unknown"
         val perf = Performance(
             city = cityName, team = team,
@@ -187,17 +183,4 @@ class OdysejaDsl {
         val mapper = ObjectMapper()
         return mapper.readValue(response, ProblemDetail::class.java)
     }
-
-    fun ensureAgeAndProblemExist() {
-        val ageClient = controllerClientFactory.create(AgeController::class.java)
-        val problemClient = controllerClientFactory.create(ProblemController::class.java)
-
-        ageClient.setUpDefaultAges()
-
-        val problemEntities = listOf(0, 1, 2, 3, 4, 5).map {
-            ProblemEntity(it, it.toString())
-        }
-        problemClient.updateProblems(problemEntities)
-    }
-
 }

@@ -1,4 +1,4 @@
-package odyseja.odysejapka.age
+package odyseja.odysejapka.timetable
 
 import org.springframework.data.repository.CrudRepository
 

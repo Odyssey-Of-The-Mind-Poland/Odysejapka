@@ -1,4 +1,4 @@
-package odyseja.odysejapka.age
+package odyseja.odysejapka.timetable
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

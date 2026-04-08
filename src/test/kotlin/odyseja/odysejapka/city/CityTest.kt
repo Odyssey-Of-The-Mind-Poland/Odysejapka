@@ -4,14 +4,17 @@ import odyseja.odysejapka.OdysejaDsl
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.security.test.context.support.WithMockUser
+import ovh.snet.grzybek.controller.client.core.RespondingControllerClient
 import kotlin.test.Test
 
 @WithMockUser(username = "testuser", roles = ["ADMIN"])
 class CityTest: OdysejaDsl() {
+    lateinit var cityRespondingClient: RespondingControllerClient<CityController>
 
     @BeforeEach
     fun cityTestSetUp() {
         cityClient.clearCities()
+        cityRespondingClient = controllerClientFactory.respondingClient(CityController::class.java)
     }
 
     @Test
@@ -37,7 +40,6 @@ class CityTest: OdysejaDsl() {
 
     @Test
     fun `should delete city`() {
-        val cityRespondingClient = controllerClientFactory.respondingClient(CityController::class.java)
         val city = createCity("Usuwisko Dolne")
         cityClient.deleteCity(city.id)
 
@@ -50,7 +52,6 @@ class CityTest: OdysejaDsl() {
 
     @Test
     fun `should delete city tied to performances`() {
-        val cityRespondingClient = controllerClientFactory.respondingClient(CityController::class.java)
         val city = createCity("Konkurs")
         createPerformance(city.id)
         cityClient.deleteCity(city.id)
@@ -73,7 +74,6 @@ class CityTest: OdysejaDsl() {
 
     @Test
     fun `should properly handle exceptions`() {
-        val cityRespondingClient = controllerClientFactory.respondingClient(CityController::class.java)
         var response = cityRespondingClient.executeConsumer {
                 controller -> controller.getCityByName("Nieistniejów")
         }

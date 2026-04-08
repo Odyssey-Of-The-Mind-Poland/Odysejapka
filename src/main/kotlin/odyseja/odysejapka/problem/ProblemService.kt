@@ -1,6 +1,7 @@
 package odyseja.odysejapka.problem
 
 import jakarta.persistence.EntityNotFoundException
+import jakarta.transaction.Transactional
 import odyseja.odysejapka.change.ChangeService
 import org.springframework.stereotype.Service
 import kotlin.jvm.optionals.getOrElse
@@ -20,6 +21,16 @@ class ProblemService(
             ?: throw EntityNotFoundException("Nie znaleziono problemu o ID $problemId")
     }
 
+    @Transactional
+    fun ensureProblemExists(problemId: Int): ProblemEntity {
+        return try {
+            getProblem(problemId)
+        } catch(_: EntityNotFoundException) {
+            problemRepository.save(ProblemEntity(problemId, "Problem $problemId"))
+        }
+    }
+
+    @Transactional
     fun updateProblems(problemEntities: List<ProblemEntity>) {
         for (problem in problemEntities) {
             val toEdit: ProblemEntity = problemRepository.findById(problem.id)
@@ -31,6 +42,7 @@ class ProblemService(
         changeService.updateVersion()
     }
 
+    @Transactional
     fun deleteProblem(problemId: Int) {
         problemRepository.deleteById(problemId)
         changeService.updateVersion()

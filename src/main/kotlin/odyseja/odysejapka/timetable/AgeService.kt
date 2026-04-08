@@ -1,4 +1,4 @@
-package odyseja.odysejapka.age
+package odyseja.odysejapka.timetable
 
 import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
@@ -11,41 +11,25 @@ class AgeService(
     private val changeService: ChangeService
 ) {
 
-    fun getAges(): MutableIterable<AgeEntity?> {
-        return ageRepository.findAll()
-    }
-
     fun getAge(ageId: Int): AgeEntity {
         return ageRepository.findFirstById(ageId)
             ?: throw EntityNotFoundException("Nie znaleziono grupy wiekowej $ageId")
     }
 
     @Transactional
-    fun addAge(age: AgeEntity) {
+    fun addAge(age: AgeEntity): AgeEntity {
         age.validate()
-        ageRepository.save(age)
+        val age = ageRepository.save(age)
         changeService.updateVersion()
+        return age
     }
 
     @Transactional
-    fun ensureAgeExists(ageId: Int) {
-        try {
+    fun ensureAgeExists(ageId: Int): AgeEntity {
+        return try {
             getAge(ageId)
         } catch (_: EntityNotFoundException) {
             addAge(AgeEntity(ageId, ageId.toString()))
         }
-    }
-
-    @Transactional
-    fun setUpDefaultAges() {
-        arrayOf(0, 1, 2, 3, 4)
-            .forEach {ensureAgeExists(it)}
-        changeService.updateVersion()
-    }
-
-    @Transactional
-    fun deleteAge(ageId: Int) {
-        ageRepository.deleteById(ageId)
-        changeService.updateVersion()
     }
 }

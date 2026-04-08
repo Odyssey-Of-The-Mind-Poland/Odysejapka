@@ -1,7 +1,6 @@
 package odyseja.odysejapka.timetable
 
 import jakarta.persistence.EntityNotFoundException
-import odyseja.odysejapka.age.AgeService
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.problem.ProblemService
@@ -32,8 +31,8 @@ class TimeTableService(
                 it.id,
                 cityService.getCity(cityId),
                 it.team,
-                problemService.getProblem(it.problem),
-                ageService.getAge(it.age),
+                problemService.ensureProblemExists(it.problem),
+                ageService.ensureAgeExists(it.age),
                 stageService.getOrCreateStageByNumber(it.city, it.stage),
                 it.performance,
                 it.spontan,
@@ -57,8 +56,8 @@ class TimeTableService(
             performance.id,
             cityService.getCityByName(performance.city),
             performance.team,
-            problemService.getProblem(performance.problem),
-            ageService.getAge(performance.age),
+            problemService.ensureProblemExists(performance.problem),
+            ageService.ensureAgeExists(performance.age),
             stageService.getOrCreateStageByNumber(performance.city, performance.stage),
             performance.performance,
             performance.spontan,
@@ -81,8 +80,8 @@ class TimeTableService(
 
         pToEdit.cityEntity = cityService.getCityByName(performance.city)
         pToEdit.team = performance.team
-        pToEdit.problemEntity = problemService.getProblem(performance.problem)
-        pToEdit.ageEntity = ageService.getAge(performance.age)
+        pToEdit.problemEntity = problemService.ensureProblemExists(performance.problem)
+        pToEdit.ageEntity = ageService.ensureAgeExists(performance.age)
         pToEdit.stageEntity = stageService.getOrCreateStageByNumber(performance.city, performance.stage)
         pToEdit.performance = performance.performance
         pToEdit.spontan = performance.spontan
