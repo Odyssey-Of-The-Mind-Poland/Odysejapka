@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.test.context.support.WithMockUser
+import ovh.snet.grzybek.controller.client.core.RespondingControllerClient
 import java.time.LocalDate
 import kotlin.test.Test
 
@@ -14,11 +15,13 @@ import kotlin.test.Test
 class ImportCsvTest: OdysejaDsl() {
 
     private lateinit var city: CityEntity
+    lateinit var timetableRespondingClient: RespondingControllerClient<TimeTableController>
 
     @BeforeEach
     fun csvSetUp() {
         cityClient.clearCities()
         city = createCity("finał")
+        timetableRespondingClient = controllerClientFactory.respondingClient(TimeTableController::class.java)
     }
 
     @Test
@@ -72,11 +75,13 @@ class ImportCsvTest: OdysejaDsl() {
         )
 
         testCases.forEach { (content, message) ->
-            Assertions.assertThatThrownBy {
-                timeTableClient.importPerformances(content, city.id)
-            }
-                .hasRootCauseInstanceOf(IllegalArgumentException::class.java)
-                .hasMessageContaining(message)
+            val response = (timetableRespondingClient.executeConsumer {
+                controller -> controller.importPerformances(content, city.id)
+            })
+            val detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+            Assertions.assertThat(detail.status).isEqualTo(400)
+            Assertions.assertThat(detail.detail).isEqualTo(message)
+            Assertions.assertThat(detail.title).isEqualTo("ILLEGAL ARGUMENT")
         }
     }
 
@@ -108,16 +113,15 @@ class ImportCsvTest: OdysejaDsl() {
             "text/csv",
             content.toByteArray())
 
-        Assertions.assertThatThrownBy {
-            timeTableClient.importPerformances(csvFile, city.id)
-        }
-            .hasRootCauseInstanceOf(IllegalArgumentException::class.java)
-            .hasMessageContaining("Plik nie zawiera żadnych przedstawień.")
+        val response = timetableRespondingClient.executeConsumer {
+            controller -> controller.importPerformances(csvFile, city.id)}
+        val detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+        Assertions.assertThat(detail.status).isEqualTo(400)
+        Assertions.assertThat(detail.detail).isEqualTo("Plik nie zawiera żadnych przedstawień.")
     }
 
     @Test
     fun `should reject imports with invalid city ID`() {
-        val timetableRespondingClient = controllerClientFactory.respondingClient(TimeTableController::class.java)
         val response = timetableRespondingClient.executeConsumer { controller ->
             controller.importPerformances(mockCsv(), 123456789)
         }

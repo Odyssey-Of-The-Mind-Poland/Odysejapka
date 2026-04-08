@@ -12,6 +12,19 @@ import java.net.URI
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgument(e: IllegalArgumentException, request: HttpServletRequest): ProblemDetail {
+        val response = ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST,
+            e.message
+        )
+        response.apply {
+            title = "ILLEGAL ARGUMENT"
+            instance = URI.create(request.requestURI)
+        }
+        return response
+    }
+
     @ExceptionHandler(EntityNotFoundException::class)
     fun handleEntityNotFound(e: EntityNotFoundException, request: HttpServletRequest): ProblemDetail {
         val response = ProblemDetail.forStatusAndDetail(
