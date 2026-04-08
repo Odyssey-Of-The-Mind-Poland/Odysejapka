@@ -2,7 +2,6 @@ package odyseja.odysejapka
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import odyseja.odysejapka.age.AgeController
-import odyseja.odysejapka.age.AgeEntity
 import odyseja.odysejapka.city.CityController
 import odyseja.odysejapka.city.CreateCityRequest
 import odyseja.odysejapka.form.FormController
@@ -193,10 +192,7 @@ class OdysejaDsl {
         val ageClient = controllerClientFactory.create(AgeController::class.java)
         val problemClient = controllerClientFactory.create(ProblemController::class.java)
 
-        val ageEntities = listOf(0, 1, 2, 3, 4).map {
-            AgeEntity(it, it.toString())
-        }
-        ageClient.updateAge(ageEntities)
+        ageClient.setUpDefaultAges()
 
         val problemEntities = listOf(0, 1, 2, 3, 4, 5).map {
             ProblemEntity(it, it.toString())

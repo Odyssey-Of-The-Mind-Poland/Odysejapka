@@ -4,36 +4,40 @@ import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import kotlin.jvm.optionals.getOrElse
 
 @Service
 class AgeService(
-  private val ageRepository: AgeRepository,
-  private val changeService: ChangeService
+    private val ageRepository: AgeRepository,
+    private val changeService: ChangeService
 ) {
 
-  fun getAges(): MutableIterable<AgeEntity?> {
-    return ageRepository.findAll()
-  }
-
-  fun getAge(ageId: Int): AgeEntity {
-    return ageRepository.findFirstById(ageId) ?: throw EntityNotFoundException("Nie znaleziono grupy wiekowej $ageId")
-  }
-
-  @Transactional
-  fun updateAges(ageEntities: List<AgeEntity>) {
-    for (age in ageEntities) {
-      val toEdit: AgeEntity = ageRepository.findById(age.id).getOrElse { AgeEntity(age.id, age.name) }
-      toEdit.name = age.name
-      ageRepository.save(toEdit)
+    fun getAges(): MutableIterable<AgeEntity?> {
+        return ageRepository.findAll()
     }
 
-    changeService.updateVersion()
-  }
+    fun getAge(ageId: Int): AgeEntity {
+        return ageRepository.findFirstById(ageId) ?: throw EntityNotFoundException("Nie znaleziono grupy wiekowej $ageId")
+    }
 
-  @Transactional
-  fun deleteAge(ageId: Int) {
-    ageRepository.deleteById(ageId)
-    changeService.updateVersion()
-  }
+    @Transactional
+    fun ensureAgeExists(ageId: Int) {
+        try {
+            getAge(ageId)
+        } catch (_: EntityNotFoundException) {
+            ageRepository.save(AgeEntity(ageId, ageId.toString()))
+        }
+    }
+
+    @Transactional
+    fun setUpDefaultAges() {
+        mutableListOf(0, 1, 2, 3, 4)
+            .forEach {ensureAgeExists(it)}
+        changeService.updateVersion()
+    }
+
+    @Transactional
+    fun deleteAge(ageId: Int) {
+        ageRepository.deleteById(ageId)
+        changeService.updateVersion()
+    }
 }
