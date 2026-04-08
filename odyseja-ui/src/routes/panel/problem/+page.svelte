@@ -1,6 +1,6 @@
 <script lang="ts">
   import {put} from '$lib/apiService';
-  import type {Problems} from '$lib/types';
+  import type {Problem, Problems} from '$lib/types';
 
   export let data: Problems;
 
@@ -14,7 +14,7 @@
     toggleEdit();
   }
 
-  async function saveProblems(problems: Problems) {
+  async function saveProblems(problems: Problem[]) {
     await put(problems, "/problem", 'Problemy zapisano pomyślnie')
   }
 
