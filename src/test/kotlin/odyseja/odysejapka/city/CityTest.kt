@@ -77,7 +77,7 @@ class CityTest: OdysejaDsl() {
         var response = cityRespondingClient.executeConsumer {
                 controller -> controller.getCityByName("Nieistniejów")
         }
-        var detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+        var detail = parseProblemDetail(response)
 
         Assertions.assertThat(detail.status).isEqualTo(404)
         Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o nazwie Nieistniejów")
@@ -86,7 +86,7 @@ class CityTest: OdysejaDsl() {
         response = cityRespondingClient.executeConsumer {
                 controller -> controller.getCity(941415125)
         }
-        detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+        detail = parseProblemDetail(response)
 
         Assertions.assertThat(detail.status).isEqualTo(404)
         Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o ID 941415125")
@@ -95,7 +95,7 @@ class CityTest: OdysejaDsl() {
         response = cityRespondingClient.executeConsumer {
                 controller -> controller.deleteCity(941415125)
         }
-        detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+        detail = parseProblemDetail(response)
 
         Assertions.assertThat(detail.status).isEqualTo(404)
         Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o ID 941415125")

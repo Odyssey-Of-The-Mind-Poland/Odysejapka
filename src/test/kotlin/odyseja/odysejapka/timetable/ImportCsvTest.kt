@@ -75,7 +75,7 @@ class ImportCsvTest: OdysejaDsl() {
             val response = (timetableRespondingClient.executeConsumer {
                 controller -> controller.importPerformances(content, city.id)
             })
-            val detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+            val detail = parseProblemDetail(response)
             Assertions.assertThat(detail.status).isEqualTo(400)
             Assertions.assertThat(detail.detail).isEqualTo(message)
             Assertions.assertThat(detail.title).isEqualTo("ILLEGAL ARGUMENT")
@@ -112,7 +112,7 @@ class ImportCsvTest: OdysejaDsl() {
 
         val response = timetableRespondingClient.executeConsumer {
             controller -> controller.importPerformances(csvFile, city.id)}
-        val detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+        val detail = parseProblemDetail(response)
         Assertions.assertThat(detail.status).isEqualTo(400)
         Assertions.assertThat(detail.detail).isEqualTo("Plik nie zawiera żadnych przedstawień.")
     }
@@ -122,7 +122,7 @@ class ImportCsvTest: OdysejaDsl() {
         val response = timetableRespondingClient.executeConsumer { controller ->
             controller.importPerformances(mockCsv(), 123456789)
         }
-        val detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+        val detail = parseProblemDetail(response)
 
         Assertions.assertThat(detail.status).isEqualTo(404)
         Assertions.assertThat(detail.title).isEqualTo("ENTITY NOT FOUND")

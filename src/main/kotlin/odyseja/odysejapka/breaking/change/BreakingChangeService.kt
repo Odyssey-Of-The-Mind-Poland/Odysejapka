@@ -14,6 +14,7 @@ class BreakingChangeService(private val breakingChangeRepository: BreakingChange
 
     @Transactional
     fun setBreakingChange(breakingChange: BreakingChange) {
+        breakingChange.validate()
         val breakingChangeEntity = breakingChangeRepository.findFirstByOrderByIdDesc()
 
         if (breakingChangeEntity == null) {
@@ -26,7 +27,11 @@ class BreakingChangeService(private val breakingChangeRepository: BreakingChange
     }
 
     fun shouldUpdate(currentVersion: String): Boolean {
-        val breakingChangeVersionParts = getLastBreakingChange().version.split(".").map { it.toInt() }
+        BreakingChange(currentVersion).validate()
+        currentVersion.replace("+", ".")
+        val lastBreakingChange = getLastBreakingChange().version.replace("+", ".")
+
+        val breakingChangeVersionParts = lastBreakingChange.split(".").map { it.toInt() }
         val currentVersionParts = currentVersion.split(".").map { it.toInt() }
 
         val maxLength = maxOf(breakingChangeVersionParts.size, currentVersionParts.size)

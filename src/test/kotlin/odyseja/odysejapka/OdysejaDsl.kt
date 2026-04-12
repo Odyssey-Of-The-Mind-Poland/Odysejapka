@@ -27,6 +27,7 @@ import org.springframework.http.ProblemDetail
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import ovh.snet.grzybek.controller.client.core.ControllerClientFactory
+import ovh.snet.grzybek.controller.client.core.ControllerResponse
 import java.time.LocalDate
 
 @SpringBootTest
@@ -179,8 +180,11 @@ class OdysejaDsl {
         return csvFile
     }
 
-    fun parseProblemDetail(response: String): ProblemDetail {
+    fun parseProblemDetail(response: ControllerResponse<Void>): ProblemDetail {
         val mapper = ObjectMapper()
-        return mapper.readValue(response, ProblemDetail::class.java)
+        return mapper.readValue(
+            response.mockHttpServletResponse.contentAsString,
+            ProblemDetail::class.java
+        )
     }
 }
