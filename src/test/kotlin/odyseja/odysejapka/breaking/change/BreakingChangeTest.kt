@@ -103,6 +103,14 @@ class BreakingChangeTest: OdysejaDsl() {
         currentVersion = "2.1.2.4"
         breakingChangeClient.setBreakingChange(BreakingChange("2.1.4"))
         Assertions.assertThat(breakingChangeClient.shouldUpdate(currentVersion)).isTrue()
+
+        currentVersion = "2.1.4+33"
+        breakingChangeClient.setBreakingChange(BreakingChange("2.1.4+34"))
+        Assertions.assertThat(breakingChangeClient.shouldUpdate(currentVersion)).isTrue()
+        breakingChangeClient.setBreakingChange(BreakingChange("2.1.4+33"))
+        Assertions.assertThat(breakingChangeClient.shouldUpdate(currentVersion)).isFalse()
+        breakingChangeClient.setBreakingChange(BreakingChange("2.1.4+32"))
+        Assertions.assertThat(breakingChangeClient.shouldUpdate(currentVersion)).isFalse()
     }
 
     @Test
