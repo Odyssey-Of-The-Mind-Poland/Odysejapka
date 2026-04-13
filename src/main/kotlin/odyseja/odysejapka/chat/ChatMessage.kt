@@ -2,7 +2,7 @@ package odyseja.odysejapka.chat
 
 import java.time.Instant
 
-data class ChatMessageDto(
+data class ChatMessage(
     val id: Long,
     val performanceId: Int,
     val userId: String,
