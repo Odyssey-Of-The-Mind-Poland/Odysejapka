@@ -6,12 +6,14 @@ import java.sql.Timestamp
 @Service
 class ChangeService(private val changeRepository: ChangeRepository) {
 
-  fun getVersion(): Version {
-    val lastChange = changeRepository.findFirstByOrderByChangedAtDesc()
-    return Version(lastChange.id)
-  }
+    fun getVersion(): Version {
+        val lastChange = changeRepository.findFirstByOrderByChangedAtDesc()
+        if (lastChange == null) updateVersion()
 
-  fun updateVersion() {
-    changeRepository.save(ChangeEntity(0, Timestamp(System.currentTimeMillis())))
-  }
+        return Version(lastChange!!.id)
+    }
+
+    fun updateVersion() {
+        changeRepository.save(ChangeEntity(0, Timestamp(System.currentTimeMillis())))
+    }
 }
