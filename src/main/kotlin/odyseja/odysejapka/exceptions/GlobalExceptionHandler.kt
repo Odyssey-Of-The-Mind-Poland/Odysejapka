@@ -25,6 +25,19 @@ class GlobalExceptionHandler {
         return response
     }
 
+    @ExceptionHandler(IllegalStateException::class)
+    fun handleIllegalState(e: IllegalStateException, request: HttpServletRequest): ProblemDetail {
+        val response = ProblemDetail.forStatusAndDetail(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            e.message
+        )
+        response.apply {
+            title = "ILLEGAL STATE"
+            instance = URI.create(request.requestURI)
+        }
+        return response
+    }
+
     @ExceptionHandler(EntityNotFoundException::class)
     fun handleEntityNotFound(e: EntityNotFoundException, request: HttpServletRequest): ProblemDetail {
         val response = ProblemDetail.forStatusAndDetail(
