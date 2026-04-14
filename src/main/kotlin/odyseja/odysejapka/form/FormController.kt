@@ -2,7 +2,6 @@ package odyseja.odysejapka.form
 
 import odyseja.odysejapka.dashboard.PerformanceAccessService
 import odyseja.odysejapka.dashboard.UserAccessService
-import odyseja.odysejapka.dashboard.extractUserId
 import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -52,8 +51,7 @@ class FormController(
         @RequestBody result: PerformanceResultsRequest,
         @AuthenticationPrincipal principal: Any?
     ) {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
         formService.setTeamResults(performanceId, result)
     }
 
@@ -62,8 +60,7 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ): TeamForm {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
         return formService.getTeamForm(performanceId)
     }
 
@@ -82,8 +79,7 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ) {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
         val performance = timeTableService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
@@ -97,8 +93,7 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ): Map<String, Boolean> {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
         val performance = timeTableService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
@@ -113,8 +108,7 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ): ResponseEntity<ByteArray> {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
         val teamForm = formService.getTeamForm(performanceId)
         if (!teamForm.approved) throw ResponseStatusException(HttpStatus.CONFLICT, "Form not approved")
         val pdfBytes = teamFormPdfGeneratorService.generatePdf(performanceId)
@@ -129,8 +123,7 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ): ResponseEntity<ByteArray> {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
         val teamForm = formService.getTeamForm(performanceId)
         if (!teamForm.approved) throw ResponseStatusException(HttpStatus.CONFLICT, "Form not approved")
         val pdfBytes = teamFormPdfGeneratorService.generatePdf(performanceId, english = true)
@@ -145,8 +138,7 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ): ResponseEntity<ByteArray> {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
         val teamForm = formService.getTeamForm(performanceId)
         if (!teamForm.approved) throw ResponseStatusException(HttpStatus.CONFLICT, "Form not approved")
         val pdfBytes = teamFormPdfGeneratorService.generatePdf(performanceId)

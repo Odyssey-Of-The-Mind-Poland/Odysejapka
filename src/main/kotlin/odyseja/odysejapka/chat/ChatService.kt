@@ -1,9 +1,6 @@
 package odyseja.odysejapka.chat
 
-import odyseja.odysejapka.dashboard.PerformanceAccessService
-import odyseja.odysejapka.dashboard.extractUserId
 import odyseja.odysejapka.users.UserService
-import org.apache.http.auth.InvalidCredentialsException
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -12,7 +9,6 @@ import java.time.Instant
 @Service
 class ChatService(
     private val chatMessageRepository: ChatMessageRepository,
-    private val performanceAccessService: PerformanceAccessService,
     private val userService: UserService,
     private val messagingTemplate: SimpMessagingTemplate
 ) {
@@ -21,14 +17,6 @@ class ChatService(
         return chatMessageRepository
             .findAllByPerformanceIdOrderByCreatedAtAsc(performanceId)
             .map { it.toChatMessage() }
-    }
-
-    fun verifyAccess(performanceId: Int, principal: Any?): String {
-        val userId = extractUserId(principal)
-            ?: throw InvalidCredentialsException("Nie rozpoznano użytkownika")
-        performanceAccessService.checkAccess(userId, performanceId)
-
-        return userId
     }
 
     @Transactional
