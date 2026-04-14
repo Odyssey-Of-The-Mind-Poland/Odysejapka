@@ -40,12 +40,11 @@ data class Performance (
     }
 
     fun validate() {
-        require(problem in 0..5) {"Numer problemu musi wynosić od 0 do 5."}
-        require(age in 0..4) {"Numer grupy wiekowej musi wynosić od 0 do 4."}
-        require(Regex("\\d{2}:\\d{2}").matches(spontan)) {"Godzina spontana powinna być w następującym formacie: 08:45."}
-        require(Regex("\\d{2}:\\d{2}").matches(performance)) {"Godzina występu powinna być w następującym formacie: 08:45."}
-        require(spontanDay in arrayOf("sobota", "niedziela")) {"Dozwolone dni spontana to sobota lub niedziela."}
-        require(performanceDay in arrayOf("sobota", "niedziela")) {"Dozwolone dni występu to sobota lub niedziela."}
+        require(age in 0..4) {"Numer grupy wiekowej musi wynosić od 0 do 4"}
+        require(Regex("\\d{2}:\\d{2}").matches(spontan)) {"Godzina spontana powinna być w następującym formacie: 08:45"}
+        require(Regex("\\d{2}:\\d{2}").matches(performance)) {"Godzina występu powinna być w następującym formacie: 08:45"}
+        require(spontanDay in arrayOf("sobota", "niedziela")) {"Dozwolone dni spontana to sobota lub niedziela"}
+        require(performanceDay in arrayOf("sobota", "niedziela")) {"Dozwolone dni występu to sobota lub niedziela"}
     }
 
 }

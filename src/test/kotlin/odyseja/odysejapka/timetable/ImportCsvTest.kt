@@ -63,12 +63,12 @@ class ImportCsvTest: OdysejaDsl() {
     @Test
     fun `should reject imports with improper data`() {
         val testCases = listOf(
-            mockCsv(performanceDay = "wtorek") to "Dozwolone dni występu to sobota lub niedziela.",
-            mockCsv(spontanDay = "2") to "Dozwolone dni spontana to sobota lub niedziela.",
-            mockCsv(problem = 6) to "Numer problemu musi wynosić od 0 do 5.",
-            mockCsv(age = 5) to "Numer grupy wiekowej musi wynosić od 0 do 4.",
-            mockCsv(performance = "12 34") to "Godzina występu powinna być w następującym formacie: 08:45.",
-            mockCsv(spontan = "00:000") to "Godzina spontana powinna być w następującym formacie: 08:45."
+            mockCsv(performanceDay = "wtorek") to "Dozwolone dni występu to sobota lub niedziela",
+            mockCsv(spontanDay = "2") to "Dozwolone dni spontana to sobota lub niedziela",
+            mockCsv(problem = 6) to "Numer problemu musi wynosić od 0 do 5",
+            mockCsv(age = 5) to "Numer grupy wiekowej musi wynosić od 0 do 4",
+            mockCsv(performance = "12 34") to "Godzina występu powinna być w następującym formacie: 08:45",
+            mockCsv(spontan = "00:000") to "Godzina spontana powinna być w następującym formacie: 08:45"
         )
 
         testCases.forEach { (content, message) ->

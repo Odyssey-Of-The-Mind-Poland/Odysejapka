@@ -31,7 +31,7 @@ class TimeTableService(
                 it.id,
                 cityService.getCity(cityId),
                 it.team,
-                problemService.ensureProblemExists(it.problem),
+                problemService.getProblem(it.problem),
                 ageService.ensureAgeExists(it.age),
                 stageService.getOrCreateStageByNumber(it.city, it.stage),
                 it.performance,
@@ -56,7 +56,7 @@ class TimeTableService(
             performance.id,
             cityService.getCityByName(performance.city),
             performance.team,
-            problemService.ensureProblemExists(performance.problem),
+            problemService.getProblem(performance.problem),
             ageService.ensureAgeExists(performance.age),
             stageService.getOrCreateStageByNumber(performance.city, performance.stage),
             performance.performance,
@@ -80,7 +80,7 @@ class TimeTableService(
 
         pToEdit.cityEntity = cityService.getCityByName(performance.city)
         pToEdit.team = performance.team
-        pToEdit.problemEntity = problemService.ensureProblemExists(performance.problem)
+        pToEdit.problemEntity = problemService.getProblem(performance.problem)
         pToEdit.ageEntity = ageService.ensureAgeExists(performance.age)
         pToEdit.stageEntity = stageService.getOrCreateStageByNumber(performance.city, performance.stage)
         pToEdit.performance = performance.performance
