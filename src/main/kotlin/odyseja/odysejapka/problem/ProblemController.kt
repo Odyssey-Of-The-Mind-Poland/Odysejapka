@@ -19,7 +19,7 @@ class ProblemController(private val problemService: ProblemService) {
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @DeleteMapping("{problemId}")
+    @DeleteMapping("/{problemId}")
     fun deleteProblem(@PathVariable problemId: Int) {
         return problemService.deleteProblem(problemId)
     }

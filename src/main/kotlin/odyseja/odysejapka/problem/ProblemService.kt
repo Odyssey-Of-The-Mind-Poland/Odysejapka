@@ -33,10 +33,12 @@ class ProblemService(
         for (problem in problemEntities) {
             val toEdit: ProblemEntity = problemRepository.findById(problem.id)
                 .getOrElse { ProblemEntity(problem.id, problem.name) }
-            toEdit.name = problem.name
+            toEdit.apply{
+                name = problem.name
+                validate()
+            }
             problemRepository.save(toEdit)
         }
-
         changeService.updateVersion()
     }
 
