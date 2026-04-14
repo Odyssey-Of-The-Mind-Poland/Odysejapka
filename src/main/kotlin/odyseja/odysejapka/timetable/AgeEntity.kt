@@ -12,8 +12,12 @@ class AgeEntity (
     @Column
     var name: String
 ) {
+    init {
+        validate()
+    }
+
     fun validate() {
-        require(id in 0..4) { "Grupa wiekowa może mieć następujące ID: 0, 1, 2, 3, 4" }
+        require(id in 0..4) { "Dozwolone ID grupy wiekowej to: 0, 1, 2, 3 lub 4" }
         require(name == id.toString()) {"Nazwa grupy wiekowej musi być równa jej ID."}
     }
 }

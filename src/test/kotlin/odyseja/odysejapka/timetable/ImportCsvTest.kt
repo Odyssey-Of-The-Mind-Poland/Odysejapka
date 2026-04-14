@@ -66,7 +66,7 @@ class ImportCsvTest: OdysejaDsl() {
             mockCsv(performanceDay = "wtorek") to "Dozwolone dni występu to sobota lub niedziela",
             mockCsv(spontanDay = "2") to "Dozwolone dni spontana to sobota lub niedziela",
             mockCsv(problem = 6) to "Numer problemu musi wynosić od 0 do 5",
-            mockCsv(age = 5) to "Numer grupy wiekowej musi wynosić od 0 do 4",
+            mockCsv(age = 5) to "Dozwolone ID grupy wiekowej to: 0, 1, 2, 3 lub 4",
             mockCsv(performance = "12 34") to "Godzina występu powinna być w następującym formacie: 08:45",
             mockCsv(spontan = "00:000") to "Godzina spontana powinna być w następującym formacie: 08:45"
         )

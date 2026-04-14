@@ -32,7 +32,7 @@ class TimeTableService(
                 cityService.getCity(cityId),
                 it.team,
                 problemService.getProblem(it.problem),
-                ageService.ensureAgeExists(it.age),
+                ageService.getAge(it.age),
                 stageService.getOrCreateStageByNumber(it.city, it.stage),
                 it.performance,
                 it.spontan,
@@ -57,7 +57,7 @@ class TimeTableService(
             cityService.getCityByName(performance.city),
             performance.team,
             problemService.getProblem(performance.problem),
-            ageService.ensureAgeExists(performance.age),
+            ageService.getAge(performance.age),
             stageService.getOrCreateStageByNumber(performance.city, performance.stage),
             performance.performance,
             performance.spontan,
@@ -81,7 +81,7 @@ class TimeTableService(
         pToEdit.cityEntity = cityService.getCityByName(performance.city)
         pToEdit.team = performance.team
         pToEdit.problemEntity = problemService.getProblem(performance.problem)
-        pToEdit.ageEntity = ageService.ensureAgeExists(performance.age)
+        pToEdit.ageEntity = ageService.getAge(performance.age)
         pToEdit.stageEntity = stageService.getOrCreateStageByNumber(performance.city, performance.stage)
         pToEdit.performance = performance.performance
         pToEdit.spontan = performance.spontan
