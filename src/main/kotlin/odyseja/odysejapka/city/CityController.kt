@@ -10,7 +10,7 @@ class CityController(
     private val cityDeletionService: CityDeletionService
 ) {
 
-    @GetMapping()
+    @GetMapping
     fun getCities(): MutableIterable<CityEntity?> {
         return cityService.getCities()
     }
@@ -18,11 +18,6 @@ class CityController(
     @GetMapping("/{cityId}")
     fun getCity(@PathVariable cityId: Int): CityEntity {
         return cityService.getCity(cityId)
-    }
-
-    @GetMapping("/name/{cityName}")
-    fun getCityByName(@PathVariable cityName: String): CityEntity {
-        return cityService.getCityByName(cityName)
     }
 
     @Secured("ROLE_ADMINISTRATOR")

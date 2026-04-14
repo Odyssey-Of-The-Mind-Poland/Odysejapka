@@ -111,6 +111,8 @@ class OdysejaDsl {
 
     fun createCity(name: String) = cityClient.saveCity(CreateCityRequest(name))
 
+    fun getCityByName(name: String) = cityClient.getCities().firstOrNull { it?.name == name }
+
     fun createPerformance(cityId: Int): Int {
         return createPerformance(cityId, team = "Sample Team")
     }

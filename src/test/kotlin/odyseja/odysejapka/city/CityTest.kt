@@ -28,26 +28,13 @@ class CityTest: OdysejaDsl() {
     }
 
     @Test
-    fun `should look up city by its name`() {
-        val city = createCity("Znajdź Mnie")
-        val foundCity = cityClient.getCityByName("Znajdź Mnie")
-
-        Assertions.assertThat(foundCity).isNotNull
-        Assertions.assertThat(foundCity.id).isEqualTo(city.id)
-        Assertions.assertThat(foundCity.name).isEqualTo(city.name)
-        Assertions.assertThat(foundCity.name).isEqualTo("Znajdź Mnie")
-    }
-
-    @Test
     fun `should delete city`() {
         val city = createCity("Usuwisko Dolne")
         cityClient.deleteCity(city.id)
 
-        val response = cityRespondingClient.executeConsumer { controller ->
-            controller.getCityByName("Usuwisko Dolne")
-        }
+        val response = getCityByName("Usuwisko Dolne")
 
-        Assertions.assertThat(response.statusCode).isEqualTo(404)
+        Assertions.assertThat(response).isNull()
     }
 
     @Test
@@ -56,11 +43,9 @@ class CityTest: OdysejaDsl() {
         createPerformance(city.id)
         cityClient.deleteCity(city.id)
 
-        val response = cityRespondingClient.executeConsumer {
-            controller -> controller.getCityByName("Konkurs")
-        }
+        val response = getCityByName("Konkurs")
 
-        Assertions.assertThat(response.statusCode).isEqualTo(404)
+        Assertions.assertThat(response).isNull()
     }
 
     @Test
@@ -75,18 +60,9 @@ class CityTest: OdysejaDsl() {
     @Test
     fun `should properly handle exceptions`() {
         var response = cityRespondingClient.executeConsumer {
-                controller -> controller.getCityByName("Nieistniejów")
-        }
-        var detail = parseProblemDetail(response)
-
-        Assertions.assertThat(detail.status).isEqualTo(404)
-        Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o nazwie Nieistniejów")
-        Assertions.assertThat(detail.title).isEqualTo("ENTITY NOT FOUND")
-
-        response = cityRespondingClient.executeConsumer {
                 controller -> controller.getCity(941415125)
         }
-        detail = parseProblemDetail(response)
+        var detail = parseProblemDetail(response)
 
         Assertions.assertThat(detail.status).isEqualTo(404)
         Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o ID 941415125")
