@@ -7,8 +7,11 @@ import java.sql.Timestamp
 class ChangeService(private val changeRepository: ChangeRepository) {
 
     fun getVersion(): Version {
-        val lastChange = changeRepository.findFirstByOrderByChangedAtDesc()
-        if (lastChange == null) updateVersion()
+        var lastChange = changeRepository.findFirstByOrderByChangedAtDesc()
+        if (lastChange == null) {
+            updateVersion()
+            lastChange = changeRepository.findFirstByOrderByChangedAtDesc()
+        }
 
         return Version(lastChange!!.id)
     }
