@@ -3,6 +3,7 @@ package odyseja.odysejapka.exceptions
 import jakarta.persistence.EntityNotFoundException
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.http.auth.InvalidCredentialsException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -14,65 +15,67 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgument(e: IllegalArgumentException, request: HttpServletRequest): ProblemDetail {
-        val response = ProblemDetail.forStatusAndDetail(
+        return createProblemDetail(
+            e, request,
             HttpStatus.BAD_REQUEST,
-            e.message
+            "ILLEGAL ARGUMENT"
         )
-        response.apply {
-            title = "ILLEGAL ARGUMENT"
-            instance = URI.create(request.requestURI)
-        }
-        return response
     }
 
     @ExceptionHandler(IllegalStateException::class)
     fun handleIllegalState(e: IllegalStateException, request: HttpServletRequest): ProblemDetail {
-        val response = ProblemDetail.forStatusAndDetail(
+        return createProblemDetail(
+            e, request,
             HttpStatus.INTERNAL_SERVER_ERROR,
-            e.message
+            "ILLEGAL STATE"
         )
-        response.apply {
-            title = "ILLEGAL STATE"
-            instance = URI.create(request.requestURI)
-        }
-        return response
     }
 
     @ExceptionHandler(EntityNotFoundException::class)
     fun handleEntityNotFound(e: EntityNotFoundException, request: HttpServletRequest): ProblemDetail {
-        val response = ProblemDetail.forStatusAndDetail(
+        return createProblemDetail(
+            e, request,
             HttpStatus.NOT_FOUND,
-            e.message
+            "ENTITY NOT FOUND"
         )
-        response.apply {
-            title = "ENTITY NOT FOUND"
-            instance = URI.create(request.requestURI)
-        }
-        return response
     }
 
     @ExceptionHandler(NoAccessException::class)
     fun handleNoAccess(e: NoAccessException, request: HttpServletRequest): ProblemDetail {
-        val response = ProblemDetail.forStatusAndDetail(
+        return createProblemDetail(
+            e, request,
             HttpStatus.FORBIDDEN,
-            e.message
+            "NO ACCESS"
         )
-        response.apply {
-            title = "NO ACCESS"
-            instance = URI.create(request.requestURI)
-        }
-        return response
     }
 
     @ExceptionHandler(InvalidCredentialsException::class)
     fun handleInvalidCredentials(e: InvalidCredentialsException, request: HttpServletRequest): ProblemDetail {
-        val response = ProblemDetail.forStatusAndDetail(
+        return createProblemDetail(
+            e, request,
             HttpStatus.UNAUTHORIZED,
-            e.message
+            "INVALID CREDENTIALS"
         )
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException::class)
+    fun handleDataIntegrityViolation(e: DataIntegrityViolationException, request: HttpServletRequest): ProblemDetail {
+        return createProblemDetail(
+            e, request,
+            HttpStatus.CONFLICT,
+            "DATA INTEGRITY VIOLATION"
+        )
+    }
+
+    private fun createProblemDetail(exception: Exception,
+                                    request: HttpServletRequest,
+                                    status: HttpStatus,
+                                    title: String): ProblemDetail {
+        val response = ProblemDetail.forStatus(status)
         response.apply {
-            title = "INVALID CREDENTIALS"
-            instance = URI.create(request.requestURI)
+            this.title = title
+            this.instance = URI.create(request.requestURI)
+            this.detail = exception.message
         }
         return response
     }
