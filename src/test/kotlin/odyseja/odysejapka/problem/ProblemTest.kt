@@ -66,6 +66,7 @@ class ProblemTest: OdysejaDsl() {
 
     @Test
     fun `should create problem if it's missing`() {
+        timeTableClient.clearTimetable()
         problemClient.updateProblems(problems)
         problemClient.deleteProblem(1)
         val city = createCity("Finał")
@@ -99,5 +100,35 @@ class ProblemTest: OdysejaDsl() {
         Assertions.assertThat(detail.status).isEqualTo(400)
         Assertions.assertThat(detail.detail).isEqualTo("Nazwa problemu nie może być pusta")
         Assertions.assertThat(detail.title).isEqualTo("ILLEGAL ARGUMENT")
+    }
+
+    @Test
+    fun `should update problem tied to performance`() {
+        timeTableClient.clearTimetable()
+        val city = createCity("Finał")
+        createPerformance(city.id, problem = 1)
+        Assertions.assertThatNoException().isThrownBy {
+            problemClient.updateProblems(listOf(
+                ProblemEntity(1, "Aktualizacja problemu powinna się udać")
+            ))
+        }
+    }
+
+    @Test
+    fun `should fail to delete problem tied to performance`() {
+        // Wydaje mi się, że nie powinno dać się usuwać przedstawień przez problem, w przeciwieństwie do miast.
+        // Nie widzę dla tego żadnego zastosowania, a potencjalne wpadki już tak.
+
+        timeTableClient.clearTimetable()
+        val city = createCity("Finał")
+        createPerformance(city.id, problem = 1)
+
+        val response = problemRespondingClient.executeConsumer { controller ->
+            controller.deleteProblem(1)
+        }
+        val detail = parseProblemDetail(response)
+        Assertions.assertThat(detail.status).isEqualTo(409)
+        Assertions.assertThat(detail.title).isEqualTo("DATA INTEGRITY VIOLATION")
+
     }
 }
