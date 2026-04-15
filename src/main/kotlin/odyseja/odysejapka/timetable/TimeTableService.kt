@@ -74,6 +74,7 @@ class TimeTableService(
         return per
     }
 
+    @Transactional
     fun updatePerformance(performance: Performance) {
         val pToEdit = timeTableRepository.findFirstById(performance.id)
             ?: throw EntityNotFoundException("Nie znaleziono przedstawienia o ID ${performance.id}")
@@ -89,6 +90,7 @@ class TimeTableService(
         changeService.updateVersion()
     }
 
+    @Transactional
     fun deletePerformance(id: Int) {
         if (!timeTableRepository.existsById(id))
             throw EntityNotFoundException("Nie znaleziono przedstawienia o ID $id")
