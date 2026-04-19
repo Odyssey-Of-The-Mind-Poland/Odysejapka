@@ -2,6 +2,7 @@ package odyseja.odysejapka.form
 
 import odyseja.odysejapka.OdysejaDsl
 import odyseja.odysejapka.city.CreateCityRequest
+import odyseja.odysejapka.city.KonkursLevel
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
@@ -128,8 +129,8 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should set judges count for city`() {
-        val city1 = cityClient.saveCity(CreateCityRequest("City 1"))
-        val city2 = cityClient.saveCity(CreateCityRequest("City 2"))
+        val city1 = createCity("City 1")
+        val city2 = createCity("City 2")
 
         formClient.setFormData(
             PROBLEM_ID,
@@ -151,9 +152,9 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should return judges count in getFormData`() {
-        val city1 = cityClient.saveCity(CreateCityRequest("City 1"))
-        val city2 = cityClient.saveCity(CreateCityRequest("City 2"))
-        val city3 = cityClient.saveCity(CreateCityRequest("City 3"))
+        val city1 = createCity("City 1", KonkursLevel.REGIONAL)
+        val city2 = createCity("City 2", KonkursLevel.REGIONAL)
+        val city3 = createCity("City 3", KonkursLevel.FINAL)
 
         seedDefault()
         val existing = form()

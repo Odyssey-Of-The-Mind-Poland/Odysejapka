@@ -2,7 +2,9 @@ package odyseja.odysejapka
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import odyseja.odysejapka.city.CityController
+import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CreateCityRequest
+import odyseja.odysejapka.city.KonkursLevel
 import odyseja.odysejapka.form.FormController
 import odyseja.odysejapka.form.JudgeType
 import odyseja.odysejapka.form.LongTermFormEntry
@@ -109,7 +111,9 @@ class OdysejaDsl {
         return Triple(dtId, styleId, penaltyId)
     }
 
-    fun createCity(name: String) = cityClient.saveCity(CreateCityRequest(name))
+    fun createCity(name: String, level: KonkursLevel = KonkursLevel.FINAL): CityEntity {
+        return cityClient.saveCity(CreateCityRequest(name, level))
+    }
 
     fun getCityByName(name: String) = cityClient.getCities().firstOrNull { it?.name == name }
 

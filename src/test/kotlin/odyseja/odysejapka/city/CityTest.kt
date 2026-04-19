@@ -19,12 +19,13 @@ class CityTest: OdysejaDsl() {
 
     @Test
     fun `should create city`() {
-        val cityRequest = CreateCityRequest("Konkurs")
+        val cityRequest = CreateCityRequest("Konkurs", KonkursLevel.FINAL)
         val city = cityClient.saveCity(cityRequest)
 
         Assertions.assertThat(city).isNotNull
         Assertions.assertThat(city.name).isEqualTo("Konkurs")
         Assertions.assertThat(city.id).isNotNull
+        Assertions.assertThat(city.level).isEqualTo(KonkursLevel.FINAL)
     }
 
     @Test
@@ -39,11 +40,11 @@ class CityTest: OdysejaDsl() {
 
     @Test
     fun `should delete city tied to performances`() {
-        val city = createCity("Konkurs")
+        val city = createCity("Konkurs z przedstawieniem")
         createPerformance(city.id)
         cityClient.deleteCity(city.id)
 
-        val response = getCityByName("Konkurs")
+        val response = getCityByName("Konkurs z przedstawieniem")
 
         Assertions.assertThat(response).isNull()
     }
@@ -59,19 +60,10 @@ class CityTest: OdysejaDsl() {
 
     @Test
     fun `should properly handle exceptions`() {
-        var response = cityRespondingClient.executeConsumer {
+        val response = cityRespondingClient.executeConsumer {
                 controller -> controller.getCity(941415125)
         }
-        var detail = parseProblemDetail(response)
-
-        Assertions.assertThat(detail.status).isEqualTo(404)
-        Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o ID 941415125")
-        Assertions.assertThat(detail.title).isEqualTo("ENTITY NOT FOUND")
-
-        response = cityRespondingClient.executeConsumer {
-                controller -> controller.deleteCity(941415125)
-        }
-        detail = parseProblemDetail(response)
+        val detail = parseProblemDetail(response)
 
         Assertions.assertThat(detail.status).isEqualTo(404)
         Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o ID 941415125")

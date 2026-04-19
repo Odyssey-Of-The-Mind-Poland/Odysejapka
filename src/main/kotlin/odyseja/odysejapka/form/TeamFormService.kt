@@ -2,6 +2,7 @@ package odyseja.odysejapka.form
 
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
+import odyseja.odysejapka.city.KonkursLevel
 import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 
@@ -27,6 +28,7 @@ class TeamFormService(
         val performance = timeTableService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         val city = performance.cityEntity
+        val isFo = city.level == KonkursLevel.FINAL
 
         val judgeCount = judgeCountService.getJudgeCountByProblemAndCity(problem, city.id).judgeCount
 
@@ -36,7 +38,7 @@ class TeamFormService(
             cityName = city.name,
             problem = problem,
             age = performance.ageEntity.id,
-            isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final"),
+            isFo = isFo,
             performanceAt = "",
             performanceTime = "",
             dtEntries = emptyList(),
@@ -54,8 +56,6 @@ class TeamFormService(
         val styleEntries = getStyleResults(form.styleEntries, results, judgeCount)
         val penaltyEntries = getPenaltyResults(form.penaltyEntries, results)
         val weightHeldEntries = if (problem == 4) getWeightHeldResults(weightHeldResults) else emptyList()
-
-        val isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final")
 
         val performanceAt = resultEntity.performanceAt ?: ""
         val performanceTime = resultEntity.performanceTime ?: ""

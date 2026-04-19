@@ -17,7 +17,7 @@ class CityService(
 
   @Transactional
   fun addCity(city: CreateCityRequest): CityEntity {
-    val saved = cityRepository.save(CityEntity(0, city.name))
+    val saved = cityRepository.save(CityEntity(0, city.name, city.level))
     changeService.updateVersion()
     return saved
   }

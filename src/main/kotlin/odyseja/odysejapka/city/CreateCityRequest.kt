@@ -1,4 +1,7 @@
 package odyseja.odysejapka.city
 
-class CreateCityRequest(val name: String) {
+class CreateCityRequest(
+    val name: String,
+    val level: KonkursLevel
+) {
 }
