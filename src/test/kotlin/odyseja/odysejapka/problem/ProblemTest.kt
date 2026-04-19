@@ -57,6 +57,7 @@ class ProblemTest: OdysejaDsl() {
 
     @Test
     fun `should delete problems`() {
+        timeTableClient.clearTimetable()
         problemClient.updateProblems(problems)
         problemClient.deleteProblem(1)
 
