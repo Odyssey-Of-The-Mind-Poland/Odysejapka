@@ -11,13 +11,16 @@
     import IconPlus from "@tabler/icons-svelte/icons/plus";
     import IconTrash from "@tabler/icons-svelte/icons/trash";
     import {toast} from "svelte-sonner";
+    import * as Select from '$lib/components/ui/select/index.js';
 
     type City = {
         id: number;
         name: string;
+        level: string;
     };
 
     let newCityName = $state('');
+    let newCityLevel = $state('REGIONAL');
 
     let citiesQuery = createOdysejaQuery<City[]>({
         queryKey: ['dashboardCities'],
@@ -29,11 +32,12 @@
         return [...citiesQuery.data].sort((a, b) => a.name.localeCompare(b.name));
     });
 
-    let addCityMutation = createPostMutation<City, { name: string }>({
+    let addCityMutation = createPostMutation<City, { name: string, level: string }>({
         path: '/api/v1/city',
         queryKey: ['dashboardCities'],
         onSuccess: () => {
             newCityName = '';
+            newCityLevel = 'REGIONAL';
             toast.success('Miasto zostało dodane');
         },
     });
@@ -49,7 +53,7 @@
     function handleAdd() {
         const trimmed = newCityName.trim();
         if (!trimmed) return;
-        addCityMutation.mutate({name: trimmed});
+        addCityMutation.mutate({name: trimmed, level: newCityLevel});
     }
 
     function handleKeydown(e: KeyboardEvent) {
@@ -79,12 +83,29 @@
     </div>
 
     <RequirePermission role="ADMINISTRATOR">
-        <div class="flex items-center gap-2 max-w-md">
+        <div class="flex items-center gap-2 max-w-lg">
             <Input
                     bind:value={newCityName}
                     placeholder="Nazwa miasta..."
                     onkeydown={handleKeydown}
             />
+            <div class="flex items-center gap-2">
+                <Select.Root type="single" bind:value={newCityLevel}>
+                    <Select.Trigger class="w-45">
+                        {newCityLevel === 'REGIONAL'
+                            ? 'Finał Regionalny'
+                            : 'Finał Ogólnopolski'}
+                    </Select.Trigger>
+                    <Select.Content>
+                        <Select.Item value='REGIONAL'>
+                            Finał Regionalny
+                        </Select.Item>
+                        <Select.Item value='FINAL'>
+                            Finał Ogólnopolski
+                        </Select.Item>
+                    </Select.Content>
+                </Select.Root>
+            </div>
             <Button
                     onclick={handleAdd}
                     disabled={!newCityName.trim() || addCityMutation.isPending}
