@@ -41,7 +41,7 @@ class ProblemTest: OdysejaDsl() {
         val overwriteExisting = listOf(
             ProblemEntity(1, "Wymyślny wyścig"),
             ProblemEntity(2, "Zwierzątko-robociątko"),
-            ProblemEntity(3, "Komunikacja od kuchni"),
+            ProblemEntity(3, "Książki od kuchni"),
             ProblemEntity(4, "Bezpieczne balschronienie"),
             ProblemEntity(5, "Historia pełna gwiazd"),
             ProblemEntity(0, "Czas na cuda")
