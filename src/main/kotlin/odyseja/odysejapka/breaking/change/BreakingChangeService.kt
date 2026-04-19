@@ -28,11 +28,8 @@ class BreakingChangeService(private val breakingChangeRepository: BreakingChange
 
     fun shouldUpdate(currentVersion: String): Boolean {
         BreakingChange(currentVersion).validate()
-        val currentVersionFormatted = currentVersion.replace("+", ".")
-        val lastBreakingChangeFormatted = getLastBreakingChange().version.replace("+", ".")
-
-        val breakingChangeVersionParts = lastBreakingChangeFormatted.split(".").map { it.toInt() }
-        val currentVersionParts = currentVersionFormatted.split(".").map { it.toInt() }
+        val breakingChangeVersionParts = getLastBreakingChange().version.split(".").map { it.toInt() }
+        val currentVersionParts = currentVersion.split(".").map { it.toInt() }
 
         val maxLength = maxOf(breakingChangeVersionParts.size, currentVersionParts.size)
 

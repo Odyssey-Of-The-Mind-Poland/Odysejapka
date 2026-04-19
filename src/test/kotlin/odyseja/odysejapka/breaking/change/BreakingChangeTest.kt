@@ -32,15 +32,15 @@ class BreakingChangeTest: OdysejaDsl() {
         breakingChangeClient.setBreakingChange(BreakingChange("0.0.1"))
         Assertions.assertThat(breakingChangeClient.getLastBreakingChange().version).isEqualTo("0.0.1")
 
-        breakingChangeClient.setBreakingChange(BreakingChange("1.3.2+23"))
-        Assertions.assertThat(breakingChangeClient.getLastBreakingChange().version).isEqualTo("1.3.2+23")
+        breakingChangeClient.setBreakingChange(BreakingChange("1.3.2"))
+        Assertions.assertThat(breakingChangeClient.getLastBreakingChange().version).isEqualTo("1.3.2")
 
         breakingChangeClient.setBreakingChange(BreakingChange("0.0.0"))
         Assertions.assertThat(breakingChangeClient.getLastBreakingChange().version).isEqualTo("0.0.0")
     }
 
     @ParameterizedTest
-    @ValueSource(strings = ["1.2.3", "1.2", "1", "1.2.3.4", "1.2.3333", "1.2.3+45", "1+23"])
+    @ValueSource(strings = ["1.2.3", "1.2", "1", "1.2.3.4", "1.2.3333", "1.2.3", "1"])
     fun `should accept non-obvious inputs`(testCase: String) {
         breakingChangeClient.setBreakingChange(BreakingChange(testCase))
         Assertions.assertThat(breakingChangeClient.getLastBreakingChange().version).isEqualTo(testCase)
@@ -48,14 +48,14 @@ class BreakingChangeTest: OdysejaDsl() {
 
     @ParameterizedTest
     @ValueSource(strings = ["zero.zero.zero", ".", "...", "v1.2", "1.2.3-alpha", "omer na hulajnodze", "",
-        "1.2.", ".1.2", "1+2.3", "1+2+3", "1.2+3.4", "1.2.+3", "1.2.3+", "+"])
+        "1.2.3+1"])
     fun `should reject non-integer inputs`(testCase: String) {
         val response = breakingChangeRespondingControllerClient.executeConsumer { controller ->
                 controller.setBreakingChange(BreakingChange(testCase))
             }
         val detail = parseProblemDetail(response)
         Assertions.assertThat(detail.status).isEqualTo(400)
-        Assertions.assertThat(detail.detail)
+        Assertions.assertThat(detail.detail).isNotEmpty()
         Assertions.assertThat(detail.title).isEqualTo("ILLEGAL ARGUMENT")
     }
 
@@ -68,17 +68,17 @@ class BreakingChangeTest: OdysejaDsl() {
         var detail = parseProblemDetail(response)
         Assertions.assertThat(detail.status).isEqualTo(400)
         Assertions.assertThat(detail.detail)
-            .isEqualTo("Wersja musi być w formacie W.X.Y+Z, gdzie W, X, Y i Z są liczbami (Int)")
+            .isEqualTo("Wersja musi być w formacie X.Y.Z, gdzie X, Y i Z są liczbami (Int)")
         Assertions.assertThat(detail.title).isEqualTo("ILLEGAL ARGUMENT")
 
-        val invalidBuildNumber = "1+2+3"
+        val emptyString = ""
         response = breakingChangeRespondingControllerClient.executeConsumer { controller ->
-            controller.setBreakingChange(BreakingChange(invalidBuildNumber))
+            controller.setBreakingChange(BreakingChange(emptyString))
         }
         detail = parseProblemDetail(response)
         Assertions.assertThat(detail.status).isEqualTo(400)
         Assertions.assertThat(detail.detail)
-            .isEqualTo("Wersja nie może mieć więcej niż 1 build number")
+            .isEqualTo("Wersja nie może być pusta")
         Assertions.assertThat(detail.title).isEqualTo("ILLEGAL ARGUMENT")
 
 
@@ -103,14 +103,6 @@ class BreakingChangeTest: OdysejaDsl() {
         currentVersion = "2.1.2.4"
         breakingChangeClient.setBreakingChange(BreakingChange("2.1.4"))
         Assertions.assertThat(breakingChangeClient.shouldUpdate(currentVersion)).isTrue()
-
-        currentVersion = "2.1.4+33"
-        breakingChangeClient.setBreakingChange(BreakingChange("2.1.4+34"))
-        Assertions.assertThat(breakingChangeClient.shouldUpdate(currentVersion)).isTrue()
-        breakingChangeClient.setBreakingChange(BreakingChange("2.1.4+33"))
-        Assertions.assertThat(breakingChangeClient.shouldUpdate(currentVersion)).isFalse()
-        breakingChangeClient.setBreakingChange(BreakingChange("2.1.4+32"))
-        Assertions.assertThat(breakingChangeClient.shouldUpdate(currentVersion)).isFalse()
     }
 
     @Test
