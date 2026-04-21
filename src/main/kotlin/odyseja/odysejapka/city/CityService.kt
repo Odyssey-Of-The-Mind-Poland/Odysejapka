@@ -22,6 +22,16 @@ class CityService(
     return saved
   }
 
+  @Transactional
+  fun updateCity(city: CityEntity): CityEntity {
+    val updatedCity = getCity(city.id)
+    updatedCity.apply {
+      name = city.name
+      level = city.level
+    }
+    return cityRepository.save(updatedCity)
+  }
+
   fun getCityByName(cityName: String): CityEntity {
     return cityRepository.findFirstByName(cityName) ?: throw EntityNotFoundException("Nie znaleziono miasta o nazwie $cityName")
   }

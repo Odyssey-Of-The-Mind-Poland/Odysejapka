@@ -8,24 +8,42 @@ import ovh.snet.grzybek.controller.client.core.RespondingControllerClient
 import kotlin.test.Test
 
 @WithMockUser(username = "testuser", roles = ["ADMIN"])
-class CityTest: OdysejaDsl() {
+class CityTest : OdysejaDsl() {
     lateinit var cityRespondingClient: RespondingControllerClient<CityController>
 
     @BeforeEach
     fun cityTestSetUp() {
-        cityClient.clearCities()
+        clearCities()
         cityRespondingClient = controllerClientFactory.respondingClient(CityController::class.java)
     }
 
     @Test
     fun `should create city`() {
-        val cityRequest = CreateCityRequest("Konkurs", KonkursLevel.FINAL)
-        val city = cityClient.saveCity(cityRequest)
+        var cityRequest = CreateCityRequest("Konkurs", KonkursLevel.FINAL)
+        var city = cityClient.saveCity(cityRequest)
 
         Assertions.assertThat(city).isNotNull
         Assertions.assertThat(city.name).isEqualTo("Konkurs")
         Assertions.assertThat(city.id).isNotNull
         Assertions.assertThat(city.level).isEqualTo(KonkursLevel.FINAL)
+
+        cityRequest = CreateCityRequest("agawgal2572%@&%)q#^!?+", KonkursLevel.REGIONAL)
+        city = cityClient.saveCity(cityRequest)
+        Assertions.assertThat(city).isNotNull
+        Assertions.assertThat(city.name).isEqualTo("agawgal2572%@&%)q#^!?+")
+        Assertions.assertThat(city.id).isNotNull
+        Assertions.assertThat(city.level).isEqualTo(KonkursLevel.REGIONAL)
+    }
+
+    @Test fun `should return all cities`() {
+        clearCities()
+        for (i in 1..10) {
+            createCity("Miasto $i")
+        }
+
+        val cities = cityClient.getCities()
+        Assertions.assertThat(cities).hasSize(10)
+        Assertions.assertThat(cities.first()!!.name).isEqualTo("Miasto 1")
     }
 
     @Test
@@ -50,12 +68,36 @@ class CityTest: OdysejaDsl() {
     }
 
     @Test
-    fun `should clear all cities`() {
-        createCity("Konkurs 1")
-        createCity("Konkurs 2")
-        cityClient.clearCities()
+    fun `should update city`() {
+        clearCities()
+        val oldCity = createCity("Stare Miasto", KonkursLevel.REGIONAL)
+        val newCity = CityEntity(oldCity.id, "Nowe Miasto", KonkursLevel.FINAL)
+        cityClient.updateCity(newCity)
 
-        Assertions.assertThat(cityClient.getCities()).isEmpty()
+        Assertions.assertThat(cityClient.getCity(oldCity.id).name).isEqualTo("Nowe Miasto")
+        Assertions.assertThat(cityClient.getCity(oldCity.id).level).isEqualTo(KonkursLevel.FINAL)
+        Assertions.assertThat(getCityByName("Stare Miasto")).isNull()
+    }
+
+    @Test
+    fun `should update city tied to performances`() {
+        clearCities()
+        val oldCity = createCity("Stare Miasto", KonkursLevel.REGIONAL)
+        val performance = createPerformance(oldCity.id)
+        val newCity = CityEntity(oldCity.id, "Nowe Miasto", KonkursLevel.FINAL)
+        Assertions.assertThatNoException().isThrownBy {
+            cityClient.updateCity(newCity)
+        }
+
+        Assertions.assertThat(cityClient.getCity(oldCity.id).name).isEqualTo("Nowe Miasto")
+        Assertions.assertThat(cityClient.getCity(oldCity.id).level).isEqualTo(KonkursLevel.FINAL)
+        Assertions.assertThat(getCityByName("Stare Miasto")).isNull()
+
+        Assertions.assertThatNoException().isThrownBy {
+            timeTableClient.getPerformance(performance)
+        }
+        val newPerformance = timeTableClient.getPerformance(performance)
+        Assertions.assertThat(newPerformance.city).isEqualTo("Nowe Miasto")
     }
 
     @Test

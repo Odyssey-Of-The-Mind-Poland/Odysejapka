@@ -193,4 +193,11 @@ class OdysejaDsl {
             ProblemDetail::class.java
         )
     }
+
+    fun clearCities() {
+        val cities = cityClient.getCities()
+        cities.forEach {
+            cityClient.deleteCity(it!!.id)
+        }
+    }
 }

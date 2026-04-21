@@ -27,14 +27,14 @@ class CityController(
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @DeleteMapping("/{cityId}")
-    fun deleteCity(@PathVariable cityId: Int) {
-        cityDeletionService.deleteCity(cityId)
+    @PutMapping
+    fun updateCity(@RequestBody city: CityEntity): CityEntity {
+        return cityService.updateCity(city)
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @DeleteMapping
-    fun clearCities() {
-        cityDeletionService.clearCities()
+    @DeleteMapping("/{cityId}")
+    fun deleteCity(@PathVariable cityId: Int) {
+        cityDeletionService.deleteCity(cityId)
     }
 }

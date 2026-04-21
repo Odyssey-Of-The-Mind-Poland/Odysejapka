@@ -19,7 +19,7 @@ class ImportCsvTest: OdysejaDsl() {
 
     @BeforeEach
     fun csvSetUp() {
-        cityClient.clearCities()
+        clearCities()
         city = createCity("finał")
         timetableRespondingClient = controllerClientFactory.respondingClient(TimeTableController::class.java)
     }
