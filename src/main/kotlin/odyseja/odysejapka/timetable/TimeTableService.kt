@@ -20,7 +20,8 @@ class TimeTableService(
 ) {
 
     fun getFinals(): List<Performance> {
-        return getPerformanceEntitiesByCity(0).map { it.toPerformance() }
+        val finals = cityService.getFinals()
+        return getPerformanceEntitiesByCity(finals.id).map { it.toPerformance() }
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

@@ -6,4 +6,5 @@ interface CityRepository : CrudRepository<CityEntity?, Int?> {
 
   fun findFirstByName(name: String): CityEntity?
   fun findFirstById(cityId: Int): CityEntity?
+  fun findFirstByLevel(level: KonkursLevel): CityEntity?
 }

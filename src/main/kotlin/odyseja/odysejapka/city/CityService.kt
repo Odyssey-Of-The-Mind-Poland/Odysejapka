@@ -15,6 +15,11 @@ class CityService(
     return cityRepository.findAll()
   }
 
+  fun getFinals(): CityEntity {
+    return cityRepository.findFirstByLevel(KonkursLevel.FINAL)
+      ?: throw EntityNotFoundException("Nie znaleziono konkursu ogólnopolskiego")
+  }
+
   @Transactional
   fun addCity(city: CreateCityRequest): CityEntity {
     val saved = cityRepository.save(CityEntity(0, city.name, city.level))
