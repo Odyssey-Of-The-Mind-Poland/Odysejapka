@@ -1,6 +1,6 @@
 <script lang="ts">
     import {Spinner} from "$lib/components/ui/spinner";
-    import {createOdysejaQuery, createPostMutation, createDelMutation} from "$lib/queries";
+    import {createOdysejaQuery, createPostMutation, createDelMutation, createPutMutation} from "$lib/queries";
     import {setBreadcrumbs} from "$lib/breadcrumbs";
     import {onMount} from "svelte";
     import * as Card from "$lib/components/ui/card/index.js";
@@ -10,6 +10,7 @@
     import IconBuilding from "@tabler/icons-svelte/icons/building";
     import IconPlus from "@tabler/icons-svelte/icons/plus";
     import IconTrash from "@tabler/icons-svelte/icons/trash";
+    import IconEdit from "@tabler/icons-svelte/icons/edit";
     import {toast} from "svelte-sonner";
     import * as Select from '$lib/components/ui/select/index.js';
 
@@ -21,6 +22,9 @@
 
     let newCityName = $state('');
     let newCityLevel = $state('REGIONAL');
+    let currentEditingId: number | null = $state(null);
+    let updatedName = $state('');
+    let updatedLevel = $state('');
 
     let citiesQuery = createOdysejaQuery<City[]>({
         queryKey: ['dashboardCities'],
@@ -50,14 +54,55 @@
         },
     });
 
+    let updateCityMutation = createPutMutation<City, { id: number, name: string, level: string }>({
+        path: '/api/v1/city',
+        queryKey: ['dashboardCities'],
+        onSuccess: () => {
+            toast.success('Miasto zostało zaktualizowane');
+        },
+    })
+
     function handleAdd() {
         const trimmed = newCityName.trim();
         if (!trimmed) return;
         addCityMutation.mutate({name: trimmed, level: newCityLevel});
     }
 
+    function handleSaveEdits(city: City) {
+        city.name = updatedName;
+        city.level = updatedLevel;
+
+        updateCityMutation.mutate({
+            id: city.id,
+            name: city.name,
+            level: city.level
+        });
+
+        currentEditingId = null;
+        updatedName = '';
+        updatedLevel = '';
+    }
+
+    function handleCancelEdits() {
+        currentEditingId = null;
+        updatedName = '';
+        updatedLevel = '';
+    }
+
     function handleKeydown(e: KeyboardEvent) {
         if (e.key === 'Enter') handleAdd();
+    }
+
+    function mapLevel(level: string) {
+        return level === 'REGIONAL'
+            ? 'Finał Regionalny'
+            : 'Finał Ogólnopolski'
+    }
+
+    function startEditing(city: City) {
+        updatedName = city.name;
+        updatedLevel = city.level;
+        currentEditingId = city.id;
     }
 
     onMount(() => {
@@ -92,16 +137,14 @@
             <div class="flex items-center gap-2">
                 <Select.Root type="single" bind:value={newCityLevel}>
                     <Select.Trigger class="w-45">
-                        {newCityLevel === 'REGIONAL'
-                            ? 'Finał Regionalny'
-                            : 'Finał Ogólnopolski'}
+                        {mapLevel(newCityLevel)}
                     </Select.Trigger>
                     <Select.Content>
                         <Select.Item value='REGIONAL'>
-                            Finał Regionalny
+                            {mapLevel('REGIONAL')}
                         </Select.Item>
                         <Select.Item value='FINAL'>
-                            Finał Ogólnopolski
+                            {mapLevel('FINAL')}
                         </Select.Item>
                     </Select.Content>
                 </Select.Root>
@@ -139,21 +182,75 @@
                     <Card.Header>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="flex items-center justify-center size-9 rounded-md bg-muted">
-                                    <IconBuilding class="size-4 text-muted-foreground"/>
-                                </div>
-                                <Card.Title class="text-base">{city.name}</Card.Title>
+                                {#if currentEditingId === city.id}
+                                    <div class="flex flex-col gap-1">
+                                        <Input
+                                                class="font-base"
+                                                bind:value={updatedName}
+                                                placeholder="Wprowadź nazwę miasta"
+                                        />
+                                        <Select.Root type="single" bind:value={updatedLevel}>
+                                            <Select.Trigger class="px-3 font-base">
+                                                {mapLevel(updatedLevel)}
+                                            </Select.Trigger>
+                                            <Select.Content>
+                                                <Select.Item value="REGIONAL">{mapLevel("REGIONAL")}</Select.Item>
+                                                <Select.Item value="FINAL">{mapLevel("FINAL")}</Select.Item>
+                                            </Select.Content>
+                                        </Select.Root>
+                                    </div>
+                                {:else}
+                                    <div class="flex items-center justify-center size-9 rounded-md bg-muted">
+                                        <IconBuilding class="size-4 text-muted-foreground"/>
+                                    </div>
+                                    <div class="flex-col gap 1">
+                                        <Card.Title class="text-base">{city.name}</Card.Title>
+                                        <Card.Content
+                                                class="px-0 text-sm text-muted-foreground">{mapLevel(city.level)}
+                                        </Card.Content>
+                                    </div>
+                                {/if}
                             </div>
                             <RequirePermission role="ADMINISTRATOR">
-                                <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        class="size-8 text-muted-foreground hover:text-red-500"
-                                        onclick={() => deleteCityMutation.mutate({cityId: city.id})}
-                                        disabled={deleteCityMutation.isPending}
-                                >
-                                    <IconTrash class="size-4"/>
-                                </Button>
+                                <div class="flex items-center gap-1">
+                                    {#if currentEditingId === city.id}
+                                        <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                class="text-white bg-primary hover:bg-primary/90 hover:text-white px-8"
+                                                onclick={() => handleSaveEdits(city)}
+                                                disabled={updateCityMutation.isPending}
+                                        >
+                                            Zapisz
+                                        </Button>
+                                        <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                class="text-muted-foreground hover:text-red-500 px-8"
+                                                onclick={handleCancelEdits}
+                                        >
+                                            Anuluj
+                                        </Button>
+                                    {:else}
+                                        <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                class="size-8 text-muted-foreground hover:ext-primary"
+                                                onclick={() => (startEditing(city))}
+                                        >
+                                        <IconEdit class="size-4" />
+                                        </Button>
+                                        <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                class="size-8 text-muted-foreground hover:text-red-500"
+                                                onclick={() => deleteCityMutation.mutate({ cityId: city.id })}
+                                                disabled={deleteCityMutation.isPending}
+                                        >
+                                            <IconTrash class="size-4" />
+                                        </Button>
+                                    {/if}
+                                </div>
                             </RequirePermission>
                         </div>
                     </Card.Header>
