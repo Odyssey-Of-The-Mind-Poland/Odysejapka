@@ -13,7 +13,7 @@ class InfoController(
   @GetMapping()
   @ResponseBody
   fun getInfo(@RequestParam(required = false) cityId: Int?): Iterable<Info?>? {
-    return cityId?.let { infoService.getInfo(cityId) } ?: infoService.getInfo(0)
+    return infoService.getInfo(cityId)
   }
 
   @GetMapping("/id/{info}")
@@ -31,7 +31,7 @@ class InfoController(
   @GetMapping("/map")
   @ResponseBody
   fun getInfoAndCategories(@RequestParam(required = false) cityId: Int?): Map<String, Any> {
-    val infos = cityId?.let { infoService.getInfo(cityId) } ?: infoService.getInfo(0)
+    val infos = infoService.getInfo(cityId)
     val categories = infoService.getInfoCategory()
     return mapOf(
       "infos" to (infos?.toList() ?: emptyList()),
