@@ -28,9 +28,9 @@ class InfoController(
     return infoService.getInfoCategory()
   }
 
-  @GetMapping("/v2")
+  @GetMapping("/map")
   @ResponseBody
-  fun getInfoV2(@RequestParam(required = false) cityId: Int?): Map<String, Any> {
+  fun getInfoAndCategories(@RequestParam(required = false) cityId: Int?): Map<String, Any> {
     val infos = cityId?.let { infoService.getInfo(cityId) } ?: infoService.getInfo(0)
     val categories = infoService.getInfoCategory()
     return mapOf(

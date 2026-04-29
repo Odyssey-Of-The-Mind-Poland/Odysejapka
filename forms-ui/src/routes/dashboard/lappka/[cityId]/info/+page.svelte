@@ -15,7 +15,7 @@
 
     let infoQuery = $derived(createOdysejaQuery<InfoResponse>({
         queryKey: ['lappkaInfo', String(cityId)],
-        path: `/api/info/v2?cityId=${cityId}`,
+        path: `/api/info/map?cityId=${cityId}`,
     }));
 
     let categories = $derived(infoQuery.data?.categories ?? []);
