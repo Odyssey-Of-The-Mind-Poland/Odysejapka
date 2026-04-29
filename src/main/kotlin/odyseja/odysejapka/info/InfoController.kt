@@ -59,4 +59,10 @@ class InfoController(
     infoService.deleteInfo(id)
   }
 
+  @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
+  @DeleteMapping("/category/{id}")
+  @ResponseBody
+  fun deleteInfoCategory(@PathVariable id: Int) {
+    infoService.deleteInfoCategory(id)
+  }
 }

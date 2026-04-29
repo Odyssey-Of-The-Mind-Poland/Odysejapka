@@ -32,16 +32,22 @@ class InfoService(
                 info.infoName,
                 info.infoText,
                 cityService.getCity(info.city),
-                infoCategoryRepository.findFirstById(info.category),
+                infoCategoryRepository.findFirstById(info.category)
+                    ?: addInfoCategory(InfoCategoryEntity(0, info.categoryName)),
                 info.sortNumber,
                 info.icon,
                 info.color
             )
         )
-
         changeService.updateVersion()
-
         return savedInfo.toInfo()
+    }
+
+    @Transactional
+    fun addInfoCategory(infoCategory: InfoCategoryEntity): InfoCategoryEntity {
+        val savedInfoCategory = infoCategoryRepository.save(infoCategory)
+        changeService.updateVersion()
+        return savedInfoCategory
     }
 
     @Transactional
@@ -54,7 +60,6 @@ class InfoService(
         infoRepository.save(infoEntity)
 
         changeService.updateVersion()
-
         return info
     }
 
@@ -67,6 +72,13 @@ class InfoService(
     @Transactional
     fun deleteInfoByCity(cityId: Int) {
         infoRepository.deleteByCityId(cityId)
+        changeService.updateVersion()
+    }
+
+    @Transactional
+    fun deleteInfoCategory(categoryId: Int) {
+        infoRepository.deleteByCategoryId(categoryId)
+        infoCategoryRepository.deleteById(categoryId)
         changeService.updateVersion()
     }
 

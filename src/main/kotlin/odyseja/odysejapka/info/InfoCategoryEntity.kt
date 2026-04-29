@@ -7,9 +7,9 @@ class InfoCategoryEntity(
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column()
-  val id: Int,
+  var id: Int,
   @Column()
-  val name: String
+  var name: String
 ) {
   fun toInfoCategory(): InfoCategory {
     return InfoCategory(id, name)
