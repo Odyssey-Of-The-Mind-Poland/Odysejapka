@@ -19,10 +19,6 @@ class InfoService(
       .sortedByDescending { it.sortNumber }
   }
 
-  fun getAllInfo(): List<Info> {
-    return infoRepository.findAllByOrderBySortNumber().map { it.toInfo() }.sortedByDescending { it.sortNumber }
-  }
-
   fun getInfoCategory(): MutableIterable<InfoCategoryEntity> {
     return infoCategoryRepository.findAll()
   }
