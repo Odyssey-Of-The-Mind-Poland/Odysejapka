@@ -28,7 +28,7 @@
         const next: Record<number, Info[]> = {};
         for (const cat of categories) {
             next[cat.id] = infos
-                .filter(i => i.categoryName === cat.name)
+                .filter(i => i.category === cat.id)
                 .sort((a, b) => a.sortNumber - b.sortNumber);
         }
         categoryItems = next;
