@@ -24,15 +24,15 @@ class InfoController(
 
   @GetMapping("/category")
   @ResponseBody
-  fun getInfoCategory(): Iterable<InfoCategoryEntity> {
-    return infoService.getInfoCategory()
+  fun getInfoCategories(): Iterable<InfoCategoryEntity> {
+    return infoService.getInfoCategories()
   }
 
   @GetMapping("/map")
   @ResponseBody
   fun getInfoAndCategories(@RequestParam(required = false) cityId: Int?): Map<String, Any> {
     val infos = infoService.getInfo(cityId)
-    val categories = infoService.getInfoCategory()
+    val categories = infoService.getInfoCategories()
     return mapOf(
       "infos" to (infos.toList()),
       "categories" to categories.map { it.toInfoCategory() }

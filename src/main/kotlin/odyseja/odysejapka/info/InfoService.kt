@@ -21,7 +21,7 @@ class InfoService(
             .sortedByDescending { it?.sortNumber }
     }
 
-    fun getInfoCategory(): MutableIterable<InfoCategoryEntity> {
+    fun getInfoCategories(): MutableIterable<InfoCategoryEntity> {
         return infoCategoryRepository.findAll()
     }
 
