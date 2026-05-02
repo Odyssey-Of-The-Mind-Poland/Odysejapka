@@ -10,9 +10,9 @@ class InfoController(
   private val infoService: InfoService
 ) {
 
-  @GetMapping()
+  @GetMapping
   @ResponseBody
-  fun getInfo(@RequestParam(required = false) cityId: Int?): Iterable<Info?>? {
+  fun getInfo(@RequestParam(required = false) cityId: Int?): Iterable<Info?> {
     return infoService.getInfo(cityId)
   }
 
@@ -34,7 +34,7 @@ class InfoController(
     val infos = infoService.getInfo(cityId)
     val categories = infoService.getInfoCategory()
     return mapOf(
-      "infos" to (infos?.toList() ?: emptyList()),
+      "infos" to (infos.toList()),
       "categories" to categories.map { it.toInfoCategory() }
     )
   }
