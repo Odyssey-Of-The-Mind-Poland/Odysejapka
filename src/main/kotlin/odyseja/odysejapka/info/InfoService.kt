@@ -1,5 +1,6 @@
 package odyseja.odysejapka.info
 
+import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
 import org.springframework.stereotype.Service
@@ -13,8 +14,8 @@ class InfoService(
     private val changeService: ChangeService
 ) {
 
-    fun getInfo(cityId: Int?): Iterable<Info?>? {
-        val city = if (cityId == null) cityService.getFinals()else cityService.getCity(cityId)
+    fun getInfo(cityId: Int?): Iterable<Info?> {
+        val city = if (cityId == null) cityService.getFinals() else cityService.getCity(cityId)
         return (infoRepository.findByCity(city)
         ).map { it?.toInfo() }
             .sortedByDescending { it?.sortNumber }
@@ -52,7 +53,8 @@ class InfoService(
 
     @Transactional
     fun updateInfo(info: Info): Info {
-        val infoEntity = infoRepository.findById(info.id).get()
+        val infoEntity = getInfoEntityById(info.id)
+        infoEntity.infoName = info.infoName
         infoEntity.infoText = info.infoText
         infoEntity.sortNumber = info.sortNumber
         infoEntity.icon = info.icon
@@ -82,7 +84,12 @@ class InfoService(
         changeService.updateVersion()
     }
 
-    fun getInfoById(info: Int): Info {
-        return infoRepository.findById(info).get().toInfo()
+    fun getInfoById(infoId: Int): Info {
+        return getInfoEntityById(infoId).toInfo()
+    }
+
+    private fun getInfoEntityById(infoId: Int): InfoEntity {
+        return infoRepository.findFirstById(infoId)
+            ?: throw EntityNotFoundException("Nie znaleziono informacji o ID $infoId")
     }
 }
