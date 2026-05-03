@@ -34,7 +34,7 @@ class ImportCsvTest: OdysejaDsl() {
             "text/csv",
             content
         )
-        timeTableClient.importPerformances(csvFile, city.id)
+        timeTableClient.csvImport(csvFile, city.id)
 
         Assertions.assertThat(timeTableClient.getPerformances(city.id)).hasSize(280)
 
@@ -73,7 +73,7 @@ class ImportCsvTest: OdysejaDsl() {
 
         testCases.forEach { (content, message) ->
             val response = (timetableRespondingClient.executeConsumer {
-                controller -> controller.importPerformances(content, city.id)
+                controller -> controller.csvImport(content, city.id)
             })
             val detail = parseProblemDetail(response)
             Assertions.assertThat(detail.status).isEqualTo(400)
@@ -96,7 +96,7 @@ class ImportCsvTest: OdysejaDsl() {
             content.toByteArray())
 
         Assertions.assertThatThrownBy {
-            timeTableClient.importPerformances(csvFile, city.id)
+            timeTableClient.csvImport(csvFile, city.id)
         }
             .hasRootCauseInstanceOf(CsvRequiredFieldEmptyException::class.java)
     }
@@ -111,7 +111,7 @@ class ImportCsvTest: OdysejaDsl() {
             content.toByteArray())
 
         val response = timetableRespondingClient.executeConsumer {
-            controller -> controller.importPerformances(csvFile, city.id)}
+            controller -> controller.csvImport(csvFile, city.id)}
         val detail = parseProblemDetail(response)
         Assertions.assertThat(detail.status).isEqualTo(400)
         Assertions.assertThat(detail.detail).isEqualTo("Plik nie zawiera żadnych przedstawień.")
@@ -120,7 +120,7 @@ class ImportCsvTest: OdysejaDsl() {
     @Test
     fun `should reject imports with invalid city ID`() {
         val response = timetableRespondingClient.executeConsumer { controller ->
-            controller.importPerformances(mockCsv(), 123456789)
+            controller.csvImport(mockCsv(), 123456789)
         }
         val detail = parseProblemDetail(response)
 
@@ -144,7 +144,7 @@ class ImportCsvTest: OdysejaDsl() {
 
         testCases.forEach {
             Assertions.assertThatThrownBy {
-                timeTableClient.importPerformances(it, city.id)
+                timeTableClient.csvImport(it, city.id)
             }
                 .hasRootCauseInstanceOf(CsvRequiredFieldEmptyException::class.java)
         }

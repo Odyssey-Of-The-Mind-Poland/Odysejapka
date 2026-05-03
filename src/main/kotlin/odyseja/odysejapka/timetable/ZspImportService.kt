@@ -7,7 +7,7 @@ import odyseja.odysejapka.drive.ZspSheetsAdapter
 import org.springframework.stereotype.Service
 
 @Service
-class ImportTimetableService(
+class ZspImportService(
     private val timeTableService: TimeTableService,
     private val cityService: CityService,
     private val backgroundJobService: BackgroundJobService
@@ -16,7 +16,7 @@ class ImportTimetableService(
     private val jobType = "timetable"
 
     fun import(zspId: String, cityId: Int) {
-        clearTimeTable(cityId)
+        timeTableService.clearTimetableByCity(cityId)
         val sheetsAdapter = ZspSheetsAdapter.getZspSheetsAdapter(zspId)
         val city = cityService.getCity(cityId)
         timeTableService.clearTimetableByCity(cityId)
@@ -25,10 +25,6 @@ class ImportTimetableService(
             jobType,
             TimeTableRunner(timeTableService, sheetsAdapter, city.name)
         )
-    }
-
-    fun clearTimeTable(cityId: Int) {
-        timeTableService.clearTimetableByCity(cityId)
     }
 
     fun stop() {

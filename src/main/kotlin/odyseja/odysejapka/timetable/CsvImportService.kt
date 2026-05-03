@@ -12,7 +12,7 @@ import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
 @Service
-class ImportCsvService(
+class CsvImportService(
     private val timeTableService: TimeTableService,
     private val stageUserService: StageUserService
 ) {

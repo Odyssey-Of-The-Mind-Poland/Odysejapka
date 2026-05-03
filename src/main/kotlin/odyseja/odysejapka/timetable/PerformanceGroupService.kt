@@ -3,7 +3,9 @@ package odyseja.odysejapka.timetable
 import org.springframework.stereotype.Service
 
 @Service
-class PerformanceGroupService(private val timeTableService: TimeTableService) {
+class PerformanceGroupService(
+    private val timeTableService: TimeTableService
+) {
     fun getPerformanceGroups(cityId: Int?): List<PerformanceGroup> {
         val performances =
             cityId?.let { timeTableService.getPerformanceEntitiesByCity(cityId) } ?: timeTableService.getAllPerformanceEntities()
