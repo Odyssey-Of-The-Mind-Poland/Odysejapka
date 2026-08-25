@@ -8,7 +8,7 @@ class ChangeEntity (
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column
-  val id: Int,
+  var id: Int,
   @Column
-  val changedAt: Timestamp
+  var changedAt: Timestamp
 )

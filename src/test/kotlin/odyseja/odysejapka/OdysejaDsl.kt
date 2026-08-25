@@ -2,14 +2,16 @@ package odyseja.odysejapka
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import odyseja.odysejapka.city.CityController
+import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CreateCityRequest
+import odyseja.odysejapka.city.KonkursLevel
 import odyseja.odysejapka.form.FormController
 import odyseja.odysejapka.form.JudgeType
 import odyseja.odysejapka.form.LongTermFormEntry
 import odyseja.odysejapka.form.StyleFormEntry
 import odyseja.odysejapka.form.PenaltyFormEntry
 import odyseja.odysejapka.form.PerformanceResultsRequest
-import odyseja.odysejapka.form.ProblemForm
+import odyseja.odysejapka.form.FormData
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.spontan.SpontanController
 import odyseja.odysejapka.timetable.Performance
@@ -27,6 +29,7 @@ import org.springframework.http.ProblemDetail
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import ovh.snet.grzybek.controller.client.core.ControllerClientFactory
+import ovh.snet.grzybek.controller.client.core.ControllerResponse
 import java.time.LocalDate
 
 @SpringBootTest
@@ -78,10 +81,10 @@ class OdysejaDsl {
         style: List<StyleFormEntry>,
         penalty: List<PenaltyFormEntry>
     ) {
-        formClient.setProblemForm(PROBLEM_ID, ProblemForm(dt, style, penalty))
+        formClient.setFormData(PROBLEM_ID, FormData(dt, style, penalty))
     }
 
-    fun form() = formClient.getProblemForm(PROBLEM_ID)
+    fun form() = formClient.getFormData(PROBLEM_ID)
 
     fun seedDefault(): Unit = setForm(
         dt = listOf(LongTermFormEntry(
@@ -108,7 +111,11 @@ class OdysejaDsl {
         return Triple(dtId, styleId, penaltyId)
     }
 
-    fun createCity(name: String) = cityClient.saveCity(CreateCityRequest(name))
+    fun createCity(name: String, level: KonkursLevel = KonkursLevel.FINAL): CityEntity {
+        return cityClient.saveCity(CreateCityRequest(name, level))
+    }
+
+    fun getCityByName(name: String) = cityClient.getCities().firstOrNull { it?.name == name }
 
     fun createPerformance(cityId: Int): Int {
         return createPerformance(cityId, team = "Sample Team")
@@ -179,9 +186,18 @@ class OdysejaDsl {
         return csvFile
     }
 
-    fun parseProblemDetail(response: String): ProblemDetail {
+    fun parseProblemDetail(response: ControllerResponse<Void>): ProblemDetail {
         val mapper = ObjectMapper()
-        return mapper.readValue(response, ProblemDetail::class.java)
+        return mapper.readValue(
+            response.mockHttpServletResponse.contentAsString,
+            ProblemDetail::class.java
+        )
     }
 
+    fun clearCities() {
+        val cities = cityClient.getCities()
+        cities.forEach {
+            cityClient.deleteCity(it!!.id)
+        }
+    }
 }

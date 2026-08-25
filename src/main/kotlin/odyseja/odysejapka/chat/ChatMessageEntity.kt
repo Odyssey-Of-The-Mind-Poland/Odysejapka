@@ -14,7 +14,7 @@ class ChatMessageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0
+    var id: Long = 0
 
     @Column(name = "performance_id", nullable = false)
     var performanceId: Int = 0
@@ -30,4 +30,13 @@ class ChatMessageEntity {
 
     @Column(name = "created_at", nullable = false)
     var createdAt: Instant = Instant.now()
+
+    fun toChatMessage() = ChatMessage(
+        id = id,
+        performanceId = performanceId,
+        userId = userId,
+        userName = userName,
+        message = message,
+        createdAt = createdAt
+    )
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 class BreakingChangeController(private val breakingChangeService: BreakingChangeService) {
 
     @GetMapping
-    fun getLastBrakingChange(): BreakingChange {
+    fun getLastBreakingChange(): BreakingChange {
         return breakingChangeService.getLastBreakingChange()
     }
 
@@ -22,8 +22,4 @@ class BreakingChangeController(private val breakingChangeService: BreakingChange
     fun shouldUpdate(@RequestParam version: String): Boolean {
         return breakingChangeService.shouldUpdate(version)
     }
-
-    data class BreakingChange(
-        val version: String
-    )
 }

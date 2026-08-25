@@ -1,10 +1,10 @@
 <script lang="ts">
     import {createOdysejaQuery} from "$lib/queries";
-    import type {City, ProblemForm} from "./types";
+    import type {City, FormData} from "./types";
     import JudgeCountSelect from "./JudgeCountSelect.svelte";
     import {Spinner} from "$lib/components/ui/spinner";
 
-    const {form = $bindable()} = $props<{form: ProblemForm}>();
+    const {form = $bindable()} = $props<{form: FormData}>();
 
     let cityQuery = createOdysejaQuery<City[]>({
         queryKey: ['city'],

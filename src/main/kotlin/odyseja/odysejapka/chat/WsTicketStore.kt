@@ -1,5 +1,6 @@
 package odyseja.odysejapka.chat
 
+import odyseja.odysejapka.users.UserService
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.util.UUID
@@ -8,19 +9,22 @@ import java.util.concurrent.ConcurrentHashMap
 data class WsTicketInfo(
     val userId: String,
     val userName: String,
-    val createdAt: Instant = Instant.now(),
+    val createdAt: Instant = Instant.now()
 )
 
 @Component
-class WsTicketStore {
+class WsTicketStore (
+    private val userService: UserService
+) {
 
     private val tickets = ConcurrentHashMap<String, WsTicketInfo>()
 
-    fun createTicket(userId: String, userName: String): String {
+    fun createTicket(userId: String): WsTicketResponse {
         cleanup()
+        val userName = userService.getUserEntityByUserId(userId).name ?: "Nieznany"
         val ticket = UUID.randomUUID().toString()
         tickets[ticket] = WsTicketInfo(userId, userName)
-        return ticket
+        return WsTicketResponse(ticket)
     }
 
     fun consumeTicket(ticket: String): WsTicketInfo? {

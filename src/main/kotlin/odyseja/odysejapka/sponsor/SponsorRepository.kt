@@ -5,10 +5,12 @@ import org.springframework.data.repository.CrudRepository
 
 interface SponsorRepository : CrudRepository<SponsorEntity, Int> {
 
-    fun findAllByCity_Id(cityId: Int): List<SponsorEntity>
+    fun findFirstById(id: Int): SponsorEntity?
+
+    fun findAllByCityId(cityId: Int): List<SponsorEntity>
 
     fun deleteByCityId(cityId: Int)
 
     @Query("SELECT MAX(s.columnOrder) FROM sponsor s WHERE s.rowOrder = :rowOrder AND s.city.id = :cityId")
-    fun findMaxColumnOrderByRowOrderAndCity_Id(rowOrder: Int, cityId: Int): Int?
+    fun findMaxColumnOrderByRowOrderAndCityId(rowOrder: Int, cityId: Int): Int?
 }

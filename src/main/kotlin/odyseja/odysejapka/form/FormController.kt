@@ -2,8 +2,8 @@ package odyseja.odysejapka.form
 
 import odyseja.odysejapka.dashboard.PerformanceAccessService
 import odyseja.odysejapka.dashboard.UserAccessService
-import odyseja.odysejapka.dashboard.extractUserId
-import odyseja.odysejapka.timetable.PerformanceRepository
+import odyseja.odysejapka.timetable.PerformanceService
+import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -22,28 +22,29 @@ import org.springframework.web.server.ResponseStatusException
 @RestController
 @RequestMapping("/api/v1/form")
 class FormController(
-    private val formService: FormService?,
-    private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService?,
+    private val formService: FormService,
+    private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService,
     private val performanceAccessService: PerformanceAccessService,
     private val userAccessService: UserAccessService,
-    private val performanceRepository: PerformanceRepository
+    private val timeTableService: TimeTableService,
+    private val performanceService: PerformanceService
 ) {
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @PutMapping("/{problem}")
-    fun setProblemForm(@PathVariable problem: Int, @RequestBody problemForm: ProblemForm) {
-        formService!!.setFormEntries(problem, problemForm)
+    fun setFormData(@PathVariable problem: Int, @RequestBody formData: FormData) {
+        formService.setFormEntries(problem, formData)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @GetMapping("/{problem}")
-    fun getProblemForm(@PathVariable problem: Int): ProblemForm {
-        return formService!!.getProblemForm(problem)
+    fun getFormData(@PathVariable problem: Int): FormData {
+        return formService.getFormData(problem)
     }
 
     @GetMapping("/{problem}/judge-count")
     fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCountResponse {
-        return formService!!.getJudgeCount(problem, cityId)
+        return formService.getJudgeCount(problem, cityId)
     }
 
     @PutMapping("/{performanceId}/result")
@@ -52,9 +53,8 @@ class FormController(
         @RequestBody result: PerformanceResultsRequest,
         @AuthenticationPrincipal principal: Any?
     ) {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
-        formService!!.setTeamResults(performanceId, result)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
+        formService.setTeamResults(performanceId, result)
     }
 
     @GetMapping("/{performanceId}/result")
@@ -62,9 +62,8 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ): TeamForm {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
-        return formService!!.getTeamForm(performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
+        return formService.getTeamForm(performanceId)
     }
 
     @GetMapping("/subjective-ranges")
@@ -82,15 +81,13 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ) {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
-        val performance = performanceRepository.findById(performanceId).orElse(null)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
+        val performance = performanceService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN)
         }
-        formService!!.approveForm(performanceId)
+        formService.approveForm(performanceId)
     }
 
     @PutMapping("/{performanceId}/ranatra")
@@ -98,15 +95,13 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ): Map<String, Boolean> {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
-        val performance = performanceRepository.findById(performanceId).orElse(null)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
+        val performance = performanceService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN)
         }
-        val newValue = formService!!.toggleRanatra(performanceId)
+        val newValue = formService.toggleRanatra(performanceId)
         return mapOf("ranatra" to newValue)
     }
 
@@ -115,11 +110,10 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ): ResponseEntity<ByteArray> {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
-        val teamForm = formService!!.getTeamForm(performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
+        val teamForm = formService.getTeamForm(performanceId)
         if (!teamForm.approved) throw ResponseStatusException(HttpStatus.CONFLICT, "Form not approved")
-        val pdfBytes = teamFormPdfGeneratorService!!.generatePdf(performanceId)
+        val pdfBytes = teamFormPdfGeneratorService.generatePdf(performanceId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"team-form-${performanceId}.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)
@@ -131,11 +125,10 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ): ResponseEntity<ByteArray> {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
-        val teamForm = formService!!.getTeamForm(performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
+        val teamForm = formService.getTeamForm(performanceId)
         if (!teamForm.approved) throw ResponseStatusException(HttpStatus.CONFLICT, "Form not approved")
-        val pdfBytes = teamFormPdfGeneratorService!!.generatePdf(performanceId, english = true)
+        val pdfBytes = teamFormPdfGeneratorService.generatePdf(performanceId, english = true)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"team-form-${performanceId}-en.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)
@@ -147,11 +140,10 @@ class FormController(
         @PathVariable performanceId: Int,
         @AuthenticationPrincipal principal: Any?
     ): ResponseEntity<ByteArray> {
-        val userId = extractUserId(principal) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-        performanceAccessService.checkAccess(userId, performanceId)
-        val teamForm = formService!!.getTeamForm(performanceId)
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
+        val teamForm = formService.getTeamForm(performanceId)
         if (!teamForm.approved) throw ResponseStatusException(HttpStatus.CONFLICT, "Form not approved")
-        val pdfBytes = teamFormPdfGeneratorService!!.generatePdf(performanceId)
+        val pdfBytes = teamFormPdfGeneratorService.generatePdf(performanceId)
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"team-form-${performanceId}.pdf\"")
             .contentType(MediaType.APPLICATION_PDF)

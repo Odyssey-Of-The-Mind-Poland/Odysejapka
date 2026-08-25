@@ -1,9 +1,9 @@
 package odyseja.odysejapka.dashboard
 
 import odyseja.odysejapka.form.TeamResultEntity
-import odyseja.odysejapka.form.TeamResultRepository
+import odyseja.odysejapka.form.TeamResultService
 import odyseja.odysejapka.spontan.SpontanResultEntity
-import odyseja.odysejapka.spontan.SpontanResultRepository
+import odyseja.odysejapka.spontan.SpontanResultService
 import odyseja.odysejapka.timetable.PerformanceGroup
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,8 +17,8 @@ class TeamsFormController(
     private val cityAccessService: CityAccessService,
     private val stageAccessService: StageAccessService,
     private val userAccessService: UserAccessService,
-    private val teamResultRepository: TeamResultRepository,
-    private val spontanResultRepository: SpontanResultRepository
+    private val teamResultService: TeamResultService,
+    private val spontanResultService: SpontanResultService
 ) {
 
     @GetMapping
@@ -63,11 +63,11 @@ class TeamsFormController(
 
     private fun getTeamResults(performanceIds: List<Int>): Map<Int, TeamResultEntity> {
         if (performanceIds.isEmpty()) return emptyMap()
-        return teamResultRepository.findAllByPerformanceIdIn(performanceIds).associateBy { it.performanceId }
+        return teamResultService.getTeamResults(performanceIds).associateBy { it.performanceId }
     }
 
     private fun getSpontanResults(performanceIds: List<Int>): Map<Int, SpontanResultEntity> {
         if (performanceIds.isEmpty()) return emptyMap()
-        return spontanResultRepository.findAllByPerformanceIdIn(performanceIds).associateBy { it.performanceId }
+        return spontanResultService.getSpontanResults(performanceIds).associateBy { it.performanceId }
     }
 }

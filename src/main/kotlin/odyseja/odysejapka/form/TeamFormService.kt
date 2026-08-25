@@ -1,29 +1,37 @@
 package odyseja.odysejapka.form
 
+import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
-import odyseja.odysejapka.timetable.PerformanceRepository
+import odyseja.odysejapka.city.KonkursLevel
+import odyseja.odysejapka.timetable.PerformanceService
+import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 
 @Service
 class TeamFormService(
-    private val teamResultRepository: TeamResultRepository,
-    private val performanceRepository: PerformanceRepository,
-    private val formProblemRepository: FormProblemRepository,
-    private val cityFormJudgesRepository: CityFormJudgesRepository,
+    private val teamResultService: TeamResultService,
+    private val formProblemService: FormProblemService,
+    private val judgeCountService: JudgeCountService,
+    private val performanceService: PerformanceService
 ) {
 
     @Transactional
     fun getTeamForm(performanceId: Int): TeamForm {
-        val resultEntity = teamResultRepository.findByPerformanceId(performanceId)
-        val approved = resultEntity?.approved ?: false
-        val ranatra = resultEntity?.ranatra ?: false
-        val results = resultEntity?.results?.results ?: emptyList()
-        val weightHeldResults = resultEntity?.results?.weightHeldResults ?: emptyMap()
-        val performance = performanceRepository.findById(performanceId).get()
+        val resultEntity = try {
+            teamResultService.getTeamResult(performanceId)
+        } catch (_: EntityNotFoundException) {
+            TeamResultEntity().apply { this.performanceId = performanceId }
+        }
+        val approved = resultEntity.approved
+        val ranatra = resultEntity.ranatra
+        val results = resultEntity.results?.results ?: emptyList()
+        val weightHeldResults = resultEntity.results?.weightHeldResults ?: emptyMap()
+        val performance = performanceService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         val city = performance.cityEntity
+        val isFo = city.level == KonkursLevel.FINAL
 
-        val judgeCount = cityFormJudgesRepository.findByProblemAndCity(problem, city)?.judgeCount ?: 1
+        val judgeCount = judgeCountService.getJudgeCountByProblemAndCity(problem, city.id).judgeCount
 
         val emptyForm = TeamForm(
             performanceId = performanceId,
@@ -31,7 +39,7 @@ class TeamFormService(
             cityName = city.name,
             problem = problem,
             age = performance.ageEntity.id,
-            isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final"),
+            isFo = isFo,
             performanceAt = "",
             performanceTime = "",
             dtEntries = emptyList(),
@@ -42,7 +50,7 @@ class TeamFormService(
             ranatra = ranatra
         )
 
-        val formEntity = formProblemRepository.findByProblem(problem) ?: return emptyForm
+        val formEntity = formProblemService.findByProblem(problem)
         val form = formEntity.form ?: return emptyForm
 
         val dtEntries = getDtResults(form.dtEntries, results, judgeCount)
@@ -50,10 +58,8 @@ class TeamFormService(
         val penaltyEntries = getPenaltyResults(form.penaltyEntries, results)
         val weightHeldEntries = if (problem == 4) getWeightHeldResults(weightHeldResults) else emptyList()
 
-        val isFo = city.name.lowercase().contains("finał") || city.name.lowercase().contains("final")
-
-        val performanceAt = resultEntity?.performanceAt ?: ""
-        val performanceTime = resultEntity?.performanceTime ?: ""
+        val performanceAt = resultEntity.performanceAt ?: ""
+        val performanceTime = resultEntity.performanceTime ?: ""
 
         return TeamForm(
             performanceId = performanceId,

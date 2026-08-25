@@ -4,11 +4,11 @@ import odyseja.odysejapka.gad.Team
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.form.FormState
 import odyseja.odysejapka.form.TeamResultEntity
-import odyseja.odysejapka.form.TeamResultRepository
+import odyseja.odysejapka.form.TeamResultService
 import odyseja.odysejapka.spontan.SpontanResultEntity
-import odyseja.odysejapka.spontan.SpontanResultRepository
+import odyseja.odysejapka.spontan.SpontanResultService
 import odyseja.odysejapka.timetable.PerformanceEntity
-import odyseja.odysejapka.timetable.PerformanceRepository
+import odyseja.odysejapka.timetable.PerformanceService
 import org.springframework.stereotype.Service
 
 data class ResultsStatusResponse(
@@ -19,22 +19,15 @@ data class ResultsStatusResponse(
 
 @Service
 class CityResultsService(
-    private val performanceRepository: PerformanceRepository,
-    private val teamResultRepository: TeamResultRepository,
-    private val spontanResultRepository: SpontanResultRepository,
+    private val teamResultService: TeamResultService,
+    private val spontanResultService: SpontanResultService,
     private val cityService: CityService,
-    private val latexGeneratorService: LatexGeneratorService
+    private val latexGeneratorService: LatexGeneratorService,
+    private val performanceService: PerformanceService
 ) {
 
     fun getResultsStatus(cityId: Int): ResultsStatusResponse {
-        val performances = performanceRepository.findAllByCityEntity_Id(cityId)
-            .filter { !it.isExcludedFromScoring() }
-        val performanceIds = performances.map { it.id }
-
-        val teamResults = teamResultRepository.findAllByPerformanceIdIn(performanceIds)
-            .associateBy { it.performanceId }
-        val spontanResults = spontanResultRepository.findAllByPerformanceIdIn(performanceIds)
-            .associateBy { it.performanceId }
+        val (performances, teamResults, spontanResults) = fetchResults(cityId)
 
         val unapprovedForms = performances.filter { perf ->
             val tr = teamResults[perf.id]
@@ -61,20 +54,25 @@ class CityResultsService(
     }
 
     private fun buildTeamsFromDb(cityId: Int, cityName: String): List<Team> {
-        val performances = performanceRepository.findAllByCityEntity_Id(cityId)
-            .filter { !it.isExcludedFromScoring() }
-        val performanceIds = performances.map { it.id }
-
-        val teamResults = teamResultRepository.findAllByPerformanceIdIn(performanceIds)
-            .associateBy { it.performanceId }
-        val spontanResults = spontanResultRepository.findAllByPerformanceIdIn(performanceIds)
-            .associateBy { it.performanceId }
+        val (performances, teamResults, spontanResults) = fetchResults(cityId)
 
         return performances.map { perf ->
             val tr = teamResults[perf.id]
             val sr = spontanResults[perf.id]
             mapToTeam(perf, tr, sr, cityName)
         }
+    }
+
+    private fun fetchResults(cityId: Int): Triple<List<PerformanceEntity>, Map<Int, TeamResultEntity>, Map<Int, SpontanResultEntity>> {
+        val performances = performanceService.getPerformanceEntitiesByCity(cityId)
+            .filter { !it.isExcludedFromScoring() }
+        val performanceIds = performances.map { it.id }
+
+        val teamResults = teamResultService.getTeamResults(performanceIds)
+            .associateBy { it.performanceId }
+        val spontanResults = spontanResultService.getSpontanResults(performanceIds)
+            .associateBy { it.performanceId }
+        return Triple(performances, teamResults, spontanResults)
     }
 
     private fun mapToTeam(

@@ -10,10 +10,10 @@ class InfoController(
   private val infoService: InfoService
 ) {
 
-  @GetMapping()
+  @GetMapping
   @ResponseBody
-  fun getInfo(@RequestParam(required = false) cityId: Int?): Iterable<Info?>? {
-    return cityId?.let { infoService.getInfo(cityId) } ?: infoService.getInfo(0)
+  fun getInfo(@RequestParam(required = false) cityId: Int?): Iterable<Info?> {
+    return infoService.getInfo(cityId)
   }
 
   @GetMapping("/id/{info}")
@@ -24,17 +24,17 @@ class InfoController(
 
   @GetMapping("/category")
   @ResponseBody
-  fun getInfoCategory(): Iterable<InfoCategoryEntity> {
-    return infoService.getInfoCategory()
+  fun getInfoCategories(): Iterable<InfoCategoryEntity> {
+    return infoService.getInfoCategories()
   }
 
-  @GetMapping("/v2")
+  @GetMapping("/map")
   @ResponseBody
-  fun getInfoV2(@RequestParam(required = false) cityId: Int?): Map<String, Any> {
-  val infos = cityId?.let { infoService.getInfo(cityId) } ?: infoService.getInfo(0)
-    val categories = infoService.getInfoCategory()
+  fun getInfoAndCategories(@RequestParam(required = false) cityId: Int?): Map<String, Any> {
+    val infos = infoService.getInfo(cityId)
+    val categories = infoService.getInfoCategories()
     return mapOf(
-      "infos" to (infos?.toList() ?: emptyList()),
+      "infos" to (infos.toList()),
       "categories" to categories.map { it.toInfoCategory() }
     )
   }
@@ -59,4 +59,10 @@ class InfoController(
     infoService.deleteInfo(id)
   }
 
+  @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
+  @DeleteMapping("/category/{id}")
+  @ResponseBody
+  fun deleteInfoCategory(@PathVariable id: Int) {
+    infoService.deleteInfoCategory(id)
+  }
 }

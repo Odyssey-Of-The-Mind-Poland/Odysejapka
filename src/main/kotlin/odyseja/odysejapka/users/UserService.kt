@@ -1,19 +1,25 @@
 package odyseja.odysejapka.users
 
 import jakarta.persistence.EntityNotFoundException
+import odyseja.odysejapka.auth.LoginRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import odyseja.odysejapka.roles.Role
+import org.apache.http.auth.InvalidCredentialsException
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
     private val userRolesRepository: UserRolesRepository
 ) {
+    @Transactional
+    fun addUserEntity(user: UserEntity): UserEntity {
+        return userRepository.save(user)
+    }
 
     @Transactional
     fun createUser(user: CreateUserRequest): User {
-        val entity = userRepository.save(UserEntity.from(user))
+        val entity = addUserEntity(UserEntity.from(user))
         if (isFirstUser()) {
             assignRolesToUser(
                 UserRoles(
@@ -29,9 +35,9 @@ class UserService(
 
     @Transactional(readOnly = true)
     fun getUserByUserId(userId: String): User? {
-        val entity = userRepository.findByUserId(userId)
+        val entity = getUserEntityOrNullByUserId(userId)
         if (entity != null) {
-            val roles = userRolesRepository.findByUserId(userId).map { it.toUserRole() }
+            val roles = getRolesEntities(userId).map { it.toUserRole() }
             return entity.toUser(roles)
         }
         return null
@@ -39,28 +45,43 @@ class UserService(
 
     @Transactional(readOnly = true)
     fun getUser(id: Long): User? {
-        val entity = userRepository.findById(id)
-        return entity.map { userEntity ->
-            val userId = userEntity.userId ?: return@map null
-            val roles = userRolesRepository.findByUserId(userId).map { it.toUserRole() }
+        val entity = getUserEntity(id)
+        return entity.let { userEntity ->
+            val userId = userEntity.userId ?: return null
+            val roles = getRolesEntities(userId).map { it.toUserRole() }
             userEntity.toUser(roles)
-        }.orElseThrow { EntityNotFoundException("User with ID $id not found") }
+        }
     }
 
     @Transactional(readOnly = true)
     fun listUsers(): List<User> {
         return userRepository.findAll().map { entity ->
             val roles =
-                entity.userId?.let { userRolesRepository.findByUserId(it).map { it.toUserRole() } } ?: emptyList()
+                entity.userId?.let { getRolesEntities(it).map { it.toUserRole() } } ?: emptyList()
             entity.toUser(roles)
         }
     }
 
+    @Transactional(readOnly = true)
+    fun verifyUserLogin(request: LoginRequest): UserEntity {
+        val user = userRepository.findByEmail(request.email)
+            ?: throw InvalidCredentialsException("Nieprawidłowe dane uwierzytelniające")
+
+        if (user.authProvider != "local") {
+            throw InvalidCredentialsException("To konto używa autoryzacji Auth0")
+        }
+
+        if (user.password != request.password) {
+            throw InvalidCredentialsException("Nieprawidłowe dane uwierzytelniające")
+        }
+
+        return user
+    }
+
     @Transactional
     fun assignRolesToUser(userRoles: UserRoles): UserRoles {
-        val user = userRepository.findById(userRoles.userId)
-            .orElseThrow { EntityNotFoundException("User with ID ${userRoles.userId} not found") }
-        userRolesRepository.deleteByUserId(user.userId!!)
+        val user = getUserEntity(userRoles.userId)
+        deleteRoleEntities(user.userId!!)
 
         val roleEntities = UserRolesEntity.from(userRoles, user.userId!!)
         userRolesRepository.saveAll(roleEntities)
@@ -69,11 +90,47 @@ class UserService(
     }
 
     @Transactional(readOnly = true)
-    fun getUserRoles(userId: Long): UserRoles {
-        val user = userRepository.findById(userId)
-            .orElseThrow { EntityNotFoundException("User with ID ${userId} not found") }
-        val roleEntities = userRolesRepository.findByUserId(user.userId!!)
+    fun getUserRoles(id: Long): UserRoles {
+        val user = getUserEntity(id)
+        val roleEntities = getRolesEntities(user.userId!!)
         val roles = roleEntities.map { it.toUserRole() }
-        return UserRoles(userId, roles)
+        return UserRoles(id, roles)
+    }
+
+    @Transactional(readOnly = true)
+    fun getUserEntity(id: Long): UserEntity {
+        return userRepository.findFirstById(id)
+            ?: throw EntityNotFoundException("Nie znaleziono użytkownika o ID $id")
+    }
+
+    @Transactional(readOnly = true)
+    fun getUserEntityOrNull(id: Long): UserEntity? {
+        return userRepository.findFirstById(id)
+    }
+
+    @Transactional(readOnly = true)
+    fun getUserEntityByUserId(userId: String): UserEntity {
+        return userRepository.findByUserId(userId)
+            ?: throw EntityNotFoundException("Nie znaleziono użytkownika o UserID $userId")
+    }
+
+    @Transactional(readOnly = true)
+    fun getUserEntityOrNullByUserId(userId: String): UserEntity? {
+        return userRepository.findByUserId(userId)
+    }
+
+    @Transactional
+    fun deleteUser(id: Long) {
+        userRepository.deleteById(id)
+    }
+
+    @Transactional(readOnly = true)
+    fun getRolesEntities(userId: String): List<UserRolesEntity> {
+        return userRolesRepository.findByUserId(userId)
+    }
+
+    @Transactional
+    fun deleteRoleEntities(userId: String) {
+        userRolesRepository.deleteByUserId(userId)
     }
 }

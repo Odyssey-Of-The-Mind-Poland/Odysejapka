@@ -8,12 +8,12 @@ import jakarta.persistence.Id
 class BreakingChangeEntity(
     @Id
     @Column
-    val id: Int,
+    var id: Int,
     @Column
     var version: String
 ) {
-    fun toBreakingChange(): BreakingChangeController.BreakingChange {
-        return BreakingChangeController.BreakingChange(
+    fun toBreakingChange(): BreakingChange {
+        return BreakingChange(
             version = version
         )
     }

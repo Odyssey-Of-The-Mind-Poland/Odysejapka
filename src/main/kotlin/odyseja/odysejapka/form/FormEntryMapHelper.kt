@@ -1,14 +1,14 @@
 package odyseja.odysejapka.form
 
 /**
- * Helper to create a map of entry_id -> entry from a ProblemForm
+ * Helper to create a map of entry_id -> entry from a FormData
  */
 object FormEntryMapHelper {
 
     /**
      * Creates a map of entry_id -> entry for all entries in the form
      */
-    fun createEntryMap(form: ProblemForm): Map<Long, Any> {
+    fun createEntryMap(form: FormData): Map<Long, Any> {
         val map = mutableMapOf<Long, Any>()
         
         form.dtEntries.forEach { entry ->
@@ -54,7 +54,7 @@ object FormEntryMapHelper {
     /**
      * Assigns IDs to entries that don't have them, preserving existing IDs
      */
-    fun assignIds(form: ProblemForm, existingForm: ProblemForm?): ProblemForm {
+    fun assignIds(form: FormData, existingForm: FormData?): FormData {
         val existingIds = existingForm?.let { createEntryMap(it).keys } ?: emptySet()
         val nextIdHolder = mutableListOf((existingIds.maxOrNull() ?: 0L) + 1L)
 

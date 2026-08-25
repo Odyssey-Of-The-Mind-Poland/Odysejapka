@@ -6,7 +6,7 @@
     import {Button} from "$lib/components/ui/button";
     import {toast} from "svelte-sonner";
     import * as Separator from "$lib/components/ui/separator/index.js";
-    import {defaultEntry, type FormEntryType, type ProblemForm} from "./types";
+    import {defaultEntry, type FormEntryType, type FormData} from "./types";
     import {recalculateSortIndexes} from "./sortIndexUtils";
     import ScoringCard from "./ScoringCard.svelte";
     import StyleCard from "./StyleCard.svelte";
@@ -16,11 +16,11 @@
 
     let activeTab = $state<'editor' | 'translation'>('editor');
     let problem = $derived(page.params.id);
-    let formQuery = createOdysejaQuery<ProblemForm>({
+    let formQuery = createOdysejaQuery<FormData>({
         queryKey: ['problems'],
         path: `/api/v1/form/${problem}`,
     });
-    let form = $state<ProblemForm>()
+    let form = $state<FormData>()
     $effect(() => {
         setBreadcrumbs([
             {name: 'Konkursy', href: '/dashboard/competitions'},
@@ -35,7 +35,7 @@
         form = {
             ...(form ?? {dtEntries: [], styleEntries: [], penaltyEntries: []}),
             [category]: recalculateSortIndexes([...(form?.[category] ?? []), newEntry]),
-        } as ProblemForm;
+        } as FormData;
     }
 
     function removeEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', index: number) {
@@ -44,7 +44,7 @@
         }
     }
 
-    let saveMutation = createPutMutation<ProblemForm>({
+    let saveMutation = createPutMutation<FormData>({
         path: `/api/v1/form/${problem}`,
         queryKey: ['problems'],
         onSuccess: data => {

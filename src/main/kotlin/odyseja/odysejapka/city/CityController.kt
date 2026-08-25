@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(value = ["/city", "/api/v1/city"])
 class CityController(
-    private val cityService: CityService
+    private val cityService: CityService,
+    private val cityDeletionService: CityDeletionService
 ) {
 
-    @GetMapping()
+    @GetMapping
     fun getCities(): MutableIterable<CityEntity?> {
         return cityService.getCities()
     }
@@ -19,11 +20,6 @@ class CityController(
         return cityService.getCity(cityId)
     }
 
-    @GetMapping("/name/{cityName}")
-    fun getCityByName(@PathVariable cityName: String): CityEntity {
-        return cityService.getCityByName(cityName)
-    }
-
     @Secured("ROLE_ADMINISTRATOR")
     @PostMapping
     fun saveCity(@RequestBody cityRequest: CreateCityRequest): CityEntity {
@@ -31,14 +27,14 @@ class CityController(
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @DeleteMapping("/{cityId}")
-    fun deleteCity(@PathVariable cityId: Int) {
-        cityService.deleteCity(cityId)
+    @PutMapping
+    fun updateCity(@RequestBody city: CityEntity): CityEntity {
+        return cityService.updateCity(city)
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @DeleteMapping
-    fun clearCities() {
-        cityService.clearCities()
+    @DeleteMapping("/{cityId}")
+    fun deleteCity(@PathVariable cityId: Int) {
+        cityDeletionService.deleteCity(cityId)
     }
 }

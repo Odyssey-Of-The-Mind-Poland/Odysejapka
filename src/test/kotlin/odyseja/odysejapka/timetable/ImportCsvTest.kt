@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.test.context.support.WithMockUser
+import ovh.snet.grzybek.controller.client.core.RespondingControllerClient
 import java.time.LocalDate
 import kotlin.test.Test
 
@@ -14,11 +15,13 @@ import kotlin.test.Test
 class ImportCsvTest: OdysejaDsl() {
 
     private lateinit var city: CityEntity
+    lateinit var timetableRespondingClient: RespondingControllerClient<TimeTableController>
 
     @BeforeEach
     fun csvSetUp() {
-        cityClient.clearCities()
+        clearCities()
         city = createCity("finał")
+        timetableRespondingClient = controllerClientFactory.respondingClient(TimeTableController::class.java)
     }
 
     @Test
@@ -31,7 +34,7 @@ class ImportCsvTest: OdysejaDsl() {
             "text/csv",
             content
         )
-        timeTableClient.importPerformances(csvFile, city.id)
+        timeTableClient.csvImport(csvFile, city.id)
 
         Assertions.assertThat(timeTableClient.getPerformances(city.id)).hasSize(280)
 
@@ -60,20 +63,22 @@ class ImportCsvTest: OdysejaDsl() {
     @Test
     fun `should reject imports with improper data`() {
         val testCases = listOf(
-            mockCsv(performanceDay = "wtorek") to "Dozwolone dni występu to sobota lub niedziela.",
-            mockCsv(spontanDay = "2") to "Dozwolone dni spontana to sobota lub niedziela.",
-            mockCsv(problem = 6) to "Numer problemu musi wynosić od 0 do 5.",
-            mockCsv(age = 5) to "Numer grupy wiekowej musi wynosić od 0 do 4.",
-            mockCsv(performance = "12 34") to "Godzina występu powinna być w następującym formacie: 08:45.",
-            mockCsv(spontan = "00:000") to "Godzina spontana powinna być w następującym formacie: 08:45."
+            mockCsv(performanceDay = "wtorek") to "Dozwolone dni występu to sobota lub niedziela",
+            mockCsv(spontanDay = "2") to "Dozwolone dni spontana to sobota lub niedziela",
+            mockCsv(problem = 6) to "Numer problemu musi wynosić od 0 do 5",
+            mockCsv(age = 5) to "Dozwolone ID grupy wiekowej to: 0, 1, 2, 3 lub 4",
+            mockCsv(performance = "12 34") to "Godzina występu powinna być w następującym formacie: 08:45",
+            mockCsv(spontan = "00:000") to "Godzina spontana powinna być w następującym formacie: 08:45"
         )
 
         testCases.forEach { (content, message) ->
-            Assertions.assertThatThrownBy {
-                timeTableClient.importPerformances(content, city.id)
-            }
-                .hasRootCauseInstanceOf(IllegalArgumentException::class.java)
-                .hasMessageContaining(message)
+            val response = (timetableRespondingClient.executeConsumer {
+                controller -> controller.csvImport(content, city.id)
+            })
+            val detail = parseProblemDetail(response)
+            Assertions.assertThat(detail.status).isEqualTo(400)
+            Assertions.assertThat(detail.detail).isEqualTo(message)
+            Assertions.assertThat(detail.title).isEqualTo("ILLEGAL ARGUMENT")
         }
     }
 
@@ -91,7 +96,7 @@ class ImportCsvTest: OdysejaDsl() {
             content.toByteArray())
 
         Assertions.assertThatThrownBy {
-            timeTableClient.importPerformances(csvFile, city.id)
+            timeTableClient.csvImport(csvFile, city.id)
         }
             .hasRootCauseInstanceOf(CsvRequiredFieldEmptyException::class.java)
     }
@@ -105,20 +110,19 @@ class ImportCsvTest: OdysejaDsl() {
             "text/csv",
             content.toByteArray())
 
-        Assertions.assertThatThrownBy {
-            timeTableClient.importPerformances(csvFile, city.id)
-        }
-            .hasRootCauseInstanceOf(IllegalArgumentException::class.java)
-            .hasMessageContaining("Plik nie zawiera żadnych przedstawień.")
+        val response = timetableRespondingClient.executeConsumer {
+            controller -> controller.csvImport(csvFile, city.id)}
+        val detail = parseProblemDetail(response)
+        Assertions.assertThat(detail.status).isEqualTo(400)
+        Assertions.assertThat(detail.detail).isEqualTo("Plik nie zawiera żadnych przedstawień.")
     }
 
     @Test
     fun `should reject imports with invalid city ID`() {
-        val timetableRespondingClient = controllerClientFactory.respondingClient(TimeTableController::class.java)
         val response = timetableRespondingClient.executeConsumer { controller ->
-            controller.importPerformances(mockCsv(), 123456789)
+            controller.csvImport(mockCsv(), 123456789)
         }
-        val detail = parseProblemDetail(response.mockHttpServletResponse.contentAsString)
+        val detail = parseProblemDetail(response)
 
         Assertions.assertThat(detail.status).isEqualTo(404)
         Assertions.assertThat(detail.title).isEqualTo("ENTITY NOT FOUND")
@@ -140,7 +144,7 @@ class ImportCsvTest: OdysejaDsl() {
 
         testCases.forEach {
             Assertions.assertThatThrownBy {
-                timeTableClient.importPerformances(it, city.id)
+                timeTableClient.csvImport(it, city.id)
             }
                 .hasRootCauseInstanceOf(CsvRequiredFieldEmptyException::class.java)
         }

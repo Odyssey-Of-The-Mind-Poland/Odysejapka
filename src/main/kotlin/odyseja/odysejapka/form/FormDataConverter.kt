@@ -6,13 +6,13 @@ import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
 
 @Converter(autoApply = false)
-class ProblemFormConverter : AttributeConverter<ProblemForm, String> {
+class FormDataConverter : AttributeConverter<FormData, String> {
 
     companion object {
         private val objectMapper: ObjectMapper = jacksonObjectMapper()
     }
 
-    override fun convertToDatabaseColumn(attribute: ProblemForm?): String? {
+    override fun convertToDatabaseColumn(attribute: FormData?): String? {
         if (attribute == null) return null
         return try {
             objectMapper.writeValueAsString(attribute)
@@ -21,10 +21,10 @@ class ProblemFormConverter : AttributeConverter<ProblemForm, String> {
         }
     }
 
-    override fun convertToEntityAttribute(dbData: String?): ProblemForm? {
+    override fun convertToEntityAttribute(dbData: String?): FormData? {
         if (dbData == null || dbData.isBlank()) return null
         return try {
-            objectMapper.readValue(dbData, ProblemForm::class.java)
+            objectMapper.readValue(dbData, FormData::class.java)
         } catch (e: Exception) {
             null
         }

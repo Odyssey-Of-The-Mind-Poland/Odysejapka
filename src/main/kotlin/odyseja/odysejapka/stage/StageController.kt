@@ -25,7 +25,7 @@ class StageController(
   @Secured("ROLE_ADMINISTRATOR")
   @DeleteMapping("/{cityId}")
   fun clearStagesByCity(@PathVariable cityId: Int) {
-    stageService.clearStagesByCity(cityId)
+    stageService.deleteStagesByCity(cityId)
   }
 
   @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")

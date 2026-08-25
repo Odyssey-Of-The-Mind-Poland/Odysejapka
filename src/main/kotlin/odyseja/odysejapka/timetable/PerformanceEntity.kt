@@ -1,6 +1,5 @@
 package odyseja.odysejapka.timetable
 
-import odyseja.odysejapka.age.AgeEntity
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.isForeigner
 import odyseja.odysejapka.problem.ProblemEntity

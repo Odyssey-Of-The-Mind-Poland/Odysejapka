@@ -3,12 +3,12 @@
     import * as Input from '$lib/components/ui/input/index.js';
     import * as Label from '$lib/components/ui/label/index.js';
     import {Badge} from '$lib/components/ui/badge/index.js';
-    import type {FormEntryType, ProblemForm} from "./types";
+    import type {FormEntryType, FormData} from "./types";
     import {formatSortIndex} from "./sortIndexUtils";
     import LanguagesIcon from "@lucide/svelte/icons/languages";
 
     interface Props {
-        form: ProblemForm;
+        form: FormData;
     }
 
     let {form = $bindable()}: Props = $props();

@@ -3,14 +3,14 @@
     import * as Collapsible from '$lib/components/ui/collapsible/index.js';
     import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
     import {dndzone} from 'svelte-dnd-action';
-    import type {FormEntryType, ProblemForm} from "./types";
+    import type {FormEntryType, FormData} from "./types";
     import {recalculateSortIndexes} from "./sortIndexUtils";
     import type {Snippet} from 'svelte';
 
     interface Props {
         title: string;
         entries: FormEntryType[];
-        form: ProblemForm;
+        form: FormData;
         category: 'dtEntries' | 'styleEntries' | 'penaltyEntries';
         children: Snippet<[{ item: FormEntryType; index: number; items: FormEntryType[] }]>;
         addButtons: Snippet<[]>;

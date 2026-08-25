@@ -5,15 +5,16 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BreakingChangeService(private val breakingChangeRepository: BreakingChangeRepository) {
-    fun getLastBreakingChange(): BreakingChangeController.BreakingChange {
+    fun getLastBreakingChange(): BreakingChange {
         return breakingChangeRepository.findFirstByOrderByIdDesc()?.toBreakingChange()
-            ?: BreakingChangeController.BreakingChange(
+            ?: BreakingChange(
                 version = "0.0.0"
             )
     }
 
     @Transactional
-    fun setBreakingChange(breakingChange: BreakingChangeController.BreakingChange) {
+    fun setBreakingChange(breakingChange: BreakingChange) {
+        breakingChange.validate()
         val breakingChangeEntity = breakingChangeRepository.findFirstByOrderByIdDesc()
 
         if (breakingChangeEntity == null) {
@@ -26,6 +27,7 @@ class BreakingChangeService(private val breakingChangeRepository: BreakingChange
     }
 
     fun shouldUpdate(currentVersion: String): Boolean {
+        BreakingChange(currentVersion).validate()
         val breakingChangeVersionParts = getLastBreakingChange().version.split(".").map { it.toInt() }
         val currentVersionParts = currentVersion.split(".").map { it.toInt() }
 

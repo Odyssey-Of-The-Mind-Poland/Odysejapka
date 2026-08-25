@@ -1,14 +1,12 @@
 package odyseja.odysejapka.spontan
 
 import odyseja.odysejapka.dashboard.UserAccessService
-import odyseja.odysejapka.timetable.PerformanceRepository
-import odyseja.odysejapka.users.UserRepository
+import odyseja.odysejapka.users.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 
 /**
@@ -20,10 +18,9 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 class SpontanAccessService(
     private val userAccessService: UserAccessService,
-    private val userRepository: UserRepository,
-    private val spontanUserRepository: SpontanUserRepository,
-    private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
-    private val performanceRepository: PerformanceRepository
+    private val userService: UserService,
+    private val spontanUserService: SpontanUserService,
+    private val spontanGroupAssignmentService: SpontanGroupAssignmentService
 ) {
 
     /**
@@ -32,8 +29,8 @@ class SpontanAccessService(
     fun currentSpontanUser(): SpontanUserEntity? {
         if (!userAccessService.isSpontan()) return null
         val principalUserId = extractCurrentPrincipalUserId() ?: return null
-        val user = userRepository.findByUserId(principalUserId) ?: return null
-        return spontanUserRepository.findByUserId(user.id!!)
+        val user = userService.getUserEntityOrNullByUserId(principalUserId) ?: return null
+        return spontanUserService.getSpontanUserOrNullByUserId(user.id!!)
     }
 
     /**
@@ -43,8 +40,8 @@ class SpontanAccessService(
      */
     fun accessibleAssignmentIds(cityId: Int): Set<Long>? {
         val spontanUser = currentSpontanUser() ?: return null
-        return spontanGroupAssignmentRepository
-            .findByCityIdAndSpontanUserId(cityId, spontanUser.id!!)
+        return spontanGroupAssignmentService
+            .getAssignmentEntitiesByUser(cityId, spontanUser.id!!)
             .map { it.id }
             .toSet()
     }
@@ -54,9 +51,9 @@ class SpontanAccessService(
      */
     fun verifyGroupAccess(cityId: Int, groupId: GroupId) {
         val spontanUser = currentSpontanUser() ?: return
-        val assignment = spontanGroupAssignmentRepository
-            .findByCityIdAndProblemAndAgeAndLeague(cityId, groupId.problem, groupId.age, groupId.league)
-        if (assignment?.spontanUser?.id != spontanUser.id) {
+        val assignment = spontanGroupAssignmentService
+            .getAssignmentEntity(cityId, groupId.problem, groupId.age, groupId.league)
+        if (assignment.spontanUser?.id != spontanUser.id) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "No access to this group")
         }
     }
@@ -67,19 +64,9 @@ class SpontanAccessService(
      */
     fun verifyPerformanceAccess(performanceId: Int) {
         val spontanUser = currentSpontanUser() ?: return
-        val performance = performanceRepository.findById(performanceId).orElse(null)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Performance not found")
+        val assignment = spontanGroupAssignmentService.getAssignmentEntityFromPerformance(performanceId)
 
-        val cityId = performance.cityEntity.id
-        val groupId = GroupId(
-            problem = performance.problemEntity.id,
-            age = performance.ageEntity.id,
-            league = performance.league ?: ""
-        )
-
-        val assignment = spontanGroupAssignmentRepository
-            .findByCityIdAndProblemAndAgeAndLeague(cityId, groupId.problem, groupId.age, groupId.league)
-        if (assignment?.spontanUser?.id != spontanUser.id) {
+        if (assignment.spontanUser?.id != spontanUser.id) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "No access to this group")
         }
     }

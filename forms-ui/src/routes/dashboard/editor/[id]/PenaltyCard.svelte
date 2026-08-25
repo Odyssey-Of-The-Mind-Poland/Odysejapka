@@ -2,12 +2,12 @@
     import {Button} from "$lib/components/ui/button";
     import FormCard from "./FormCard.svelte";
     import PenaltyFormEntry from "./PenaltyFormEntry.svelte";
-    import type {FormEntryType, ProblemForm} from "./types";
+    import type {FormEntryType, FormData} from "./types";
 
     interface Props {
         title: string;
         entries: FormEntryType[];
-        form: ProblemForm;
+        form: FormData;
         onAddEntry: (category: 'penaltyEntries', type: 'PENALTY', penaltyType?: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA') => void;
         onRemoveEntry: (category: 'penaltyEntries', index: number) => void;
     }

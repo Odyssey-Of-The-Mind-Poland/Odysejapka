@@ -1,48 +1,47 @@
 package odyseja.odysejapka.timetable
 
-import odyseja.odysejapka.age.AgeEntity
-import odyseja.odysejapka.age.AgeRepository
+import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
-import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.city.CityService
-import odyseja.odysejapka.form.TeamResultRepository
-import odyseja.odysejapka.problem.ProblemEntity
-import odyseja.odysejapka.problem.ProblemRepository
-import odyseja.odysejapka.spontan.SpontanResultRepository
-import odyseja.odysejapka.stage.StageEntity
-import odyseja.odysejapka.stage.StageRepository
+import odyseja.odysejapka.problem.ProblemService
+import odyseja.odysejapka.stage.StageService
+import odyseja.odysejapka.form.TeamResultService
+import odyseja.odysejapka.spontan.SpontanResultService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TimeTableService(
-    private val timeTableRepository: PerformanceRepository,
-    private val problemRepository: ProblemRepository,
-    private val stageRepository: StageRepository,
-    private val ageRepository: AgeRepository,
-    private val teamResultRepository: TeamResultRepository,
-    private val spontanResultRepository: SpontanResultRepository,
+    private val performanceService: PerformanceService,
+    private val problemService: ProblemService,
+    private val ageService: AgeService,
     private val cityService: CityService,
-    private val changeService: ChangeService
-) {
+    private val changeService: ChangeService,
+    private val stageService: StageService,
+    private val teamResultService: TeamResultService,
+    private val spontanResultService: SpontanResultService
+    ) {
 
     fun getFinals(): List<Performance> {
-        return timeTableRepository.findAllByCityEntity_Id(0).map { it.toPerformance() }
+        val finals = cityService.getFinals()
+        return performanceService.getPerformanceEntitiesByCity(finals.id)
+            .map { it.toPerformance() }
     }
 
-    fun addPerformances(performances: List<Performance>, cityEntity: CityEntity): List<PerformanceEntity> {
-        val performanceIdsToDelete = timeTableRepository.findAllByCityEntity_Id(cityEntity.id).map { it.id }
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    fun addPerformances(performances: List<Performance>, cityId: Int): List<PerformanceEntity> {
+        val performanceIdsToDelete = performanceService.getPerformancesByCity(cityId).map { it.id }
         deleteResultsForPerformances(performanceIdsToDelete)
-        timeTableRepository.deleteByCityEntity(cityEntity)
-        val per: List<PerformanceEntity> = performances.map {
+        clearTimetableByCity(cityId)
+        val performanceEntities: List<PerformanceEntity> = performances.map {
             PerformanceEntity(
                 it.id,
-                cityEntity,
+                cityService.getCity(cityId),
                 it.team,
-                getProblem(it.problem),
-                getAge(it.age),
-                getStage(it.stage, it.city),
+                problemService.getProblem(it.problem),
+                ageService.getAge(it.age),
+                stageService.getOrCreateStageByNumber(it.city, it.stage),
                 it.performance,
                 it.spontan,
                 it.part,
@@ -53,21 +52,21 @@ class TimeTableService(
                 it.zspSheet
             )
         }
-        timeTableRepository.saveAll(per)
+        performanceService.savePerformances(performanceEntities)
 
         changeService.updateVersion()
-        return per
+        return performanceEntities
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun addPerformance(performance: Performance): PerformanceEntity {
-        val per = PerformanceEntity(
+        val performanceEntity = PerformanceEntity(
             performance.id,
-            getCity(performance.city),
+            cityService.getCityByName(performance.city),
             performance.team,
-            getProblem(performance.problem),
-            getAge(performance.age),
-            getStage(performance.stage, performance.city),
+            problemService.getProblem(performance.problem),
+            ageService.getAge(performance.age),
+            stageService.getOrCreateStageByNumber(performance.city, performance.stage),
             performance.performance,
             performance.spontan,
             performance.part,
@@ -77,110 +76,63 @@ class TimeTableService(
             performance.zspRow,
             performance.zspSheet
         )
-        timeTableRepository.save(per)
+        performanceService.savePerformance(performanceEntity)
 
         changeService.updateVersion()
-        return per
+        return performanceEntity
     }
 
+    @Transactional
     fun updatePerformance(performance: Performance) {
-        val pToEdit = timeTableRepository.findById(performance.id).get()
-        pToEdit.cityEntity = getCity(performance.city)
-        pToEdit.team = performance.team
-        pToEdit.problemEntity = getProblem(performance.problem)
-        pToEdit.ageEntity = getAge(performance.age)
-        pToEdit.stageEntity = getStage(performance.stage, performance.city)
-        pToEdit.performance = performance.performance
-        pToEdit.spontan = performance.spontan
-        timeTableRepository.save(pToEdit)
+        val performanceToEdit = performanceService.getPerformanceEntity(performance.id)
+
+        performanceToEdit.cityEntity = cityService.getCityByName(performance.city)
+        performanceToEdit.team = performance.team
+        performanceToEdit.problemEntity = problemService.getProblem(performance.problem)
+        performanceToEdit.ageEntity = ageService.getAge(performance.age)
+        performanceToEdit.stageEntity = stageService.getOrCreateStageByNumber(performance.city, performance.stage)
+        performanceToEdit.performance = performance.performance
+        performanceToEdit.spontan = performance.spontan
+
+        performanceService.savePerformance(performanceToEdit)
+        changeService.updateVersion()
     }
 
-    fun delPerformance(id: Int) {
+    @Transactional
+    fun deletePerformance(id: Int) {
         deleteResultsForPerformance(id)
-        timeTableRepository.deleteById(id)
-
+        performanceService.deletePerformance(id)
         changeService.updateVersion()
     }
 
     @Transactional
     fun clearTimetable() {
-        val performanceIds = timeTableRepository.findAll().mapNotNull { it?.id }
+        val performanceIds = performanceService.getAllPerformanceEntities()
+            .mapNotNull { it?.id }
         deleteResultsForPerformances(performanceIds)
-        timeTableRepository.deleteAll()
+        performanceService.deleteAllPerformances()
         changeService.updateVersion()
     }
 
     @Transactional
     fun clearTimetableByCity(cityId: Int) {
         val city = cityService.getCity(cityId)
-        val performanceIds = timeTableRepository.findAllByCityEntity_Id(cityId).map { it.id }
+        val performanceIds = performanceService.getPerformanceEntitiesByCity(cityId).map { it.id }
         deleteResultsForPerformances(performanceIds)
-        timeTableRepository.deleteByCityEntity(city)
+        performanceService.deletePerformancesByCity(city)
         changeService.updateVersion()
     }
 
-
-    fun getAge(age: Int): AgeEntity {
-        return ageRepository.findFirstById(age) ?: ageRepository.save(
-            AgeEntity(
-                age,
-                age.toString()
-            )
-        )
-    }
-
-    fun getStage(stageNumber: Int, cityName: String): StageEntity {
-        val city = getCity(cityName)
-        val stage = stageRepository.findFirstByNumberAndCityEntity(
-            stageNumber,
-            city
-        )
-
-        return stage ?: stageRepository.save(StageEntity(0, stageNumber, "Scena nr. $stage", city))
-    }
-
-    fun getCity(city: String): CityEntity {
-        return cityService.getCityByName(city)
-    }
-
-    fun getProblem(problem: Int): ProblemEntity {
-        return problemRepository.findFirstById(problem) ?: problemRepository.save(
-            ProblemEntity(
-                problem,
-                problem.toString()
-            )
-        )
-    }
-
-    fun getByCity(cityId: Int): List<Performance> {
-        return timeTableRepository.findAllByCityEntity_Id(cityId).map { it.toPerformance() }
-    }
-
-    @Transactional
-    fun deleteByCity(cityId: Int) {
-        val city = cityService.getCity(cityId)
-        val performanceIds = timeTableRepository.findAllByCityEntity_Id(cityId).map { it.id }
-        deleteResultsForPerformances(performanceIds)
-        timeTableRepository.deleteByCityEntity(city)
-    }
-
-    fun getPerformance(performanceId: Int): Performance {
-        return (timeTableRepository.findById(performanceId)
-            .orElseThrow { IllegalArgumentException("Performance $performanceId not found") }
-            ?.toPerformance() ?: IllegalArgumentException("Performance $performanceId not found")) as Performance
-    }
-
     private fun deleteResultsForPerformance(performanceId: Int) {
-        teamResultRepository.deleteByPerformanceId(performanceId)
-        spontanResultRepository.deleteByPerformanceId(performanceId)
+        teamResultService.deleteTeamResult(performanceId)
+        spontanResultService.deleteSpontanResult(performanceId)
     }
 
     private fun deleteResultsForPerformances(performanceIds: List<Int>) {
         if (performanceIds.isEmpty()) {
             return
         }
-
-        teamResultRepository.deleteAllByPerformanceIdIn(performanceIds)
-        spontanResultRepository.deleteAllByPerformanceIdIn(performanceIds)
+        teamResultService.deleteTeamResults(performanceIds)
+        spontanResultService.deleteSpontanResults(performanceIds)
     }
 }

@@ -59,7 +59,7 @@
             formData.append('cityId', String(cityId));
 
             // Route through BFF proxy — token is added server-side
-            const response = await fetch('/api/proxy/timeTable/csv', {
+            const response = await fetch('/api/proxy/timeTable/import/csv', {
                 method: 'POST',
                 body: formData,
             });

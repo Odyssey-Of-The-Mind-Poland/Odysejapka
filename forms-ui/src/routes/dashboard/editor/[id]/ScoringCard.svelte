@@ -3,12 +3,12 @@
     import FormCard from "./FormCard.svelte";
     import LongTermFormEntry from "./LongTermFormEntry.svelte";
     import SectionFormEntry from "./SectionFormEntry.svelte";
-    import type {FormEntryType, ProblemForm} from "./types";
+    import type {FormEntryType, FormData} from "./types";
 
     interface Props {
         title: string;
         entries: FormEntryType[];
-        form: ProblemForm;
+        form: FormData;
         onAddEntry: (category: 'dtEntries', type: 'SCORING' | 'SECTION') => void;
         onRemoveEntry: (category: 'dtEntries', index: number) => void;
     }

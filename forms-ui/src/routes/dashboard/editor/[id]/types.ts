@@ -1,4 +1,4 @@
-export type ProblemForm = {
+export type FormData = {
 	dtEntries: FormEntryType[];
 	styleEntries: FormEntryType[];
 	penaltyEntries: FormEntryType[];

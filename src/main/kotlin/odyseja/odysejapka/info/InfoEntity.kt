@@ -8,15 +8,15 @@ class InfoEntity(
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column()
-  val id: Int,
+  var id: Int,
   @Column()
-  val infoName: String,
+  var infoName: String,
   @Column(columnDefinition = "TEXT")
   var infoText: String,
   @ManyToOne(fetch = FetchType.LAZY)
-  val city: CityEntity,
+  var city: CityEntity,
   @ManyToOne(fetch = FetchType.LAZY)
-  val category: InfoCategoryEntity,
+  var category: InfoCategoryEntity,
   @Column()
   var sortNumber: Int,
   @Column(columnDefinition = "TEXT")

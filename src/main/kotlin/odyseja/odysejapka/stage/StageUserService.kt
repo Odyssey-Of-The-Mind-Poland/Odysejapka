@@ -2,7 +2,7 @@ package odyseja.odysejapka.stage
 
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.users.UserEntity
-import odyseja.odysejapka.users.UserRepository
+import odyseja.odysejapka.users.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,7 +16,7 @@ data class StageUserCredentials(
 @Service
 class StageUserService(
     private val stageUserRepository: StageUserRepository,
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val cityService: CityService
 ) {
     private val logger = LoggerFactory.getLogger(StageUserService::class.java)
@@ -25,10 +25,10 @@ class StageUserService(
     fun createStageUsers(cityId: Int, stages: Set<Int>) {
         val city = cityService.getCity(cityId)
         val citySlug = slugify(city.name)
-        stageUserRepository.deleteAllByCityId(cityId)
+        deleteStageUsersByCity(cityId)
 
         for (stage in stages) {
-            val existing = stageUserRepository.findByCityIdAndStage(cityId, stage)
+            val existing = getStageUserOrNull(cityId, stage)
             if (existing != null) {
                 logger.info("Stage user already exists for city {} stage {}", cityId, stage)
                 continue
@@ -39,7 +39,7 @@ class StageUserService(
             val displayName = "${city.name} Scena $stage"
 
             val userEntity = UserEntity.forLocalAuth(displayName, email, password)
-            val savedUser = userRepository.save(userEntity)
+            val savedUser = userService.addUserEntity(userEntity)
 
             val stageUser = StageUserEntity(
                 cityId = cityId,
@@ -54,12 +54,25 @@ class StageUserService(
 
     @Transactional(readOnly = true)
     fun getCredentials(cityId: Int, stage: Int): StageUserCredentials? {
-        val stageUser = stageUserRepository.findByCityIdAndStage(cityId, stage) ?: return null
-        val user = userRepository.findById(stageUser.userId).orElse(null) ?: return null
+        val stageUser = getStageUserOrNull(cityId, stage) ?: return null
+        val user = userService.getUserEntityOrNull(stageUser.userId) ?: return null
         return StageUserCredentials(
             email = user.email ?: return null,
             password = user.password ?: return null
         )
+    }
+
+    fun getStageUserOrNullByUserId(userId: Long): StageUserEntity? {
+        return stageUserRepository.findByUserId(userId)
+    }
+
+    @Transactional
+    fun deleteStageUsersByCity(cityId: Int) {
+        stageUserRepository.deleteAllByCityId(cityId)
+    }
+
+    private fun getStageUserOrNull(cityId: Int, stage: Int): StageUserEntity? {
+        return stageUserRepository.findByCityIdAndStage(cityId, stage)
     }
 
     private fun generatePassword(): String {

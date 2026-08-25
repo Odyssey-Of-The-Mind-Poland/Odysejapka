@@ -1,37 +1,45 @@
 package odyseja.odysejapka.dashboard
 
-import odyseja.odysejapka.stage.StageUserRepository
-import odyseja.odysejapka.timetable.PerformanceRepository
-import odyseja.odysejapka.users.UserRepository
-import org.springframework.http.HttpStatus
+import odyseja.odysejapka.exceptions.NoAccessException
+import odyseja.odysejapka.stage.StageUserService
+import odyseja.odysejapka.timetable.PerformanceService
+import odyseja.odysejapka.timetable.TimeTableService
+import odyseja.odysejapka.users.UserService
+import org.apache.http.auth.InvalidCredentialsException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 
 @Service
 class PerformanceAccessService(
-    private val performanceRepository: PerformanceRepository,
     private val userAccessService: UserAccessService,
-    private val userRepository: UserRepository,
-    private val stageUserRepository: StageUserRepository
+    private val userService: UserService,
+    private val stageUserService: StageUserService,
+    private val performanceService: PerformanceService
 ) {
 
     @Transactional(readOnly = true)
     fun checkAccess(principalUserId: String, performanceId: Int) {
         if (userAccessService.isAdmin()) return
 
-        val performance = performanceRepository.findById(performanceId).orElse(null)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val performance = performanceService.getPerformanceEntity(performanceId)
 
         if (userAccessService.hasProblemRole(performance.problemEntity.id)) return
 
-        val user = userRepository.findByUserId(principalUserId)
-            ?: throw ResponseStatusException(HttpStatus.FORBIDDEN)
-        val stageUser = stageUserRepository.findByUserId(user.id!!)
-            ?: throw ResponseStatusException(HttpStatus.FORBIDDEN)
+        val user = userService.getUserEntityOrNullByUserId(principalUserId)
+            ?: throw NoAccessException("Brak uprawnień do wyświetlania przedstawień")
+        val stageUser = stageUserService.getStageUserOrNullByUserId(user.id!!)
+            ?: throw NoAccessException("Brak uprawnień do wyświetlania przedstawień")
 
         if (stageUser.cityId != performance.cityEntity.id || stageUser.stage != performance.stageEntity.number) {
-            throw ResponseStatusException(HttpStatus.FORBIDDEN)
+            throw NoAccessException("Brak uprawnień do wyświetlenia tego przedstawienia")
         }
+    }
+
+    @Transactional(readOnly = true)
+    fun checkAccessByPrincipal(performanceId: Int, principal: Any?): String {
+        val userId = extractUserId(principal)
+            ?: throw InvalidCredentialsException("Nie rozpoznano użytkownika")
+        checkAccess(userId, performanceId)
+        return userId
     }
 }
