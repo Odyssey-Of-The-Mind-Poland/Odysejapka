@@ -14,5 +14,6 @@
     <include file="db/changelog/008-create-spontan-definitions-table.xml"/>
     <include file="db/changelog/012-insert-gad-cache-from-backup.xml"/>
     <include file="db/changelog/013-fix-change-id-sequence.xml"/>
+    <include file="db/changelog/015-drop-legacy-team-result-entries.xml"/>
 
 </databaseChangeLog>

@@ -1,6 +1,7 @@
 package odyseja.odysejapka.timetable
 
 import odyseja.odysejapka.city.CityEntity
+import odyseja.odysejapka.isForeigner
 import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.stage.StageEntity
 import java.time.LocalDate
@@ -74,8 +75,14 @@ class PerformanceEntity(
             age = ageEntity.id,
             stage = stageEntity.number,
             part = part,
-            league = league
+            league = league,
+            guest = isForeignTeam(),
+            day = performanceDay
         )
+    }
+
+    private fun isForeignTeam(): Boolean {
+        return isForeigner(cityEntity.name, team)
     }
 
     private fun getPerformanceDate(): LocalDate {

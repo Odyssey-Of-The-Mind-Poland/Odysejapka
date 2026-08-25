@@ -10,5 +10,7 @@ data class PerformanceGroup(
                    val age: Int,
                    val stage: Int,
                    val part: Int?,
-                   val league: String?)
+                   val league: String?,
+                   val guest: Boolean = false,
+                   val day: String)
 }

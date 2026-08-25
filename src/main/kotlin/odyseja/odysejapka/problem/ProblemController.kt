@@ -9,7 +9,7 @@ class ProblemController(private val problemService: ProblemService) {
 
     @GetMapping
     fun getProblems(): List<ProblemEntity?> {
-        return problemService.getProblems()
+        return problemService.getProblemsWithNewLines()
     }
 
     @Secured("ROLE_ADMINISTRATOR")

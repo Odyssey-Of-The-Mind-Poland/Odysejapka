@@ -1,6 +1,6 @@
 package odyseja.odysejapka.gad
 
-import odyseja.odysejapka.gad.TeamsGroupKey
+import odyseja.odysejapka.isForeigner
 import odyseja.odysejapka.timetable.Performance
 import org.apache.commons.lang3.StringUtils
 import kotlin.math.abs
@@ -158,11 +158,6 @@ data class Team(
     }
 
     fun isForeigner(): Boolean {
-        for (foreigner in listOf("spain", "china", "slovakia")) {
-            if (city.lowercase().contains(foreigner) || teamName.lowercase().contains(foreigner)) {
-                return true
-            }
-        }
-        return false
+        return isForeigner(city, teamName)
     }
 }

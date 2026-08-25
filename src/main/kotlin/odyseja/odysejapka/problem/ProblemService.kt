@@ -11,8 +11,19 @@ class ProblemService(
     private val changeService: ChangeService
 ) {
 
+    fun getProblemsWithNewLines(): List<ProblemEntity?> {
+        // Lappka need \n to split problem names
+        return problemRepository.findAll().sortedBy { it.id }.map { problem ->
+            problem?.let { ProblemEntity(it.id, it.name.replace("\\n", "\n")) }
+        }
+    }
+
     fun getProblems(): List<ProblemEntity?> {
-        return problemRepository.findAll().sortedBy { it.id }
+        return problemRepository.findAll().sortedBy { it.id }.map { problem ->
+            problem?.let { ProblemEntity(it.id, it.name
+                .replace("\\n", "")
+                .replace("\n", "")) }
+        }
     }
 
     @Transactional

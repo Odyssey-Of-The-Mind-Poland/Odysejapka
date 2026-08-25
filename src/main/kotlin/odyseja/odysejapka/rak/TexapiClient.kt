@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.exchange
 import java.nio.charset.StandardCharsets
 
 data class TexapiCompileRequest(val content: String)
@@ -48,7 +49,7 @@ class TexapiClient(
         }
         val url = "$baseUrl/api/latex/compile/file?compiler=lualatex&mainFile=main.tex"
         val request = HttpEntity(body, headers)
-        val response = restTemplate.exchange(url, HttpMethod.POST, request, String::class.java)
+        val response = restTemplate.exchange<String>(url, HttpMethod.POST, request)
         val responseBody = response.body ?: throw IllegalStateException("Empty response from Texapi")
         val parsed = objectMapper.readValue(responseBody, TexapiCompileResponse::class.java)
         if (parsed.status == "error") {

@@ -5,6 +5,7 @@ export type Group = {
     stage: number;
     part: number;
     league: string;
+    day: string;
 }
 
 export function getGroupTitle(group: Group): string {
@@ -16,10 +17,17 @@ export function getGroupTitle(group: Group): string {
     if (group.league) {
         name = `${name} • Liga ${group.league}`;
     }
+
+    if (group.day) {
+        name = `${name} • ${group.day}`;
+    }
     return name;
 }
 
 export function compareGroups(a: Group, b: Group): number {
+    if (a.day < b.day) return -1;
+    if (a.day > b.day) return 1;
+
     if (a.problem < b.problem) return -1;
     if (a.problem > b.problem) return 1;
 

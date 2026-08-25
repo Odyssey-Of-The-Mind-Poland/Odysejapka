@@ -23,8 +23,17 @@ class LatexGeneratorService(
         return texapiClient.compileFilesToPdf(latex, fontFiles)
     }
 
+    fun generateShortPdf(teams: List<Team>, isRegion: Boolean = false, contestName: String? = null): ByteArray {
+        val latex = generateLatex(teams, isRegion, contestName, 4)
+        val fontFiles = loadFontFiles()
+        require(fontFiles.any { it.first == "Ubuntu-Regular.ttf" }) {
+            "Ubuntu fonts required for LaTeX PDF. Add static/fonts/Ubuntu-Regular.ttf (and Bold/Italic/BoldItalic) to resources."
+        }
+        return texapiClient.compileFilesToPdf(latex, fontFiles)
+    }
+
     private fun loadFontFiles(): List<Pair<String, ByteArray>> {
-        val fontNames = listOf("Ubuntu-Regular.ttf", "Ubuntu-Bold.ttf", "Ubuntu-Italic.ttf", "Ubuntu-BoldItalic.ttf")
+        val fontNames = listOf("Ubuntu-Regular.ttf", "Ubuntu-Bold.ttf", "Ubuntu-Italic.ttf", "Ubuntu-BoldItalic.ttf", "UbuntuCondensed-Regular.ttf")
         return fontNames.mapNotNull { name ->
             val resource = ClassPathResource("static/fonts/$name")
             if (!resource.exists()) return@mapNotNull null
@@ -32,10 +41,14 @@ class LatexGeneratorService(
         }
     }
 
-    fun generateLatex(teams: List<Team>, isRegion: Boolean = false, contestName: String? = null): String {
+    fun generateLatex(teams: List<Team>, isRegion: Boolean = false, contestName: String? = null, maxPlace: Int = 999): String {
         val initialGroups = RakCalculator().calculateScores(teams, isRegion)
             .sortedWith(compareBy({ it.problem }, { it.division }))
-        val splitGroups = initialGroups.flatMap { splitLargeGroup(it) }
+        val splitGroups = initialGroups.flatMap { splitLargeGroup(it) }.map { group ->
+            group.copy(
+                teamScores = group.teamScores.filter { it.place <= maxPlace }
+            )
+        }.filter { it.teamScores.isNotEmpty() }
         val problems = problemService.getProblems().filterNotNull()
         val context = buildContext(splitGroups, problems, contestName)
         val templateSource = ClassPathResource("templates/latex/results.tex").inputStream.reader().readText()
@@ -81,8 +94,8 @@ class LatexGeneratorService(
     }
 
     private fun toLatexRow(score: FinalTeamScore, problem: Int): LatexRow {
-        val placeContent = if (score.team.ranatra) "${score.place}\\\\[1pt]{\\color{orange}[RF]}" else "${score.place}"
-        val placeStyle = if (score.isWinner) "{\\color{blue}\\bfseries $placeContent}" else placeContent
+        val placeNumber = if (score.isWinner) "{\\color{blue}\\bfseries ${score.place}}" else "${score.place}"
+        val placeStyle = if (score.team.ranatra) "\\shortstack{$placeNumber\\\\{\\color{orange}\\scriptsize[RF]}}" else placeNumber
         val teamStyle = if (score.isWinner) "{\\color{blue}\\bfseries ${escapeLatex(score.team.shortTeamName)}}" else escapeLatex(score.team.shortTeamName)
         val cityStyle = if (score.isWinner) "{\\color{blue}\\bfseries ${escapeLatex(score.team.city)}}" else "{\\color{gray} ${escapeLatex(score.team.city)}}"
         val penaltyStyle = if ((score.team.penaltyScore ?: 0f) != 0f) "\\textcolor{red}{${formatInt(score.team.penaltyScore!!)}}" else "{\\color{gray} ${formatInt(score.team.penaltyScore ?: 0f)}}"
