@@ -2,6 +2,7 @@ package odyseja.odysejapka.dashboard
 
 import odyseja.odysejapka.exceptions.NoAccessException
 import odyseja.odysejapka.stage.StageUserService
+import odyseja.odysejapka.timetable.PerformanceService
 import odyseja.odysejapka.timetable.TimeTableService
 import odyseja.odysejapka.users.UserService
 import org.apache.http.auth.InvalidCredentialsException
@@ -10,17 +11,17 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PerformanceAccessService(
-    private val timeTableService: TimeTableService,
     private val userAccessService: UserAccessService,
     private val userService: UserService,
-    private val stageUserService: StageUserService
+    private val stageUserService: StageUserService,
+    private val performanceService: PerformanceService
 ) {
 
     @Transactional(readOnly = true)
     fun checkAccess(principalUserId: String, performanceId: Int) {
         if (userAccessService.isAdmin()) return
 
-        val performance = timeTableService.getPerformanceEntity(performanceId)
+        val performance = performanceService.getPerformanceEntity(performanceId)
 
         if (userAccessService.hasProblemRole(performance.problemEntity.id)) return
 

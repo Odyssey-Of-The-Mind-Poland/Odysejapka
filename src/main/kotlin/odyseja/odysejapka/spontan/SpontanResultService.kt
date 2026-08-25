@@ -1,6 +1,7 @@
 package odyseja.odysejapka.spontan
 
-import odyseja.odysejapka.timetable.TimeTableService
+import odyseja.odysejapka.change.ChangeService
+import odyseja.odysejapka.timetable.PerformanceService
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -10,7 +11,8 @@ import org.springframework.web.server.ResponseStatusException
 class SpontanResultService(
     private val spontanResultRepository: SpontanResultRepository,
     private val spontanGroupAssignmentService: SpontanGroupAssignmentService,
-    private val timeTableService: TimeTableService
+    private val changeService: ChangeService,
+    private val performanceService: PerformanceService
 ) {
 
     private val scoreCalculator = SpontanScoreCalculator()
@@ -22,7 +24,7 @@ class SpontanResultService(
         val definition = assignment.spontanDefinition
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No spontan definition assigned")
 
-        val performances = timeTableService.getPerformanceEntitiesByCity(cityId)
+        val performances = performanceService.getPerformanceEntitiesByCity(cityId)
             .filter {
                 !it.isExcludedFromScoring() &&
                 it.problemEntity.id == groupId.problem &&
@@ -59,8 +61,8 @@ class SpontanResultService(
     }
 
     @Transactional
-    fun setResults(performanceId: Int, request: SpontanResultsRequest): SpontanTeamResult {
-        val performance = timeTableService.getPerformance(performanceId)
+    fun setResult(performanceId: Int, request: SpontanResultsRequest): SpontanTeamResult {
+        val performance = performanceService.getPerformance(performanceId)
         val assignment = spontanGroupAssignmentService.getAssignmentEntityFromPerformance(performanceId)
 
         val definition = assignment.spontanDefinition
@@ -96,4 +98,15 @@ class SpontanResultService(
         return spontanResultRepository.findAllByPerformanceIdIn(performanceIds)
     }
 
+    @Transactional
+    fun deleteSpontanResult(performanceId: Int) {
+        spontanResultRepository.deleteByPerformanceId(performanceId)
+        changeService.updateVersion()
+    }
+
+    @Transactional
+    fun deleteSpontanResults(performanceIds: List<Int>) {
+        spontanResultRepository.deleteAllByPerformanceIdIn(performanceIds)
+        changeService.updateVersion()
+    }
 }

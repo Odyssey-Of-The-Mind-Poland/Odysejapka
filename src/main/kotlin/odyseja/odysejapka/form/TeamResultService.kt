@@ -1,12 +1,14 @@
 package odyseja.odysejapka.form
 
 import jakarta.persistence.EntityNotFoundException
+import odyseja.odysejapka.change.ChangeService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TeamResultService(
     private val teamResultRepository: TeamResultRepository,
+    private val changeService: ChangeService
 ) {
 
     fun getTeamResult(performanceId: Int): TeamResultEntity {
@@ -21,7 +23,7 @@ class TeamResultService(
     }
 
     @Transactional
-    fun setTeamResults(performanceId: Int, request: PerformanceResultsRequest) {
+    fun setTeamResult(performanceId: Int, request: PerformanceResultsRequest) {
         val entity = try {
             getTeamResult(performanceId)
         } catch (_: EntityNotFoundException) {
@@ -33,6 +35,22 @@ class TeamResultService(
         entity.performanceAt = request.performanceAt.ifBlank { null }
         entity.performanceTime = request.performanceTime.ifBlank { null }
         teamResultRepository.save(entity)
+        changeService.updateVersion()
+    }
+
+    @Transactional
+    fun deleteTeamResult(performanceId: Int) {
+        teamResultRepository.deleteByPerformanceId(performanceId)
+        changeService.updateVersion()
+    }
+
+    @Transactional
+    fun deleteTeamResults(performanceIds: List<Int>) {
+        if (performanceIds.isEmpty()) {
+            return
+        }
+        teamResultRepository.deleteAllByPerformanceIdIn(performanceIds)
+        changeService.updateVersion()
     }
 
     @Transactional

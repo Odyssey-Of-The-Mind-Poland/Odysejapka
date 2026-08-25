@@ -94,7 +94,7 @@ class SpontanController(
         @RequestBody request: SpontanResultsRequest
     ): SpontanTeamResult {
         spontanAccessService.verifyPerformanceAccess(performanceId)
-        return spontanResultService.setResults(performanceId, request)
+        return spontanResultService.setResult(performanceId, request)
     }
 
     // Spontan user management endpoints

@@ -2,6 +2,7 @@ package odyseja.odysejapka.form
 
 import odyseja.odysejapka.dashboard.PerformanceAccessService
 import odyseja.odysejapka.dashboard.UserAccessService
+import odyseja.odysejapka.timetable.PerformanceService
 import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -25,7 +26,8 @@ class FormController(
     private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService,
     private val performanceAccessService: PerformanceAccessService,
     private val userAccessService: UserAccessService,
-    private val timeTableService: TimeTableService
+    private val timeTableService: TimeTableService,
+    private val performanceService: PerformanceService
 ) {
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
@@ -80,7 +82,7 @@ class FormController(
         @AuthenticationPrincipal principal: Any?
     ) {
         performanceAccessService.checkAccessByPrincipal(performanceId, principal)
-        val performance = timeTableService.getPerformanceEntity(performanceId)
+        val performance = performanceService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN)
@@ -94,7 +96,7 @@ class FormController(
         @AuthenticationPrincipal principal: Any?
     ): Map<String, Boolean> {
         performanceAccessService.checkAccessByPrincipal(performanceId, principal)
-        val performance = timeTableService.getPerformanceEntity(performanceId)
+        val performance = performanceService.getPerformanceEntity(performanceId)
         val problem = performance.problemEntity.id
         if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN)

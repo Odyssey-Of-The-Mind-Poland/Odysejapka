@@ -12,17 +12,18 @@ class TimeTableController(
     private val timeTableService: TimeTableService,
     private val zspImportService: ZspImportService,
     private val csvImportService: CsvImportService,
-    private val performanceGroupService: PerformanceGroupService
+    private val performanceGroupService: PerformanceGroupService,
+    private val performanceService: PerformanceService
     ) {
 
     @GetMapping
     fun getPerformances(@RequestParam(required = false) cityId: Int?): List<Performance> {
-        return cityId?.let { timeTableService.getPerformancesByCity(cityId) } ?: timeTableService.getFinals()
+        return cityId?.let { performanceService.getPerformancesByCity(cityId) } ?: timeTableService.getFinals()
     }
 
     @GetMapping("/{performanceId}")
     fun getPerformance(@PathVariable performanceId: Int): Performance {
-        return timeTableService.getPerformance(performanceId)
+        return performanceService.getPerformance(performanceId)
     }
 
     @PostMapping("/import/csv")

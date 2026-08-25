@@ -2,6 +2,7 @@ package odyseja.odysejapka.spontan
 
 import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.city.CityService
+import odyseja.odysejapka.timetable.PerformanceService
 import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -10,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 class SpontanGroupAssignmentService(
     private val spontanGroupAssignmentRepository: SpontanGroupAssignmentRepository,
     private val cityService: CityService,
-    private val timeTableService: TimeTableService
+    private val performanceService: PerformanceService
 ) {
     fun getAssignmentEntity(cityId: Int, problem: Int, age: Int, league: String): SpontanGroupAssignmentEntity {
         return spontanGroupAssignmentRepository.findByCityIdAndProblemAndAgeAndLeague(cityId, problem, age, league)
@@ -23,7 +24,7 @@ class SpontanGroupAssignmentService(
     }
 
     fun getAssignmentEntityFromPerformance(performanceId: Int): SpontanGroupAssignmentEntity {
-        val performance = timeTableService.getPerformanceEntity(performanceId)
+        val performance = performanceService.getPerformanceEntity(performanceId)
 
         val cityId = performance.cityEntity.id
         val groupId = GroupId(

@@ -5,35 +5,36 @@ import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.problem.ProblemService
 import odyseja.odysejapka.stage.StageService
-import odyseja.odysejapka.form.TeamResultRepository
-import odyseja.odysejapka.spontan.SpontanResultRepository
+import odyseja.odysejapka.form.TeamResultService
+import odyseja.odysejapka.spontan.SpontanResultService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TimeTableService(
-    private val timeTableRepository: PerformanceRepository,
+    private val performanceService: PerformanceService,
     private val problemService: ProblemService,
     private val ageService: AgeService,
     private val cityService: CityService,
     private val changeService: ChangeService,
     private val stageService: StageService,
-    private val teamResultRepository: TeamResultRepository,
-    private val spontanResultRepository: SpontanResultRepository
+    private val teamResultService: TeamResultService,
+    private val spontanResultService: SpontanResultService
     ) {
 
     fun getFinals(): List<Performance> {
         val finals = cityService.getFinals()
-        return getPerformanceEntitiesByCity(finals.id).map { it.toPerformance() }
+        return performanceService.getPerformanceEntitiesByCity(finals.id)
+            .map { it.toPerformance() }
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun addPerformances(performances: List<Performance>, cityId: Int): List<PerformanceEntity> {
-        val performanceIdsToDelete = getPerformancesByCity(cityId).map { it.id }
+        val performanceIdsToDelete = performanceService.getPerformancesByCity(cityId).map { it.id }
         deleteResultsForPerformances(performanceIdsToDelete)
         clearTimetableByCity(cityId)
-        val per: List<PerformanceEntity> = performances.map {
+        val performanceEntities: List<PerformanceEntity> = performances.map {
             PerformanceEntity(
                 it.id,
                 cityService.getCity(cityId),
@@ -51,15 +52,15 @@ class TimeTableService(
                 it.zspSheet
             )
         }
-        timeTableRepository.saveAll(per)
+        performanceService.savePerformances(performanceEntities)
 
         changeService.updateVersion()
-        return per
+        return performanceEntities
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun addPerformance(performance: Performance): PerformanceEntity {
-        val per = PerformanceEntity(
+        val performanceEntity = PerformanceEntity(
             performance.id,
             cityService.getCityByName(performance.city),
             performance.team,
@@ -75,86 +76,63 @@ class TimeTableService(
             performance.zspRow,
             performance.zspSheet
         )
-        timeTableRepository.save(per)
+        performanceService.savePerformance(performanceEntity)
 
         changeService.updateVersion()
-        return per
+        return performanceEntity
     }
 
     @Transactional
     fun updatePerformance(performance: Performance) {
-        val pToEdit = timeTableRepository.findFirstById(performance.id)
-            ?: throw EntityNotFoundException("Nie znaleziono przedstawienia o ID ${performance.id}")
+        val performanceToEdit = performanceService.getPerformanceEntity(performance.id)
 
-        pToEdit.cityEntity = cityService.getCityByName(performance.city)
-        pToEdit.team = performance.team
-        pToEdit.problemEntity = problemService.getProblem(performance.problem)
-        pToEdit.ageEntity = ageService.getAge(performance.age)
-        pToEdit.stageEntity = stageService.getOrCreateStageByNumber(performance.city, performance.stage)
-        pToEdit.performance = performance.performance
-        pToEdit.spontan = performance.spontan
-        timeTableRepository.save(pToEdit)
+        performanceToEdit.cityEntity = cityService.getCityByName(performance.city)
+        performanceToEdit.team = performance.team
+        performanceToEdit.problemEntity = problemService.getProblem(performance.problem)
+        performanceToEdit.ageEntity = ageService.getAge(performance.age)
+        performanceToEdit.stageEntity = stageService.getOrCreateStageByNumber(performance.city, performance.stage)
+        performanceToEdit.performance = performance.performance
+        performanceToEdit.spontan = performance.spontan
+
+        performanceService.savePerformance(performanceToEdit)
         changeService.updateVersion()
     }
 
     @Transactional
     fun deletePerformance(id: Int) {
-        if (!timeTableRepository.existsById(id))
-            throw EntityNotFoundException("Nie znaleziono przedstawienia o ID $id")
         deleteResultsForPerformance(id)
-        timeTableRepository.deleteById(id)
+        performanceService.deletePerformance(id)
         changeService.updateVersion()
     }
 
     @Transactional
     fun clearTimetable() {
-        val performanceIds = timeTableRepository.findAll().mapNotNull { it?.id }
+        val performanceIds = performanceService.getAllPerformanceEntities()
+            .mapNotNull { it?.id }
         deleteResultsForPerformances(performanceIds)
-        timeTableRepository.deleteAll()
+        performanceService.deleteAllPerformances()
         changeService.updateVersion()
     }
 
     @Transactional
     fun clearTimetableByCity(cityId: Int) {
         val city = cityService.getCity(cityId)
-        val performanceIds = timeTableRepository.findAllByCityEntity_Id(cityId).map { it.id }
+        val performanceIds = performanceService.getPerformanceEntitiesByCity(cityId).map { it.id }
         deleteResultsForPerformances(performanceIds)
-        timeTableRepository.deleteByCityEntity(city)
+        performanceService.deletePerformancesByCity(city)
         changeService.updateVersion()
     }
 
-    fun getPerformanceEntitiesByCity(cityId: Int): List<PerformanceEntity> {
-        return timeTableRepository.findAllByCityEntityId(cityId)
-    }
-
-    fun getAllPerformanceEntities(): Iterable<PerformanceEntity?> {
-        return timeTableRepository.findAll()
-    }
-
-    fun getPerformancesByCity(cityId: Int): List<Performance> {
-        return getPerformanceEntitiesByCity(cityId).map { it.toPerformance() }
-    }
-
-    fun getPerformanceEntity(performanceId: Int): PerformanceEntity {
-        val performance = timeTableRepository.findFirstById(performanceId)
-            ?: throw EntityNotFoundException("Nie znaleziono przedstawienia o ID $performanceId")
-        return performance
-    }
-
-    fun getPerformance(performanceId: Int): Performance {
-        return getPerformanceEntity(performanceId).toPerformance()
-    }
-
     private fun deleteResultsForPerformance(performanceId: Int) {
-        teamResultRepository.deleteByPerformanceId(performanceId)
-        spontanResultRepository.deleteByPerformanceId(performanceId)
+        teamResultService.deleteTeamResult(performanceId)
+        spontanResultService.deleteSpontanResult(performanceId)
     }
 
     private fun deleteResultsForPerformances(performanceIds: List<Int>) {
         if (performanceIds.isEmpty()) {
             return
         }
-        teamResultRepository.deleteAllByPerformanceIdIn(performanceIds)
-        spontanResultRepository.deleteAllByPerformanceIdIn(performanceIds)
+        teamResultService.deleteTeamResults(performanceIds)
+        spontanResultService.deleteSpontanResults(performanceIds)
     }
 }
