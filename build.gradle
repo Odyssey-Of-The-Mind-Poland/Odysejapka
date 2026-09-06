@@ -10,6 +10,8 @@ plugins {
 group = 'ovh.snet.grzybek'
 version = '0.0.1-SNAPSHOT'
 
+ext['testcontainers.version'] = '1.21.4'
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -52,7 +54,7 @@ dependencies {
 
     runtimeOnly 'org.postgresql:postgresql'
 
-    testImplementation("org.testcontainers:postgresql:1.21.4")
+    testImplementation("org.testcontainers:postgresql")
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
