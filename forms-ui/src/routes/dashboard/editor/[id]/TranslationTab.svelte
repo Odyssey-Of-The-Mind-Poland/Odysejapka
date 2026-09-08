@@ -43,7 +43,7 @@
                         <div class="flex flex-col gap-1">
                             <div class="flex items-center gap-3">
                                 <span class="text-sm font-semibold text-muted-foreground min-w-[2rem]">{displayIndex}.</span>
-                                <div class="flex-1 grid grid-cols-2 gap-3 items-center">
+                                <div class="flex-1 grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-3 sm:items-center">
                                     <div class="text-sm font-medium truncate" title={entry.name}>{entry.name || '(brak nazwy)'}</div>
                                     <Input.Input
                                         type="text"
@@ -59,7 +59,7 @@
                                         {@const nestedIndex = formatSortIndex(nested, displayIndex)}
                                         <div class="flex items-center gap-3">
                                             <span class="text-xs font-semibold text-muted-foreground min-w-[2.5rem]">{nestedIndex}.</span>
-                                            <div class="flex-1 grid grid-cols-2 gap-3 items-center">
+                                            <div class="flex-1 grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-3 sm:items-center">
                                                 <div class="text-sm truncate" title={nested.name}>{nested.name || '(brak nazwy)'}</div>
                                                 <Input.Input
                                                     type="text"
@@ -75,7 +75,7 @@
                                                     {@const deepIndex = formatSortIndex(deep, nestedIndex)}
                                                     <div class="flex items-center gap-3">
                                                         <span class="text-xs font-semibold text-muted-foreground min-w-[3rem]">{deepIndex}.</span>
-                                                        <div class="flex-1 grid grid-cols-2 gap-3 items-center">
+                                                        <div class="flex-1 grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-3 sm:items-center">
                                                             <div class="text-sm truncate" title={deep.name}>{deep.name || '(brak nazwy)'}</div>
                                                             <Input.Input
                                                                 type="text"
@@ -113,7 +113,7 @@
                         {@const displayIndex = (i + 1).toString()}
                         <div class="flex items-center gap-3">
                             <span class="text-sm font-semibold text-muted-foreground min-w-[2rem]">{displayIndex}.</span>
-                            <div class="flex-1 grid grid-cols-2 gap-3 items-center">
+                            <div class="flex-1 grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-3 sm:items-center">
                                 <div class="text-sm font-medium truncate" title={entry.name}>{entry.name || '(brak nazwy)'}</div>
                                 <Input.Input
                                     type="text"
@@ -144,7 +144,7 @@
                         {@const displayIndex = (i + 1).toString()}
                         <div class="flex items-center gap-3">
                             <span class="text-sm font-semibold text-muted-foreground min-w-[2rem]">{displayIndex}.</span>
-                            <div class="flex-1 grid grid-cols-2 gap-3 items-center">
+                            <div class="flex-1 grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-3 sm:items-center">
                                 <div class="text-sm font-medium truncate" title={entry.name}>{entry.name || '(brak nazwy)'}</div>
                                 <Input.Input
                                     type="text"

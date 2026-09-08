@@ -55,14 +55,14 @@
         </Collapsible.Trigger>
         <Collapsible.Content>
             <div class="flex flex-col gap-4 p-2">
-        <div class="flex items-center gap-4">
+        <div class="flex flex-wrap items-center gap-4">
             {#if entry.scoring}
                 <ScoringTypeSelect bind:value={entry.scoring.scoringType} />
             {/if}
             <EntryNameInput bind:value={entry.name} id={entry.id} />
         </div>
         {#if entry.scoring}
-            <div class="flex items-center gap-4">
+            <div class="flex flex-wrap items-center gap-4">
                 {#if isSubjective}
                     <SubjectiveRangeSelect bind:scoring={entry.scoring} />
                 {/if}

@@ -72,7 +72,7 @@
         </Collapsible.Trigger>
         <Collapsible.Content>
             <div class="flex flex-col gap-4 p-2">
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center gap-4">
                     <EntryTypeSelect bind:value={entry.type}/>
                     <EntryNameInput bind:value={entry.name} id={entry.id}/>
                 </div>
