@@ -42,24 +42,25 @@
 </script>
 
 <div class="flex flex-col gap-4 h-full">
-    <div class="flex items-center justify-between">
-        <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex gap-1 overflow-x-auto rounded-lg bg-muted p-1 w-full sm:w-fit [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {#if !isSpontan}
                 <button
-                        class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors {activeTab === 'dt' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}"
+                        class="flex-1 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors sm:flex-none sm:py-1.5 {activeTab === 'dt' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}"
                         onclick={() => goto(`/dashboard/competitions/${cityId}/dt`)}
                 >
                     Problemy DT
                 </button>
             {/if}
             <button
-                    class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors {activeTab === 'spontany' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}"
+                    class="flex-1 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors sm:flex-none sm:py-1.5 {activeTab === 'spontany' ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}"
                     onclick={() => goto(`/dashboard/competitions/${cityId}/spontany`)}
             >
                 Spontany
             </button>
         </div>
-        <div class="flex items-center gap-2">
+        <!-- RequirePermission renders no wrapper, so these target the buttons themselves. -->
+        <div class="flex items-center gap-2 [&>*]:flex-1 sm:[&>*]:flex-none">
             <RequirePermission role="ADMINISTRATOR">
                 {#if activeTab === 'dt'}
                     <Button variant="outline" size="sm" onclick={() => goto('/dashboard/editor')}>
