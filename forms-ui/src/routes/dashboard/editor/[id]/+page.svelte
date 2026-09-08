@@ -63,15 +63,15 @@
 {:else if formQuery.isPending || !form}
     <Spinner size="sm"/>
 {:else}
-    <div class="flex flex-col gap-6 p-6">
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Edytor Formularza - Problem {problem}</h1>
-            <Button onclick={save}>Zapisz</Button>
+    <div class="flex flex-col gap-6 p-0 sm:p-6">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 class="text-xl font-bold sm:text-2xl">Edytor Formularza - Problem {problem}</h1>
+            <Button class="w-full sm:w-auto" onclick={save}>Zapisz</Button>
         </div>
 
-        <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
+        <div class="flex gap-1 overflow-x-auto rounded-lg bg-muted p-1 w-full sm:w-fit [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button
-                class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline cursor-pointer
+                class="flex-1 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors no-underline cursor-pointer sm:flex-none sm:py-1.5
                     {activeTab === 'editor'
                         ? 'bg-background text-foreground shadow-sm'
                         : 'text-muted-foreground hover:text-foreground'}"
@@ -80,7 +80,7 @@
                 Formularz
             </button>
             <button
-                class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline cursor-pointer
+                class="flex-1 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors no-underline cursor-pointer sm:flex-none sm:py-1.5
                     {activeTab === 'translation'
                         ? 'bg-background text-foreground shadow-sm'
                         : 'text-muted-foreground hover:text-foreground'}"

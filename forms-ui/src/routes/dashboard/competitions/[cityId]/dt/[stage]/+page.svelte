@@ -224,12 +224,12 @@
             <p class="text-sm text-muted-foreground mt-1">{String(performanceGroupsQuery.error)}</p>
         </div>
     {:else}
-        <div class="flex items-center justify-between">
-            <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex gap-1 overflow-x-auto rounded-lg bg-muted p-1 w-full sm:w-fit [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {#each stages as stage (stage)}
                     <a
                             href={stageUrl(stage)}
-                            class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors no-underline
+                            class="shrink-0 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors no-underline sm:py-1.5
                                 {activeStage === stage
                                     ? 'bg-background text-foreground shadow-sm'
                                     : 'text-muted-foreground hover:text-foreground'}"
@@ -238,7 +238,7 @@
                     </a>
                 {/each}
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 [&>*]:flex-1 sm:[&>*]:flex-none">
                 <RequirePermission role="ADMINISTRATOR">
                     <CsvUploadDialog {cityId}/>
                 </RequirePermission>
