@@ -13,9 +13,10 @@
         objectiveBucketName: string;
         value?: number | string | null;
         disabled?: boolean;
+        label?: string;
     }
 
-    let { objectiveBucketName, value = $bindable(), disabled = false }: Props = $props();
+    let { objectiveBucketName, value = $bindable(), disabled = false, label }: Props = $props();
 
     let bucketsQuery = createOdysejaQuery<ObjectiveBucket[]>({
         queryKey: ['objective-buckets'],
@@ -38,14 +39,19 @@
 </script>
 
 <div class="flex flex-col gap-1">
-    <span class="text-[10px] text-muted-foreground leading-none">Punkty</span>
+    <span class="text-[10px] text-muted-foreground leading-none">
+        <!-- Below `lg` the shared judge-badge header is hidden, so each field
+             has to name its own judge; from `lg` up the badge row does it. -->
+        <span class="lg:hidden">{label ?? 'Punkty'}</span>
+        <span class="hidden lg:inline">Punkty</span>
+    </span>
     <Select.Root
         type="single"
         value={stringValue}
         onValueChange={handleValueChange}
         disabled={disabled}
     >
-        <Select.Trigger class="w-[5.5rem] h-8 text-sm" disabled={disabled}>
+        <Select.Trigger class="w-full h-10 text-sm lg:w-[5.5rem] lg:h-8" disabled={disabled}>
             {stringValue ?? 'Punkty'}
         </Select.Trigger>
         <Select.Content>

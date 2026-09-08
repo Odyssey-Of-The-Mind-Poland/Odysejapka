@@ -133,10 +133,10 @@
     });
 </script>
 
-<div class="flex flex-col gap-8">
+<div class="flex flex-col gap-8 pb-20 sm:pb-0">
     <!-- Header -->
     <div class="rounded-xl border bg-card shadow-sm overflow-hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 py-4 sm:px-6 sm:py-5">
             <div class="flex items-center gap-4">
                 <button
                     class="flex items-center justify-center size-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shrink-0 cursor-pointer"
@@ -165,7 +165,9 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 shrink-0">
+            <div
+                class="fixed inset-x-0 bottom-0 z-40 flex items-center gap-2 border-t bg-background/95 px-4 py-3 backdrop-blur [&>*]:flex-1 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:static sm:z-auto sm:border-0 sm:bg-transparent sm:p-0 sm:pb-0 sm:backdrop-blur-none sm:shrink-0 sm:[&>*]:flex-none"
+            >
                 <Button
                     variant="outline"
                     onclick={() => window.location.href = `${teamUrl}/preview`}
@@ -221,8 +223,8 @@
     {:else if formData}
         <div class="flex flex-col gap-8">
             <!-- Performance time and duration at top -->
-            <div class="rounded-xl border bg-card shadow-sm p-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="rounded-xl border bg-card shadow-sm p-4 sm:p-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div class="flex flex-col gap-2">
                         <Label.Root for="performanceAt">Godzina występu</Label.Root>
                         <Input.Input
