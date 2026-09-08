@@ -107,8 +107,9 @@
         {/if}
         <div class={nested ? "flex flex-col divide-y divide-border" : "rounded-xl border bg-card shadow-sm overflow-hidden divide-y divide-border"}>
             {#if showHeader}
-                <!-- Judge badges row aligned with selects -->
-                <div class="flex items-start gap-4 px-5 py-2.5 bg-muted/40">
+                <!-- Judge badges row aligned with selects. Hidden below `lg`,
+                     where each field labels its own judge instead. -->
+                <div class="hidden items-start gap-4 px-5 py-2.5 bg-muted/40 lg:flex">
                     <div class="flex-1 min-w-0"></div>
                     <div class="flex items-start gap-2 shrink-0">
                         {#each allColumns as column}

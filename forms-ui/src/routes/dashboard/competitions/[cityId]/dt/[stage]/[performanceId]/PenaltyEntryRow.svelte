@@ -42,9 +42,9 @@
     const maxCommentLength = 100;
 </script>
 
-<div class="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : hasAnomaly ? 'border-l-3 border-l-amber-500 bg-amber-500/5' : ''}">
+<div class="flex flex-col gap-3 px-3 py-3 transition-colors hover:bg-muted/30 group lg:flex-row lg:items-center lg:gap-4 lg:px-5 {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : hasAnomaly ? 'border-l-3 border-l-amber-500 bg-amber-500/5' : ''}">
     <!-- Left: Index + Name -->
-    <div class="flex-1 min-w-0">
+    <div class="min-w-0 lg:flex-1">
         <div class="flex items-start gap-2">
             <span class="text-xs text-muted-foreground font-mono tabular-nums shrink-0 pt-0.5">
                 {penaltyEntry.entry.sortIndex}.
@@ -70,7 +70,7 @@
     </div>
 
     <!-- Right: Value + Comment -->
-    <div class="flex items-start gap-3 shrink-0">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-start lg:shrink-0">
         <div>
             {#if penaltyEntry.entry.penaltyType === 'RANGE' && penaltyEntry.entry.penaltyRange}
                 <RangePenaltyInput
@@ -95,7 +95,7 @@
             {/if}
         </div>
 
-        <div class="flex flex-col gap-1 w-80">
+        <div class="flex flex-col gap-1 w-full sm:w-80">
             <span class="text-[10px] text-muted-foreground leading-none">Komentarz</span>
             <Input.Input
                 type="text"

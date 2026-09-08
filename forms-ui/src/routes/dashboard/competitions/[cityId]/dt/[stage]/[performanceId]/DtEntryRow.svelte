@@ -32,6 +32,10 @@
         anomalies?: Anomaly[];
     }>();
 
+    function getColumnLabel(column: { type: 'DT_A' | 'DT_B', judge: number }): string {
+        return (column.type === 'DT_A' ? 'Sędzia A' : 'Sędzia B') + column.judge;
+    }
+
     function getDisplayLabel(): string {
         if (nestingLevel === 1) {
             return String.fromCharCode(97 + entryIndex) + ".";
@@ -102,7 +106,7 @@
 
 {#if isSection && !hasScoring}
     <!-- Section header row -->
-    <div class="px-5 py-3 bg-muted/30">
+    <div class="px-3 py-3 bg-muted/30 lg:px-5">
         <div class="flex items-baseline gap-2">
             {#if getDisplayLabel()}
                 <span class="text-sm font-bold text-foreground tabular-nums">{getDisplayLabel()}</span>
@@ -112,7 +116,7 @@
     </div>
 
     {#if hasNestedEntries}
-        <div class="border-l-2 border-primary/20 ml-5">
+        <div class="border-l-2 border-primary/20 ml-2 lg:ml-5">
             <DtEntriesTable
                 entries={dtEntry.nestedEntries}
                 isFo={isFo}
@@ -129,9 +133,9 @@
     {/if}
 {:else}
     <!-- Scoring entry row -->
-    <div class="flex items-start gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : hasAnomaly ? 'border-l-3 border-l-amber-500 bg-amber-500/5' : ''}">
+    <div class="flex flex-col gap-3 px-3 py-3 transition-colors hover:bg-muted/30 group lg:flex-row lg:items-start lg:gap-4 lg:px-5 {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : hasAnomaly ? 'border-l-3 border-l-amber-500 bg-amber-500/5' : ''}">
         <!-- Left: Index + Name -->
-        <div class="flex-1 min-w-0 pt-1.5">
+        <div class="min-w-0 lg:flex-1 lg:pt-1.5">
             <div class="flex items-start gap-2">
                 {#if getDisplayLabel()}
                     <span class="text-sm text-muted-foreground font-mono tabular-nums shrink-0 pt-0.5">
@@ -158,8 +162,9 @@
             </div>
         </div>
 
-        <!-- Right: Judge inputs -->
-        <div class="flex items-start gap-2 shrink-0">
+        <!-- Right: Judge inputs. Below `lg` these wrap into a 2-up grid; four
+             88px fields plus the 16rem no-element column never fit 390px. -->
+        <div class="grid grid-cols-2 gap-2 lg:flex lg:items-start lg:shrink-0">
             {#each allColumns as column}
                 {@const isEnabled = isColumnEnabled(column)}
                 {@const objectiveBucket = dtEntry.entry.scoring?.objectiveBucket}
@@ -169,6 +174,7 @@
                 {#if isObjective && objectiveBucket}
                     <ObjectiveJudgeInput
                         objectiveBucketName={objectiveBucket}
+                        label={getColumnLabel(column)}
                         bind:value={dtEntry.results[column.type][column.judge]}
                         disabled={!isEnabled || dtEntry.noElement}
                     />
@@ -176,22 +182,29 @@
                     <SubjectiveJudgeInput
                         subjectiveRangeName={subjectiveRange}
                         isFo={isFo}
+                        label={getColumnLabel(column)}
                         bind:value={dtEntry.results[column.type][column.judge]}
                         disabled={!isEnabled || dtEntry.noElement}
                     />
                 {:else if !isEnabled}
-                    <div class="w-[5.5rem]"></div>
+                    <div class="hidden lg:block lg:w-[5.5rem]"></div>
                 {/if}
             {/each}
 
             {#if showNoElementColumn}
-                <div class="w-[16rem] ml-2 pl-2 border-l border-border flex flex-col items-center justify-center gap-1.5">
+                <div class="col-span-2 flex flex-col items-center justify-center gap-1.5 border-t border-border pt-2 lg:col-span-1 lg:w-[16rem] lg:ml-2 lg:border-t-0 lg:border-l lg:pl-2 lg:pt-0">
                     {#if dtEntry.entry.scoring?.noElementEnabled}
                         {@const entryId = dtEntry.entry.id ?? 0}
-                        <Checkbox
-                            id="no-element-{entryId}"
-                            bind:checked={dtEntry.noElement}
-                        />
+                        <div class="flex items-center gap-2">
+                            <Checkbox
+                                id="no-element-{entryId}"
+                                bind:checked={dtEntry.noElement}
+                            />
+                            <!-- The column header carries this label from `lg` up. -->
+                            <label for="no-element-{entryId}" class="text-xs text-muted-foreground lg:hidden">
+                                Brak elementu
+                            </label>
+                        </div>
                         {#if dtEntry.noElement}
                             <Input.Input
                                 type="text"
@@ -208,7 +221,7 @@
     </div>
 
     {#if hasNestedEntries}
-        <div class="border-l-2 border-primary/20 ml-5">
+        <div class="border-l-2 border-primary/20 ml-2 lg:ml-5">
             <DtEntriesTable
                 entries={dtEntry.nestedEntries!}
                 isFo={isFo}

@@ -76,12 +76,12 @@
     {/if}
 
     <!-- Add weight control -->
-    <div class="flex items-center gap-2">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
         <Select.Root
             type="single"
             bind:value={selectedWeight}
         >
-            <Select.Trigger class="w-[10rem] h-8 text-sm">
+            <Select.Trigger class="w-full h-10 text-sm sm:w-[10rem] sm:h-8">
                 {selectedWeight ? `${formatWeight(Number(selectedWeight))} kg` : 'Ciężar...'}
             </Select.Trigger>
             <Select.Content>
@@ -99,7 +99,7 @@
             size="sm"
             onclick={addWeight}
             disabled={!selectedWeight}
-            class="h-8"
+            class="h-10 sm:h-8"
         >
             <PlusIcon class="size-3.5 mr-1" />
             Dodaj

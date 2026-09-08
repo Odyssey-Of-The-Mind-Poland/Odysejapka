@@ -29,7 +29,7 @@
         onValueChange={handleValueChange}
         disabled={disabled}
     >
-        <Select.Trigger class="w-[5.5rem] h-8 text-sm" disabled={disabled}>
+        <Select.Trigger class="w-full h-10 text-sm lg:w-[5.5rem] lg:h-8" disabled={disabled}>
             {stringValue ?? 'Wybierz'}
         </Select.Trigger>
         <Select.Content>

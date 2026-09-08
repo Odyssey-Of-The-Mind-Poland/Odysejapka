@@ -21,9 +21,9 @@
     let hasError = $derived(entryErrors.length > 0);
 </script>
 
-<div class="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/30 group {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : ''}">
+<div class="flex flex-col gap-3 px-3 py-3 transition-colors hover:bg-muted/30 group lg:flex-row lg:items-center lg:gap-4 lg:px-5 {hasError ? 'border-l-3 border-l-destructive bg-destructive/5' : ''}">
     <!-- Left: Index + Name -->
-    <div class="flex-1 min-w-0">
+    <div class="min-w-0 lg:flex-1">
         <div class="flex items-start gap-2">
             <span class="text-xs text-muted-foreground font-mono tabular-nums shrink-0 pt-0.5">
                 {styleEntry.entry.sortIndex + 1}.
@@ -46,7 +46,7 @@
     </div>
 
     <!-- Right: Judge inputs -->
-    <div class="flex items-center gap-4 shrink-0">
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:flex lg:items-center lg:gap-4 lg:shrink-0">
         {#each allJudgeColumns as judge}
             {#if styleEntry.entry.styleType === 'PREDEFINED'}
                 <PredefinedStyleInput
