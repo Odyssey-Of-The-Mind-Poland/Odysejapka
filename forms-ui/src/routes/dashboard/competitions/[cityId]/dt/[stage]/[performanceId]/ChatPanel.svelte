@@ -148,7 +148,8 @@
     }
 </script>
 
-<div class="fixed bottom-24 right-6 z-50 w-[380px] max-h-[500px] flex flex-col rounded-xl border bg-card shadow-xl overflow-hidden">
+<div
+    class="fixed inset-x-0 bottom-0 z-50 flex h-[80dvh] flex-col rounded-t-xl border bg-card shadow-xl overflow-hidden pb-[env(safe-area-inset-bottom)] sm:inset-x-auto sm:right-6 sm:bottom-24 sm:h-auto sm:w-[380px] sm:max-h-[500px] sm:rounded-xl sm:pb-0">
     <!-- Header -->
     <div class="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
         <div class="flex items-center gap-2">
@@ -166,7 +167,7 @@
     <!-- Messages -->
     <div
         bind:this={messagesContainer}
-        class="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px] max-h-[380px]"
+        class="flex-1 overflow-y-auto p-4 space-y-3 sm:min-h-[300px] sm:max-h-[380px]"
     >
         {#if messagesQuery.isPending}
             <div class="flex items-center justify-center h-full">

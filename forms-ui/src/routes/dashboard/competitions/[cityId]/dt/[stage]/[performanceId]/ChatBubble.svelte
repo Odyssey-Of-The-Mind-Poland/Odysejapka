@@ -11,7 +11,7 @@
 </script>
 
 <button
-    class="fixed bottom-6 right-6 z-50 flex items-center justify-center size-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-all hover:scale-105 cursor-pointer"
+    class="fixed bottom-20 right-4 z-50 flex items-center justify-center size-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-all hover:scale-105 cursor-pointer sm:bottom-6 sm:right-6"
     onclick={onclick}
     aria-label="Otwórz czat"
 >
