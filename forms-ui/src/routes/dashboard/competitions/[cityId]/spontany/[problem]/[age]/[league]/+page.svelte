@@ -299,7 +299,7 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-muted/40 border-b">
-                        <th rowspan="2" class="px-4 py-2 text-left font-semibold align-bottom">Drużyna</th>
+                        <th rowspan="2" class="sticky left-0 z-10 bg-muted/40 px-4 py-2 text-left font-semibold align-bottom">Drużyna</th>
                         {#if manualFields.length > 0}
                             {#each manualFields as field}
                                 <th rowspan="2" class="px-2 py-2 text-center font-semibold border-l align-bottom">
