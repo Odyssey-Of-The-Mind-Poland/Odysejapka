@@ -69,13 +69,12 @@
 </script>
 
 <Sidebar.Provider
-        class="md:flex"
         style="--sidebar-width: calc(var(--spacing) * 64); --header-height: calc(var(--spacing) * 12 + 1px);"
 >
     <AppSidebar variant="sidebar"/>
     <Sidebar.Inset>
         <SiteHeader/>
-        <div class="p-4 h-full">
+        <div class="p-3 sm:p-4 lg:p-6 h-full min-w-0">
             {@render children()}
         </div>
     </Sidebar.Inset>
