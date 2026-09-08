@@ -15,6 +15,7 @@
     import ObsuwaBadge from "./ObsuwaBadge.svelte";
     import BugIcon from "@lucide/svelte/icons/bug";
     import FormStateBadge from "./FormStateBadge.svelte";
+    import TeamCard from "./TeamCard.svelte";
 
     type City = {
         id: number;
@@ -276,7 +277,7 @@
 
                     {#each dayGroup.groups as group (`${group.problem}-${group.age}-${group.league ?? ''}`)}
                         <div class="flex flex-col gap-1.5">
-                            <div class="flex items-center gap-2 px-1">
+                            <div class="flex flex-wrap items-center gap-x-2 gap-y-1 px-1">
                                 <Badge variant="outline" class="font-mono tabular-nums">Problem {group.problem}</Badge>
                                 <Badge variant="secondary" class="font-mono tabular-nums">Grupa wiekowa {group.age}</Badge>
                                 {#if group.league}
@@ -284,7 +285,19 @@
                                 {/if}
                                 <span class="text-xs text-muted-foreground">{group.teams.length} {group.teams.length === 1 ? 'drużyna' : 'drużyn'}</span>
                             </div>
-                            <div class="rounded-xl border bg-card shadow-sm overflow-hidden">
+                            <!-- Below `md` the eleven-column table is only
+                                 reachable by horizontal scrolling, so the same
+                                 rows render as cards instead. -->
+                            <div class="flex flex-col divide-y rounded-xl border bg-card shadow-sm md:hidden">
+                                {#each group.teams as team (team.performanceId)}
+                                    <TeamCard
+                                            {team}
+                                            showWeight={group.problem === 4}
+                                            onclick={() => goto(`/dashboard/competitions/${cityId}/dt/${activeStage}/${team.performanceId}`)}
+                                    />
+                                {/each}
+                            </div>
+                            <div class="hidden rounded-xl border bg-card shadow-sm overflow-hidden md:block">
                                 <Table.Root>
                                     <Table.Header>
                                         <Table.Row class="bg-muted/40 hover:bg-muted/40">

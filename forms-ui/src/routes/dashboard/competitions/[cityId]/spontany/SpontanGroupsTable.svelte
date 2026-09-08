@@ -112,7 +112,7 @@
                                             value={group.spontanDefinitionId ? String(group.spontanDefinitionId) : undefined}
                                             onValueChange={(v) => onAssignSpontan(group, v === '__none__' ? '__none__' : v ?? '__none__')}
                                     >
-                                        <Select.Trigger class="w-[220px]">
+                                        <Select.Trigger class="w-full min-w-[180px] md:w-[220px]">
                                             {group.spontanDefinitionName ?? 'Brak'}
                                         </Select.Trigger>
                                         <Select.Content>
@@ -171,7 +171,7 @@
                                             value={group.spontanUserId ? String(group.spontanUserId) : undefined}
                                             onValueChange={(v) => onAssignUser(group, v === '__none__' ? '__none__' : v ?? '__none__')}
                                     >
-                                        <Select.Trigger class="w-[180px]">
+                                        <Select.Trigger class="w-full min-w-[150px] md:w-[180px]">
                                             {group.spontanUserName ?? 'Brak'}
                                         </Select.Trigger>
                                         <Select.Content>

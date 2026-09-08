@@ -17,7 +17,7 @@
 <SelectWithLabel 
     label="Typ kategori" 
     bind:value={value} 
-    flexClass="w-[180px]"
+    flexClass="w-full sm:w-[180px]"
     triggerContent={() => categoryLabels[value] || " "}
 >
     <Select.Group>

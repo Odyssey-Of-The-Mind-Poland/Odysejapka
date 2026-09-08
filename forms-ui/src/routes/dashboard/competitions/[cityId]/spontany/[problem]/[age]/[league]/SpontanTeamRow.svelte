@@ -50,7 +50,10 @@
 </script>
 
 <tr class="border-b hover:bg-muted/30 {isDirty ? 'bg-yellow-50 dark:bg-yellow-950/20' : ''}">
-    <td class="px-4 py-2 font-medium whitespace-nowrap">
+    <!-- Pinned so the team stays visible while the judge columns scroll. A
+         sticky cell needs its own opaque background, so it has to repeat the
+         row's dirty highlight rather than inheriting it. -->
+    <td class="sticky left-0 z-10 px-4 py-2 font-medium whitespace-nowrap {isDirty ? 'bg-yellow-50 dark:bg-yellow-950/20' : 'bg-card'}">
         <div>{team}</div>
         <div class="text-xs text-muted-foreground font-mono">{spontanHour}</div>
     </td>
