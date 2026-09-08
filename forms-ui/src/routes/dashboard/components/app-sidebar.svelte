@@ -1,5 +1,7 @@
 <script lang="ts">
     import * as Sidebar from "$lib/registry/ui/sidebar";
+    import {useSidebar} from "$lib/registry/ui/sidebar";
+    import {afterNavigate} from "$app/navigation";
     import NavMain from "./nav-main.svelte";
     import NavUser from "./nav-user.svelte";
     import CitySelector from "./city-selector.svelte";
@@ -7,9 +9,18 @@
     import {routes} from "../routes";
 
     let {...restProps}: ComponentProps<typeof Sidebar.Root> = $props();
+
+    // Below `md` the sidebar renders as an overlay sheet. Closing it after each
+    // navigation stops it from covering the page it just linked to; doing it
+    // here rather than per-link also covers the city selector and user menu.
+    const sidebar = useSidebar();
+
+    afterNavigate(() => {
+        if (sidebar.openMobile) sidebar.setOpenMobile(false);
+    });
 </script>
 
-<Sidebar.Root collapsible="none" class="h-auto border-r" {...restProps}>
+<Sidebar.Root collapsible="offcanvas" class="border-r" {...restProps}>
     <Sidebar.Header class="border-b">
         <Sidebar.Menu>
             <Sidebar.MenuItem>
