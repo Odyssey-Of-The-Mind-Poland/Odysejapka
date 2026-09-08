@@ -105,15 +105,18 @@
 
 				<div class="flex flex-col gap-3">
 					<Label>Komórki do podmiany</Label>
-					<div class="rounded-lg border overflow-hidden">
-						<div class="grid grid-cols-[1fr_1fr_1fr_auto] gap-px bg-muted text-xs font-medium text-muted-foreground">
+					<!-- Three text columns plus a delete button do not fit a phone;
+					     scrolling keeps the grid intact rather than restructuring
+					     a rarely used admin tool. -->
+					<div class="rounded-lg border overflow-x-auto">
+						<div class="grid min-w-[32rem] grid-cols-[1fr_1fr_1fr_auto] gap-px bg-muted text-xs font-medium text-muted-foreground">
 							<div class="bg-background px-3 py-2">Arkusz</div>
 							<div class="bg-background px-3 py-2">Komórka</div>
 							<div class="bg-background px-3 py-2">Wartość</div>
 							<div class="bg-background px-3 py-2 w-10"></div>
 						</div>
 						{#each cells as cell, i}
-							<div class="grid grid-cols-[1fr_1fr_1fr_auto] gap-px bg-muted">
+							<div class="grid min-w-[32rem] grid-cols-[1fr_1fr_1fr_auto] gap-px bg-muted">
 								<div class="bg-background px-2 py-1.5">
 									<Select.Root
 										type="single"

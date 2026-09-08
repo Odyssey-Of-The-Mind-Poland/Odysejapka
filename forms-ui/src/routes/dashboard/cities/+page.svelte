@@ -128,15 +128,15 @@
     </div>
 
     <RequirePermission role="ADMINISTRATOR">
-        <div class="flex items-center gap-2 max-w-lg">
+        <div class="flex flex-col gap-2 max-w-lg sm:flex-row sm:items-center">
             <Input
                     bind:value={newCityName}
                     placeholder="Nazwa miasta..."
                     onkeydown={handleKeydown}
             />
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 sm:shrink-0">
                 <Select.Root type="single" bind:value={newCityLevel}>
-                    <Select.Trigger class="w-45">
+                    <Select.Trigger class="w-full sm:w-45">
                         {mapLevel(newCityLevel)}
                     </Select.Trigger>
                     <Select.Content>

@@ -194,18 +194,18 @@
                 {#if newFields.length > 0}
                     <div class="flex flex-col gap-2">
                         {#each newFields as field, i}
-                            <div class="flex items-center gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
                                 <Input
                                         bind:value={field.name}
                                         placeholder="Nazwa pola..."
-                                        class="w-200"
+                                        class="w-full sm:w-200"
                                 />
                                 <Select.Root
                                         type="single"
                                         value={field.fieldType}
                                         onValueChange={(v) => { if (v === 'MULTIPLIER' || v === 'EXPRESSION' || v === 'BOOLEAN') newFields[i].fieldType = v; }}
                                 >
-                                    <Select.Trigger class="w-32">
+                                    <Select.Trigger class="w-full sm:w-32">
                                         {field.fieldType === 'MULTIPLIER' ? 'Mnożnik' : field.fieldType === 'EXPRESSION' ? 'Wyrażenie' : 'TAK/NIE'}
                                     </Select.Trigger>
                                     <Select.Content>
@@ -218,7 +218,7 @@
                                     <Input
                                             bind:value={field.expression}
                                             placeholder="np. FLOOR(v/3)*5"
-                                            class="w-48 font-mono"
+                                            class="w-full font-mono sm:w-48"
                                     />
                                 {:else if field.fieldType === 'BOOLEAN'}
                                     <Input
@@ -226,7 +226,7 @@
                                             step="0.1"
                                             bind:value={field.trueValue}
                                             placeholder="Pkt. za TAK"
-                                            class="w-28"
+                                            class="w-full sm:w-28"
                                     />
                                 {:else}
                                     <Input
@@ -234,7 +234,7 @@
                                             step="0.1"
                                             bind:value={field.multiplier}
                                             placeholder="Mnożnik"
-                                            class="w-24"
+                                            class="w-full sm:w-24"
                                     />
                                 {/if}
                                 <Button
