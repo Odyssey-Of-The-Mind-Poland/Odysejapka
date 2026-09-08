@@ -277,5 +277,9 @@
 {/if}
 {#if isChatOpen}
     <ChatPanel performanceId={performanceIdParam} onclose={() => isChatOpen = false} />
-    <ChatBubble unreadCount={0} onclick={() => isChatOpen = false} />
+    <!-- Below `sm` the panel is a full-width bottom sheet with its own close
+         button, and the bubble would sit on top of its message input. -->
+    <div class="hidden sm:block">
+        <ChatBubble unreadCount={0} onclick={() => isChatOpen = false} />
+    </div>
 {/if}
