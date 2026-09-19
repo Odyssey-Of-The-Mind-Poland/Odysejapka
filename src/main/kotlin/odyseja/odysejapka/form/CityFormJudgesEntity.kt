@@ -37,3 +37,35 @@ class CityFormJudgesEntity {
     }
 }
 
+@Entity
+@Table(name = "judge_teams")
+class JudgeTeamEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long = 0
+
+    @Column
+    var problem: Int = 0
+
+    @Column
+    var judgeCountDtA: Int = 0
+
+    @Column
+    var judgeCountDtB: Int = 0
+
+    @Column
+    var judgeCountStyle: Int = 0
+
+    @ManyToOne(cascade = [CascadeType.ALL])
+    var city: CityEntity? = null
+
+    companion object {
+        fun create(problem: Int, city: CityEntity): JudgeTeamEntity {
+            val entity = JudgeTeamEntity()
+            entity.problem = problem
+            entity.city = city
+            return entity
+        }
+    }
+}
+
