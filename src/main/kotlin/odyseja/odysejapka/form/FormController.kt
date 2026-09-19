@@ -26,7 +26,6 @@ class FormController(
     private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService,
     private val performanceAccessService: PerformanceAccessService,
     private val userAccessService: UserAccessService,
-    private val timeTableService: TimeTableService,
     private val performanceService: PerformanceService
 ) {
 
