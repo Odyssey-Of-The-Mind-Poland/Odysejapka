@@ -1,4 +1,8 @@
-package odyseja.odysejapka.form
+package odyseja.odysejapka.form.problem.form
+
+import odyseja.odysejapka.form.LongTermFormEntry
+import odyseja.odysejapka.form.PenaltyFormEntry
+import odyseja.odysejapka.form.StyleFormEntry
 
 /**
  * Helper to create a map of entry_id -> entry from a FormData

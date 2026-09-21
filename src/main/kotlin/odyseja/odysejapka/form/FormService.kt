@@ -1,34 +1,53 @@
 package odyseja.odysejapka.form
 
+import odyseja.odysejapka.form.judge.team.JudgeTeamService
+import odyseja.odysejapka.form.problem.form.FormData
+import odyseja.odysejapka.form.problem.form.FormEntryMapHelper
+import odyseja.odysejapka.form.problem.form.ProblemFormService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class FormService(
-    private val formProblemService: FormProblemService,
+    private val problemFormService: ProblemFormService,
     private val teamFormService: TeamFormService,
     private val judgeCountService: JudgeCountService,
     private val teamResultService: TeamResultService,
     private val formValidationService: FormValidationService,
     private val formAnomalyService: FormAnomalyService,
+    private val judgeTeamService: JudgeTeamService,
 ) {
 
     @Transactional
     fun setFormEntries(problem: Int, form: FormData) {
-        val existingEntity = formProblemService.findByProblem(problem)
+        val existingEntity = problemFormService.findByProblem(problem)
         val existingForm = existingEntity.form
 
         val formWithIds = FormEntryMapHelper.assignIds(form, existingForm)
 
         existingEntity.form = formWithIds
-        formProblemService.saveFormProblem(existingEntity)
+        problemFormService.saveProblemForm(existingEntity)
 
         judgeCountService.setJudgesCount(problem, form.smallJudgesTeam, form.bigJudgesTeam)
     }
 
+    @Transactional
+    fun setFormEntriesV2(problem: Int, form: FormData) {
+        val existingEntity = problemFormService.findByProblem(problem)
+        val existingForm = existingEntity.form
+
+        val formWithIds = FormEntryMapHelper.assignIds(form, existingForm)
+
+        existingEntity.form = formWithIds
+        problemFormService.saveProblemForm(existingEntity)
+
+        val judgeTeams = judgeTeamService.getJudgeTeamsByProblem(problem).filterNotNull()
+        judgeTeamService.setJudgeTeamsForProblem(problem, judgeTeams)
+    }
+
 
     fun getFormData(problem: Int): FormData {
-        val entity = formProblemService.findByProblem(problem)
+        val entity = problemFormService.findByProblem(problem)
         val form = entity.form ?: FormData(
             dtEntries = emptyList(),
             styleEntries = emptyList(),
@@ -42,6 +61,21 @@ class FormService(
         return form.copy(
             smallJudgesTeam = smallJudgesTeams,
             bigJudgesTeam = bigJudgesTeams
+        )
+    }
+
+    fun getFormDataV2(problem: Int): FormData {
+        val entity = problemFormService.findByProblem(problem)
+        val form = entity.form ?: FormData(
+            dtEntries = emptyList(),
+            styleEntries = emptyList(),
+            penaltyEntries = emptyList()
+        )
+
+        val judgeTeams = judgeTeamService.getJudgeTeamsByProblem(problem)
+
+        return form.copy(
+            judgeTeams = judgeTeams
         )
     }
 
