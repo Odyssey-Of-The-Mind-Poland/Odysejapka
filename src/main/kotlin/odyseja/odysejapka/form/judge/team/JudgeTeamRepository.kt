@@ -1,4 +1,4 @@
-package odyseja.odysejapka.form
+package odyseja.odysejapka.form.judge.team
 
 import odyseja.odysejapka.city.CityEntity
 import org.springframework.data.repository.CrudRepository
