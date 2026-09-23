@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.31.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="create-city" author="przem">
+        <createTable tableName="city">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="level" type="SMALLINT">
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1789847673035-3" author="przem">
+        <createTable tableName="judge_teams">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_judge_teams"/>
+            </column>
+            <column name="problem" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="judge_count_dta" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="judge_count_dtb" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="judge_count_style" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1789847673035-4" author="przem">
+        <addForeignKeyConstraint baseColumnNames="city_id" baseTableName="judge_teams"
+                                 constraintName="FK_JUDGE_TEAMS_ON_CITY" referencedColumnNames="id"
+                                 referencedTableName="city"/>
+    </changeSet>
+    <changeSet id="1789847673035-1" author="przem">
+        <createTable tableName="form_problems">
+            <column name="judge_count" type="INT">
+            </column>
+            <column name="problem" type="INT">
+            </column>
+        </createTable>
+        <addNotNullConstraint columnDataType="INT" columnName="judge_count" tableName="form_problems" validate="true"/>
+    </changeSet>
+    <changeSet id="1789847673035-2" author="przem">
+        <addNotNullConstraint columnDataType="INT" columnName="problem" tableName="form_problems" validate="true"/>
+    </changeSet>
+
+</databaseChangeLog>
