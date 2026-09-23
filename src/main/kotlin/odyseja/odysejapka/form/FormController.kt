@@ -32,7 +32,13 @@ class FormController(
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @PutMapping("/{problem}")
     fun setFormData(@PathVariable problem: Int, @RequestBody formData: FormData) {
-        formService.setFormEntries(problem, formData)
+        formService.setFormData(problem, formData)
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
+    @PutMapping("/v2/{problem}")
+    fun setFormDataV2(@PathVariable problem: Int, @RequestBody formData: FormData) {
+        formService.setFormData(problem, formData)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
@@ -41,8 +47,19 @@ class FormController(
         return formService.getFormData(problem)
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
+    @GetMapping("/v2/{problem}")
+    fun getFormDataV2(@PathVariable problem: Int): FormData {
+        return formService.getFormData(problem)
+    }
+
     @GetMapping("/{problem}/judge-count")
     fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCountResponse {
+        return formService.getJudgeCount(problem, cityId)
+    }
+
+    @GetMapping("/v2/{problem}/judge-count")
+    fun getJudgeCountV2(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCountResponse {
         return formService.getJudgeCount(problem, cityId)
     }
 
