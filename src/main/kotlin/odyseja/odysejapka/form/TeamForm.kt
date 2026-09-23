@@ -18,6 +18,7 @@ data class TeamForm(
     val canPreview: Boolean = false,
     val approved: Boolean = false,
     val judgeCount: Int = 1,
+    val judgeCountV2: JudgeCount = JudgeCount(1, 1, 1),
     val ranatra: Boolean = false
 ) {
     data class DtTeamFormEntry(

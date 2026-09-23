@@ -19,7 +19,7 @@ class FormService(
 ) {
 
     @Transactional
-    fun setFormEntries(problem: Int, form: FormData) {
+    fun setFormData(problem: Int, form: FormData) {
         val existingEntity = problemFormService.findByProblem(problem)
         val existingForm = existingEntity.form
 
@@ -32,7 +32,7 @@ class FormService(
     }
 
     @Transactional
-    fun setFormEntriesV2(problem: Int, form: FormData) {
+    fun setFormDataV2(problem: Int, form: FormData) {
         val existingEntity = problemFormService.findByProblem(problem)
         val existingForm = existingEntity.form
 
@@ -69,14 +69,11 @@ class FormService(
         val form = entity.form ?: FormData(
             dtEntries = emptyList(),
             styleEntries = emptyList(),
-            penaltyEntries = emptyList()
+            penaltyEntries = emptyList(),
+            judgeTeams = emptyList(),
         )
 
-        val judgeTeams = judgeTeamService.getJudgeTeamsByProblem(problem)
-
-        return form.copy(
-            judgeTeams = judgeTeams
-        )
+        return form.copy()
     }
 
     private fun extractJudgeTeamIds(judgeEntities: List<CityFormJudgesEntity?>, judgeCount: Int): List<Int>? {
@@ -88,6 +85,10 @@ class FormService(
 
     fun getJudgeCount(problem: Int, cityId: Int): JudgeCountResponse {
         return judgeCountService.getJudgeCountByProblemAndCity(problem, cityId)
+    }
+
+    fun getJudgeCountV2(problem: Int, cityId: Int): JudgeCount {
+        return judgeTeamService.getJudgeCountByProblemAndCity(problem, cityId)
     }
 
     @Transactional

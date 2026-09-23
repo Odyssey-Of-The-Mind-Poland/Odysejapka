@@ -15,7 +15,5 @@
     <include file="db/changelog/012-insert-gad-cache-from-backup.xml"/>
     <include file="db/changelog/013-fix-change-id-sequence.xml"/>
     <include file="db/changelog/015-drop-legacy-team-result-entries.xml"/>
-    <include file="/db/changelog/016-add-judge-teams.xml"/>
-    <include file="/db/changelog/017-rename-problem-form.xml"/>
 
 </databaseChangeLog>
