@@ -15,7 +15,7 @@ class FormSortIndexTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(null, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(null, "Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1),
@@ -25,7 +25,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val entries = form()
+        val entries = formV2()
         Assertions.assertThat(entries.dtEntries).hasSize(3)
         Assertions.assertThat(entries.dtEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(entries.dtEntries[0].name).isEqualTo("Entry 1")
@@ -43,7 +43,7 @@ class FormSortIndexTest : OdysejaDsl() {
         )
 
         // Create initial entries
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(null, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(null, "Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1),
@@ -53,13 +53,13 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val initial = form()
+        val initial = formV2()
         val entry1Id = initial.dtEntries[0].id!!
         val entry2Id = initial.dtEntries[1].id!!
         val entry3Id = initial.dtEntries[2].id!!
 
         // Reorder entries (swap first and last)
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(entry3Id, "Entry 3", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(entry2Id, "Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1),
@@ -69,7 +69,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val reordered = form()
+        val reordered = formV2()
         Assertions.assertThat(reordered.dtEntries).hasSize(3)
         Assertions.assertThat(reordered.dtEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(reordered.dtEntries[0].name).isEqualTo("Entry 3")
@@ -81,7 +81,7 @@ class FormSortIndexTest : OdysejaDsl() {
 
     @Test
     fun `should assign sequential sort indexes to style entries`() {
-        setForm(
+        setFormV2(
             dt = emptyList(),
             style = listOf(
                 StyleFormEntry(null, "Style 1", StyleFormEntry.EntryType.STYLE, sortIndex = 0),
@@ -91,7 +91,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val entries = form()
+        val entries = formV2()
         Assertions.assertThat(entries.styleEntries).hasSize(3)
         Assertions.assertThat(entries.styleEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(entries.styleEntries[0].name).isEqualTo("Style 1")
@@ -103,7 +103,7 @@ class FormSortIndexTest : OdysejaDsl() {
 
     @Test
     fun `should assign sequential sort indexes to penalty entries`() {
-        setForm(
+        setFormV2(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -113,7 +113,7 @@ class FormSortIndexTest : OdysejaDsl() {
             )
         )
 
-        val entries = form()
+        val entries = formV2()
         Assertions.assertThat(entries.penaltyEntries).hasSize(3)
         Assertions.assertThat(entries.penaltyEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(entries.penaltyEntries[0].name).isEqualTo("Penalty 1")
@@ -131,7 +131,7 @@ class FormSortIndexTest : OdysejaDsl() {
         )
 
         // Create initial entries
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(null, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(null, "Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1),
@@ -141,12 +141,12 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val initial = form()
+        val initial = formV2()
         val entry1Id = initial.dtEntries[0].id!!
         val entry3Id = initial.dtEntries[2].id!!
 
         // Remove middle entry
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(entry1Id, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(entry3Id, "Entry 3", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1)
@@ -155,7 +155,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val afterRemove = form()
+        val afterRemove = formV2()
         Assertions.assertThat(afterRemove.dtEntries).hasSize(2)
         Assertions.assertThat(afterRemove.dtEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(afterRemove.dtEntries[0].name).isEqualTo("Entry 1")
@@ -170,7 +170,7 @@ class FormSortIndexTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(
                     null,
@@ -188,7 +188,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val entries = form()
+        val entries = formV2()
         Assertions.assertThat(entries.dtEntries).hasSize(1)
         val section = entries.dtEntries[0]
         Assertions.assertThat(section.entries).hasSize(3)
@@ -208,7 +208,7 @@ class FormSortIndexTest : OdysejaDsl() {
         )
 
         // Create initial nested entries
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(
                     null,
@@ -226,14 +226,14 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val initial = form()
+        val initial = formV2()
         val sectionId = initial.dtEntries[0].id!!
         val nested1Id = initial.dtEntries[0].entries[0].id!!
         val nested2Id = initial.dtEntries[0].entries[1].id!!
         val nested3Id = initial.dtEntries[0].entries[2].id!!
 
         // Reorder nested entries (swap first and last)
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(
                     sectionId,
@@ -251,7 +251,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val reordered = form()
+        val reordered = formV2()
         val section = reordered.dtEntries[0]
         Assertions.assertThat(section.entries).hasSize(3)
         Assertions.assertThat(section.entries[0].sortIndex).isEqualTo(0)
@@ -270,7 +270,7 @@ class FormSortIndexTest : OdysejaDsl() {
         )
 
         // Create initial entries
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(null, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(null, "Entry 3", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1)
@@ -279,12 +279,12 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val initial = form()
+        val initial = formV2()
         val entry1Id = initial.dtEntries[0].id!!
         val entry3Id = initial.dtEntries[1].id!!
 
         // Add entry in the middle
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(entry1Id, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(null, "Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1),
@@ -294,7 +294,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val afterAdd = form()
+        val afterAdd = formV2()
         Assertions.assertThat(afterAdd.dtEntries).hasSize(3)
         Assertions.assertThat(afterAdd.dtEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(afterAdd.dtEntries[0].name).isEqualTo("Entry 1")

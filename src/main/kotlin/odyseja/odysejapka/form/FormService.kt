@@ -41,7 +41,7 @@ class FormService(
         existingEntity.form = formWithIds
         problemFormService.saveProblemForm(existingEntity)
 
-        val judgeTeams = judgeTeamService.getJudgeTeamsByProblem(problem).filterNotNull()
+        val judgeTeams = form.judgeTeams ?: emptyList()
         judgeTeamService.setJudgeTeamsForProblem(problem, judgeTeams)
     }
 
@@ -105,8 +105,30 @@ class FormService(
         teamResultService.updateFormState(performanceId, state)
     }
 
+    @Transactional
+    fun setTeamResultsV2(performanceId: Int, request: PerformanceResultsRequest) {
+        teamResultService.setTeamResult(performanceId, request)
+        val teamForm = teamFormService.getTeamFormV2(performanceId)
+        val errors = formValidationService.validateTeamForm(teamForm)
+        val anomalies = formAnomalyService.detectAnomalies(teamForm)
+        val state = when {
+            errors.isNotEmpty() -> FormState.ERROR
+            anomalies.isNotEmpty() -> FormState.ANOMALY
+            else -> FormState.SCORED
+        }
+        teamResultService.updateFormState(performanceId, state)
+    }
+
     fun getTeamForm(performanceId: Int): TeamForm {
         val teamForm = teamFormService.getTeamForm(performanceId)
+        val errors = formValidationService.validateTeamForm(teamForm)
+        val anomalies = formAnomalyService.detectAnomalies(teamForm)
+        val canPreview = errors.isEmpty()
+        return teamForm.copy(validationErrors = errors, anomalies = anomalies, canPreview = canPreview)
+    }
+
+    fun getTeamFormV2(performanceId: Int): TeamForm {
+        val teamForm = teamFormService.getTeamFormV2(performanceId)
         val errors = formValidationService.validateTeamForm(teamForm)
         val anomalies = formAnomalyService.detectAnomalies(teamForm)
         val canPreview = errors.isEmpty()
@@ -118,6 +140,25 @@ class FormService(
         teamResultService.approveTeamResult(performanceId)
 
         val teamForm = teamFormService.getTeamForm(performanceId)
+        val rawForm = TeamFormToRawTeamFormConverter.convert(teamForm)
+        val rawWeight = if (teamForm.problem == 4) {
+            teamForm.weightHeldEntries.flatMap { it.weights }.sum()
+        } else null
+        teamResultService.updateRawScores(
+            performanceId = performanceId,
+            rawDt = rawForm.dtSum,
+            rawStyle = rawForm.styleSum,
+            rawPenalty = rawForm.penaltySum,
+            rawWeight = rawWeight,
+            rawTotal = rawForm.totalSum
+        )
+    }
+
+    @Transactional
+    fun approveFormV2(performanceId: Int) {
+        teamResultService.approveTeamResult(performanceId)
+
+        val teamForm = teamFormService.getTeamFormV2(performanceId)
         val rawForm = TeamFormToRawTeamFormConverter.convert(teamForm)
         val rawWeight = if (teamForm.problem == 4) {
             teamForm.weightHeldEntries.flatMap { it.weights }.sum()

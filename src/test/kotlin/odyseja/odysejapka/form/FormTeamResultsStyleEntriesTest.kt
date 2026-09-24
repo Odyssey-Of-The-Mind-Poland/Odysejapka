@@ -10,7 +10,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
 
     @Test
     fun `should handle STYLE entries in form`() {
-        setForm(
+        setFormV2(
             dt = listOf(LongTermFormEntry(
                 null, "DT", LongTermFormEntry.EntryType.SCORING,
                 scoring = LongTermFormEntry.ScoringData(
@@ -31,7 +31,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
             ))
         )
 
-        val entries = form()
+        val entries = formV2()
         Assertions.assertThat(entries.styleEntries).hasSize(2)
         Assertions.assertThat(entries.styleEntries[0].type).isEqualTo(StyleFormEntry.EntryType.STYLE)
         Assertions.assertThat(entries.styleEntries[0].name).isEqualTo("Style Entry 1")
@@ -41,7 +41,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
 
     @Test
     fun `should include STYLE entries in team results`() {
-        setForm(
+        setFormV2(
             dt = listOf(LongTermFormEntry(
                 null, "DT", LongTermFormEntry.EntryType.SCORING,
                 scoring = LongTermFormEntry.ScoringData(
@@ -59,7 +59,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
             ))
         )
 
-        val entries = form()
+        val entries = formV2()
         val dtId = entries.dtEntries.first().id!!
         val styleId = entries.styleEntries.first().id!!
         val penaltyId = entries.penaltyEntries.first().id!!
@@ -81,7 +81,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
 
     @Test
     fun `should support multiple STYLE entries in style category`() {
-        setForm(
+        setFormV2(
             dt = listOf(LongTermFormEntry(
                 null, "DT", LongTermFormEntry.EntryType.SCORING,
                 scoring = LongTermFormEntry.ScoringData(
@@ -100,7 +100,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val entries = form()
+        val entries = formV2()
         Assertions.assertThat(entries.styleEntries).hasSize(2)
         Assertions.assertThat(entries.styleEntries[0].type).isEqualTo(StyleFormEntry.EntryType.STYLE)
         Assertions.assertThat(entries.styleEntries[0].name).isEqualTo("Style Entry 1")

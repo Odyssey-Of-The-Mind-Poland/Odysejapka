@@ -2,8 +2,10 @@ package odyseja.odysejapka.form
 
 import odyseja.odysejapka.OdysejaDsl
 import odyseja.odysejapka.city.KonkursLevel
+import odyseja.odysejapka.form.judge.team.JudgeTeam
 import odyseja.odysejapka.form.problem.form.FormData
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
 
@@ -12,9 +14,9 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should set form entry`() {
-        seedDefault()
+        seedDefaultV2()
 
-        val entries = form()
+        val entries = formV2()
         Assertions.assertThat(entries.dtEntries).hasSize(1)
         val dtEntry = entries.dtEntries[0]
         Assertions.assertThat(dtEntry.type).isEqualTo(LongTermFormEntry.EntryType.SCORING)
@@ -27,14 +29,14 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should update entry`() {
-        seedDefault()
-        val existing = form()
+        seedDefaultV2()
+        val existing = formV2()
 
         val dtId = existing.dtEntries.first().id
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(
                     dtId, "DT new", LongTermFormEntry.EntryType.SCORING,
@@ -56,7 +58,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val updated = form()
+        val updated = formV2()
         Assertions.assertThat(updated.dtEntries).hasSize(1)
         val updatedDt = updated.dtEntries[0]
         Assertions.assertThat(updatedDt.name).isEqualTo("DT new")
@@ -65,12 +67,12 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should delete entry when omitted from request`() {
-        seedDefault()
-        val existing = form()
+        seedDefaultV2()
+        val existing = formV2()
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
-        setForm(
+        setFormV2(
             dt = emptyList(),
             style = listOf(
                 StyleFormEntry(
@@ -84,7 +86,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val afterDelete = form()
+        val afterDelete = formV2()
         Assertions.assertThat(afterDelete.dtEntries).isEmpty()
         Assertions.assertThat(afterDelete.styleEntries).hasSize(1)
         Assertions.assertThat(afterDelete.styleEntries[0].name).isEqualTo("Style")
@@ -94,8 +96,8 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should add new entry to existing category`() {
-        seedDefault()
-        val existing = form()
+        seedDefaultV2()
+        val existing = formV2()
         val dtId = existing.dtEntries.first().id
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
@@ -105,7 +107,7 @@ class FormTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setForm(
+        setFormV2(
             dt = listOf(LongTermFormEntry(dtId, "DT", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)),
             style = listOf(
                 StyleFormEntry(styleId, "Style", StyleFormEntry.EntryType.STYLE),
@@ -114,7 +116,7 @@ class FormTest : OdysejaDsl() {
             penalty = listOf(PenaltyFormEntry(penaltyId, "Penalty", PenaltyFormEntry.EntryType.PENALTY))
         )
 
-        val afterAdd = form()
+        val afterAdd = formV2()
         Assertions.assertThat(afterAdd.styleEntries).hasSize(2)
         Assertions.assertThat(afterAdd.styleEntries.map { it.name })
             .containsExactlyInAnyOrder("Style", "Style 2")
@@ -132,51 +134,63 @@ class FormTest : OdysejaDsl() {
         val city1 = createCity("City 1")
         val city2 = createCity("City 2")
 
-        formClient.setFormData(
+        formClient.setFormDataV2(
             PROBLEM_ID,
             FormData(
                 dtEntries = emptyList(),
                 styleEntries = emptyList(),
                 penaltyEntries = emptyList(),
-                smallJudgesTeam = listOf(city1.id),
-                bigJudgesTeam = listOf(city2.id)
+                judgeTeams = listOf(
+                    JudgeTeam(PROBLEM_ID, city1.id, JudgeCount(1, 1, 1)),
+                    JudgeTeam(PROBLEM_ID, city2.id, JudgeCount(2, 2, 2))
+                )
             )
         )
 
-        val city1Judges = formClient.getJudgeCount(PROBLEM_ID, city1.id)
-        val city2Judges = formClient.getJudgeCount(PROBLEM_ID, city2.id)
+        val city1Judges = formClient.getJudgeCountV2(PROBLEM_ID, city1.id)
+        val city2Judges = formClient.getJudgeCountV2(PROBLEM_ID, city2.id)
 
-        Assertions.assertThat(city1Judges.judgeCount).isEqualTo(1)
-        Assertions.assertThat(city2Judges.judgeCount).isEqualTo(2)
+        Assertions.assertThat(city1Judges.dtA).isEqualTo(1)
+        Assertions.assertThat(city1Judges.dtB).isEqualTo(1)
+        Assertions.assertThat(city1Judges.style).isEqualTo(1)
+        Assertions.assertThat(city2Judges.dtA).isEqualTo(2)
+        Assertions.assertThat(city2Judges.dtB).isEqualTo(2)
+        Assertions.assertThat(city2Judges.style).isEqualTo(2)
+
     }
 
     @Test
     fun `should return judges count in getFormData`() {
+        clearCities()
         val city1 = createCity("City 1", KonkursLevel.REGIONAL)
         val city2 = createCity("City 2", KonkursLevel.REGIONAL)
         val city3 = createCity("City 3", KonkursLevel.FINAL)
 
-        seedDefault()
-        val existing = form()
+        seedDefaultV2()
+        val existing = formV2()
 
-        formClient.setFormData(
+        formClient.setFormDataV2(
             PROBLEM_ID,
             existing.copy(
-                smallJudgesTeam = listOf(city1.id, city2.id),
-                bigJudgesTeam = listOf(city3.id)
+                judgeTeams = listOf(
+                    JudgeTeam(PROBLEM_ID, city1.id, JudgeCount(1, 1, 1)),
+                    JudgeTeam(PROBLEM_ID, city2.id, JudgeCount(1, 1, 1)),
+                    JudgeTeam(PROBLEM_ID, city3.id, JudgeCount(2, 2, 2))
+                )
             )
         )
 
-        val retrievedForm = formClient.getFormData(PROBLEM_ID)
+        val retrievedForm = formClient.getFormDataV2(PROBLEM_ID)
 
-        Assertions.assertThat(retrievedForm.smallJudgesTeam).contains(city1.id, city2.id)
-        Assertions.assertThat(retrievedForm.bigJudgesTeam).contains(city3.id)
+        Assertions.assertThat(retrievedForm.judgeTeams).hasSize(3)
+        Assertions.assertThat(retrievedForm.judgeTeams?.map { it.cityId })
+            .containsExactlyInAnyOrder(city1.id, city2.id, city3.id)
     }
 
     @Test
     fun `should set form visual group`() {
-        seedDefault()
-        val existing = form()
+        seedDefaultV2()
+        val existing = formV2()
         val dtId = existing.dtEntries.first().id
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
@@ -186,7 +200,7 @@ class FormTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setForm(
+        setFormV2(
             dt = listOf(LongTermFormEntry(dtId, "DT", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)),
             style = listOf(
                 StyleFormEntry(styleId, "Style", StyleFormEntry.EntryType.STYLE),
@@ -198,8 +212,8 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should support nested section entries`() {
-        seedDefault()
-        val existing = form()
+        seedDefaultV2()
+        val existing = formV2()
         val dtId = existing.dtEntries.first().id
 
         val scoringData = LongTermFormEntry.ScoringData(
@@ -207,7 +221,7 @@ class FormTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(
                     dtId,
@@ -245,14 +259,14 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should support scoring group entries`() {
-        seedDefault()
+        seedDefaultV2()
 
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
             noElementEnabled = false
         )
 
-        setForm(
+        setFormV2(
             dt = listOf(
                 LongTermFormEntry(
                     null,
@@ -278,7 +292,7 @@ class FormTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val after = form()
+        val after = formV2()
         Assertions.assertThat(after.dtEntries).hasSize(1)
         val group = after.dtEntries[0]
         Assertions.assertThat(group.name).isEqualTo("DT Group")
@@ -290,7 +304,7 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should define penalty entry with RANGE type`() {
-        setForm(
+        setFormV2(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -303,7 +317,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val retrieved = form()
+        val retrieved = formV2()
         Assertions.assertThat(retrieved.penaltyEntries).hasSize(1)
         val penalty = retrieved.penaltyEntries[0]
         Assertions.assertThat(penalty.name).isEqualTo("Range Penalty")
@@ -314,7 +328,7 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should define penalty entry with DISCRETE type`() {
-        setForm(
+        setFormV2(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -327,7 +341,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val retrieved = form()
+        val retrieved = formV2()
         Assertions.assertThat(retrieved.penaltyEntries).hasSize(1)
         val penalty = retrieved.penaltyEntries[0]
         Assertions.assertThat(penalty.name).isEqualTo("Discrete Penalty")
@@ -337,7 +351,7 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should define penalty entry with SINGLE type`() {
-        setForm(
+        setFormV2(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -350,7 +364,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val retrieved = form()
+        val retrieved = formV2()
         Assertions.assertThat(retrieved.penaltyEntries).hasSize(1)
         val penalty = retrieved.penaltyEntries[0]
         Assertions.assertThat(penalty.name).isEqualTo("Single Penalty")
@@ -360,7 +374,7 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should define multiple penalty entries with different types`() {
-        setForm(
+        setFormV2(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -385,7 +399,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val retrieved = form()
+        val retrieved = formV2()
         Assertions.assertThat(retrieved.penaltyEntries).hasSize(3)
         
         val rangePenalty = retrieved.penaltyEntries.first { it.name == "Range Penalty" }
@@ -405,7 +419,7 @@ class FormTest : OdysejaDsl() {
     @Test
     fun `should update penalty entry with different type`() {
         // Create initial penalty with RANGE type
-        setForm(
+        setFormV2(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -418,11 +432,11 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val existing = form()
+        val existing = formV2()
         val penaltyId = existing.penaltyEntries.first().id
 
         // Update to DISCRETE type
-        setForm(
+        setFormV2(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -435,7 +449,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val updated = form()
+        val updated = formV2()
         Assertions.assertThat(updated.penaltyEntries).hasSize(1)
         val penalty = updated.penaltyEntries[0]
         Assertions.assertThat(penalty.id).isEqualTo(penaltyId)

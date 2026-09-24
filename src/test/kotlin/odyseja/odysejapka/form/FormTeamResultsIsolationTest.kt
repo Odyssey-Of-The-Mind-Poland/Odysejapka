@@ -1,6 +1,7 @@
 package odyseja.odysejapka.form
 
 import odyseja.odysejapka.OdysejaDsl
+import odyseja.odysejapka.form.judge.team.JudgeTeam
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
@@ -20,6 +21,50 @@ class FormTeamResultsIsolationTest : OdysejaDsl() {
             existingForm.copy(
                 smallJudgesTeam = listOf(cityA.id),
                 bigJudgesTeam = listOf(cityB.id)
+            )
+        )
+
+        val perfA = createPerformance(cityA.id)
+        val perfB = createPerformance(cityB.id)
+
+        setTeamResults(perfA, listOf(performanceResult(dtId, 11)))
+        setTeamResults(
+            perfB, listOf(
+                performanceResult(dtId, 22),
+                performanceResult(dtId, 33, judge = 2)
+            )
+        )
+
+        val a = getTeamResults(perfA)
+        val b = getTeamResults(perfB)
+        val aAll = a.dtEntries.size + a.styleEntries.size + a.penaltyEntries.size
+        val bAll = b.dtEntries.size + b.styleEntries.size + b.penaltyEntries.size
+
+        Assertions.assertThat(aAll).isEqualTo(3) // All form entries (dt, style, penalty)
+        val dtEntryA = a.dtEntries.first { it.entry.id == dtId }
+        Assertions.assertThat(dtEntryA.results[JudgeType.DT_A]).containsEntry(1, 11L)
+
+        Assertions.assertThat(bAll).isEqualTo(3) // All form entries (dt, style, penalty)
+        val dtEntryB = b.dtEntries.first { it.entry.id == dtId }
+        Assertions.assertThat(dtEntryB.results[JudgeType.DT_A]?.keys).containsExactlyInAnyOrder(1, 2)
+        Assertions.assertThat(dtEntryB.results[JudgeType.DT_A]).containsEntry(1, 22L)
+        Assertions.assertThat(dtEntryB.results[JudgeType.DT_A]).containsEntry(2, 33L)
+    }
+
+    @Test
+    fun `V2 should keep results isolated between cities and support different judge counts`() {
+        val (dtId, _, _) = seedDefaultFormWithIdsV2()
+        val cityA = createCity("Warszawa")
+        val cityB = createCity("Kraków")
+
+        val existingForm = formV2()
+        formClient.setFormDataV2(
+            PROBLEM_ID,
+            existingForm.copy(
+                judgeTeams = listOf(
+                    JudgeTeam(PROBLEM_ID, cityA.id, JudgeCount(1, 1, 1)),
+                    JudgeTeam(PROBLEM_ID, cityB.id, JudgeCount(2, 2, 2))
+                )
             )
         )
 

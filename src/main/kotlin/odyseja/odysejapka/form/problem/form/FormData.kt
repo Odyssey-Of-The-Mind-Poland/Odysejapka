@@ -15,5 +15,5 @@ data class FormData(
     val penaltyEntries: List<PenaltyFormEntry>,
     val smallJudgesTeam: List<Int>? = null,
     val bigJudgesTeam: List<Int>? = null,
-    val judgeTeams: List<JudgeTeam?> = emptyList()
+    val judgeTeams: List<JudgeTeam>? = null
 )
