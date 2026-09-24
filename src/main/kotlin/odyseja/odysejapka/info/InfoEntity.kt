@@ -2,6 +2,8 @@ package odyseja.odysejapka.info
 
 import odyseja.odysejapka.city.CityEntity
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
 @Entity(name = "info")
 class InfoEntity(
@@ -14,8 +16,10 @@ class InfoEntity(
   @Column(columnDefinition = "TEXT")
   var infoText: String,
   @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   var city: CityEntity,
   @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   var category: InfoCategoryEntity,
   @Column()
   var sortNumber: Int,
