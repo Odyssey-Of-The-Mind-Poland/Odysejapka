@@ -9,6 +9,8 @@ import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import odyseja.odysejapka.city.CityEntity
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
 @Entity
 @Table(name = "form_problems")
@@ -24,7 +26,8 @@ class CityFormJudgesEntity {
     @Column
     var judgeCount: Int = 0
 
-    @ManyToOne(cascade = [CascadeType.ALL])
+    @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH])
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var city: CityEntity? = null
 
     companion object {
