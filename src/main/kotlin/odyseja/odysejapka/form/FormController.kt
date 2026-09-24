@@ -10,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -38,7 +39,7 @@ class FormController(
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @PutMapping("/v2/{problem}")
     fun setFormDataV2(@PathVariable problem: Int, @RequestBody formData: FormData) {
-        formService.setFormData(problem, formData)
+        formService.setFormDataV2(problem, formData)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
@@ -50,7 +51,7 @@ class FormController(
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @GetMapping("/v2/{problem}")
     fun getFormDataV2(@PathVariable problem: Int): FormData {
-        return formService.getFormData(problem)
+        return formService.getFormDataV2(problem)
     }
 
     @GetMapping("/{problem}/judge-count")
@@ -59,8 +60,8 @@ class FormController(
     }
 
     @GetMapping("/v2/{problem}/judge-count")
-    fun getJudgeCountV2(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCountResponse {
-        return formService.getJudgeCount(problem, cityId)
+    fun getJudgeCountV2(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCount {
+        return formService.getJudgeCountV2(problem, cityId)
     }
 
     @PutMapping("/{performanceId}/result")
@@ -73,6 +74,16 @@ class FormController(
         formService.setTeamResults(performanceId, result)
     }
 
+    @PutMapping("/v2/{performanceId}/result")
+    fun setTeamResultsV2(
+        @PathVariable performanceId: Int,
+        @RequestBody result: PerformanceResultsRequest,
+        @AuthenticationPrincipal principal: Any?
+    ) {
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
+        formService.setTeamResultsV2(performanceId, result)
+    }
+
     @GetMapping("/{performanceId}/result")
     fun getTeamResults(
         @PathVariable performanceId: Int,
@@ -80,6 +91,15 @@ class FormController(
     ): TeamForm {
         performanceAccessService.checkAccessByPrincipal(performanceId, principal)
         return formService.getTeamForm(performanceId)
+    }
+
+    @GetMapping("/v2/{performanceId}/result")
+    fun getTeamResultsV2(
+        @PathVariable performanceId: Int,
+        @AuthenticationPrincipal principal: Any?
+    ): TeamForm {
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
+        return formService.getTeamFormV2(performanceId)
     }
 
     @GetMapping("/subjective-ranges")
@@ -104,6 +124,20 @@ class FormController(
             throw ResponseStatusException(HttpStatus.FORBIDDEN)
         }
         formService.approveForm(performanceId)
+    }
+
+    @PutMapping("/v2/{performanceId}/approve")
+    fun approveFormV2(
+        @PathVariable performanceId: Int,
+        @AuthenticationPrincipal principal: Any?
+    ) {
+        performanceAccessService.checkAccessByPrincipal(performanceId, principal)
+        val performance = performanceService.getPerformanceEntity(performanceId)
+        val problem = performance.problemEntity.id
+        if (!userAccessService.isAdmin() && !userAccessService.isKapitanForProblem(problem)) {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN)
+        }
+        formService.approveFormV2(performanceId)
     }
 
     @PutMapping("/{performanceId}/ranatra")

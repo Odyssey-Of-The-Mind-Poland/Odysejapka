@@ -10,6 +10,8 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import odyseja.odysejapka.city.CityEntity
 import odyseja.odysejapka.form.JudgeCount
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
 /**
  * Ta klasa reprezentuje jeden zespół sędziowski – czyli kombinację liczby sędziów A, B i Stylu w danym problemie na danym konkursie.
@@ -34,7 +36,8 @@ class JudgeTeamEntity {
     @Column
     var judgeCountStyle: Int = 0
 
-    @ManyToOne(cascade = [CascadeType.ALL])
+    @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH])
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var city: CityEntity? = null
 
     companion object {

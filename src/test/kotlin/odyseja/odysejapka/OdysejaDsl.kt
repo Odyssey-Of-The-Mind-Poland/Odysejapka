@@ -190,8 +190,14 @@ class OdysejaDsl {
 
     fun getTeamResults(performanceId: Int) = formClient.getTeamResults(performanceId, null)
 
+    fun getTeamResultsV2(performanceId: Int) = formClient.getTeamResultsV2(performanceId, null)
+
     fun setTeamResults(performanceId: Int, results: List<PerformanceResultsRequest.PerformanceResult>) {
         formClient.setTeamResults(performanceId, PerformanceResultsRequest(results), null)
+    }
+
+    fun setTeamResultsV2(performanceId: Int, results: List<PerformanceResultsRequest.PerformanceResult>) {
+        formClient.setTeamResultsV2(performanceId, PerformanceResultsRequest(results), null)
     }
 
     fun performanceResult(entryId: Long, result: Long, judge: Int = 1, judgeType: JudgeType = JudgeType.DT_A) =
