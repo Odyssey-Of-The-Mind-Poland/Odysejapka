@@ -53,6 +53,7 @@ class FormTeamResultsIsolationTest : OdysejaDsl() {
 
     @Test
     fun `V2 should keep results isolated between cities and support different judge counts`() {
+        clearCities()
         val (dtId, _, _) = seedDefaultFormWithIdsV2()
         val cityA = createCity("Warszawa")
         val cityB = createCity("Kraków")
@@ -71,16 +72,16 @@ class FormTeamResultsIsolationTest : OdysejaDsl() {
         val perfA = createPerformance(cityA.id)
         val perfB = createPerformance(cityB.id)
 
-        setTeamResults(perfA, listOf(performanceResult(dtId, 11)))
-        setTeamResults(
+        setTeamResultsV2(perfA, listOf(performanceResult(dtId, 11)))
+        setTeamResultsV2(
             perfB, listOf(
                 performanceResult(dtId, 22),
                 performanceResult(dtId, 33, judge = 2)
             )
         )
 
-        val a = getTeamResults(perfA)
-        val b = getTeamResults(perfB)
+        val a = getTeamResultsV2(perfA)
+        val b = getTeamResultsV2(perfB)
         val aAll = a.dtEntries.size + a.styleEntries.size + a.penaltyEntries.size
         val bAll = b.dtEntries.size + b.styleEntries.size + b.penaltyEntries.size
 

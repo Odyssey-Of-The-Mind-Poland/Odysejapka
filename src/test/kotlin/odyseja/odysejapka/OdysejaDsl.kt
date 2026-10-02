@@ -159,7 +159,7 @@ class OdysejaDsl {
     fun createPerformance(
         cityId: Int,
         team: String = "Sample Team",
-        problem: Int = 1,
+        problem: Int = PROBLEM_ID,
         age: Int = 1,
         stage: Int = 1,
         spontan: String = "11:11",
