@@ -150,7 +150,16 @@ class OdysejaDsl {
         return cityClient.saveCity(CreateCityRequest(name, level))
     }
 
-    fun getCityByName(name: String) = cityClient.getCities().firstOrNull { it?.name == name }
+    fun getCity(cityId: Int) = cityClient.getCity(cityId)
+
+    fun getCityWithRespondingClient(cityId: Int): ProblemDetail {
+        val client = controllerClientFactory.respondingClient(CityController::class.java)
+        val response = client.executeConsumer{
+            controller -> controller.getCity(cityId)
+        }
+        val problem = parseProblemDetail(response)
+        return problem
+    }
 
     fun createPerformance(cityId: Int): Int {
         return createPerformance(cityId, team = "Sample Team")
@@ -168,9 +177,10 @@ class OdysejaDsl {
         performanceDay: String = "niedziela",
         league: String? = ""
     ): Int {
-        val cityName = cityClient.getCities().firstOrNull { it?.id == cityId }?.name ?: "Unknown"
         val perf = Performance(
-            city = cityName, team = team,
+            cityId = cityId,
+            cityName = getCity(cityId).name,
+            team = team,
             id = 0,
             problem = problem,
             age = age,

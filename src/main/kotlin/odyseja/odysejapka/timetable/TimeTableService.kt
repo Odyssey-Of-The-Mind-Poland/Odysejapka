@@ -1,6 +1,5 @@
 package odyseja.odysejapka.timetable
 
-import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.problem.ProblemService
@@ -41,7 +40,7 @@ class TimeTableService(
                 it.team,
                 problemService.getProblem(it.problem),
                 ageService.getAge(it.age),
-                stageService.getOrCreateStageByNumber(it.city, it.stage),
+                stageService.getOrCreateStageByNumber(cityId, it.stage),
                 it.performance,
                 it.spontan,
                 it.part,
@@ -62,11 +61,11 @@ class TimeTableService(
     fun addPerformance(performance: Performance): PerformanceEntity {
         val performanceEntity = PerformanceEntity(
             performance.id,
-            cityService.getCityByName(performance.city),
+            cityService.getCity(performance.cityId),
             performance.team,
             problemService.getProblem(performance.problem),
             ageService.getAge(performance.age),
-            stageService.getOrCreateStageByNumber(performance.city, performance.stage),
+            stageService.getOrCreateStageByNumber(performance.cityId, performance.stage),
             performance.performance,
             performance.spontan,
             performance.part,
@@ -86,11 +85,11 @@ class TimeTableService(
     fun updatePerformance(performance: Performance) {
         val performanceToEdit = performanceService.getPerformanceEntity(performance.id)
 
-        performanceToEdit.cityEntity = cityService.getCityByName(performance.city)
+        performanceToEdit.cityEntity = cityService.getCity(performance.cityId)
         performanceToEdit.team = performance.team
         performanceToEdit.problemEntity = problemService.getProblem(performance.problem)
         performanceToEdit.ageEntity = ageService.getAge(performance.age)
-        performanceToEdit.stageEntity = stageService.getOrCreateStageByNumber(performance.city, performance.stage)
+        performanceToEdit.stageEntity = stageService.getOrCreateStageByNumber(performance.cityId, performance.stage)
         performanceToEdit.performance = performance.performance
         performanceToEdit.spontan = performance.spontan
 

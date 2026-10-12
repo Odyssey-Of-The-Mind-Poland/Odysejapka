@@ -28,13 +28,13 @@ class JudgeTeamEntity {
     var problem: Int = 0
 
     @Column
-    var judgeCountDtA: Int = 0
+    var judgeCountDtA: Int = 1
 
     @Column
-    var judgeCountDtB: Int = 0
+    var judgeCountDtB: Int = 1
 
     @Column
-    var judgeCountStyle: Int = 0
+    var judgeCountStyle: Int = 1
 
     @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH])
     @OnDelete(action = OnDeleteAction.CASCADE)

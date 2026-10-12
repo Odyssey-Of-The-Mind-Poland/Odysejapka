@@ -5,8 +5,8 @@ import java.time.LocalDate
 
 data class Performance (
     val id: Int = 0,
-    @CsvBindByName(column = "Konkurs")
-    val city: String = "",
+    val cityId: Int = 0,
+    val cityName: String = "",
     @CsvBindByName(column = "Drużyna", required = true)
     val team: String = "",
     @CsvBindByName(column = "Problem", required = true)

@@ -1,6 +1,5 @@
 package odyseja.odysejapka.form.judge.team
 
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.transaction.annotation.Transactional
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
@@ -14,7 +13,8 @@ class JudgeTeamService(
     private val changeService: ChangeService
 ) {
     fun getJudgeCountByProblemAndCity(problem: Int, cityId: Int): JudgeCount {
-        val judgeTeam = getJudgeTeamEntityByProblemAndCity(problem, cityId) ?: throw EntityNotFoundException("Nie ma takiego zespołu sędziowskiego.")
+        val judgeTeam = getJudgeTeamEntityByProblemAndCity(problem, cityId)
+            ?: JudgeTeamEntity.create(problem, cityService.getCity(cityId))
         val judgeCount = JudgeCount(
             judgeTeam.judgeCountDtA,
             judgeTeam.judgeCountDtB,

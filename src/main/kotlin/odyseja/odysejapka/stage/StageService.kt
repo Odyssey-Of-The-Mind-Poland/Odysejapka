@@ -14,16 +14,17 @@ class StageService(
     private val stageUserService: StageUserService
 ) {
 
-    fun getStageByNumber(cityName: String, stageNumber: Int): StageEntity {
-        return stageRepository.findFirstByNumberAndCityEntity(stageNumber, cityService.getCityByName(cityName))
-            ?: throw EntityNotFoundException ("W mieście $cityName nie ma sceny $stageNumber")
+    fun getStageByNumber(cityId: Int, stageNumber: Int): StageEntity {
+        val city = cityService.getCity(cityId)
+        return stageRepository.findFirstByNumberAndCityEntity(stageNumber, city)
+            ?: throw EntityNotFoundException ("W mieście $city.name nie ma sceny $stageNumber")
     }
 
     @Transactional
-    fun getOrCreateStageByNumber(cityName: String, stageNumber: Int): StageEntity {
-        return stageRepository.findFirstByNumberAndCityEntity(stageNumber, cityService.getCityByName(cityName))
+    fun getOrCreateStageByNumber(cityId: Int, stageNumber: Int): StageEntity {
+        return stageRepository.findFirstByNumberAndCityEntity(stageNumber, cityService.getCity(cityId))
             ?: stageRepository.save(StageEntity(
-                0, stageNumber, "Scena $stageNumber", cityService.getCityByName(cityName)
+                0, stageNumber, "Scena $stageNumber", cityService.getCity(cityId)
             ))
     }
 
