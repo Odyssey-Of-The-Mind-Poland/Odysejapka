@@ -39,10 +39,11 @@ class FormService(
         val formWithIds = FormEntryMapHelper.assignIds(form, existingForm)
 
         existingEntity.form = formWithIds
-        problemFormService.saveProblemForm(existingEntity)
 
         val judgeTeams = form.judgeTeams ?: emptyList()
+
         judgeTeamService.setJudgeTeamsForProblem(problem, judgeTeams)
+        problemFormService.saveProblemForm(existingEntity)
     }
 
 
