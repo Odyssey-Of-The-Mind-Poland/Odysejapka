@@ -5,7 +5,6 @@ import odyseja.odysejapka.city.KonkursLevel
 import odyseja.odysejapka.form.judge.team.JudgeTeam
 import odyseja.odysejapka.form.problem.form.FormData
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
 
@@ -14,9 +13,9 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should set form entry`() {
-        seedDefaultV2()
+        seedDefault()
 
-        val entries = formV2()
+        val entries = form()
         Assertions.assertThat(entries.dtEntries).hasSize(1)
         val dtEntry = entries.dtEntries[0]
         Assertions.assertThat(dtEntry.type).isEqualTo(LongTermFormEntry.EntryType.SCORING)
@@ -29,8 +28,8 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should update entry`() {
-        seedDefaultV2()
-        val existing = formV2()
+        seedDefault()
+        val existing = form()
 
         val dtId = existing.dtEntries.first().id
         val styleId = existing.styleEntries.first().id
@@ -58,7 +57,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val updated = formV2()
+        val updated = form()
         Assertions.assertThat(updated.dtEntries).hasSize(1)
         val updatedDt = updated.dtEntries[0]
         Assertions.assertThat(updatedDt.name).isEqualTo("DT new")
@@ -67,8 +66,8 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should delete entry when omitted from request`() {
-        seedDefaultV2()
-        val existing = formV2()
+        seedDefault()
+        val existing = form()
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
@@ -86,7 +85,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val afterDelete = formV2()
+        val afterDelete = form()
         Assertions.assertThat(afterDelete.dtEntries).isEmpty()
         Assertions.assertThat(afterDelete.styleEntries).hasSize(1)
         Assertions.assertThat(afterDelete.styleEntries[0].name).isEqualTo("Style")
@@ -96,8 +95,8 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should add new entry to existing category`() {
-        seedDefaultV2()
-        val existing = formV2()
+        seedDefault()
+        val existing = form()
         val dtId = existing.dtEntries.first().id
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
@@ -116,7 +115,7 @@ class FormTest : OdysejaDsl() {
             penalty = listOf(PenaltyFormEntry(penaltyId, "Penalty", PenaltyFormEntry.EntryType.PENALTY))
         )
 
-        val afterAdd = formV2()
+        val afterAdd = form()
         Assertions.assertThat(afterAdd.styleEntries).hasSize(2)
         Assertions.assertThat(afterAdd.styleEntries.map { it.name })
             .containsExactlyInAnyOrder("Style", "Style 2")
@@ -166,8 +165,8 @@ class FormTest : OdysejaDsl() {
         val city2 = createCity("City 2", KonkursLevel.REGIONAL)
         val city3 = createCity("City 3", KonkursLevel.FINAL)
 
-        seedDefaultV2()
-        val existing = formV2()
+        seedDefault()
+        val existing = form()
 
         formClient.setFormDataV2(
             PROBLEM_ID,
@@ -189,8 +188,8 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should set form visual group`() {
-        seedDefaultV2()
-        val existing = formV2()
+        seedDefault()
+        val existing = form()
         val dtId = existing.dtEntries.first().id
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
@@ -212,8 +211,8 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should support nested section entries`() {
-        seedDefaultV2()
-        val existing = formV2()
+        seedDefault()
+        val existing = form()
         val dtId = existing.dtEntries.first().id
 
         val scoringData = LongTermFormEntry.ScoringData(
@@ -259,7 +258,7 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should support scoring group entries`() {
-        seedDefaultV2()
+        seedDefault()
 
         val scoringData = LongTermFormEntry.ScoringData(
             scoringType = LongTermFormEntry.ScoringType.SUBJECTIVE,
@@ -292,7 +291,7 @@ class FormTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val after = formV2()
+        val after = form()
         Assertions.assertThat(after.dtEntries).hasSize(1)
         val group = after.dtEntries[0]
         Assertions.assertThat(group.name).isEqualTo("DT Group")
@@ -317,7 +316,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val retrieved = formV2()
+        val retrieved = form()
         Assertions.assertThat(retrieved.penaltyEntries).hasSize(1)
         val penalty = retrieved.penaltyEntries[0]
         Assertions.assertThat(penalty.name).isEqualTo("Range Penalty")
@@ -341,7 +340,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val retrieved = formV2()
+        val retrieved = form()
         Assertions.assertThat(retrieved.penaltyEntries).hasSize(1)
         val penalty = retrieved.penaltyEntries[0]
         Assertions.assertThat(penalty.name).isEqualTo("Discrete Penalty")
@@ -364,7 +363,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val retrieved = formV2()
+        val retrieved = form()
         Assertions.assertThat(retrieved.penaltyEntries).hasSize(1)
         val penalty = retrieved.penaltyEntries[0]
         Assertions.assertThat(penalty.name).isEqualTo("Single Penalty")
@@ -399,7 +398,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val retrieved = formV2()
+        val retrieved = form()
         Assertions.assertThat(retrieved.penaltyEntries).hasSize(3)
         
         val rangePenalty = retrieved.penaltyEntries.first { it.name == "Range Penalty" }
@@ -432,7 +431,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val existing = formV2()
+        val existing = form()
         val penaltyId = existing.penaltyEntries.first().id
 
         // Update to DISCRETE type
@@ -449,7 +448,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val updated = formV2()
+        val updated = form()
         Assertions.assertThat(updated.penaltyEntries).hasSize(1)
         val penalty = updated.penaltyEntries[0]
         Assertions.assertThat(penalty.id).isEqualTo(penaltyId)

@@ -25,7 +25,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val entries = formV2()
+        val entries = form()
         Assertions.assertThat(entries.dtEntries).hasSize(3)
         Assertions.assertThat(entries.dtEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(entries.dtEntries[0].name).isEqualTo("Entry 1")
@@ -53,7 +53,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val initial = formV2()
+        val initial = form()
         val entry1Id = initial.dtEntries[0].id!!
         val entry2Id = initial.dtEntries[1].id!!
         val entry3Id = initial.dtEntries[2].id!!
@@ -69,7 +69,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val reordered = formV2()
+        val reordered = form()
         Assertions.assertThat(reordered.dtEntries).hasSize(3)
         Assertions.assertThat(reordered.dtEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(reordered.dtEntries[0].name).isEqualTo("Entry 3")
@@ -91,7 +91,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val entries = formV2()
+        val entries = form()
         Assertions.assertThat(entries.styleEntries).hasSize(3)
         Assertions.assertThat(entries.styleEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(entries.styleEntries[0].name).isEqualTo("Style 1")
@@ -113,7 +113,7 @@ class FormSortIndexTest : OdysejaDsl() {
             )
         )
 
-        val entries = formV2()
+        val entries = form()
         Assertions.assertThat(entries.penaltyEntries).hasSize(3)
         Assertions.assertThat(entries.penaltyEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(entries.penaltyEntries[0].name).isEqualTo("Penalty 1")
@@ -141,7 +141,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val initial = formV2()
+        val initial = form()
         val entry1Id = initial.dtEntries[0].id!!
         val entry3Id = initial.dtEntries[2].id!!
 
@@ -155,7 +155,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val afterRemove = formV2()
+        val afterRemove = form()
         Assertions.assertThat(afterRemove.dtEntries).hasSize(2)
         Assertions.assertThat(afterRemove.dtEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(afterRemove.dtEntries[0].name).isEqualTo("Entry 1")
@@ -188,7 +188,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val entries = formV2()
+        val entries = form()
         Assertions.assertThat(entries.dtEntries).hasSize(1)
         val section = entries.dtEntries[0]
         Assertions.assertThat(section.entries).hasSize(3)
@@ -226,7 +226,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val initial = formV2()
+        val initial = form()
         val sectionId = initial.dtEntries[0].id!!
         val nested1Id = initial.dtEntries[0].entries[0].id!!
         val nested2Id = initial.dtEntries[0].entries[1].id!!
@@ -251,7 +251,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val reordered = formV2()
+        val reordered = form()
         val section = reordered.dtEntries[0]
         Assertions.assertThat(section.entries).hasSize(3)
         Assertions.assertThat(section.entries[0].sortIndex).isEqualTo(0)
@@ -279,7 +279,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val initial = formV2()
+        val initial = form()
         val entry1Id = initial.dtEntries[0].id!!
         val entry3Id = initial.dtEntries[1].id!!
 
@@ -294,7 +294,7 @@ class FormSortIndexTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val afterAdd = formV2()
+        val afterAdd = form()
         Assertions.assertThat(afterAdd.dtEntries).hasSize(3)
         Assertions.assertThat(afterAdd.dtEntries[0].sortIndex).isEqualTo(0)
         Assertions.assertThat(afterAdd.dtEntries[0].name).isEqualTo("Entry 1")

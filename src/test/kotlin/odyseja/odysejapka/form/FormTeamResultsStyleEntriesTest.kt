@@ -31,7 +31,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
             ))
         )
 
-        val entries = formV2()
+        val entries = form()
         Assertions.assertThat(entries.styleEntries).hasSize(2)
         Assertions.assertThat(entries.styleEntries[0].type).isEqualTo(StyleFormEntry.EntryType.STYLE)
         Assertions.assertThat(entries.styleEntries[0].name).isEqualTo("Style Entry 1")
@@ -59,7 +59,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
             ))
         )
 
-        val entries = formV2()
+        val entries = form()
         val dtId = entries.dtEntries.first().id!!
         val styleId = entries.styleEntries.first().id!!
         val penaltyId = entries.penaltyEntries.first().id!!
@@ -100,7 +100,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
             penalty = emptyList()
         )
 
-        val entries = formV2()
+        val entries = form()
         Assertions.assertThat(entries.styleEntries).hasSize(2)
         Assertions.assertThat(entries.styleEntries[0].type).isEqualTo(StyleFormEntry.EntryType.STYLE)
         Assertions.assertThat(entries.styleEntries[0].name).isEqualTo("Style Entry 1")
