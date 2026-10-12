@@ -11,16 +11,16 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
 
     @Test
     fun `should add new team results and fetch them`() {
-        val (dtId, styleId, _) = seedDefaultFormWithIdsV2()
+        val (dtId, styleId, _) = seedDefaultFormWithIds()
         val city = createCity("Rzeszów")
         val perfId = createPerformance(city.id)
 
-        setTeamResultsV2(perfId, listOf(
+        setTeamResults(perfId, listOf(
             performanceResult(dtId, 50),
             performanceResult(styleId, 30, judgeType = JudgeType.STYLE)
         ))
 
-        val saved = getTeamResultsV2(perfId)
+        val saved = getTeamResults(perfId)
         val allEntries = saved.dtEntries.size + saved.styleEntries.size + saved.penaltyEntries.size
         Assertions.assertThat(allEntries).isEqualTo(3) // All form entries (dt, style, penalty)
         val dtEntry = saved.dtEntries.first { it.entry.id == dtId }
@@ -31,10 +31,10 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
 
     @Test
     fun `should update existing result and add another judge`() {
-        val (dtId, styleId, _) = seedDefaultFormWithIdsV2()
+        val (dtId, styleId, _) = seedDefaultFormWithIds()
         val city = createCity("Gdynia")
         
-        val existingForm = formV2()
+        val existingForm = form()
         formClient.setFormDataV2(
             PROBLEM_ID,
             existingForm.copy(
@@ -44,18 +44,18 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
         
         val perfId = createPerformance(city.id)
 
-        setTeamResultsV2(perfId, listOf(
+        setTeamResults(perfId, listOf(
             performanceResult(dtId, 10),
             performanceResult(styleId, 20, judgeType = JudgeType.STYLE)
         ))
 
-        setTeamResultsV2(perfId, listOf(
+        setTeamResults(perfId, listOf(
             performanceResult(dtId, 15),
             performanceResult(styleId, 22, judge = 2, judgeType = JudgeType.STYLE),
             performanceResult(styleId, 20, judgeType = JudgeType.STYLE)
         ))
 
-        val after = getTeamResultsV2(perfId)
+        val after = getTeamResults(perfId)
         val allEntries = after.dtEntries.size + after.styleEntries.size + after.penaltyEntries.size
 
         Assertions.assertThat(allEntries).isEqualTo(3) // All form entries (dt, style, penalty)
@@ -70,7 +70,7 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
 
     @Test
     fun `should be idempotent when sending unchanged values`() {
-        val (dtId, styleId, _) = seedDefaultFormWithIdsV2()
+        val (dtId, styleId, _) = seedDefaultFormWithIds()
         val city = createCity("Białystok")
         val perfId = createPerformance(city.id)
 
@@ -79,12 +79,12 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
             performanceResult(styleId, 66, judgeType = JudgeType.STYLE)
         )
 
-        setTeamResultsV2(perfId, payload)
+        setTeamResults(perfId, payload)
         val first = getTeamResults(perfId)
         val firstAll = first.dtEntries.size + first.styleEntries.size + first.penaltyEntries.size
         Assertions.assertThat(firstAll).isEqualTo(3) // All form entries (dt, style, penalty)
 
-        setTeamResultsV2(perfId, payload)
+        setTeamResults(perfId, payload)
         val second = getTeamResults(perfId)
         val secondAll = second.dtEntries.size + second.styleEntries.size + second.penaltyEntries.size
         Assertions.assertThat(secondAll).isEqualTo(3)
@@ -96,13 +96,13 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
 
     @Test
     fun `empty payload is a no-op`() {
-        seedDefaultFormWithIdsV2()
+        seedDefaultFormWithIds()
         val city = createCity("Słupsk")
         val perfId = createPerformance(city.id)
 
-        setTeamResultsV2(perfId, emptyList())
+        setTeamResults(perfId, emptyList())
 
-        val after = getTeamResultsV2(perfId)
+        val after = getTeamResults(perfId)
         val allEntries = after.dtEntries.size + after.styleEntries.size + after.penaltyEntries.size
         Assertions.assertThat(allEntries).isEqualTo(3) // All form entries (dt, style, penalty) but with null judge results
         Assertions.assertThat(after.dtEntries.all { 
