@@ -22,7 +22,7 @@ class JudgeTeamService(
         return judgeCount
     }
 
-    fun getJudgeTeamsByProblem(problem: Int): List<JudgeTeam?> {
+    fun getJudgeTeamsByProblem(problem: Int): List<JudgeTeam>? {
         val judgeTeams = judgeTeamRepository.findByProblem(problem)
         return judgeTeams.mapNotNull {
             it?.toJudgeTeam()
