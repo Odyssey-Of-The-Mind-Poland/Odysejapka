@@ -1,4 +1,4 @@
-package odyseja.odysejapka.form.problem.form
+package odyseja.odysejapka.form
 
 import jakarta.transaction.Transactional
 import odyseja.odysejapka.change.ChangeService

@@ -11,7 +11,7 @@ import odyseja.odysejapka.form.LongTermFormEntry
 import odyseja.odysejapka.form.StyleFormEntry
 import odyseja.odysejapka.form.PenaltyFormEntry
 import odyseja.odysejapka.form.PerformanceResultsRequest
-import odyseja.odysejapka.form.problem.form.FormData
+import odyseja.odysejapka.form.FormData
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.spontan.SpontanController
 import odyseja.odysejapka.timetable.Performance

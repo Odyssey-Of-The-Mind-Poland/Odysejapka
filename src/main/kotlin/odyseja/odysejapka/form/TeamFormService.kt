@@ -3,8 +3,6 @@ package odyseja.odysejapka.form
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import odyseja.odysejapka.city.KonkursLevel
-import odyseja.odysejapka.form.judge.team.JudgeTeamService
-import odyseja.odysejapka.form.problem.form.ProblemFormService
 import odyseja.odysejapka.timetable.PerformanceService
 import org.springframework.stereotype.Service
 

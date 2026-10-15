@@ -1,9 +1,5 @@
 package odyseja.odysejapka.form
 
-import odyseja.odysejapka.form.judge.team.JudgeTeamService
-import odyseja.odysejapka.form.problem.form.FormData
-import odyseja.odysejapka.form.problem.form.FormEntryMapHelper
-import odyseja.odysejapka.form.problem.form.ProblemFormService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

@@ -1,7 +1,4 @@
-package odyseja.odysejapka.form.judge.team
-
-import odyseja.odysejapka.city.CityEntity
-import odyseja.odysejapka.form.JudgeCount
+package odyseja.odysejapka.form
 
 /**
  * Ta klasa reprezentuje jeden zespół sędziowski – czyli kombinację liczby sędziów A, B i Stylu w danym problemie na danym konkursie.

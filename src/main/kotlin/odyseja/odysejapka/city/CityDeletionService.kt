@@ -2,7 +2,7 @@ package odyseja.odysejapka.city
 
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.form.JudgeCountService
-import odyseja.odysejapka.form.judge.team.JudgeTeamService
+import odyseja.odysejapka.form.JudgeTeamService
 import odyseja.odysejapka.info.InfoService
 import odyseja.odysejapka.sponsor.SponsorService
 import odyseja.odysejapka.spontan.SpontanGroupAssignmentService
