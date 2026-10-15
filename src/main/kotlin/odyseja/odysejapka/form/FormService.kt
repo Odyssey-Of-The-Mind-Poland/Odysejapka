@@ -66,18 +66,14 @@ class FormService(
         val form = entity.form ?: FormData(
             dtEntries = emptyList(),
             styleEntries = emptyList(),
-            penaltyEntries = emptyList(),
-            judgeTeams = emptyList(),
+            penaltyEntries = emptyList()
         )
 
-        return form.copy()
-    }
+        val judgeTeams = judgeTeamService.getJudgeTeamsByProblem(problem)
 
-    private fun extractJudgeTeamIds(judgeEntities: List<CityFormJudgesEntity?>, judgeCount: Int): List<Int>? {
-        val ids = judgeEntities
-            .filter { it?.judgeCount == judgeCount }
-            .mapNotNull { it?.city?.id }
-        return ids.ifEmpty { null }
+        return form.copy(
+            judgeTeams = judgeTeams
+        )
     }
 
     fun getJudgeCount(problem: Int, cityId: Int): JudgeCountResponse {
@@ -173,5 +169,12 @@ class FormService(
     @Transactional
     fun toggleRanatra(performanceId: Int): Boolean {
         return teamResultService.toggleRanatra(performanceId)
+    }
+
+    private fun extractJudgeTeamIds(judgeEntities: List<CityFormJudgesEntity?>, judgeCount: Int): List<Int>? {
+        val ids = judgeEntities
+            .filter { it?.judgeCount == judgeCount }
+            .mapNotNull { it?.city?.id }
+        return ids.ifEmpty { null }
     }
 }
