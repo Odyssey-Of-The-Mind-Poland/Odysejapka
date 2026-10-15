@@ -78,14 +78,15 @@ class OdysejaDsl {
     val PROBLEM_ID = 1
 
     fun setForm(
+        problem: Int = PROBLEM_ID,
         dt: List<LongTermFormEntry>,
         style: List<StyleFormEntry>,
         penalty: List<PenaltyFormEntry>
     ) {
-        formClient.setFormDataV2(PROBLEM_ID, FormData(dt, style, penalty))
+        formClient.setFormDataV2(problem, FormData(dt, style, penalty))
     }
 
-    fun form() = formClient.getFormDataV2(PROBLEM_ID)
+    fun form(problem: Int = PROBLEM_ID) = formClient.getFormDataV2(problem)
 
     fun seedDefault(): Unit = setForm(
         dt = listOf(LongTermFormEntry(
@@ -112,10 +113,10 @@ class OdysejaDsl {
         return Triple(dtId, styleId, penaltyId)
     }
 
-    fun setJudgeTeams(judgeTeams: List<JudgeTeam>) {
-        val existingForm = form()
+    fun setJudgeTeams(judgeTeams: List<JudgeTeam>, problem: Int = PROBLEM_ID) {
+        val existingForm = form(problem)
         formClient.setFormDataV2(
-            PROBLEM_ID,
+            problem,
             existingForm.copy(
                 judgeTeams = judgeTeams
             )
