@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
-import odyseja.odysejapka.form.problem.form.FormData
 
 @Converter(autoApply = false)
 class FormDataConverter : AttributeConverter<FormData, String> {

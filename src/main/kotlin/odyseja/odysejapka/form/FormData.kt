@@ -1,9 +1,4 @@
-package odyseja.odysejapka.form.problem.form
-
-import odyseja.odysejapka.form.LongTermFormEntry
-import odyseja.odysejapka.form.PenaltyFormEntry
-import odyseja.odysejapka.form.StyleFormEntry
-import odyseja.odysejapka.form.judge.team.JudgeTeam
+package odyseja.odysejapka.form
 
 /**
  * Dane do arkusza z kategoriami punktacji, ale jeszcze nieprzydzielone do konkretnego problemu.

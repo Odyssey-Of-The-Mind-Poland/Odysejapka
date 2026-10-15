@@ -1,9 +1,8 @@
-package odyseja.odysejapka.form.judge.team
+package odyseja.odysejapka.form
 
 import org.springframework.transaction.annotation.Transactional
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
-import odyseja.odysejapka.form.JudgeCount
 import org.springframework.stereotype.Service
 
 @Service

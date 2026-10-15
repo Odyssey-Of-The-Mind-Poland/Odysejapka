@@ -1,4 +1,4 @@
-package odyseja.odysejapka.form.problem.form
+package odyseja.odysejapka.form
 
 import org.springframework.data.repository.CrudRepository
 

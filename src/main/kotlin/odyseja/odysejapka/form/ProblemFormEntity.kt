@@ -1,7 +1,6 @@
-package odyseja.odysejapka.form.problem.form
+package odyseja.odysejapka.form
 
 import jakarta.persistence.*
-import odyseja.odysejapka.form.FormDataConverter
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 

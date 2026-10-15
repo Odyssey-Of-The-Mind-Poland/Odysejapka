@@ -1,4 +1,4 @@
-package odyseja.odysejapka.form.judge.team
+package odyseja.odysejapka.form
 
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -9,7 +9,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import odyseja.odysejapka.city.CityEntity
-import odyseja.odysejapka.form.JudgeCount
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 

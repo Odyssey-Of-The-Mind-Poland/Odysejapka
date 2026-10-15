@@ -2,8 +2,6 @@ package odyseja.odysejapka.form
 
 import odyseja.odysejapka.OdysejaDsl
 import odyseja.odysejapka.city.KonkursLevel
-import odyseja.odysejapka.form.judge.team.JudgeTeam
-import odyseja.odysejapka.form.problem.form.FormData
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
