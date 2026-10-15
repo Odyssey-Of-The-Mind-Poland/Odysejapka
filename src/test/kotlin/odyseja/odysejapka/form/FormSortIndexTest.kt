@@ -15,7 +15,7 @@ class FormSortIndexTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(null, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(null, "Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1),
@@ -43,7 +43,7 @@ class FormSortIndexTest : OdysejaDsl() {
         )
 
         // Create initial entries
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(null, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(null, "Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1),
@@ -59,7 +59,7 @@ class FormSortIndexTest : OdysejaDsl() {
         val entry3Id = initial.dtEntries[2].id!!
 
         // Reorder entries (swap first and last)
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(entry3Id, "Entry 3", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(entry2Id, "Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1),
@@ -81,7 +81,7 @@ class FormSortIndexTest : OdysejaDsl() {
 
     @Test
     fun `should assign sequential sort indexes to style entries`() {
-        setFormV2(
+        setForm(
             dt = emptyList(),
             style = listOf(
                 StyleFormEntry(null, "Style 1", StyleFormEntry.EntryType.STYLE, sortIndex = 0),
@@ -103,7 +103,7 @@ class FormSortIndexTest : OdysejaDsl() {
 
     @Test
     fun `should assign sequential sort indexes to penalty entries`() {
-        setFormV2(
+        setForm(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -131,7 +131,7 @@ class FormSortIndexTest : OdysejaDsl() {
         )
 
         // Create initial entries
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(null, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(null, "Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1),
@@ -146,7 +146,7 @@ class FormSortIndexTest : OdysejaDsl() {
         val entry3Id = initial.dtEntries[2].id!!
 
         // Remove middle entry
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(entry1Id, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(entry3Id, "Entry 3", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1)
@@ -170,7 +170,7 @@ class FormSortIndexTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(
                     null,
@@ -208,7 +208,7 @@ class FormSortIndexTest : OdysejaDsl() {
         )
 
         // Create initial nested entries
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(
                     null,
@@ -233,7 +233,7 @@ class FormSortIndexTest : OdysejaDsl() {
         val nested3Id = initial.dtEntries[0].entries[2].id!!
 
         // Reorder nested entries (swap first and last)
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(
                     sectionId,
@@ -270,7 +270,7 @@ class FormSortIndexTest : OdysejaDsl() {
         )
 
         // Create initial entries
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(null, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(null, "Entry 3", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1)
@@ -284,7 +284,7 @@ class FormSortIndexTest : OdysejaDsl() {
         val entry3Id = initial.dtEntries[1].id!!
 
         // Add entry in the middle
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(entry1Id, "Entry 1", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 0),
                 LongTermFormEntry(null, "Entry 2", LongTermFormEntry.EntryType.SCORING, scoring = scoringData, sortIndex = 1),

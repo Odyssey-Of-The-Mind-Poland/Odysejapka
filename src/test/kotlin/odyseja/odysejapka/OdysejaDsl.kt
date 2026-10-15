@@ -12,6 +12,7 @@ import odyseja.odysejapka.form.StyleFormEntry
 import odyseja.odysejapka.form.PenaltyFormEntry
 import odyseja.odysejapka.form.PerformanceResultsRequest
 import odyseja.odysejapka.form.FormData
+import odyseja.odysejapka.form.JudgeTeam
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.spontan.SpontanController
 import odyseja.odysejapka.timetable.Performance
@@ -76,7 +77,7 @@ class OdysejaDsl {
 
     val PROBLEM_ID = 1
 
-    fun setFormV2(
+    fun setForm(
         dt: List<LongTermFormEntry>,
         style: List<StyleFormEntry>,
         penalty: List<PenaltyFormEntry>
@@ -86,7 +87,7 @@ class OdysejaDsl {
 
     fun form() = formClient.getFormDataV2(PROBLEM_ID)
 
-    fun seedDefault(): Unit = setFormV2(
+    fun seedDefault(): Unit = setForm(
         dt = listOf(LongTermFormEntry(
             id = null, name = "DT", type = LongTermFormEntry.EntryType.SCORING,
             scoring = LongTermFormEntry.ScoringData(
@@ -109,6 +110,16 @@ class OdysejaDsl {
         val styleId = entries.styleEntries.first().id!!
         val penaltyId = entries.penaltyEntries.first().id!!
         return Triple(dtId, styleId, penaltyId)
+    }
+
+    fun setJudgeTeams(judgeTeams: List<JudgeTeam>) {
+        val existingForm = form()
+        formClient.setFormDataV2(
+            PROBLEM_ID,
+            existingForm.copy(
+                judgeTeams = judgeTeams
+            )
+        )
     }
 
     fun createCity(name: String, level: KonkursLevel = KonkursLevel.FINAL): CityEntity {
