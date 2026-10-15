@@ -10,7 +10,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
 
     @Test
     fun `should handle STYLE entries in form`() {
-        setFormV2(
+        setForm(
             dt = listOf(LongTermFormEntry(
                 null, "DT", LongTermFormEntry.EntryType.SCORING,
                 scoring = LongTermFormEntry.ScoringData(
@@ -41,7 +41,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
 
     @Test
     fun `should include STYLE entries in team results`() {
-        setFormV2(
+        setForm(
             dt = listOf(LongTermFormEntry(
                 null, "DT", LongTermFormEntry.EntryType.SCORING,
                 scoring = LongTermFormEntry.ScoringData(
@@ -81,7 +81,7 @@ class FormTeamResultsStyleEntriesTest : OdysejaDsl() {
 
     @Test
     fun `should support multiple STYLE entries in style category`() {
-        setFormV2(
+        setForm(
             dt = listOf(LongTermFormEntry(
                 null, "DT", LongTermFormEntry.EntryType.SCORING,
                 scoring = LongTermFormEntry.ScoringData(

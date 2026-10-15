@@ -9,21 +9,15 @@ import org.springframework.security.test.context.support.WithMockUser
 class FormTeamResultsIsolationTest : OdysejaDsl() {
 
     @Test
-    fun `V2 should keep results isolated between cities and support different judge counts`() {
+    fun `should keep results isolated between cities and support different judge counts`() {
         val (dtId, _, _) = seedDefaultFormWithIds()
         val cityA = createCity("Warszawa")
         val cityB = createCity("Kraków")
 
-        val existingForm = form()
-        formClient.setFormDataV2(
-            PROBLEM_ID,
-            existingForm.copy(
-                judgeTeams = listOf(
-                    JudgeTeam(PROBLEM_ID, cityA.id, JudgeCount(1, 1, 1)),
-                    JudgeTeam(PROBLEM_ID, cityB.id, JudgeCount(2, 2, 2))
-                )
-            )
-        )
+        setJudgeTeams(listOf(
+            JudgeTeam(PROBLEM_ID, cityA.id, JudgeCount(1, 1, 1)),
+            JudgeTeam(PROBLEM_ID, cityB.id, JudgeCount(2, 2, 2))
+        ))
 
         val perfA = createPerformance(cityA.id, problem = PROBLEM_ID)
         val perfB = createPerformance(cityB.id, problem = PROBLEM_ID)

@@ -33,7 +33,7 @@ class FormTest : OdysejaDsl() {
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(
                     dtId, "DT new", LongTermFormEntry.EntryType.SCORING,
@@ -69,7 +69,7 @@ class FormTest : OdysejaDsl() {
         val styleId = existing.styleEntries.first().id
         val penaltyId = existing.penaltyEntries.first().id
 
-        setFormV2(
+        setForm(
             dt = emptyList(),
             style = listOf(
                 StyleFormEntry(
@@ -104,7 +104,7 @@ class FormTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setFormV2(
+        setForm(
             dt = listOf(LongTermFormEntry(dtId, "DT", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)),
             style = listOf(
                 StyleFormEntry(styleId, "Style", StyleFormEntry.EntryType.STYLE),
@@ -197,7 +197,7 @@ class FormTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setFormV2(
+        setForm(
             dt = listOf(LongTermFormEntry(dtId, "DT", LongTermFormEntry.EntryType.SCORING, scoring = scoringData)),
             style = listOf(
                 StyleFormEntry(styleId, "Style", StyleFormEntry.EntryType.STYLE),
@@ -218,7 +218,7 @@ class FormTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(
                     dtId,
@@ -263,7 +263,7 @@ class FormTest : OdysejaDsl() {
             noElementEnabled = false
         )
 
-        setFormV2(
+        setForm(
             dt = listOf(
                 LongTermFormEntry(
                     null,
@@ -301,7 +301,7 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should define penalty entry with RANGE type`() {
-        setFormV2(
+        setForm(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -325,7 +325,7 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should define penalty entry with DISCRETE type`() {
-        setFormV2(
+        setForm(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -348,7 +348,7 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should define penalty entry with SINGLE type`() {
-        setFormV2(
+        setForm(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -371,7 +371,7 @@ class FormTest : OdysejaDsl() {
 
     @Test
     fun `should define multiple penalty entries with different types`() {
-        setFormV2(
+        setForm(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -416,7 +416,7 @@ class FormTest : OdysejaDsl() {
     @Test
     fun `should update penalty entry with different type`() {
         // Create initial penalty with RANGE type
-        setFormV2(
+        setForm(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
@@ -433,7 +433,7 @@ class FormTest : OdysejaDsl() {
         val penaltyId = existing.penaltyEntries.first().id
 
         // Update to DISCRETE type
-        setFormV2(
+        setForm(
             dt = emptyList(),
             style = emptyList(),
             penalty = listOf(
