@@ -13,7 +13,6 @@ class JudgeTeamService(
 ) {
     fun getJudgeCountByProblemAndCity(problem: Int, cityId: Int): JudgeCount {
         val judgeTeam = getJudgeTeamEntityByProblemAndCity(problem, cityId)
-            ?: JudgeTeamEntity.create(problem, cityService.getCity(cityId))
         val judgeCount = JudgeCount(
             judgeTeam.judgeCountDtA,
             judgeTeam.judgeCountDtB,
@@ -23,17 +22,19 @@ class JudgeTeamService(
     }
 
     fun getJudgeTeamsByProblem(problem: Int): List<JudgeTeam>? {
-        val judgeTeams = judgeTeamRepository.findByProblem(problem)
-        return judgeTeams.mapNotNull {
-            it?.toJudgeTeam()
+        val allCities = cityService.getCities()
+        val judgeTeams = mutableListOf<JudgeTeam>()
+        allCities.forEach {
+            val judgeTeam = getJudgeTeamEntityByProblemAndCity(problem, it?.id ?: return judgeTeams)
+            judgeTeams.add(judgeTeam.toJudgeTeam())
         }
+
+        return judgeTeams
     }
 
     @Transactional
     fun setJudgeTeamForCity(problem: Int, cityId: Int, judgeCount: JudgeCount) {
-        val city = cityService.getCity(cityId)
-        val judgeTeam = getJudgeTeamEntityByProblemAndCity(problem, cityId) ?:
-            JudgeTeamEntity.create(problem, city)
+        val judgeTeam = getJudgeTeamEntityByProblemAndCity(problem, cityId)
         judgeTeam.apply {
             judgeCountDtA = judgeCount.dtA
             judgeCountDtB = judgeCount.dtB
@@ -52,21 +53,15 @@ class JudgeTeamService(
     }
 
     @Transactional
-    fun deleteJudgeTeam(problem: Int, cityId: Int) {
-        val judgeTeam = getJudgeTeamEntityByProblemAndCity(problem, cityId) ?: return
-        judgeTeamRepository.delete(judgeTeam)
-        changeService.updateVersion()
-    }
-
-    @Transactional
     fun deleteJudgeTeamsByCity(cityId: Int) {
         val city = cityService.getCity(cityId)
         judgeTeamRepository.deleteByCity(city)
     }
 
-    private fun getJudgeTeamEntityByProblemAndCity(problem: Int, cityId: Int): JudgeTeamEntity? {
+    private fun getJudgeTeamEntityByProblemAndCity(problem: Int, cityId: Int): JudgeTeamEntity {
         val city = cityService.getCity(cityId)
         val judgeTeam = judgeTeamRepository.findByProblemAndCity(problem, city)
+            ?: JudgeTeamEntity.create(problem, city)
         return judgeTeam
     }
 }
