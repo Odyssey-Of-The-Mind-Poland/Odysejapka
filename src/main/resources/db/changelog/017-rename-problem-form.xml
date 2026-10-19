@@ -28,8 +28,5 @@
         <renameTable oldTableName="form_problem_json"
                      newTableName="problem_form"/>
     </changeSet>
-    <changeSet id="1789993619118-3" author="przem">
-        <addUniqueConstraint columnNames="problem" constraintName="uc_problem_form_problem" tableName="problem_form"/>
-    </changeSet>
 
 </databaseChangeLog>
