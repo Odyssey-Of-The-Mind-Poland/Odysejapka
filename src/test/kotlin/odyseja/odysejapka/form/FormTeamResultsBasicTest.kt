@@ -34,7 +34,7 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
         val city = createCity("Gdynia")
         
         val existingForm = form()
-        formClient.setFormDataV2(
+        formClient.setFormData(
             PROBLEM_ID,
             existingForm.copy(
                 judgeTeams = listOf(JudgeTeam(PROBLEM_ID, city.id, JudgeCount(2, 2, 2)))
