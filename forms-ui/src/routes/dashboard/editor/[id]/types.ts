@@ -4,7 +4,20 @@ export type FormData = {
 	penaltyEntries: FormEntryType[];
 	smallJudgesTeam?: number[] | null;
 	bigJudgesTeam?: number[] | null;
+	judgeTeams?: JudgeTeam[] | null;
 };
+
+export type JudgeTeam = {
+	problem: number;
+	cityId: number;
+	judgeCount: JudgeCount;
+}
+
+export type JudgeCount = {
+	dtA: number;
+	dtB: number;
+	style: number;
+}
 
 export type FormEntryType = {
 	id: number | null;

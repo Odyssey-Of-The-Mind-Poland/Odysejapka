@@ -13,12 +13,13 @@
     import PenaltyCard from "./PenaltyCard.svelte";
     import JudgeCount from "./JudgeCount.svelte";
     import TranslationTab from "./TranslationTab.svelte";
+    import JudgeTeamsDialog from "./JudgeTeamsDialog.svelte";
 
     let activeTab = $state<'editor' | 'translation'>('editor');
     let problem = $derived(page.params.id);
     let formQuery = createOdysejaQuery<FormData>({
         queryKey: ['problems'],
-        path: `/api/v1/form/${problem}`,
+        path: `/api/v1/form/v2/${problem}`,
     });
     let form = $state<FormData>()
     $effect(() => {
@@ -29,6 +30,7 @@
         ]);
         form = formQuery.data;
     })
+    let openJudgeTeamsDialog = $state(false);
 
     function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY', penaltyType?: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA') {
         const newEntry: FormEntryType = defaultEntry(type, penaltyType)
@@ -44,8 +46,12 @@
         }
     }
 
+    function judgeTeamsDialogHandler() {
+        openJudgeTeamsDialog = true;
+    }
+
     let saveMutation = createPutMutation<FormData>({
-        path: `/api/v1/form/${problem}`,
+        path: `/api/v1/form/v2/${problem}`,
         queryKey: ['problems'],
         onSuccess: data => {
             toast.success("Formularz zapisany pomyślnie");
@@ -66,7 +72,10 @@
     <div class="flex flex-col gap-6 p-0 sm:p-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h1 class="text-xl font-bold sm:text-2xl">Edytor Formularza - Problem {problem}</h1>
-            <Button class="w-full sm:w-auto" onclick={save}>Zapisz</Button>
+            <span>
+                <Button class="w-full sm:w-auto" onclick={judgeTeamsDialogHandler}>Zespoły Sędziowskie</Button>
+                <Button class="w-full sm:w-auto" onclick={save}>Zapisz</Button>
+            </span>
         </div>
 
         <div class="flex gap-1 overflow-x-auto rounded-lg bg-muted p-1 w-full sm:w-fit [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -94,6 +103,8 @@
             <Separator.Root/>
 
             <JudgeCount {form}/>
+
+            <JudgeTeamsDialog bind:open={openJudgeTeamsDialog} bind:form={form}/>
 
             <Separator.Root/>
 
