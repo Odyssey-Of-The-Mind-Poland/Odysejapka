@@ -5,13 +5,20 @@
     import {createOdysejaQuery} from "$lib/queries";
     import type {City, FormData, JudgeTeam} from "./types";
 
-    let {form = $bindable(), open = $bindable(false)} = $props();
+    let {form = $bindable(), open = $bindable()} = $props();
 
     let cityQuery = createOdysejaQuery<City[]>({
         queryKey: ['city'],
         path: `/api/v1/city`,
+        enabled: open
     });
-    let cities = cityQuery.data;
+    let cities = $derived(cityQuery.data);
+
+    $effect(() => {
+        if (open) {
+            cityQuery.refetch?.()
+        }
+    });
 
     let judgeTeams = $derived<JudgeTeam[]>(form.judgeTeams ?? []);
 
