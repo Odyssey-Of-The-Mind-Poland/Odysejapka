@@ -3,7 +3,7 @@
     import {Button} from '$lib/components/ui/button/index.js';
     import {Spinner} from '$lib/components/ui/spinner';
     import {createOdysejaQuery} from "$lib/queries";
-    import type {City, JudgeTeam} from "./types";
+    import type {City, FormData, JudgeTeam} from "./types";
 
     let {form = $bindable(), open = $bindable(false)} = $props();
 
@@ -16,18 +16,12 @@
     let judgeTeams = $derived<JudgeTeam[]>(form.judgeTeams ?? []);
 
     function updateJudgeTeam(cityId: number, field: keyof JudgeTeam["judgeCount"], e: Event) {
-        console.log("form:", form)
-        console.log("updateJudgeTeam", cityId, field, (e.target as HTMLInputElement).value);
-        console.log("judgeTeams before:", judgeTeams);
         judgeTeams = judgeTeams || [];
-        console.log("judgeTeams after:", judgeTeams);
         const teamIndex = judgeTeams.findIndex(team => team.cityId === cityId);
-        console.log("teamIndex", teamIndex);
         judgeTeams[teamIndex].judgeCount[field] = Number((e.target as HTMLInputElement).value) ?? 1;
     }
 
     function saveJudgeTeams() {
-        console.log("saveJudgeTeams", judgeTeams);
         form.judgeTeams = judgeTeams;
         open = false;
     }
