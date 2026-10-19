@@ -3,7 +3,7 @@
     import {Button} from '$lib/components/ui/button/index.js';
     import {Spinner} from '$lib/components/ui/spinner';
     import {createOdysejaQuery} from "$lib/queries";
-    import type {City, FormData, JudgeTeam} from "./types";
+    import type {City, JudgeTeam} from "./types";
 
     let {form = $bindable(), open = $bindable()} = $props();
 
