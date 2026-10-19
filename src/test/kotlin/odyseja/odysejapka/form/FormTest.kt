@@ -131,7 +131,7 @@ class FormTest : OdysejaDsl() {
         val city1 = createCity("City 1")
         val city2 = createCity("City 2")
 
-        formClient.setFormDataV2(
+        formClient.setFormData(
             PROBLEM_ID,
             FormData(
                 dtEntries = emptyList(),
@@ -144,8 +144,8 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val city1Judges = formClient.getJudgeCountV2(PROBLEM_ID, city1.id)
-        val city2Judges = formClient.getJudgeCountV2(PROBLEM_ID, city2.id)
+        val city1Judges = formClient.getJudgeCount(PROBLEM_ID, city1.id)
+        val city2Judges = formClient.getJudgeCount(PROBLEM_ID, city2.id)
 
         Assertions.assertThat(city1Judges.dtA).isEqualTo(1)
         Assertions.assertThat(city1Judges.dtB).isEqualTo(1)
@@ -166,7 +166,7 @@ class FormTest : OdysejaDsl() {
         seedDefault()
         val existing = form()
 
-        formClient.setFormDataV2(
+        formClient.setFormData(
             PROBLEM_ID,
             existing.copy(
                 judgeTeams = listOf(
@@ -177,7 +177,7 @@ class FormTest : OdysejaDsl() {
             )
         )
 
-        val retrievedForm = formClient.getFormDataV2(PROBLEM_ID)
+        val retrievedForm = formClient.getFormData(PROBLEM_ID)
 
         Assertions.assertThat(retrievedForm.judgeTeams).hasSize(3)
         Assertions.assertThat(retrievedForm.judgeTeams?.map { it.cityId })

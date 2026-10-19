@@ -30,7 +30,7 @@
     let cityId = $derived(Number(page.params.cityId));
     let stageParam = $derived(page.params.stage);
     let performanceId = $derived(Number(page.params.performanceId));
-    let performanceIdParam = $derived(page.params.performanceId);
+    let performanceIdParam = $derived(String(page.params.performanceId));
 
     let isChatOpen = $state(false);
 

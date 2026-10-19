@@ -16,14 +16,14 @@ class JudgeTeamTest : OdysejaDsl() {
         )
         setJudgeTeams(listOf(desiredJudgeTeam))
 
-        val actualJudgeTeam = formClient.getJudgeCountV2(PROBLEM_ID, city.id)
+        val actualJudgeTeam = formClient.getJudgeCount(PROBLEM_ID, city.id)
 
         Assertions.assertThat(actualJudgeTeam).isInstanceOf(JudgeCount::class.java)
         Assertions.assertThat(actualJudgeTeam.dtA).isEqualTo(2)
         Assertions.assertThat(actualJudgeTeam.dtB).isEqualTo(2)
         Assertions.assertThat(actualJudgeTeam.style).isEqualTo(2)
 
-        val actualForm = formClient.getFormDataV2(PROBLEM_ID)
+        val actualForm = formClient.getFormData(PROBLEM_ID)
         Assertions.assertThat(actualForm.judgeTeams).contains(desiredJudgeTeam)
     }
 
@@ -32,9 +32,9 @@ class JudgeTeamTest : OdysejaDsl() {
         val city = createCity("Sędziowie nie są zdefiniowani")
 
         Assertions.assertThatNoException().isThrownBy {
-            formClient.getJudgeCountV2(PROBLEM_ID, city.id)
+            formClient.getJudgeCount(PROBLEM_ID, city.id)
         }
-        val judgeCount = formClient.getJudgeCountV2(PROBLEM_ID, city.id)
+        val judgeCount = formClient.getJudgeCount(PROBLEM_ID, city.id)
         Assertions.assertThat(judgeCount.dtA).isEqualTo(1)
         Assertions.assertThat(judgeCount.dtB).isEqualTo(1)
         Assertions.assertThat(judgeCount.style).isEqualTo(1)
@@ -48,15 +48,15 @@ class JudgeTeamTest : OdysejaDsl() {
             JudgeCount(2, 2, 2)
         )
         setJudgeTeams(listOf(oldJudgeTeam))
-        Assertions.assertThat(formClient.getJudgeCountV2(PROBLEM_ID, city.id)).isEqualTo(oldJudgeTeam.judgeCount)
+        Assertions.assertThat(formClient.getJudgeCount(PROBLEM_ID, city.id)).isEqualTo(oldJudgeTeam.judgeCount)
 
         val newJudgeTeam = JudgeTeam(PROBLEM_ID, city.id,
             JudgeCount(1, 1, 1)
         )
         setJudgeTeams(listOf(newJudgeTeam))
-        Assertions.assertThat(formClient.getJudgeCountV2(PROBLEM_ID, city.id)).isEqualTo(newJudgeTeam.judgeCount)
+        Assertions.assertThat(formClient.getJudgeCount(PROBLEM_ID, city.id)).isEqualTo(newJudgeTeam.judgeCount)
 
-        val actualForm = formClient.getFormDataV2(PROBLEM_ID)
+        val actualForm = formClient.getFormData(PROBLEM_ID)
         Assertions.assertThat(actualForm.judgeTeams).containsExactly(newJudgeTeam)
     }
 
@@ -69,7 +69,7 @@ class JudgeTeamTest : OdysejaDsl() {
         setJudgeTeams(listOf(judgeTeam))
         clearCities()
 
-        val form = formClient.getFormDataV2(PROBLEM_ID)
+        val form = formClient.getFormData(PROBLEM_ID)
         Assertions.assertThat(form.judgeTeams).isEmpty()
     }
 
@@ -81,7 +81,7 @@ class JudgeTeamTest : OdysejaDsl() {
         )
         setJudgeTeams(listOf(judgeTeam))
 
-        val actualJudgeTeam = formClient.getJudgeCountV2(PROBLEM_ID, city.id)
+        val actualJudgeTeam = formClient.getJudgeCount(PROBLEM_ID, city.id)
 
         Assertions.assertThat(actualJudgeTeam.dtA).isEqualTo(2)
         Assertions.assertThat(actualJudgeTeam.dtB).isEqualTo(1)
@@ -101,16 +101,16 @@ class JudgeTeamTest : OdysejaDsl() {
         setJudgeTeams(listOf(judgeTeamA, judgeTeamB), 1)
         setJudgeTeams(listOf(judgeTeamC, judgeTeamD), 2)
 
-        val problem1Teams = formClient.getFormDataV2(1)
-        val problem2Teams = formClient.getFormDataV2(2)
+        val problem1Teams = formClient.getFormData(1)
+        val problem2Teams = formClient.getFormData(2)
 
         Assertions.assertThat(problem1Teams.judgeTeams).contains(judgeTeamA, judgeTeamB)
         Assertions.assertThat(problem2Teams.judgeTeams).contains(judgeTeamC, judgeTeamD)
 
-        Assertions.assertThat(formClient.getJudgeCountV2(1, cityA.id)).isEqualTo(JudgeCount(2, 2, 2))
-        Assertions.assertThat(formClient.getJudgeCountV2(1, cityB.id)).isEqualTo(JudgeCount(1, 1, 1))
-        Assertions.assertThat(formClient.getJudgeCountV2(2, cityA.id)).isEqualTo(JudgeCount(2, 1, 2))
-        Assertions.assertThat(formClient.getJudgeCountV2(2, cityB.id)).isEqualTo(JudgeCount(1, 2, 1))
+        Assertions.assertThat(formClient.getJudgeCount(1, cityA.id)).isEqualTo(JudgeCount(2, 2, 2))
+        Assertions.assertThat(formClient.getJudgeCount(1, cityB.id)).isEqualTo(JudgeCount(1, 1, 1))
+        Assertions.assertThat(formClient.getJudgeCount(2, cityA.id)).isEqualTo(JudgeCount(2, 1, 2))
+        Assertions.assertThat(formClient.getJudgeCount(2, cityB.id)).isEqualTo(JudgeCount(1, 2, 1))
 
     }
 }

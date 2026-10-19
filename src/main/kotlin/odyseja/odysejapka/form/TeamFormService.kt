@@ -1,7 +1,6 @@
 package odyseja.odysejapka.form
 
 import jakarta.persistence.EntityNotFoundException
-import jakarta.transaction.Transactional
 import odyseja.odysejapka.city.KonkursLevel
 import odyseja.odysejapka.timetable.PerformanceService
 import org.springframework.stereotype.Service
@@ -10,77 +9,11 @@ import org.springframework.stereotype.Service
 class TeamFormService(
     private val teamResultService: TeamResultService,
     private val problemFormService: ProblemFormService,
-    private val judgeCountService: JudgeCountService,
     private val performanceService: PerformanceService,
     private val judgeTeamService: JudgeTeamService
 ) {
 
-    @Transactional
     fun getTeamForm(performanceId: Int): TeamForm {
-        val resultEntity = try {
-            teamResultService.getTeamResult(performanceId)
-        } catch (_: EntityNotFoundException) {
-            TeamResultEntity().apply { this.performanceId = performanceId }
-        }
-        val approved = resultEntity.approved
-        val ranatra = resultEntity.ranatra
-        val results = resultEntity.results?.results ?: emptyList()
-        val weightHeldResults = resultEntity.results?.weightHeldResults ?: emptyMap()
-        val performance = performanceService.getPerformanceEntity(performanceId)
-        val problem = performance.problemEntity.id
-        val city = performance.cityEntity
-        val isFo = city.level == KonkursLevel.FINAL
-
-        val judgeCount = judgeCountService.getJudgeCountByProblemAndCity(problem, city.id).judgeCount
-
-        val emptyForm = TeamForm(
-            performanceId = performanceId,
-            teamName = performance.team,
-            cityName = city.name,
-            problem = problem,
-            age = performance.ageEntity.id,
-            isFo = isFo,
-            performanceAt = "",
-            performanceTime = "",
-            dtEntries = emptyList(),
-            styleEntries = emptyList(),
-            penaltyEntries = emptyList(),
-            approved = approved,
-            judgeCount = judgeCount,
-            ranatra = ranatra
-        )
-
-        val formEntity = problemFormService.findByProblem(problem)
-        val form = formEntity.form ?: return emptyForm
-
-        val dtEntries = getDtResults(form.dtEntries, results, judgeCount)
-        val styleEntries = getStyleResults(form.styleEntries, results, judgeCount)
-        val penaltyEntries = getPenaltyResults(form.penaltyEntries, results)
-        val weightHeldEntries = if (problem == 4) getWeightHeldResults(weightHeldResults) else emptyList()
-
-        val performanceAt = resultEntity.performanceAt ?: ""
-        val performanceTime = resultEntity.performanceTime ?: ""
-
-        return TeamForm(
-            performanceId = performanceId,
-            teamName = performance.team,
-            cityName = city.name,
-            problem = problem,
-            age = performance.ageEntity.id,
-            isFo = isFo,
-            performanceAt = performanceAt,
-            performanceTime = performanceTime,
-            dtEntries = dtEntries,
-            styleEntries = styleEntries,
-            penaltyEntries = penaltyEntries,
-            weightHeldEntries = weightHeldEntries,
-            approved = approved,
-            judgeCount = judgeCount,
-            ranatra = ranatra
-        )
-    }
-
-    fun getTeamFormV2(performanceId: Int): TeamForm {
         val resultEntity = try {
             teamResultService.getTeamResult(performanceId)
         } catch (_: EntityNotFoundException) {

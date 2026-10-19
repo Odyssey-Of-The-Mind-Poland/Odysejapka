@@ -18,7 +18,7 @@
     let problem = $derived(page.params.id);
     let formQuery = $derived(createOdysejaQuery<FormData>({
         queryKey: ['problems'],
-        path: `/api/v1/form/v2/${problem}`,
+        path: `/api/v1/form/${problem}`,
     }));
     let form = $state<FormData>()
     $effect(() => {
@@ -53,7 +53,7 @@
     }
 
     let saveMutation = $derived(createPutMutation<FormData>({
-        path: `/api/v1/form/v2/${problem}`,
+        path: `/api/v1/form/${problem}`,
         queryKey: ['problems'],
         onSuccess: data => {
             toast.success("Formularz zapisany pomyślnie");

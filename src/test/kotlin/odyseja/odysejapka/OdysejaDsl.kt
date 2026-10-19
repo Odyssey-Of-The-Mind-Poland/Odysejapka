@@ -83,10 +83,10 @@ class OdysejaDsl {
         style: List<StyleFormEntry>,
         penalty: List<PenaltyFormEntry>
     ) {
-        formClient.setFormDataV2(problem, FormData(dt, style, penalty))
+        formClient.setFormData(problem, FormData(dt, style, penalty))
     }
 
-    fun form(problem: Int = PROBLEM_ID) = formClient.getFormDataV2(problem)
+    fun form(problem: Int = PROBLEM_ID) = formClient.getFormData(problem)
 
     fun seedDefault(): Unit = setForm(
         dt = listOf(LongTermFormEntry(
@@ -115,7 +115,7 @@ class OdysejaDsl {
 
     fun setJudgeTeams(judgeTeams: List<JudgeTeam>, problem: Int = PROBLEM_ID) {
         val existingForm = form(problem)
-        formClient.setFormDataV2(
+        formClient.setFormData(
             problem,
             existingForm.copy(
                 judgeTeams = judgeTeams
@@ -175,10 +175,10 @@ class OdysejaDsl {
         return timeTableClient.addPerformance(perf).id
     }
 
-    fun getTeamResults(performanceId: Int) = formClient.getTeamResultsV2(performanceId, null)
+    fun getTeamResults(performanceId: Int) = formClient.getTeamResults(performanceId, null)
 
     fun setTeamResults(performanceId: Int, results: List<PerformanceResultsRequest.PerformanceResult>) {
-        formClient.setTeamResultsV2(performanceId, PerformanceResultsRequest(results), null)
+        formClient.setTeamResults(performanceId, PerformanceResultsRequest(results), null)
     }
 
     fun performanceResult(entryId: Long, result: Long, judge: Int = 1, judgeType: JudgeType = JudgeType.DT_A) =
