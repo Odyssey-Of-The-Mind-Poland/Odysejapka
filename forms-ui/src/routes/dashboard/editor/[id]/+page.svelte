@@ -11,16 +11,15 @@
     import ScoringCard from "./ScoringCard.svelte";
     import StyleCard from "./StyleCard.svelte";
     import PenaltyCard from "./PenaltyCard.svelte";
-    import JudgeCount from "./JudgeCount.svelte";
     import TranslationTab from "./TranslationTab.svelte";
     import JudgeTeamsDialog from "./JudgeTeamsDialog.svelte";
 
     let activeTab = $state<'editor' | 'translation'>('editor');
     let problem = $derived(page.params.id);
-    let formQuery = createOdysejaQuery<FormData>({
+    let formQuery = $derived(createOdysejaQuery<FormData>({
         queryKey: ['problems'],
         path: `/api/v1/form/v2/${problem}`,
-    });
+    }));
     let form = $state<FormData>()
     $effect(() => {
         setBreadcrumbs([
@@ -31,6 +30,9 @@
         form = formQuery.data;
     })
     let openJudgeTeamsDialog = $state(false);
+
+    $effect(() => {
+    });
 
     function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY', penaltyType?: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA') {
         const newEntry: FormEntryType = defaultEntry(type, penaltyType)
@@ -50,13 +52,13 @@
         openJudgeTeamsDialog = true;
     }
 
-    let saveMutation = createPutMutation<FormData>({
+    let saveMutation = $derived(createPutMutation<FormData>({
         path: `/api/v1/form/v2/${problem}`,
         queryKey: ['problems'],
         onSuccess: data => {
             toast.success("Formularz zapisany pomyślnie");
         }
-    })
+    }))
 
     function save() {
         saveMutation.mutate(form)
@@ -100,10 +102,6 @@
         </div>
 
         {#if activeTab === 'editor'}
-            <Separator.Root/>
-
-            <JudgeCount {form}/>
-
             <JudgeTeamsDialog bind:open={openJudgeTeamsDialog} bind:form={form}/>
 
             <Separator.Root/>
