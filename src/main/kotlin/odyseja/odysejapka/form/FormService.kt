@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional
 class FormService(
     private val problemFormService: ProblemFormService,
     private val teamFormService: TeamFormService,
-    private val judgeCountService: JudgeCountService,
     private val teamResultService: TeamResultService,
     private val formValidationService: FormValidationService,
     private val formAnomalyService: FormAnomalyService,
