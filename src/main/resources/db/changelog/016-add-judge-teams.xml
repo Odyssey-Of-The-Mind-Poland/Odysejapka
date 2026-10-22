@@ -42,17 +42,5 @@
                                  constraintName="FK_JUDGE_TEAMS_ON_CITY" referencedColumnNames="id"
                                  referencedTableName="city"/>
     </changeSet>
-    <changeSet id="1789847673035-1" author="przem">
-        <createTable tableName="form_problems">
-            <column name="judge_count" type="INT">
-            </column>
-            <column name="problem" type="INT">
-            </column>
-        </createTable>
-        <addNotNullConstraint columnDataType="INT" columnName="judge_count" tableName="form_problems" validate="true"/>
-    </changeSet>
-    <changeSet id="1789847673035-2" author="przem">
-        <addNotNullConstraint columnDataType="INT" columnName="problem" tableName="form_problems" validate="true"/>
-    </changeSet>
 
 </databaseChangeLog>
