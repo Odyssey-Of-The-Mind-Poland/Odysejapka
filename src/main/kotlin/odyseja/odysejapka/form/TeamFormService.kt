@@ -43,7 +43,7 @@ class TeamFormService(
             styleEntries = emptyList(),
             penaltyEntries = emptyList(),
             approved = approved,
-            judgeCountV2 = judgeCount,
+            judgeCount = judgeCount,
             ranatra = ranatra
         )
 
@@ -72,7 +72,7 @@ class TeamFormService(
             penaltyEntries = penaltyEntries,
             weightHeldEntries = weightHeldEntries,
             approved = approved,
-            judgeCountV2 = judgeCount,
+            judgeCount = judgeCount,
             ranatra = ranatra
         )
     }
