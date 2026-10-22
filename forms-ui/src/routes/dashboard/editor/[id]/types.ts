@@ -120,4 +120,5 @@ export type SingleData = {
 export type City = {
 	id: number;
 	name: string;
+	level: string;
 };
