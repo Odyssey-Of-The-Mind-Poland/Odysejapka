@@ -47,7 +47,7 @@
                 <table class="table-auto w-full border-collapse border border-gray-300">
                     <thead>
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2">Konkurs</th>
+                        <th class="konkurs border border-gray-300 px-4 py-2">Konkurs</th>
                         <th class="border border-gray-300 px-4 py-2">Sędziowie A</th>
                         <th class="border border-gray-300 px-4 py-2">Sędziowie B</th>
                         <th class="border border-gray-300 px-4 py-2">Sędziowie Stylu</th>
@@ -56,7 +56,13 @@
                     <tbody>
                     {#each cities as city}
                         <tr>
-                            <td class="border border-gray-300 px-4 py-2">{city.name}</td>
+                            <td class="border border-gray-300 px-4 py-2" style="text-align: left">
+                                <p>{city.name}</p>
+                                <p class="px-0 text-xs text-muted-foreground">{city.level === "FINAL"
+                                    ? "Finał Ogólnopolski"
+                                    : "Finał Regionalny"
+                                }</p>
+                            </td>
                             <td class="border border-gray-300 px-4 py-2">
                                 <input
                                         type="number"
@@ -107,5 +113,9 @@
     th, td {
         text-align: center;
         padding: 8px;
+    }
+
+    th.konkurs {
+        width: 40%;
     }
 </style>
