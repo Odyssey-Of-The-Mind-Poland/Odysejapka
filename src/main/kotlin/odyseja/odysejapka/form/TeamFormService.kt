@@ -1,21 +1,18 @@
 package odyseja.odysejapka.form
 
 import jakarta.persistence.EntityNotFoundException
-import jakarta.transaction.Transactional
 import odyseja.odysejapka.city.KonkursLevel
 import odyseja.odysejapka.timetable.PerformanceService
-import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.stereotype.Service
 
 @Service
 class TeamFormService(
     private val teamResultService: TeamResultService,
-    private val formProblemService: FormProblemService,
-    private val judgeCountService: JudgeCountService,
-    private val performanceService: PerformanceService
+    private val problemFormService: ProblemFormService,
+    private val performanceService: PerformanceService,
+    private val judgeTeamService: JudgeTeamService
 ) {
 
-    @Transactional
     fun getTeamForm(performanceId: Int): TeamForm {
         val resultEntity = try {
             teamResultService.getTeamResult(performanceId)
@@ -31,7 +28,7 @@ class TeamFormService(
         val city = performance.cityEntity
         val isFo = city.level == KonkursLevel.FINAL
 
-        val judgeCount = judgeCountService.getJudgeCountByProblemAndCity(problem, city.id).judgeCount
+        val judgeCount = judgeTeamService.getJudgeCountByProblemAndCity(problem, city.id)
 
         val emptyForm = TeamForm(
             performanceId = performanceId,
@@ -50,7 +47,7 @@ class TeamFormService(
             ranatra = ranatra
         )
 
-        val formEntity = formProblemService.findByProblem(problem)
+        val formEntity = problemFormService.findByProblem(problem)
         val form = formEntity.form ?: return emptyForm
 
         val dtEntries = getDtResults(form.dtEntries, results, judgeCount)
@@ -99,12 +96,12 @@ class TeamFormService(
     private fun getDtResults(
         templateEntries: List<LongTermFormEntry>,
         results: List<PerformanceResultsRequest.PerformanceResult>,
-        judgeCount: Int
+        judgeCount: JudgeCount
     ): List<TeamForm.DtTeamFormEntry> {
         return templateEntries.map { templateEntry ->
             val entryId = templateEntry.id ?: return@map null
-            val judgesA = createJudgeMap(judgeCount, results, entryId, JudgeType.DT_A)
-            val judgesB = createJudgeMap(judgeCount, results, entryId, JudgeType.DT_B)
+            val judgesA = createJudgeMap(judgeCount.dtA, results, entryId, JudgeType.DT_A)
+            val judgesB = createJudgeMap(judgeCount.dtB, results, entryId, JudgeType.DT_B)
 
             val firstResult = results.firstOrNull { it.entryId == entryId }
             val noElement = firstResult?.noElement ?: false
@@ -128,7 +125,7 @@ class TeamFormService(
     private fun getNestedEntries(
         entry: LongTermFormEntry,
         results: List<PerformanceResultsRequest.PerformanceResult>,
-        judgeCount: Int
+        judgeCount: JudgeCount
     ): List<TeamForm.DtTeamFormEntry> = if (entry.entries.isNotEmpty() &&
         (entry.type == LongTermFormEntry.EntryType.SCORING_GROUP ||
                 entry.type == LongTermFormEntry.EntryType.SECTION)
@@ -141,12 +138,12 @@ class TeamFormService(
     private fun getStyleResults(
         templateEntries: List<StyleFormEntry>,
         results: List<PerformanceResultsRequest.PerformanceResult>,
-        judgeCount: Int
+        judgeCount: JudgeCount
     ): List<TeamForm.StyleTeamFormEntry> {
         return templateEntries.map { templateEntry ->
             val entryId = templateEntry.id ?: return@map null
-            val styleJudge = createJudgeMap(judgeCount, results, entryId, JudgeType.STYLE)
-            
+            val styleJudge = createJudgeMap(judgeCount.style, results, entryId, JudgeType.STYLE)
+
             val styleName = results
                 .firstOrNull { it.entryId == entryId && it.judgeType == JudgeType.STYLE }
                 ?.styleName

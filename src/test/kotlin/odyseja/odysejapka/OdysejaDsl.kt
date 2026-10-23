@@ -12,6 +12,7 @@ import odyseja.odysejapka.form.StyleFormEntry
 import odyseja.odysejapka.form.PenaltyFormEntry
 import odyseja.odysejapka.form.PerformanceResultsRequest
 import odyseja.odysejapka.form.FormData
+import odyseja.odysejapka.form.JudgeTeam
 import odyseja.odysejapka.roles.Role
 import odyseja.odysejapka.spontan.SpontanController
 import odyseja.odysejapka.timetable.Performance
@@ -77,14 +78,15 @@ class OdysejaDsl {
     val PROBLEM_ID = 1
 
     fun setForm(
+        problem: Int = PROBLEM_ID,
         dt: List<LongTermFormEntry>,
         style: List<StyleFormEntry>,
         penalty: List<PenaltyFormEntry>
     ) {
-        formClient.setFormData(PROBLEM_ID, FormData(dt, style, penalty))
+        formClient.setFormData(problem, FormData(dt, style, penalty))
     }
 
-    fun form() = formClient.getFormData(PROBLEM_ID)
+    fun form(problem: Int = PROBLEM_ID) = formClient.getFormData(problem)
 
     fun seedDefault(): Unit = setForm(
         dt = listOf(LongTermFormEntry(
@@ -111,11 +113,30 @@ class OdysejaDsl {
         return Triple(dtId, styleId, penaltyId)
     }
 
+    fun setJudgeTeams(judgeTeams: List<JudgeTeam>, problem: Int = PROBLEM_ID) {
+        val existingForm = form(problem)
+        formClient.setFormData(
+            problem,
+            existingForm.copy(
+                judgeTeams = judgeTeams
+            )
+        )
+    }
+
     fun createCity(name: String, level: KonkursLevel = KonkursLevel.FINAL): CityEntity {
         return cityClient.saveCity(CreateCityRequest(name, level))
     }
 
-    fun getCityByName(name: String) = cityClient.getCities().firstOrNull { it?.name == name }
+    fun getCity(cityId: Int) = cityClient.getCity(cityId)
+
+    fun getCityWithRespondingClient(cityId: Int): ProblemDetail {
+        val client = controllerClientFactory.respondingClient(CityController::class.java)
+        val response = client.executeConsumer{
+            controller -> controller.getCity(cityId)
+        }
+        val problem = parseProblemDetail(response)
+        return problem
+    }
 
     fun createPerformance(cityId: Int): Int {
         return createPerformance(cityId, team = "Sample Team")
@@ -124,7 +145,7 @@ class OdysejaDsl {
     fun createPerformance(
         cityId: Int,
         team: String = "Sample Team",
-        problem: Int = 1,
+        problem: Int = PROBLEM_ID,
         age: Int = 1,
         stage: Int = 1,
         spontan: String = "11:11",
@@ -133,9 +154,10 @@ class OdysejaDsl {
         performanceDay: String = "niedziela",
         league: String? = ""
     ): Int {
-        val cityName = cityClient.getCities().firstOrNull { it?.id == cityId }?.name ?: "Unknown"
         val perf = Performance(
-            city = cityName, team = team,
+            cityId = cityId,
+            cityName = getCity(cityId).name,
+            team = team,
             id = 0,
             problem = problem,
             age = age,

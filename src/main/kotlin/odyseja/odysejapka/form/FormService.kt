@@ -5,55 +5,47 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class FormService(
-    private val formProblemService: FormProblemService,
+    private val problemFormService: ProblemFormService,
     private val teamFormService: TeamFormService,
-    private val judgeCountService: JudgeCountService,
     private val teamResultService: TeamResultService,
     private val formValidationService: FormValidationService,
     private val formAnomalyService: FormAnomalyService,
+    private val judgeTeamService: JudgeTeamService,
 ) {
 
     @Transactional
-    fun setFormEntries(problem: Int, form: FormData) {
-        val existingEntity = formProblemService.findByProblem(problem)
+    fun setFormData(problem: Int, form: FormData) {
+        val existingEntity = problemFormService.findByProblem(problem)
         val existingForm = existingEntity.form
 
         val formWithIds = FormEntryMapHelper.assignIds(form, existingForm)
 
         existingEntity.form = formWithIds
-        formProblemService.saveFormProblem(existingEntity)
 
-        judgeCountService.setJudgesCount(problem, form.smallJudgesTeam, form.bigJudgesTeam)
+        val judgeTeams = form.judgeTeams ?: emptyList()
+
+        judgeTeamService.setJudgeTeamsForProblem(problem, judgeTeams)
+        problemFormService.saveProblemForm(existingEntity)
     }
 
 
     fun getFormData(problem: Int): FormData {
-        val entity = formProblemService.findByProblem(problem)
+        val entity = problemFormService.findByProblem(problem)
         val form = entity.form ?: FormData(
             dtEntries = emptyList(),
             styleEntries = emptyList(),
             penaltyEntries = emptyList()
         )
 
-        val judgeEntities = judgeCountService.getJudgeCountByProblem(problem)
-        val smallJudgesTeams = extractJudgeTeamIds(judgeEntities, 1)
-        val bigJudgesTeams = extractJudgeTeamIds(judgeEntities, 2)
+        val judgeTeams = judgeTeamService.getJudgeTeamsByProblem(problem)
 
         return form.copy(
-            smallJudgesTeam = smallJudgesTeams,
-            bigJudgesTeam = bigJudgesTeams
+            judgeTeams = judgeTeams
         )
     }
 
-    private fun extractJudgeTeamIds(judgeEntities: List<CityFormJudgesEntity?>, judgeCount: Int): List<Int>? {
-        val ids = judgeEntities
-            .filter { it?.judgeCount == judgeCount }
-            .mapNotNull { it?.city?.id }
-        return ids.ifEmpty { null }
-    }
-
-    fun getJudgeCount(problem: Int, cityId: Int): JudgeCountResponse {
-        return judgeCountService.getJudgeCountByProblemAndCity(problem, cityId)
+    fun getJudgeCount(problem: Int, cityId: Int): JudgeCount {
+        return judgeTeamService.getJudgeCountByProblemAndCity(problem, cityId)
     }
 
     @Transactional

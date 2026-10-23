@@ -64,7 +64,7 @@ class FormValidationService {
         return failures
     }
 
-    private fun validateDtEntries(entries: List<TeamForm.DtTeamFormEntry>, judgeCount: Int): List<ValidationFailure> {
+    private fun validateDtEntries(entries: List<TeamForm.DtTeamFormEntry>, judgeCount: JudgeCount): List<ValidationFailure> {
         val failures = mutableListOf<ValidationFailure>()
 
         for (dtEntry in entries) {
@@ -78,7 +78,7 @@ class FormValidationService {
         return failures
     }
 
-    private fun validateSingleDtEntry(dtEntry: TeamForm.DtTeamFormEntry, judgeCount: Int): List<ValidationFailure> {
+    private fun validateSingleDtEntry(dtEntry: TeamForm.DtTeamFormEntry, judgeCount: JudgeCount): List<ValidationFailure> {
         val entryId = dtEntry.entry.id ?: return emptyList()
         val scoring = dtEntry.entry.scoring ?: return emptyList()
         val failures = mutableListOf<ValidationFailure>()
@@ -104,19 +104,19 @@ class FormValidationService {
     private fun validateAllJudgesFilled(
         dtEntry: TeamForm.DtTeamFormEntry,
         entryId: Long,
-        judgeCount: Int
+        judgeCount: JudgeCount
     ): ValidationFailure? {
         val scoring = dtEntry.entry.scoring ?: return null
 
         val enabledTypes = when (scoring.judges) {
-            LongTermFormEntry.JudgesType.A -> listOf(JudgeType.DT_A)
-            LongTermFormEntry.JudgesType.B -> listOf(JudgeType.DT_B)
-            LongTermFormEntry.JudgesType.A_PLUS_B -> listOf(JudgeType.DT_A, JudgeType.DT_B)
+            LongTermFormEntry.JudgesType.A -> mapOf(JudgeType.DT_A to judgeCount.dtA)
+            LongTermFormEntry.JudgesType.B -> mapOf(JudgeType.DT_B to judgeCount.dtB)
+            LongTermFormEntry.JudgesType.A_PLUS_B -> mapOf(JudgeType.DT_A to judgeCount.dtA, JudgeType.DT_B to judgeCount.dtB)
         }
 
-        for (judgeType in enabledTypes) {
+        for (judgeType in enabledTypes.keys) {
             val judgeMap = dtEntry.results[judgeType] ?: continue
-            for (judgeIndex in 1..judgeCount) {
+            for (judgeIndex in 1..enabledTypes[judgeType]!!) {
                 judgeMap[judgeIndex] ?: return ValidationFailure(
                     entryId = entryId,
                     rule = "all-judges-required",
@@ -133,13 +133,13 @@ class FormValidationService {
      */
     private fun validateStyleEntriesAllJudges(
         entries: List<TeamForm.StyleTeamFormEntry>,
-        judgeCount: Int
+        judgeCount: JudgeCount
     ): List<ValidationFailure> {
         val failures = mutableListOf<ValidationFailure>()
         for (entry in entries) {
             val entryId = entry.entry.id ?: continue
             val styleMap = entry.results[JudgeType.STYLE] ?: continue
-            for (judgeIndex in 1..judgeCount) {
+            for (judgeIndex in 1..judgeCount.style) {
                 val value = styleMap[judgeIndex]
                 if (value == null) {
                     failures.add(

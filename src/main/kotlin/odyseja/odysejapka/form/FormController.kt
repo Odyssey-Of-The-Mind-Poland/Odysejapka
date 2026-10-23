@@ -3,7 +3,6 @@ package odyseja.odysejapka.form
 import odyseja.odysejapka.dashboard.PerformanceAccessService
 import odyseja.odysejapka.dashboard.UserAccessService
 import odyseja.odysejapka.timetable.PerformanceService
-import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -26,14 +25,13 @@ class FormController(
     private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService,
     private val performanceAccessService: PerformanceAccessService,
     private val userAccessService: UserAccessService,
-    private val timeTableService: TimeTableService,
     private val performanceService: PerformanceService
 ) {
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @PutMapping("/{problem}")
     fun setFormData(@PathVariable problem: Int, @RequestBody formData: FormData) {
-        formService.setFormEntries(problem, formData)
+        formService.setFormData(problem, formData)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
@@ -43,7 +41,7 @@ class FormController(
     }
 
     @GetMapping("/{problem}/judge-count")
-    fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCountResponse {
+    fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCount {
         return formService.getJudgeCount(problem, cityId)
     }
 

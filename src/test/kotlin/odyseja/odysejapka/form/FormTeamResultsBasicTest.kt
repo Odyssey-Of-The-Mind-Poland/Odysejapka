@@ -37,7 +37,7 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
         formClient.setFormData(
             PROBLEM_ID,
             existingForm.copy(
-                bigJudgesTeam = listOf(city.id)
+                judgeTeams = listOf(JudgeTeam(PROBLEM_ID, city.id, JudgeCount(2, 2, 2)))
             )
         )
         

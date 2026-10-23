@@ -1,7 +1,6 @@
 package odyseja.odysejapka.form
 
 import odyseja.odysejapka.OdysejaDsl
-import odyseja.odysejapka.city.CreateCityRequest
 import odyseja.odysejapka.city.KonkursLevel
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -138,20 +137,28 @@ class FormTest : OdysejaDsl() {
                 dtEntries = emptyList(),
                 styleEntries = emptyList(),
                 penaltyEntries = emptyList(),
-                smallJudgesTeam = listOf(city1.id),
-                bigJudgesTeam = listOf(city2.id)
+                judgeTeams = listOf(
+                    JudgeTeam(PROBLEM_ID, city1.id, JudgeCount(1, 1, 1)),
+                    JudgeTeam(PROBLEM_ID, city2.id, JudgeCount(2, 2, 2))
+                )
             )
         )
 
         val city1Judges = formClient.getJudgeCount(PROBLEM_ID, city1.id)
         val city2Judges = formClient.getJudgeCount(PROBLEM_ID, city2.id)
 
-        Assertions.assertThat(city1Judges.judgeCount).isEqualTo(1)
-        Assertions.assertThat(city2Judges.judgeCount).isEqualTo(2)
+        Assertions.assertThat(city1Judges.dtA).isEqualTo(1)
+        Assertions.assertThat(city1Judges.dtB).isEqualTo(1)
+        Assertions.assertThat(city1Judges.style).isEqualTo(1)
+        Assertions.assertThat(city2Judges.dtA).isEqualTo(2)
+        Assertions.assertThat(city2Judges.dtB).isEqualTo(2)
+        Assertions.assertThat(city2Judges.style).isEqualTo(2)
+
     }
 
     @Test
     fun `should return judges count in getFormData`() {
+        clearCities()
         val city1 = createCity("City 1", KonkursLevel.REGIONAL)
         val city2 = createCity("City 2", KonkursLevel.REGIONAL)
         val city3 = createCity("City 3", KonkursLevel.FINAL)
@@ -162,15 +169,19 @@ class FormTest : OdysejaDsl() {
         formClient.setFormData(
             PROBLEM_ID,
             existing.copy(
-                smallJudgesTeam = listOf(city1.id, city2.id),
-                bigJudgesTeam = listOf(city3.id)
+                judgeTeams = listOf(
+                    JudgeTeam(PROBLEM_ID, city1.id, JudgeCount(1, 1, 1)),
+                    JudgeTeam(PROBLEM_ID, city2.id, JudgeCount(1, 1, 1)),
+                    JudgeTeam(PROBLEM_ID, city3.id, JudgeCount(2, 2, 2))
+                )
             )
         )
 
         val retrievedForm = formClient.getFormData(PROBLEM_ID)
 
-        Assertions.assertThat(retrievedForm.smallJudgesTeam).contains(city1.id, city2.id)
-        Assertions.assertThat(retrievedForm.bigJudgesTeam).contains(city3.id)
+        Assertions.assertThat(retrievedForm.judgeTeams).hasSize(3)
+        Assertions.assertThat(retrievedForm.judgeTeams?.map { it.cityId })
+            .containsExactlyInAnyOrder(city1.id, city2.id, city3.id)
     }
 
     @Test

@@ -4,9 +4,14 @@ import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 
+/**
+ * Ogólny arkusz problemowy z kategoriami punktacji i liczbą sędziów w każdym regionie,
+ * ale jeszcze nieprzydzielony do konkretnej drużyny.
+ */
+
 @Entity
-@Table(name = "form_problem_json")
-class FormProblemEntity {
+@Table(name = "problem_form")
+class ProblemFormEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

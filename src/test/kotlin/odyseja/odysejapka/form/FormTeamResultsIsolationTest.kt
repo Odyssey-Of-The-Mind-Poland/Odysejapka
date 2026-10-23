@@ -14,17 +14,13 @@ class FormTeamResultsIsolationTest : OdysejaDsl() {
         val cityA = createCity("Warszawa")
         val cityB = createCity("Kraków")
 
-        val existingForm = form()
-        formClient.setFormData(
-            PROBLEM_ID,
-            existingForm.copy(
-                smallJudgesTeam = listOf(cityA.id),
-                bigJudgesTeam = listOf(cityB.id)
-            )
-        )
+        setJudgeTeams(listOf(
+            JudgeTeam(PROBLEM_ID, cityA.id, JudgeCount(1, 1, 1)),
+            JudgeTeam(PROBLEM_ID, cityB.id, JudgeCount(2, 2, 2))
+        ))
 
-        val perfA = createPerformance(cityA.id)
-        val perfB = createPerformance(cityB.id)
+        val perfA = createPerformance(cityA.id, problem = PROBLEM_ID)
+        val perfB = createPerformance(cityB.id, problem = PROBLEM_ID)
 
         setTeamResults(perfA, listOf(performanceResult(dtId, 11)))
         setTeamResults(

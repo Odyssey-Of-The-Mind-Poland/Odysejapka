@@ -2,6 +2,8 @@ package odyseja.odysejapka.spontan
 
 import jakarta.persistence.*
 import odyseja.odysejapka.city.CityEntity
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
 @Entity
 @Table(
@@ -16,6 +18,7 @@ class SpontanGroupAssignmentEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var city: CityEntity? = null
 
     @Column(nullable = false)

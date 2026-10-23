@@ -6,6 +6,8 @@ import odyseja.odysejapka.problem.ProblemEntity
 import odyseja.odysejapka.stage.StageEntity
 import java.time.LocalDate
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
 
 @Entity(name = "performance")
@@ -15,6 +17,7 @@ class PerformanceEntity(
     @Column()
     var id: Int,
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var cityEntity: CityEntity,
     @Column
     var team: String,
@@ -45,7 +48,8 @@ class PerformanceEntity(
     fun toPerformance(): Performance {
         return Performance(
             id = id,
-            city = cityEntity.name,
+            cityId = cityEntity.id,
+            cityName = cityEntity.name,
             team = team,
             problem = problemEntity.id,
             age = ageEntity.id,

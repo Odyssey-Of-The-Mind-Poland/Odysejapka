@@ -11,15 +11,15 @@
     import ScoringCard from "./ScoringCard.svelte";
     import StyleCard from "./StyleCard.svelte";
     import PenaltyCard from "./PenaltyCard.svelte";
-    import JudgeCount from "./JudgeCount.svelte";
     import TranslationTab from "./TranslationTab.svelte";
+    import JudgeTeamsDialog from "./JudgeTeamsDialog.svelte";
 
     let activeTab = $state<'editor' | 'translation'>('editor');
     let problem = $derived(page.params.id);
-    let formQuery = createOdysejaQuery<FormData>({
+    let formQuery = $derived(createOdysejaQuery<FormData>({
         queryKey: ['problems'],
         path: `/api/v1/form/${problem}`,
-    });
+    }));
     let form = $state<FormData>()
     $effect(() => {
         setBreadcrumbs([
@@ -29,6 +29,10 @@
         ]);
         form = formQuery.data;
     })
+    let openJudgeTeamsDialog = $state(false);
+
+    $effect(() => {
+    });
 
     function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY', penaltyType?: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA') {
         const newEntry: FormEntryType = defaultEntry(type, penaltyType)
@@ -44,13 +48,17 @@
         }
     }
 
-    let saveMutation = createPutMutation<FormData>({
+    function judgeTeamsDialogHandler() {
+        openJudgeTeamsDialog = true;
+    }
+
+    let saveMutation = $derived(createPutMutation<FormData>({
         path: `/api/v1/form/${problem}`,
         queryKey: ['problems'],
         onSuccess: data => {
             toast.success("Formularz zapisany pomyślnie");
         }
-    })
+    }))
 
     function save() {
         saveMutation.mutate(form)
@@ -66,7 +74,10 @@
     <div class="flex flex-col gap-6 p-6">
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold">Edytor Formularza - Problem {problem}</h1>
-            <Button onclick={save}>Zapisz</Button>
+            <span>
+                <Button onclick={judgeTeamsDialogHandler}>Zespoły Sędziowskie</Button>
+                <Button onclick={save}>Zapisz</Button>
+            </span>
         </div>
 
         <div class="flex gap-1 rounded-lg bg-muted p-1 w-fit">
@@ -91,9 +102,7 @@
         </div>
 
         {#if activeTab === 'editor'}
-            <Separator.Root/>
-
-            <JudgeCount {form}/>
+            <JudgeTeamsDialog bind:open={openJudgeTeamsDialog} bind:form={form}/>
 
             <Separator.Root/>
 

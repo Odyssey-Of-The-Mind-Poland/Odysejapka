@@ -37,10 +37,6 @@ class CityService(
     return cityRepository.save(updatedCity)
   }
 
-  fun getCityByName(cityName: String): CityEntity {
-    return cityRepository.findFirstByName(cityName) ?: throw EntityNotFoundException("Nie znaleziono miasta o nazwie $cityName")
-  }
-
   fun getCity(cityId: Int): CityEntity {
     return cityRepository.findFirstById(cityId) ?: throw EntityNotFoundException("Nie znaleziono miasta o ID $cityId")
   }
