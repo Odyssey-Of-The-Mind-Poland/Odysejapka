@@ -97,8 +97,8 @@
             {/if}
 
             <div class="mt-4 flex justify-end gap-4">
-                <Button onclick={() => (open = false)} variant="secondary">Cancel</Button>
-                <Button onclick={saveJudgeTeams}>Save</Button>
+                <Button onclick={() => (open = false)} variant="secondary">Anuluj</Button>
+                <Button onclick={saveJudgeTeams}>Zapisz</Button>
             </div>
         </div>
     </Dialog.Content>
