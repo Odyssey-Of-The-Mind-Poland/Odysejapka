@@ -1,6 +1,5 @@
 package odyseja.odysejapka.stage
 
-import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
 import org.springframework.stereotype.Service
@@ -13,12 +12,6 @@ class StageService(
     private val changeService: ChangeService,
     private val stageUserService: StageUserService
 ) {
-
-    fun getStageByNumber(cityId: Int, stageNumber: Int): StageEntity {
-        val city = cityService.getCity(cityId)
-        return stageRepository.findFirstByNumberAndCityEntity(stageNumber, city)
-            ?: throw EntityNotFoundException ("W mieście $city.name nie ma sceny $stageNumber")
-    }
 
     @Transactional
     fun getOrCreateStageByNumber(cityId: Int, stageNumber: Int): StageEntity {

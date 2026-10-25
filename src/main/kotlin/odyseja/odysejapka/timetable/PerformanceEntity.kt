@@ -49,7 +49,7 @@ class PerformanceEntity(
         return Performance(
             id = id,
             cityId = cityEntity.id,
-            cityName = cityEntity.name,
+            city = cityEntity.name,
             team = team,
             problem = problemEntity.id,
             age = ageEntity.id,

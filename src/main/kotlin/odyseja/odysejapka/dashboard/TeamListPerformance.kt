@@ -32,7 +32,7 @@ data class TeamListPerformance(
             val state = teamResult?.formState ?: FormState.NOT_SCORED
             return TeamListPerformance(
                 id = performance.id,
-                city = performance.cityName,
+                city = performance.city,
                 team = performance.team,
                 problem = performance.problem,
                 age = performance.age,

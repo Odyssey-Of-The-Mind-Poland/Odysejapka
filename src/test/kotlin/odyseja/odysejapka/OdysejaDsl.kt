@@ -156,7 +156,7 @@ class OdysejaDsl {
     ): Int {
         val perf = Performance(
             cityId = cityId,
-            cityName = getCity(cityId).name,
+            city = getCity(cityId).name,
             team = team,
             id = 0,
             problem = problem,

@@ -42,7 +42,7 @@ class ImportCsvTest: OdysejaDsl() {
         val mockPerformance = Performance(
             id = realPerformance.id,
             cityId = city.id,
-            cityName = "finał",
+            city = "finał",
             team = "Zespół Szkół Zawodowych i Ogólnokształcących - Kartuzy",
             problem = 3,
             age = 3,

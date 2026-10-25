@@ -92,7 +92,7 @@ class CityTest : OdysejaDsl() {
             timeTableClient.getPerformance(performance)
         }
         val newPerformance = timeTableClient.getPerformance(performance)
-        Assertions.assertThat(newPerformance.cityName).isEqualTo("Nowe Miasto")
+        Assertions.assertThat(newPerformance.city).isEqualTo("Nowe Miasto")
     }
 
     @Test

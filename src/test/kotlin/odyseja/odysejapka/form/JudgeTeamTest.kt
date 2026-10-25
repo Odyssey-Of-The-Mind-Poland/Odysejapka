@@ -18,7 +18,6 @@ class JudgeTeamTest : OdysejaDsl() {
 
         val actualJudgeTeam = formClient.getJudgeCount(PROBLEM_ID, city.id)
 
-        Assertions.assertThat(actualJudgeTeam).isInstanceOf(JudgeCount::class.java)
         Assertions.assertThat(actualJudgeTeam.dtA).isEqualTo(2)
         Assertions.assertThat(actualJudgeTeam.dtB).isEqualTo(2)
         Assertions.assertThat(actualJudgeTeam.style).isEqualTo(2)
