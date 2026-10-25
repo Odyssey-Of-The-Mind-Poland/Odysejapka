@@ -5,19 +5,12 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.31.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
-    <changeSet id="create-city" author="przem">
-        <createTable tableName="city">
-            <column name="id" type="SERIAL">
-                <constraints primaryKey="true" />
-            </column>
-            <column name="name" type="VARCHAR(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="level" type="SMALLINT">
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet id="1789847673035-3" author="przem">
+    <changeSet id="create-judge_teams" author="przem">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="judge_teams"/>
+            </not>
+        </preConditions>
         <createTable tableName="judge_teams">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_judge_teams"/>
@@ -37,7 +30,13 @@
             <column name="city_id" type="INT"/>
         </createTable>
     </changeSet>
-    <changeSet id="1789847673035-4" author="przem">
+    <changeSet id="add-city-fk-on-judge_teams" author="przem">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="city"/>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK_JUDGE_TEAMS_ON_CITY"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="city_id" baseTableName="judge_teams"
                                  constraintName="FK_JUDGE_TEAMS_ON_CITY" referencedColumnNames="id"
                                  referencedTableName="city"/>
