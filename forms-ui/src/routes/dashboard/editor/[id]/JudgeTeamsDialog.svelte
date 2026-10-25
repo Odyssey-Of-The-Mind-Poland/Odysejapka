@@ -14,13 +14,19 @@
     });
     let cities = $derived(cityQuery.data);
 
+    let originalJudgeTeams: JudgeTeam[] = $derived<JudgeTeam[]>(form.judgeTeams ?? []);
+
+    // $state jest specjalnie, bo nie chodzi o to, żeby aktualizował się w momencie odczytu originalJudgeTeams.
+    // A tak by chyba działało $derived?
+    let judgeTeams = $state<JudgeTeam[]>(JSON.parse(JSON.stringify(originalJudgeTeams)));
+    let isDirty = $derived.by(() => JSON.stringify(judgeTeams) !== JSON.stringify(originalJudgeTeams));
+
     $effect(() => {
         if (open) {
             cityQuery.refetch?.()
+            judgeTeams = JSON.parse(JSON.stringify(originalJudgeTeams));
         }
     });
-
-    let judgeTeams = $derived<JudgeTeam[]>(form.judgeTeams ?? []);
 
     function updateJudgeTeam(cityId: number, field: keyof JudgeTeam["judgeCount"], e: Event) {
         judgeTeams = judgeTeams || [];
@@ -32,6 +38,11 @@
         form.judgeTeams = judgeTeams;
         open = false;
     }
+
+    function cancelChanges() {
+        open = false;
+    }
+
 </script>
 
 <Dialog.Root open={open} onOpenChange={v => (open = v)}>
@@ -44,19 +55,19 @@
             {:else if cityQuery.error}
                 <div class="text-red-500 mb-4">{String(cityQuery.error)}</div>
             {:else}
-                <table class="table-auto w-full border-collapse border border-gray-300">
+                <table class="table-auto w-full border-collapse border border-gray-300 px-4 py-2">
                     <thead>
                     <tr>
-                        <th class="konkurs border border-gray-300 px-4 py-2">Konkurs</th>
-                        <th class="border border-gray-300 px-4 py-2">Sędziowie A</th>
-                        <th class="border border-gray-300 px-4 py-2">Sędziowie B</th>
-                        <th class="border border-gray-300 px-4 py-2">Sędziowie Stylu</th>
+                        <th class="w-2/5 border px-2 py-1">Konkurs</th>
+                        <th class="border px-2 py-1">Sędziowie A</th>
+                        <th class="border px-2 py-1">Sędziowie B</th>
+                        <th class="border px-2 py-1">Sędziowie Stylu</th>
                     </tr>
                     </thead>
                     <tbody>
                     {#each cities as city}
                         <tr>
-                            <td class="border border-gray-300 px-4 py-2" style="text-align: left">
+                            <td class="w-2/5 border border-gray-300 px-4 py-2 text-left">
                                 <p>{city.name}</p>
                                 <p class="px-0 text-xs text-muted-foreground">{city.level === "FINAL"
                                     ? "Finał Ogólnopolski"
@@ -97,25 +108,9 @@
             {/if}
 
             <div class="mt-4 flex justify-end gap-4">
-                <Button onclick={() => (open = false)} variant="secondary">Anuluj</Button>
-                <Button onclick={saveJudgeTeams}>Zapisz</Button>
+                <Button onclick={cancelChanges} variant="secondary">Anuluj</Button>
+                <Button onclick={saveJudgeTeams} disabled={!isDirty}>Zapisz</Button>
             </div>
         </div>
     </Dialog.Content>
 </Dialog.Root>
-
-<style lang="css">
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    th, td {
-        text-align: center;
-        padding: 8px;
-    }
-
-    th.konkurs {
-        width: 40%;
-    }
-</style>

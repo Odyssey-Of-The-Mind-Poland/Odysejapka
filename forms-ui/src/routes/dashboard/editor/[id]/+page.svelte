@@ -102,8 +102,6 @@
         </div>
 
         {#if activeTab === 'editor'}
-            <JudgeTeamsDialog bind:open={openJudgeTeamsDialog} bind:form={form}/>
-
             <Separator.Root/>
 
             <div class="flex flex-col gap-6">
@@ -134,5 +132,6 @@
         {:else}
             <TranslationTab bind:form={form} />
         {/if}
+        <JudgeTeamsDialog bind:open={openJudgeTeamsDialog} bind:form={form}/>
     </div>
 {/if}
