@@ -5,14 +5,40 @@ import odyseja.odysejapka.info.InfoCategory
 import odyseja.odysejapka.info.InfoCategoryStyle
 
 data class InfoV3Response(
-    val infos: List<Info>,
+    val infos: List<InfoV3>,
     val categories: List<InfoCategoryV3>
 )
 
 /**
- * Unlike the admin-facing [InfoCategory], icon and color are never null here: a category the
- * editors have not styled yet gets a stable default, so clients can render it without fallbacks.
+ * An info tile with its style resolved: the info's own icon/color win, then the category's, then
+ * a default. Icon and color are never null, so clients render tiles without fallbacks.
  */
+data class InfoV3(
+    val id: Int,
+    val infoName: String,
+    val infoText: String,
+    val city: Int,
+    val category: Int,
+    val sortNumber: Int,
+    val categoryName: String,
+    val icon: String,
+    val color: String
+) {
+    companion object {
+        fun from(info: Info, category: InfoCategory?) = InfoV3(
+            id = info.id,
+            infoName = info.infoName,
+            infoText = info.infoText,
+            city = info.city,
+            category = info.category,
+            sortNumber = info.sortNumber,
+            categoryName = info.categoryName,
+            icon = info.icon ?: category?.icon ?: InfoCategoryStyle.DEFAULT_ICON,
+            color = info.color ?: category?.color ?: InfoCategoryStyle.defaultColor(info.id)
+        )
+    }
+}
+
 data class InfoCategoryV3(
     val id: Int,
     val name: String,

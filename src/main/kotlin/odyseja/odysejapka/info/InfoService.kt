@@ -27,6 +27,7 @@ class InfoService(
 
     @Transactional
     fun addInfo(info: Info): Info {
+        InfoCategoryStyle.validate(info.icon, info.color)
         val savedInfo = infoRepository.save(
             InfoEntity(
                 info.id,
@@ -66,6 +67,7 @@ class InfoService(
 
     @Transactional
     fun updateInfo(info: Info): Info {
+        InfoCategoryStyle.validate(info.icon, info.color)
         val infoEntity = getInfoEntityById(info.id)
         infoEntity.infoName = info.infoName
         infoEntity.infoText = info.infoText

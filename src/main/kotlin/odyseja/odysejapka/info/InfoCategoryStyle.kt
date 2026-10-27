@@ -1,7 +1,8 @@
 package odyseja.odysejapka.info
 
 /**
- * Visual identity of an info category, rendered by the clients (mobile app, web).
+ * Visual identity of an info tile, rendered by the clients (mobile app, web). An info can carry
+ * its own style; when it does not, it inherits the style of its category, and then a default.
  *
  * The server stores only identifiers: [color] is one of [COLORS] and [icon] is the
  * kebab-case name of an icon from the shared icon set. The clients map them to concrete
@@ -23,6 +24,6 @@ object InfoCategoryStyle {
         }
     }
 
-    /** Colour for a category that has none assigned yet; stable per category so tiles do not flicker. */
-    fun defaultColor(categoryId: Int): String = COLORS[Math.floorMod(categoryId, COLORS.size)]
+    /** Colour for an item that has none assigned yet; stable per id so tiles do not flicker. */
+    fun defaultColor(id: Int): String = COLORS[Math.floorMod(id, COLORS.size)]
 }
