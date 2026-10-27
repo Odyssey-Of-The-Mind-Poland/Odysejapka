@@ -4,6 +4,9 @@
     import IconPlus from "@tabler/icons-svelte/icons/plus";
     import IconTrash from "@tabler/icons-svelte/icons/trash";
     import IconGripVertical from "@tabler/icons-svelte/icons/grip-vertical";
+    import IconPalette from "@tabler/icons-svelte/icons/palette";
+    import CategoryIcon from "$lib/components/CategoryIcon.svelte";
+    import {categoryColor} from "$lib/categoryStyle";
     import {dndzone} from "svelte-dnd-action";
     import type {Info, InfoCategory} from "./types";
 
@@ -12,6 +15,7 @@
         items = $bindable([]),
         deleting,
         oncreate,
+        onstyle,
         onedit,
         ondelete,
         onsort,
@@ -21,11 +25,14 @@
         items: Info[];
         deleting: boolean;
         oncreate: () => void;
+        onstyle: () => void;
         onedit: (info: Info) => void;
         ondelete: (info: Info) => void;
         onsort: (e: CustomEvent) => void;
         onfinalize: (e: CustomEvent) => void;
     } = $props();
+
+    let accent = $derived(categoryColor(category.color));
 
     function handleDelete(e: Event, info: Info) {
         e.stopPropagation();
@@ -36,11 +43,25 @@
 <Card.Root>
     <Card.Header>
         <div class="flex items-center justify-between">
-            <Card.Title>{category.name}</Card.Title>
-            <Button variant="outline" size="sm" onclick={oncreate}>
-                <IconPlus class="size-4 mr-1"/>
-                Dodaj
-            </Button>
+            <div class="flex items-center gap-3 min-w-0">
+                <div
+                        class="flex size-9 shrink-0 items-center justify-center rounded-full"
+                        style="background:{accent.background};color:{accent.foreground}"
+                >
+                    <CategoryIcon name={category.icon} class="size-5"/>
+                </div>
+                <Card.Title class="truncate">{category.name}</Card.Title>
+            </div>
+            <div class="flex gap-2">
+                <Button variant="ghost" size="sm" onclick={onstyle}>
+                    <IconPalette class="size-4 mr-1"/>
+                    Wygląd
+                </Button>
+                <Button variant="outline" size="sm" onclick={oncreate}>
+                    <IconPlus class="size-4 mr-1"/>
+                    Dodaj
+                </Button>
+            </div>
         </div>
         <Card.Description>{items.length} {items.length === 1 ? 'wpis' : 'wpisów'}</Card.Description>
     </Card.Header>

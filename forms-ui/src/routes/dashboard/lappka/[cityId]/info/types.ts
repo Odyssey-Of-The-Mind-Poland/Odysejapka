@@ -1,6 +1,8 @@
 export type InfoCategory = {
     id: number;
     name: string;
+    icon?: string | null;
+    color?: string | null;
 };
 
 export type Info = {
