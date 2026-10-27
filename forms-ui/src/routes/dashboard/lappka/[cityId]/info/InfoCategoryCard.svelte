@@ -55,7 +55,7 @@
             <div class="flex gap-2">
                 <Button variant="ghost" size="sm" onclick={onstyle}>
                     <IconPalette class="size-4 mr-1"/>
-                    Wygląd
+                    Domyślny wygląd
                 </Button>
                 <Button variant="outline" size="sm" onclick={oncreate}>
                     <IconPlus class="size-4 mr-1"/>
@@ -82,6 +82,12 @@
                     >
                         <div class="flex items-center text-muted-foreground/40 cursor-grab active:cursor-grabbing">
                             <IconGripVertical class="size-4"/>
+                        </div>
+                        <div
+                                class="flex size-7 shrink-0 items-center justify-center rounded-full"
+                                style="background:{categoryColor(info.color ?? category.color).background};color:{categoryColor(info.color ?? category.color).foreground}"
+                        >
+                            <CategoryIcon name={info.icon ?? category.icon} class="size-4"/>
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="font-medium text-sm truncate">{info.infoName}</p>

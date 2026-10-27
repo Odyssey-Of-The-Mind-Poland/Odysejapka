@@ -3,6 +3,7 @@
     import {Input} from "$lib/components/ui/input/index.js";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import TiptapEditor from "$lib/components/TiptapEditor.svelte";
+    import CategoryStylePicker from "$lib/components/CategoryStylePicker.svelte";
     import type {Info, InfoCategory} from "./types";
 
     let {
@@ -11,6 +12,8 @@
         category,
         name = $bindable(''),
         text = $bindable(''),
+        icon = $bindable<string | null>(null),
+        color = $bindable<string | null>(null),
         saving,
         onsave,
     }: {
@@ -19,6 +22,8 @@
         category: InfoCategory | null;
         name: string;
         text: string;
+        icon: string | null;
+        color: string | null;
         saving: boolean;
         onsave: () => void;
     } = $props();
@@ -37,6 +42,16 @@
             <div>
                 <label class="text-sm font-medium mb-1 block">Nazwa</label>
                 <Input bind:value={name} placeholder="Nazwa informacji..."/>
+            </div>
+
+            <div>
+                <p class="text-sm font-medium mb-1">Wygląd kafelka</p>
+                <CategoryStylePicker
+                        bind:icon
+                        bind:color
+                        label={name || 'Nazwa informacji'}
+                        inheritLabel="Z kategorii"
+                />
             </div>
 
             <div>

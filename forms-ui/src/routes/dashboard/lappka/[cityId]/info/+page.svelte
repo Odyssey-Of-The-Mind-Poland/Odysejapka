@@ -73,6 +73,8 @@
     let formName = $state('');
     let formText = $state('');
     let formSort = $state(0);
+    let formIcon = $state<string | null>(null);
+    let formColor = $state<string | null>(null);
 
     let createMutation = createPostMutation<Info, Info>({
         path: '/api/info',
@@ -122,6 +124,8 @@
         formName = '';
         formText = '';
         formSort = maxSort + 1;
+        formIcon = null;
+        formColor = null;
         selectedCategory = category;
         dialogOpen = true;
     }
@@ -131,6 +135,8 @@
         formName = info.infoName;
         formText = info.infoText;
         formSort = info.sortNumber;
+        formIcon = info.icon ?? null;
+        formColor = info.color ?? null;
         selectedCategory = categories.find(c => c.id === info.category) ?? null;
         dialogOpen = true;
     }
@@ -145,8 +151,8 @@
             category: selectedCategory.id,
             sortNumber: formSort,
             categoryName: selectedCategory.name,
-            icon: editingInfo?.icon,
-            color: editingInfo?.color,
+            icon: formIcon,
+            color: formColor,
         };
         if (editingInfo) {
             updateMutation.mutate(payload);
@@ -196,6 +202,8 @@
     category={selectedCategory}
     bind:name={formName}
     bind:text={formText}
+    bind:icon={formIcon}
+    bind:color={formColor}
     saving={createMutation.isPending || updateMutation.isPending}
     onsave={handleSave}
 />

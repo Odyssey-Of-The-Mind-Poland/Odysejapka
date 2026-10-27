@@ -13,8 +13,8 @@ export type Info = {
     category: number;
     sortNumber: number;
     categoryName: string;
-    icon?: string;
-    color?: string;
+    icon?: string | null;
+    color?: string | null;
 };
 
 export type InfoResponse = {
