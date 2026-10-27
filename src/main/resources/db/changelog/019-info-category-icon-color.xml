@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="019-info-category-icon-color" author="odysejapka">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="info_category"/>
+        </preConditions>
+        <comment>Info categories carry an icon name and an accent colour key, rendered by the clients. On a fresh database Hibernate creates the table with these columns.</comment>
+        <sql>
+            ALTER TABLE info_category ADD COLUMN IF NOT EXISTS icon VARCHAR(64);
+            ALTER TABLE info_category ADD COLUMN IF NOT EXISTS color VARCHAR(32);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

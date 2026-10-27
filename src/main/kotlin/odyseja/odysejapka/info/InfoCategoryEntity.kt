@@ -9,10 +9,13 @@ class InfoCategoryEntity(
   @Column()
   var id: Int,
   @Column()
-  var name: String
+  var name: String,
+  @Column()
+  var icon: String? = null,
+  @Column()
+  var color: String? = null
 ) {
   fun toInfoCategory(): InfoCategory {
-    return InfoCategory(id, name)
+    return InfoCategory(id, name, icon, color)
   }
 }
-

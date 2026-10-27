@@ -52,6 +52,19 @@ class InfoService(
     }
 
     @Transactional
+    fun updateInfoCategory(category: InfoCategory): InfoCategory {
+        InfoCategoryStyle.validate(category.icon, category.color)
+        val entity = infoCategoryRepository.findFirstById(category.id)
+            ?: throw EntityNotFoundException("Nie znaleziono kategorii o ID ${category.id}")
+        entity.name = category.name
+        entity.icon = category.icon
+        entity.color = category.color
+        val saved = infoCategoryRepository.save(entity)
+        changeService.updateVersion()
+        return saved.toInfoCategory()
+    }
+
+    @Transactional
     fun updateInfo(info: Info): Info {
         val infoEntity = getInfoEntityById(info.id)
         infoEntity.infoName = info.infoName

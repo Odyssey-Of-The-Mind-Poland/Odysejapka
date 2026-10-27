@@ -53,6 +53,13 @@ class InfoController(
   }
 
   @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
+  @PutMapping("/category")
+  @ResponseBody
+  fun updateInfoCategory(@RequestBody category: InfoCategory): InfoCategory {
+    return infoService.updateInfoCategory(category)
+  }
+
+  @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
   @DeleteMapping("/{id}")
   @ResponseBody
   fun deleteInfo(@PathVariable id: Int) {
