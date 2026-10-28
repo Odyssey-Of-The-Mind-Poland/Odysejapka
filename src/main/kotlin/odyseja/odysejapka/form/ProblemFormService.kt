@@ -9,9 +9,15 @@ class ProblemFormService(
     private val problemFormRepository: ProblemFormRepository,
     private val changeService: ChangeService,
 ) {
+    @Transactional
     fun findByProblem(problem: Int): ProblemFormEntity {
-        return problemFormRepository.findByProblem(problem)
-        ?: ProblemFormEntity().apply { this.problem = problem }
+        val problemForm = problemFormRepository.findByProblem(problem)
+            ?: ProblemFormEntity().also {
+                it.problem = problem
+                problemFormRepository.save(it)
+            }
+
+        return problemForm
     }
 
     @Transactional

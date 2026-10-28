@@ -24,4 +24,7 @@ class ProblemFormEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     @Convert(converter = FormDataConverter::class)
     var form: FormData? = null
+
+    @OneToMany(mappedBy = "problemForm", orphanRemoval = true, cascade = [CascadeType.ALL])
+    var judgeTeams: MutableList<JudgeTeamEntity> = mutableListOf()
 }

@@ -3,9 +3,11 @@ package odyseja.odysejapka.form
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import odyseja.odysejapka.city.CityEntity
@@ -24,9 +26,6 @@ class JudgeTeamEntity {
     var id: Long = 0
 
     @Column
-    var problem: Int = 0
-
-    @Column
     var judgeCountDtA: Int = 1
 
     @Column
@@ -39,10 +38,15 @@ class JudgeTeamEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     var city: CityEntity? = null
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "problem_form_id", referencedColumnName = "id")
+    var problemForm: ProblemFormEntity? = null
+
+
     companion object {
-        fun create(problem: Int, city: CityEntity): JudgeTeamEntity {
+        fun create(problemForm: ProblemFormEntity, city: CityEntity): JudgeTeamEntity {
             val entity = JudgeTeamEntity()
-            entity.problem = problem
+            entity.problemForm = problemForm
             entity.city = city
             return entity
         }
@@ -50,7 +54,7 @@ class JudgeTeamEntity {
 
     fun toJudgeTeam(): JudgeTeam {
         return JudgeTeam(
-            problem,
+            problemForm?.problem ?: 0,
             city?.id
                 ?: throw IllegalStateException("Ten zespół sędziowski nie ma przypisanego konkursu."),
             JudgeCount(

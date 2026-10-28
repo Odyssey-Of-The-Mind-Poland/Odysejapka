@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service
 class JudgeTeamService(
     private val judgeTeamRepository: JudgeTeamRepository,
     private val cityService: CityService,
-    private val changeService: ChangeService
+    private val changeService: ChangeService,
+    private val problemFormService: ProblemFormService
 ) {
     fun getJudgeCountByProblemAndCity(problem: Int, cityId: Int): JudgeCount {
         val judgeTeam = getJudgeTeamEntityByProblemAndCity(problem, cityId)
@@ -60,8 +61,9 @@ class JudgeTeamService(
 
     private fun getJudgeTeamEntityByProblemAndCity(problem: Int, cityId: Int): JudgeTeamEntity {
         val city = cityService.getCity(cityId)
-        val judgeTeam = judgeTeamRepository.findByProblemAndCity(problem, city)
-            ?: JudgeTeamEntity.create(problem, city)
+        val problemForm = problemFormService.findByProblem(problem)
+        val judgeTeam = judgeTeamRepository.findByProblemFormAndCity(problemForm, city)
+            ?: JudgeTeamEntity.create(problemForm, city)
         return judgeTeam
     }
 }
