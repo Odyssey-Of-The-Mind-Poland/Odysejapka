@@ -2,45 +2,58 @@
     import * as Dialog from '$lib/components/ui/dialog/index.js';
     import {Button} from '$lib/components/ui/button/index.js';
     import {Spinner} from '$lib/components/ui/spinner';
-    import {createOdysejaQuery} from "$lib/queries";
+    import {createOdysejaQuery, createPutMutation} from "$lib/queries";
     import type {City, JudgeTeam} from "./types";
+    import {toast} from "svelte-sonner";
 
-    let {form = $bindable(), open = $bindable()} = $props();
+    let {open = $bindable(), problem}: {
+        open: boolean, problem: string
+    } = $props();
 
     let cityQuery = createOdysejaQuery<City[]>({
         queryKey: ['city'],
         path: `/api/v1/city`,
         enabled: open
     });
+    let judgeTeamQuery = $derived(createOdysejaQuery<JudgeTeam[]>({
+        queryKey: ['judgeTeams'],
+        path: `/api/v1/form/${problem}/judge-teams`,
+    }));
     let cities = $derived(cityQuery.data);
+    let judgeTeams = $state(judgeTeamQuery.data ?? []);
 
-    let originalJudgeTeams: JudgeTeam[] = $derived<JudgeTeam[]>(form.judgeTeams ?? []);
+    let originalJudgeTeams: JudgeTeam[] = JSON.parse(JSON.stringify(judgeTeams));
 
-    // $state jest specjalnie, bo nie chodzi o to, żeby aktualizował się w momencie odczytu originalJudgeTeams.
-    // A tak by chyba działało $derived?
-    let judgeTeams = $state<JudgeTeam[]>(JSON.parse(JSON.stringify(originalJudgeTeams)));
     let isDirty = $derived.by(() => JSON.stringify(judgeTeams) !== JSON.stringify(originalJudgeTeams));
 
     $effect(() => {
         if (open) {
-            cityQuery.refetch?.()
-            judgeTeams = JSON.parse(JSON.stringify(originalJudgeTeams));
+            cityQuery.refetch();
         }
     });
 
     function updateJudgeTeam(cityId: number, field: keyof JudgeTeam["judgeCount"], e: Event) {
-        judgeTeams = judgeTeams || [];
         const teamIndex = judgeTeams.findIndex(team => team.cityId === cityId);
         judgeTeams[teamIndex].judgeCount[field] = Number((e.target as HTMLInputElement).value) ?? 1;
     }
 
+    let judgeTeamSaveMutation = $derived(createPutMutation<JudgeTeam[]>({
+        path: `/api/v1/form/${problem}/judge-teams`,
+        queryKey: ['judge-teams'],
+        onSuccess: data => {
+            toast.success("Zespół sędziowski zapisany pomyślnie");
+        }
+    }))
+
     function saveJudgeTeams() {
-        form.judgeTeams = judgeTeams;
+        judgeTeamSaveMutation.mutate(judgeTeams);
         open = false;
+        originalJudgeTeams = JSON.parse(JSON.stringify(judgeTeams));
     }
 
     function cancelChanges() {
         open = false;
+        judgeTeams = JSON.parse(JSON.stringify(originalJudgeTeams));
     }
 
 </script>

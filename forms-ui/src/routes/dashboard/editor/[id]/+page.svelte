@@ -6,7 +6,7 @@
     import {Button} from "$lib/components/ui/button";
     import {toast} from "svelte-sonner";
     import * as Separator from "$lib/components/ui/separator/index.js";
-    import {defaultEntry, type FormEntryType, type FormData} from "./types";
+    import {defaultEntry, type FormEntryType, type FormData, type JudgeTeam} from "./types";
     import {recalculateSortIndexes} from "./sortIndexUtils";
     import ScoringCard from "./ScoringCard.svelte";
     import StyleCard from "./StyleCard.svelte";
@@ -15,12 +15,14 @@
     import JudgeTeamsDialog from "./JudgeTeamsDialog.svelte";
 
     let activeTab = $state<'editor' | 'translation'>('editor');
-    let problem = $derived(page.params.id);
+    let problem = $derived(String(page.params.id));
     let formQuery = $derived(createOdysejaQuery<FormData>({
         queryKey: ['problems'],
         path: `/api/v1/form/${problem}`,
     }));
+
     let form = $state<FormData>()
+
     $effect(() => {
         setBreadcrumbs([
             {name: 'Konkursy', href: '/dashboard/competitions'},
@@ -30,9 +32,6 @@
         form = formQuery.data;
     })
     let openJudgeTeamsDialog = $state(false);
-
-    $effect(() => {
-    });
 
     function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY', penaltyType?: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA') {
         const newEntry: FormEntryType = defaultEntry(type, penaltyType)
@@ -52,7 +51,7 @@
         openJudgeTeamsDialog = true;
     }
 
-    let saveMutation = $derived(createPutMutation<FormData>({
+    let formSaveMutation = $derived(createPutMutation<FormData>({
         path: `/api/v1/form/${problem}`,
         queryKey: ['problems'],
         onSuccess: data => {
@@ -60,8 +59,8 @@
         }
     }))
 
-    function save() {
-        saveMutation.mutate(form)
+    function saveForm() {
+        formSaveMutation.mutate(form)
     }
 
 </script>
@@ -76,7 +75,7 @@
             <h1 class="text-xl font-bold sm:text-2xl">Edytor Formularza - Problem {problem}</h1>
             <span>
                 <Button class="w-full sm:w-auto" onclick={judgeTeamsDialogHandler}>Zespoły Sędziowskie</Button>
-                <Button class="w-full sm:w-auto" onclick={save}>Zapisz</Button>
+                <Button class="w-full sm:w-auto" onclick={saveForm}>Zapisz</Button>
             </span>
         </div>
 
@@ -132,6 +131,6 @@
         {:else}
             <TranslationTab bind:form={form} />
         {/if}
-        <JudgeTeamsDialog bind:open={openJudgeTeamsDialog} bind:form={form}/>
+        <JudgeTeamsDialog bind:open={openJudgeTeamsDialog} problem={problem}/>
     </div>
 {/if}
