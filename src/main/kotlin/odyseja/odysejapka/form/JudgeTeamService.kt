@@ -22,7 +22,7 @@ class JudgeTeamService(
         return judgeCount
     }
 
-    fun getJudgeTeamsByProblem(problem: Int): List<JudgeTeam>? {
+    fun getJudgeTeamsByProblem(problem: Int): List<JudgeTeam> {
         val allCities = cityService.getCities()
         val judgeTeams = mutableListOf<JudgeTeam>()
         allCities.forEach {

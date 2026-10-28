@@ -19,15 +19,9 @@ class FormService(
         val existingForm = existingEntity.form
 
         val formWithIds = FormEntryMapHelper.assignIds(form, existingForm)
-
         existingEntity.form = formWithIds
-
-        val judgeTeams = form.judgeTeams ?: emptyList()
-
-        judgeTeamService.setJudgeTeamsForProblem(problem, judgeTeams)
         problemFormService.saveProblemForm(existingEntity)
     }
-
 
     fun getFormData(problem: Int): FormData {
         val entity = problemFormService.findByProblem(problem)
@@ -37,15 +31,7 @@ class FormService(
             penaltyEntries = emptyList()
         )
 
-        val judgeTeams = judgeTeamService.getJudgeTeamsByProblem(problem)
-
-        return form.copy(
-            judgeTeams = judgeTeams
-        )
-    }
-
-    fun getJudgeCount(problem: Int, cityId: Int): JudgeCount {
-        return judgeTeamService.getJudgeCountByProblemAndCity(problem, cityId)
+        return form
     }
 
     @Transactional

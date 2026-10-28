@@ -16,14 +16,14 @@ class JudgeTeamTest : OdysejaDsl() {
         )
         setJudgeTeams(listOf(desiredJudgeTeam))
 
-        val actualJudgeTeam = formClient.getJudgeCount(PROBLEM_ID, city.id)
+        val actualJudgeCount = formClient.getJudgeCount(PROBLEM_ID, city.id)
 
-        Assertions.assertThat(actualJudgeTeam.dtA).isEqualTo(2)
-        Assertions.assertThat(actualJudgeTeam.dtB).isEqualTo(2)
-        Assertions.assertThat(actualJudgeTeam.style).isEqualTo(2)
+        Assertions.assertThat(actualJudgeCount.dtA).isEqualTo(2)
+        Assertions.assertThat(actualJudgeCount.dtB).isEqualTo(2)
+        Assertions.assertThat(actualJudgeCount.style).isEqualTo(2)
 
-        val actualForm = formClient.getFormData(PROBLEM_ID)
-        Assertions.assertThat(actualForm.judgeTeams).contains(desiredJudgeTeam)
+        val actualJudgeTeam = getJudgeTeams(PROBLEM_ID)
+        Assertions.assertThat(actualJudgeTeam).contains(desiredJudgeTeam)
     }
 
     @Test
@@ -55,8 +55,8 @@ class JudgeTeamTest : OdysejaDsl() {
         setJudgeTeams(listOf(newJudgeTeam))
         Assertions.assertThat(formClient.getJudgeCount(PROBLEM_ID, city.id)).isEqualTo(newJudgeTeam.judgeCount)
 
-        val actualForm = formClient.getFormData(PROBLEM_ID)
-        Assertions.assertThat(actualForm.judgeTeams).containsExactly(newJudgeTeam)
+        val actualJudgeTeams = getJudgeTeams(PROBLEM_ID)
+        Assertions.assertThat(actualJudgeTeams).containsExactly(newJudgeTeam)
     }
 
     @Test
@@ -68,8 +68,8 @@ class JudgeTeamTest : OdysejaDsl() {
         setJudgeTeams(listOf(judgeTeam))
         clearCities()
 
-        val form = formClient.getFormData(PROBLEM_ID)
-        Assertions.assertThat(form.judgeTeams).isEmpty()
+        val judgeTeams = getJudgeTeams(PROBLEM_ID)
+        Assertions.assertThat(judgeTeams).isEmpty()
     }
 
     @Test
@@ -100,11 +100,11 @@ class JudgeTeamTest : OdysejaDsl() {
         setJudgeTeams(listOf(judgeTeamA, judgeTeamB), 1)
         setJudgeTeams(listOf(judgeTeamC, judgeTeamD), 2)
 
-        val problem1Teams = formClient.getFormData(1)
-        val problem2Teams = formClient.getFormData(2)
+        val problem1Teams = getJudgeTeams(1)
+        val problem2Teams = getJudgeTeams(2)
 
-        Assertions.assertThat(problem1Teams.judgeTeams).contains(judgeTeamA, judgeTeamB)
-        Assertions.assertThat(problem2Teams.judgeTeams).contains(judgeTeamC, judgeTeamD)
+        Assertions.assertThat(problem1Teams).contains(judgeTeamA, judgeTeamB)
+        Assertions.assertThat(problem2Teams).contains(judgeTeamC, judgeTeamD)
 
         Assertions.assertThat(formClient.getJudgeCount(1, cityA.id)).isEqualTo(JudgeCount(2, 2, 2))
         Assertions.assertThat(formClient.getJudgeCount(1, cityB.id)).isEqualTo(JudgeCount(1, 1, 1))

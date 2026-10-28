@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException
 @RequestMapping("/api/v1/form")
 class FormController(
     private val formService: FormService,
+    private val judgeTeamService: JudgeTeamService,
     private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService,
     private val performanceAccessService: PerformanceAccessService,
     private val userAccessService: UserAccessService,
@@ -42,7 +43,19 @@ class FormController(
 
     @GetMapping("/{problem}/judge-count")
     fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCount {
-        return formService.getJudgeCount(problem, cityId)
+        return judgeTeamService.getJudgeCountByProblemAndCity(problem, cityId)
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
+    @PutMapping("/{problem}/judge-teams")
+    fun setJudgeTeams(@PathVariable problem: Int, @RequestBody judgeTeams: List<JudgeTeam>) {
+        judgeTeamService.setJudgeTeamsForProblem(problem, judgeTeams)
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
+    @GetMapping("/{problem}/judge-teams")
+    fun getJudgeTeams(@PathVariable problem: Int): List<JudgeTeam> {
+        return judgeTeamService.getJudgeTeamsByProblem(problem)
     }
 
     @PutMapping("/{performanceId}/result")

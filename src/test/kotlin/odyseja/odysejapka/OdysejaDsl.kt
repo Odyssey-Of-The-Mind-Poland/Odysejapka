@@ -114,14 +114,10 @@ class OdysejaDsl {
     }
 
     fun setJudgeTeams(judgeTeams: List<JudgeTeam>, problem: Int = PROBLEM_ID) {
-        val existingForm = form(problem)
-        formClient.setFormData(
-            problem,
-            existingForm.copy(
-                judgeTeams = judgeTeams
-            )
-        )
+        formClient.setJudgeTeams(problem, judgeTeams)
     }
+
+    fun getJudgeTeams(problem: Int = PROBLEM_ID) = formClient.getJudgeTeams(problem)
 
     fun createCity(name: String, level: KonkursLevel = KonkursLevel.FINAL): CityEntity {
         return cityClient.saveCity(CreateCityRequest(name, level))

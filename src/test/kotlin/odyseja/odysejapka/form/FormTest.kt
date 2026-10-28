@@ -127,64 +127,6 @@ class FormTest : OdysejaDsl() {
     }
 
     @Test
-    fun `should set judges count for city`() {
-        val city1 = createCity("City 1")
-        val city2 = createCity("City 2")
-
-        formClient.setFormData(
-            PROBLEM_ID,
-            FormData(
-                dtEntries = emptyList(),
-                styleEntries = emptyList(),
-                penaltyEntries = emptyList(),
-                judgeTeams = listOf(
-                    JudgeTeam(PROBLEM_ID, city1.id, JudgeCount(1, 1, 1)),
-                    JudgeTeam(PROBLEM_ID, city2.id, JudgeCount(2, 2, 2))
-                )
-            )
-        )
-
-        val city1Judges = formClient.getJudgeCount(PROBLEM_ID, city1.id)
-        val city2Judges = formClient.getJudgeCount(PROBLEM_ID, city2.id)
-
-        Assertions.assertThat(city1Judges.dtA).isEqualTo(1)
-        Assertions.assertThat(city1Judges.dtB).isEqualTo(1)
-        Assertions.assertThat(city1Judges.style).isEqualTo(1)
-        Assertions.assertThat(city2Judges.dtA).isEqualTo(2)
-        Assertions.assertThat(city2Judges.dtB).isEqualTo(2)
-        Assertions.assertThat(city2Judges.style).isEqualTo(2)
-
-    }
-
-    @Test
-    fun `should return judges count in getFormData`() {
-        clearCities()
-        val city1 = createCity("City 1", KonkursLevel.REGIONAL)
-        val city2 = createCity("City 2", KonkursLevel.REGIONAL)
-        val city3 = createCity("City 3", KonkursLevel.FINAL)
-
-        seedDefault()
-        val existing = form()
-
-        formClient.setFormData(
-            PROBLEM_ID,
-            existing.copy(
-                judgeTeams = listOf(
-                    JudgeTeam(PROBLEM_ID, city1.id, JudgeCount(1, 1, 1)),
-                    JudgeTeam(PROBLEM_ID, city2.id, JudgeCount(1, 1, 1)),
-                    JudgeTeam(PROBLEM_ID, city3.id, JudgeCount(2, 2, 2))
-                )
-            )
-        )
-
-        val retrievedForm = formClient.getFormData(PROBLEM_ID)
-
-        Assertions.assertThat(retrievedForm.judgeTeams).hasSize(3)
-        Assertions.assertThat(retrievedForm.judgeTeams?.map { it.cityId })
-            .containsExactlyInAnyOrder(city1.id, city2.id, city3.id)
-    }
-
-    @Test
     fun `should set form visual group`() {
         seedDefault()
         val existing = form()
