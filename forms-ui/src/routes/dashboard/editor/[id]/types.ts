@@ -2,9 +2,6 @@ export type FormData = {
 	dtEntries: FormEntryType[];
 	styleEntries: FormEntryType[];
 	penaltyEntries: FormEntryType[];
-	smallJudgesTeam?: number[] | null;
-	bigJudgesTeam?: number[] | null;
-	judgeTeams?: JudgeTeam[] | null;
 };
 
 export type JudgeTeam = {

@@ -16,7 +16,7 @@
         enabled: open
     });
     let judgeTeamQuery = $derived(createOdysejaQuery<JudgeTeam[]>({
-        queryKey: ['judgeTeams'],
+        queryKey: ['judgeTeams', problem],
         path: `/api/v1/form/${problem}/judge-teams`,
     }));
     let cities = $derived(cityQuery.data);
@@ -39,7 +39,7 @@
 
     let judgeTeamSaveMutation = $derived(createPutMutation<JudgeTeam[]>({
         path: `/api/v1/form/${problem}/judge-teams`,
-        queryKey: ['judge-teams'],
+        queryKey: ['judgeTeams', problem],
         onSuccess: data => {
             toast.success("Zespół sędziowski zapisany pomyślnie");
         }

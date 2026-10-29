@@ -25,6 +25,9 @@
     <changeSet id="rename-form_problem_json-to-problem_form" author="przem">
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="form_problem_json"/>
+            <not>
+                <tableExists tableName="problem_form"/>
+            </not>
         </preConditions>
         <renameTable oldTableName="form_problem_json"
                      newTableName="problem_form"/>
