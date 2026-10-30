@@ -32,6 +32,8 @@
     let categories = $derived(infoQuery.data?.categories ?? []);
     let infos = $derived(infoQuery.data?.infos ?? []);
 
+    const bySortNumberDesc = (a: Info, b: Info) => b.sortNumber - a.sortNumber;
+
     // Per-category local items for dnd
     let categoryItems = $state<Record<number, Info[]>>({});
 
@@ -40,7 +42,7 @@
         for (const cat of categories) {
             next[cat.id] = infos
                 .filter(i => i.category === cat.id)
-                .sort((a, b) => a.sortNumber - b.sortNumber);
+                .sort(bySortNumberDesc);
         }
         categoryItems = next;
     });
@@ -55,17 +57,18 @@
 
         const original = infos
             .filter(i => i.category === catId)
-            .sort((a, b) => a.sortNumber - b.sortNumber);
+            .sort(bySortNumberDesc);
         const changed = items.some((item, idx) => original[idx]?.id !== item.id);
         if (!changed) return;
 
         try {
             for (let i = 0; i < items.length; i++) {
-                if (items[i].sortNumber !== i) {
+                const sortNumber = items.length - 1 - i;
+                if (items[i].sortNumber !== sortNumber) {
                     await apiFetch('/api/info', {
                         method: 'PUT',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({...items[i], sortNumber: i}),
+                        body: JSON.stringify({...items[i], sortNumber}),
                     });
                 }
             }
@@ -112,11 +115,12 @@
 
     function openCreate(category: InfoCategory) {
         const catInfos = categoryItems[category.id] ?? [];
-        const maxSort = catInfos.length > 0 ? Math.max(...catInfos.map(i => i.sortNumber)) : -1;
+        // A new info goes to the end of the list, i.e. below the lowest sortNumber.
+        const minSort = catInfos.length > 0 ? Math.min(...catInfos.map(i => i.sortNumber)) : 1;
         editingInfo = null;
         formName = '';
         formText = '';
-        formSort = maxSort + 1;
+        formSort = minSort - 1;
         formIcon = null;
         formColor = null;
         selectedCategory = category;
@@ -136,7 +140,7 @@
 
     // The single info of a regional city is edited in place, not in a dialog.
     let regionalInfo = $derived(
-        isRegional ? ([...infos].sort((a, b) => a.sortNumber - b.sortNumber)[0] ?? null) : null
+        isRegional ? ([...infos].sort(bySortNumberDesc)[0] ?? null) : null
     );
     let loadedRegionalKey = $state<string | null>(null);
 
