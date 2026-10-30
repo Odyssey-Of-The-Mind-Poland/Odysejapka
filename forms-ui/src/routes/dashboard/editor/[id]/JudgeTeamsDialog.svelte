@@ -19,12 +19,12 @@
         queryKey: ['judgeTeams', problem],
         path: `/api/v1/form/${problem}/judge-teams`,
     }));
-    let cities = $derived(cityQuery.data);
-    let judgeTeams = $state(judgeTeamQuery.data ?? []);
+    let cities = $derived(cityQuery.data ?? []);
+    let judgeTeams = $state<JudgeTeam[]>([]);
+    let originalJudgeTeams = $state<JudgeTeam[]>([]);
+    let initialized = false;
 
-    let originalJudgeTeams: JudgeTeam[] = JSON.parse(JSON.stringify(judgeTeams));
-
-    let isDirty = $derived.by(() => JSON.stringify(judgeTeams) !== JSON.stringify(originalJudgeTeams));
+    let isDirty = $derived(JSON.stringify(judgeTeams) !== JSON.stringify(originalJudgeTeams));
 
     $effect(() => {
         if (open) {
@@ -32,9 +32,21 @@
         }
     });
 
+    $effect(() => {
+        if (open && judgeTeamQuery.data && !initialized) {
+            initialized = true;
+            judgeTeams = JSON.parse(JSON.stringify(judgeTeamQuery.data));
+            originalJudgeTeams = JSON.parse(JSON.stringify(judgeTeamQuery.data));
+        }
+    });
+
     function updateJudgeTeam(cityId: number, field: keyof JudgeTeam["judgeCount"], e: Event) {
-        const teamIndex = judgeTeams.findIndex(team => team.cityId === cityId);
-        judgeTeams[teamIndex].judgeCount[field] = Number((e.target as HTMLInputElement).value) ?? 1;
+        let team = judgeTeams.find(team => team.cityId === cityId);
+        if (!team) {
+            judgeTeams.push({problem: Number(problem), cityId, judgeCount: {dtA: 1, dtB: 1, style: 1}});
+            team = judgeTeams[judgeTeams.length - 1];
+        }
+        team.judgeCount[field] = Number((e.target as HTMLInputElement).value);
     }
 
     let judgeTeamSaveMutation = $derived(createPutMutation<JudgeTeam[]>({
