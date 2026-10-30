@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+      The level column was added after the first cities were created, so those rows have no value.
+      The finals ("final" / "finał") become FINAL, every other city without a level REGIONAL.
+      Without @Enumerated Hibernate stores the ordinal (FINAL = 0, REGIONAL = 1), so the column
+      may be numeric or text; both are handled.
+    -->
+    <changeSet id="021-normalize-city-level" author="odysejapka" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="city"/>
+            <columnExists tableName="city" columnName="level"/>
+        </preConditions>
+        <sql splitStatements="false">
+            DO $$
+            DECLARE
+                is_numeric boolean;
+            BEGIN
+                SELECT data_type IN ('smallint', 'integer', 'bigint') INTO is_numeric
+                FROM information_schema.columns
+                WHERE table_schema = current_schema() AND table_name = 'city' AND column_name = 'level';
+
+                IF is_numeric THEN
+                    UPDATE city SET level = 0 WHERE lower(replace(trim(name), 'Ł', 'ł')) IN ('final', 'finał');
+                    UPDATE city SET level = 1 WHERE level IS NULL;
+                ELSE
+                    UPDATE city SET level = 'FINAL' WHERE lower(replace(trim(name), 'Ł', 'ł')) IN ('final', 'finał');
+                    UPDATE city SET level = 'REGIONAL' WHERE level IS NULL;
+                END IF;
+            END $$;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

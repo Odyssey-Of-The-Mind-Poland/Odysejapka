@@ -158,6 +158,31 @@ class InfoTest: OdysejaDsl() {
         Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono informacji o ID $infoId")
     }
 
+    @Test
+    fun `should allow only one info in a regional city`() {
+        val city = createCity("Poznań regionalny", KonkursLevel.REGIONAL)
+        val first = infoClient.addInfo(createInfo(cityId = city.id))
+
+        val response = infoRespondingClient.executeConsumer { it.addInfo(createInfo(infoName = "Druga", cityId = city.id)) }
+
+        val detail = parseProblemDetail(response)
+        Assertions.assertThat(detail.status).isEqualTo(400)
+        Assertions.assertThat(detail.detail).contains("tylko jedną informację")
+        Assertions.assertThat(infoClient.getInfo(city.id).filterNotNull().map { it.id }).containsExactly(first.id)
+        // The only info can still be edited.
+        Assertions.assertThat(infoClient.updateInfo(first.copy(infoName = "Zmieniona")).infoName).isEqualTo("Zmieniona")
+    }
+
+    @Test
+    fun `should allow many infos in the finals`() {
+        val city = createCity("Finał wielu info", KonkursLevel.FINAL)
+
+        infoClient.addInfo(createInfo(infoName = "Pierwsza", cityId = city.id))
+        infoClient.addInfo(createInfo(infoName = "Druga", cityId = city.id))
+
+        Assertions.assertThat(infoClient.getInfo(city.id).toList()).hasSize(2)
+    }
+
     private fun createInfo(
         infoName: String = "Ważne",
         infoText: String = "Lorem ipsum dolor sit amet",

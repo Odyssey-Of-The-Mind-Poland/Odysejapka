@@ -10,9 +10,15 @@ class CityEntity(
     var id: Int,
     @Column
     var name: String,
+    // Nullable only because rows created before the column existed have no value; see [applyDefaultLevel].
     @Column
-    var level: KonkursLevel = KonkursLevel.REGIONAL
-)
+    var level: KonkursLevel? = KonkursLevel.REGIONAL
+) {
+    @PostLoad
+    fun applyDefaultLevel() {
+        if (level == null) level = KonkursLevel.REGIONAL
+    }
+}
 
 enum class KonkursLevel {
     FINAL,

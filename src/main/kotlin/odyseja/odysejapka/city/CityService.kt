@@ -32,7 +32,7 @@ class CityService(
     val updatedCity = getCity(city.id)
     updatedCity.apply {
       name = city.name
-      level = city.level
+      level = city.level ?: KonkursLevel.REGIONAL
     }
     return cityRepository.save(updatedCity)
   }

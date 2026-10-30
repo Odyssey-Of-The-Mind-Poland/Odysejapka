@@ -9,6 +9,9 @@
     import type {Info, InfoCategory, InfoResponse} from "./types";
     import InfoCategoryCard from "./InfoCategoryCard.svelte";
     import InfoEditDialog from "./InfoEditDialog.svelte";
+    import InfoForm from "./InfoForm.svelte";
+    import {Button} from "$lib/components/ui/button/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
 
     let cityId = $derived(Number(page.params.cityId));
     const queryClient = getQueryClientContext();
@@ -17,6 +20,14 @@
         queryKey: ['lappkaInfo', String(cityId)],
         path: `/api/info/map?cityId=${cityId}`,
     }));
+
+    type City = { id: number; name: string; level?: 'FINAL' | 'REGIONAL' };
+    let citiesQuery = $derived(createOdysejaQuery<City[]>({
+        queryKey: ['dashboardCities'],
+        path: '/api/v1/dashboard/cities',
+    }));
+    // Only the finals have many infos grouped in categories; a regional city has just one.
+    let isRegional = $derived(citiesQuery.data?.find(c => c.id === cityId)?.level === 'REGIONAL');
 
     let categories = $derived(infoQuery.data?.categories ?? []);
     let infos = $derived(infoQuery.data?.infos ?? []);
@@ -123,6 +134,45 @@
         dialogOpen = true;
     }
 
+    // The single info of a regional city is edited in place, not in a dialog.
+    let regionalInfo = $derived(
+        isRegional ? ([...infos].sort((a, b) => a.sortNumber - b.sortNumber)[0] ?? null) : null
+    );
+    let loadedRegionalKey = $state<string | null>(null);
+
+    $effect(() => {
+        if (!isRegional || infoQuery.isPending) return;
+        const key = `${cityId}:${regionalInfo?.id ?? 'new'}`;
+        if (key === loadedRegionalKey) return;
+        loadedRegionalKey = key;
+        formName = regionalInfo?.infoName ?? 'Informacje';
+        formText = regionalInfo?.infoText ?? '';
+        formIcon = regionalInfo?.icon ?? null;
+        formColor = regionalInfo?.color ?? null;
+    });
+
+    function saveRegional() {
+        if (!formName.trim()) return;
+        // The category is not shown for a regional city, but every info belongs to one.
+        const category = categories.find(c => c.id === regionalInfo?.category) ?? categories[0];
+        const payload: Info = {
+            id: regionalInfo?.id ?? 0,
+            infoName: formName.trim(),
+            infoText: formText,
+            city: cityId,
+            category: category?.id ?? 0,
+            sortNumber: regionalInfo?.sortNumber ?? 0,
+            categoryName: category?.name ?? 'Dla wszystkich',
+            icon: formIcon,
+            color: formColor,
+        };
+        if (regionalInfo) {
+            updateMutation.mutate(payload);
+        } else {
+            createMutation.mutate(payload);
+        }
+    }
+
     function handleSave() {
         if (!formName.trim() || !selectedCategory) return;
         const payload: Info = {
@@ -145,7 +195,7 @@
 </script>
 
 <div class="flex flex-col gap-6">
-    {#if infoQuery.isPending}
+    {#if infoQuery.isPending || citiesQuery.isPending}
         <div class="flex flex-col items-center justify-center py-16 gap-3">
             <Spinner size="sm"/>
             <p class="text-sm text-muted-foreground">Ładowanie informacji...</p>
@@ -154,6 +204,36 @@
         <div class="rounded-lg border border-destructive/30 bg-destructive/5 p-6 text-center">
             <p class="font-medium text-destructive">Błąd ładowania</p>
         </div>
+    {:else if isRegional}
+        <Card.Root>
+            <Card.Header>
+                <Card.Title>Informacja o mieście</Card.Title>
+                <Card.Description>
+                    Miasto regionalne ma jedną informację, którą aplikacja pokazuje od razu.
+                    {#if infos.length > 1}
+                        Ma ich {infos.length}, edytujesz pierwszą.
+                    {/if}
+                </Card.Description>
+            </Card.Header>
+            <Card.Content>
+                <InfoForm
+                        bind:name={formName}
+                        bind:text={formText}
+                        bind:icon={formIcon}
+                        bind:color={formColor}
+                        inheritColorLabel="Domyślny"
+                        editorKey={loadedRegionalKey ?? 'new'}
+                />
+            </Card.Content>
+            <Card.Footer class="justify-end">
+                <Button
+                        onclick={saveRegional}
+                        disabled={!formName.trim() || createMutation.isPending || updateMutation.isPending}
+                >
+                    Zapisz
+                </Button>
+            </Card.Footer>
+        </Card.Root>
     {:else if categories.length === 0}
         <div class="rounded-lg border border-dashed p-12 text-center">
             <IconInfoCircle class="size-10 text-muted-foreground/40 mx-auto mb-3"/>

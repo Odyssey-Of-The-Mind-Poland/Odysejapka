@@ -3,6 +3,7 @@ package odyseja.odysejapka.info
 import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
+import odyseja.odysejapka.city.KonkursLevel
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -27,12 +28,17 @@ class InfoService(
 
     @Transactional
     fun addInfo(info: Info): Info {
+        val city = cityService.getCity(info.city)
+        // A regional city is described by one info, shown right away without a category choice.
+        require(city.level == KonkursLevel.FINAL || infoRepository.findByCity(city).none()) {
+            "Miasto regionalne ${city.name} może mieć tylko jedną informację"
+        }
         val savedInfo = infoRepository.save(
             InfoEntity(
                 info.id,
                 info.infoName,
                 info.infoText,
-                cityService.getCity(info.city),
+                city,
                 infoCategoryRepository.findFirstById(info.category)
                     ?: addInfoCategory(InfoCategoryEntity(0, info.categoryName)),
                 info.sortNumber,
