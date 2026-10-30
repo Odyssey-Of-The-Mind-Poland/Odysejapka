@@ -32,13 +32,9 @@ class FormTeamResultsBasicTest : OdysejaDsl() {
     fun `should update existing result and add another judge`() {
         val (dtId, styleId, _) = seedDefaultFormWithIds()
         val city = createCity("Gdynia")
-        
-        val existingForm = form()
-        formClient.setFormData(
-            PROBLEM_ID,
-            existingForm.copy(
-                bigJudgesTeam = listOf(city.id)
-            )
+
+        setJudgeTeams(
+            listOf(JudgeTeam(PROBLEM_ID, city.id, JudgeCount(2, 2, 2)))
         )
         
         val perfId = createPerformance(city.id)

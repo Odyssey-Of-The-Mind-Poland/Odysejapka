@@ -3,7 +3,6 @@ package odyseja.odysejapka.form
 import odyseja.odysejapka.dashboard.PerformanceAccessService
 import odyseja.odysejapka.dashboard.UserAccessService
 import odyseja.odysejapka.timetable.PerformanceService
-import odyseja.odysejapka.timetable.TimeTableService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -23,17 +22,17 @@ import org.springframework.web.server.ResponseStatusException
 @RequestMapping("/api/v1/form")
 class FormController(
     private val formService: FormService,
+    private val judgeTeamService: JudgeTeamService,
     private val teamFormPdfGeneratorService: TeamFormPdfGeneratorService,
     private val performanceAccessService: PerformanceAccessService,
     private val userAccessService: UserAccessService,
-    private val timeTableService: TimeTableService,
     private val performanceService: PerformanceService
 ) {
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @PutMapping("/{problem}")
     fun setFormData(@PathVariable problem: Int, @RequestBody formData: FormData) {
-        formService.setFormEntries(problem, formData)
+        formService.setFormData(problem, formData)
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
@@ -43,8 +42,20 @@ class FormController(
     }
 
     @GetMapping("/{problem}/judge-count")
-    fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCountResponse {
-        return formService.getJudgeCount(problem, cityId)
+    fun getJudgeCount(@PathVariable problem: Int, @RequestParam cityId: Int): JudgeCount {
+        return judgeTeamService.getJudgeCountByProblemAndCity(problem, cityId)
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
+    @PutMapping("/{problem}/judge-teams")
+    fun setJudgeTeams(@PathVariable problem: Int, @RequestBody judgeTeams: List<JudgeTeam>) {
+        judgeTeamService.setJudgeTeamsForProblem(problem, judgeTeams)
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
+    @GetMapping("/{problem}/judge-teams")
+    fun getJudgeTeams(@PathVariable problem: Int): List<JudgeTeam> {
+        return judgeTeamService.getJudgeTeamsByProblem(problem)
     }
 
     @PutMapping("/{performanceId}/result")

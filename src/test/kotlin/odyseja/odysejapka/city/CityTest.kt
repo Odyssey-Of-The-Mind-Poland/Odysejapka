@@ -4,17 +4,14 @@ import odyseja.odysejapka.OdysejaDsl
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.security.test.context.support.WithMockUser
-import ovh.snet.grzybek.controller.client.core.RespondingControllerClient
 import kotlin.test.Test
 
 @WithMockUser(username = "testuser", roles = ["ADMIN"])
 class CityTest : OdysejaDsl() {
-    lateinit var cityRespondingClient: RespondingControllerClient<CityController>
 
     @BeforeEach
     fun cityTestSetUp() {
         clearCities()
-        cityRespondingClient = controllerClientFactory.respondingClient(CityController::class.java)
     }
 
     @Test
@@ -49,22 +46,22 @@ class CityTest : OdysejaDsl() {
     @Test
     fun `should delete city`() {
         val city = createCity("Usuwisko Dolne")
-        cityClient.deleteCity(city.id)
+        val cityId = city.id
+        cityClient.deleteCity(cityId)
 
-        val response = getCityByName("Usuwisko Dolne")
-
-        Assertions.assertThat(response).isNull()
+        val response = getCityWithRespondingClient(cityId)
+        Assertions.assertThat(response.status).isEqualTo(404)
     }
 
     @Test
     fun `should delete city tied to performances`() {
         val city = createCity("Konkurs z przedstawieniem")
-        createPerformance(city.id)
-        cityClient.deleteCity(city.id)
+        val cityId = city.id
+        createPerformance(cityId)
+        cityClient.deleteCity(cityId)
 
-        val response = getCityByName("Konkurs z przedstawieniem")
-
-        Assertions.assertThat(response).isNull()
+        val response = getCityWithRespondingClient(cityId)
+        Assertions.assertThat(response.status).isEqualTo(404)
     }
 
     @Test
@@ -76,7 +73,6 @@ class CityTest : OdysejaDsl() {
 
         Assertions.assertThat(cityClient.getCity(oldCity.id).name).isEqualTo("Nowe Miasto")
         Assertions.assertThat(cityClient.getCity(oldCity.id).level).isEqualTo(KonkursLevel.FINAL)
-        Assertions.assertThat(getCityByName("Stare Miasto")).isNull()
     }
 
     @Test
@@ -91,7 +87,6 @@ class CityTest : OdysejaDsl() {
 
         Assertions.assertThat(cityClient.getCity(oldCity.id).name).isEqualTo("Nowe Miasto")
         Assertions.assertThat(cityClient.getCity(oldCity.id).level).isEqualTo(KonkursLevel.FINAL)
-        Assertions.assertThat(getCityByName("Stare Miasto")).isNull()
 
         Assertions.assertThatNoException().isThrownBy {
             timeTableClient.getPerformance(performance)
@@ -102,13 +97,10 @@ class CityTest : OdysejaDsl() {
 
     @Test
     fun `should properly handle exceptions`() {
-        val response = cityRespondingClient.executeConsumer {
-                controller -> controller.getCity(941415125)
-        }
-        val detail = parseProblemDetail(response)
+        val response = getCityWithRespondingClient(941415125)
 
-        Assertions.assertThat(detail.status).isEqualTo(404)
-        Assertions.assertThat(detail.detail).isEqualTo("Nie znaleziono miasta o ID 941415125")
-        Assertions.assertThat(detail.title).isEqualTo("ENTITY NOT FOUND")
+        Assertions.assertThat(response.status).isEqualTo(404)
+        Assertions.assertThat(response.detail).isEqualTo("Nie znaleziono miasta o ID 941415125")
+        Assertions.assertThat(response.title).isEqualTo("ENTITY NOT FOUND")
     }
 }

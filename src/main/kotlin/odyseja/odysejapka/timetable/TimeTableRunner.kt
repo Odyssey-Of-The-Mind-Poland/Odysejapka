@@ -6,14 +6,13 @@ import odyseja.odysejapka.async.CancellableRunner
 import odyseja.odysejapka.async.Log
 import odyseja.odysejapka.drive.ZspSheetsAdapter
 import odyseja.odysejapka.gad.Teams
-import odyseja.odysejapka.timetable.TimeTableService
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 class TimeTableRunner(
     private val timeTableService: TimeTableService,
     private val sheetsAdapter: ZspSheetsAdapter,
-    private val city: String
+    private val cityId: Int
 ) : CancellableRunner {
 
     private val logger = AsyncLogger()
@@ -62,7 +61,7 @@ class TimeTableRunner(
         for (team in teams.teams) {
             if (cancelled.get()) return
             try {
-                timeTableService.addPerformance(team.toPerformance(city))
+                timeTableService.addPerformance(team.toPerformance(cityId))
             } catch (e: Exception) {
                 logger.error("Error adding performance for team ${team.teamName}: ${e.message ?: e}")
             }
