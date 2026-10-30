@@ -75,29 +75,27 @@ class InfoCategoryTest: OdysejaDsl() {
     }
 
     @Test
-    fun `should store icon and color of a category`() {
+    fun `should store the color of a category`() {
         clearInfoCategories()
         val info = infoClient.addInfo(createInfo(InfoCategory(getNewInfoCategoryId(), "Dojazd")))
 
-        val updated = infoClient.updateInfoCategory(InfoCategory(info.category, "Dojazd i parking", "map-01", "green"))
+        val updated = infoClient.updateInfoCategory(InfoCategory(info.category, "Dojazd i parking", "green"))
 
-        Assertions.assertThat(updated).isEqualTo(InfoCategory(info.category, "Dojazd i parking", "map-01", "green"))
+        Assertions.assertThat(updated).isEqualTo(InfoCategory(info.category, "Dojazd i parking", "green"))
         val stored = infoClient.getInfoCategories().single()
         Assertions.assertThat(stored.name).isEqualTo("Dojazd i parking")
-        Assertions.assertThat(stored.icon).isEqualTo("map-01")
         Assertions.assertThat(stored.color).isEqualTo("green")
     }
 
     @Test
-    fun `should clear icon and color of a category`() {
+    fun `should clear the color of a category`() {
         clearInfoCategories()
         val info = infoClient.addInfo(createInfo(InfoCategory(getNewInfoCategoryId(), "Posiłki")))
-        infoClient.updateInfoCategory(InfoCategory(info.category, "Posiłki", "coffee", "orange"))
+        infoClient.updateInfoCategory(InfoCategory(info.category, "Posiłki", "orange"))
 
-        infoClient.updateInfoCategory(InfoCategory(info.category, "Posiłki", null, null))
+        infoClient.updateInfoCategory(InfoCategory(info.category, "Posiłki", null))
 
         val stored = infoClient.getInfoCategories().single()
-        Assertions.assertThat(stored.icon).isNull()
         Assertions.assertThat(stored.color).isNull()
     }
 
@@ -107,7 +105,7 @@ class InfoCategoryTest: OdysejaDsl() {
         val info = infoClient.addInfo(createInfo(InfoCategory(getNewInfoCategoryId(), "Sponsorzy")))
 
         val response = infoRespondingClient.executeConsumer { controller ->
-            controller.updateInfoCategory(InfoCategory(info.category, "Sponsorzy", "star-01", "magenta"))
+            controller.updateInfoCategory(InfoCategory(info.category, "Sponsorzy", "magenta"))
         }
 
         val detail = parseProblemDetail(response)
@@ -117,23 +115,11 @@ class InfoCategoryTest: OdysejaDsl() {
     }
 
     @Test
-    fun `should reject malformed icon name`() {
-        clearInfoCategories()
-        val info = infoClient.addInfo(createInfo(InfoCategory(getNewInfoCategoryId(), "Regulamin")))
-
-        val response = infoRespondingClient.executeConsumer { controller ->
-            controller.updateInfoCategory(InfoCategory(info.category, "Regulamin", "<script>", "blue"))
-        }
-
-        Assertions.assertThat(parseProblemDetail(response).status).isEqualTo(400)
-    }
-
-    @Test
     fun `should return 404 when updating a category that does not exist`() {
         clearInfoCategories()
 
         val response = infoRespondingClient.executeConsumer { controller ->
-            controller.updateInfoCategory(InfoCategory(999999, "Nie ma", "info-circle", "blue"))
+            controller.updateInfoCategory(InfoCategory(999999, "Nie ma", "blue"))
         }
 
         Assertions.assertThat(parseProblemDetail(response).status).isEqualTo(404)

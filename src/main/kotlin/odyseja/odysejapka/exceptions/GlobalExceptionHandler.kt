@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import java.net.URI
@@ -65,6 +66,16 @@ class GlobalExceptionHandler {
             e.message, request,
             HttpStatus.CONFLICT,
             "DATA INTEGRITY VIOLATION"
+        )
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodArgumentNotValid(e: MethodArgumentNotValidException, request: HttpServletRequest): ProblemDetail {
+        return createProblemDetail(
+            e.bindingResult.fieldErrors.joinToString("; ") { it.defaultMessage ?: "${it.field}: nieprawidłowa wartość" },
+            request,
+            HttpStatus.BAD_REQUEST,
+            "VALIDATION FAILED"
         )
     }
 

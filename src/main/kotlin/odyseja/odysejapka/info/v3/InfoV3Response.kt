@@ -10,8 +10,8 @@ data class InfoV3Response(
 )
 
 /**
- * An info tile with its style resolved: the info's own icon/color win, then the category's, then
- * a default. Icon and color are never null, so clients render tiles without fallbacks.
+ * An info tile with its style resolved: the info's own icon wins over the one global default icon (categories have no icon), and its
+ * own color over the category's, then a default. Icon and color are never null, so clients render tiles without fallbacks.
  */
 data class InfoV3(
     val id: Int,
@@ -33,7 +33,7 @@ data class InfoV3(
             category = info.category,
             sortNumber = info.sortNumber,
             categoryName = info.categoryName,
-            icon = info.icon ?: category?.icon ?: InfoCategoryStyle.DEFAULT_ICON,
+            icon = info.icon ?: InfoCategoryStyle.DEFAULT_ICON,
             color = info.color ?: category?.color ?: InfoCategoryStyle.defaultColor(info.id)
         )
     }
@@ -42,14 +42,12 @@ data class InfoV3(
 data class InfoCategoryV3(
     val id: Int,
     val name: String,
-    val icon: String,
     val color: String
 ) {
     companion object {
         fun from(category: InfoCategory) = InfoCategoryV3(
             id = category.id,
             name = category.name,
-            icon = category.icon ?: InfoCategoryStyle.DEFAULT_ICON,
             color = category.color ?: InfoCategoryStyle.defaultColor(category.id)
         )
     }

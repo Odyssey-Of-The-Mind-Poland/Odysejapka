@@ -9,20 +9,16 @@ package odyseja.odysejapka.info
  * shades per theme (light/dark) and glyphs.
  */
 object InfoCategoryStyle {
-    val COLORS = listOf("blue", "orange", "purple", "green", "red")
+    /** Bean Validation patterns for the `icon` / `color` fields of [Info] and [InfoCategory]. */
+    const val COLOR_PATTERN = "blue|orange|purple|green|red"
+    const val ICON_PATTERN = "[a-z0-9]+(-[a-z0-9]+)*"
+    const val MAX_ICON_LENGTH = 64
+
+    const val COLOR_MESSAGE = "Nieznany kolor '\${validatedValue}'. Dozwolone: blue, orange, purple, green, red"
+    const val ICON_MESSAGE = "Nieprawidłowa nazwa ikony '\${validatedValue}'. Oczekiwany format: małe litery, cyfry i myślniki"
+
+    val COLORS = COLOR_PATTERN.split("|")
     const val DEFAULT_ICON = "info-circle"
-
-    private val ICON_FORMAT = Regex("^[a-z0-9]+(-[a-z0-9]+)*$")
-    private const val MAX_ICON_LENGTH = 64
-
-    fun validate(icon: String?, color: String?) {
-        require(color == null || color in COLORS) {
-            "Nieznany kolor kategorii '$color'. Dozwolone: ${COLORS.joinToString()}"
-        }
-        require(icon == null || (icon.length <= MAX_ICON_LENGTH && ICON_FORMAT.matches(icon))) {
-            "Nieprawidłowa nazwa ikony '$icon'. Oczekiwany format: małe litery, cyfry i myślniki"
-        }
-    }
 
     /** Colour for an item that has none assigned yet; stable per id so tiles do not flicker. */
     fun defaultColor(id: Int): String = COLORS[Math.floorMod(id, COLORS.size)]

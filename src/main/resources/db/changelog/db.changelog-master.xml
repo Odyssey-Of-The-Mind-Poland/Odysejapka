@@ -16,5 +16,6 @@
     <include file="db/changelog/013-fix-change-id-sequence.xml"/>
     <include file="db/changelog/015-drop-legacy-team-result-entries.xml"/>
     <include file="db/changelog/019-info-category-icon-color.xml"/>
+    <include file="db/changelog/020-style-info-tiles-after-figma.xml"/>
 
 </databaseChangeLog>

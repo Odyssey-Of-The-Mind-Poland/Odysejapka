@@ -38,14 +38,14 @@ class InfoV3Test : OdysejaDsl() {
     }
 
     @Test
-    fun `should inherit style from the category when the info has none`() {
+    fun `should inherit the color from the category and use the default icon when the info has none`() {
         val city = createCity("Sopot")
         val saved = infoClient.addInfo(info(city.id, "Noclegi"))
-        infoClient.updateInfoCategory(InfoCategory(saved.category, "Noclegi", "home-02", "green"))
+        infoClient.updateInfoCategory(InfoCategory(saved.category, "Noclegi", "green"))
 
         val tile = infoV3Client.getInfo(city.id).infos.single()
 
-        Assertions.assertThat(tile.icon).isEqualTo("home-02")
+        Assertions.assertThat(tile.icon).isEqualTo(InfoCategoryStyle.DEFAULT_ICON)
         Assertions.assertThat(tile.color).isEqualTo("green")
     }
 
@@ -53,7 +53,7 @@ class InfoV3Test : OdysejaDsl() {
     fun `should prefer own style over the category style`() {
         val city = createCity("Hel")
         val saved = infoClient.addInfo(info(city.id, "Plaża", icon = "sun", color = "orange"))
-        infoClient.updateInfoCategory(InfoCategory(saved.category, "Plaża", "home-02", "green"))
+        infoClient.updateInfoCategory(InfoCategory(saved.category, "Plaża", "green"))
 
         val tile = infoV3Client.getInfo(city.id).infos.single()
 
@@ -72,17 +72,16 @@ class InfoV3Test : OdysejaDsl() {
         Assertions.assertThat(tile.icon).isEqualTo(InfoCategoryStyle.DEFAULT_ICON)
         Assertions.assertThat(tile.color).isEqualTo(InfoCategoryStyle.defaultColor(saved.id))
         Assertions.assertThat(InfoCategoryStyle.COLORS).contains(tile.color)
-        Assertions.assertThat(response.categories.single().icon).isEqualTo(InfoCategoryStyle.DEFAULT_ICON)
     }
 
     @Test
-    fun `should return categories with their style`() {
+    fun `should return categories with their color`() {
         val city = createCity("Władysławowo")
         val saved = infoClient.addInfo(info(city.id, "Port"))
-        infoClient.updateInfoCategory(InfoCategory(saved.category, "Port", "building-01", "red"))
+        infoClient.updateInfoCategory(InfoCategory(saved.category, "Port", "red"))
 
         Assertions.assertThat(infoV3Client.getInfo(city.id).categories)
-            .containsExactly(InfoCategoryV3(saved.category, "Port", "building-01", "red"))
+            .containsExactly(InfoCategoryV3(saved.category, "Port", "red"))
     }
 
     @Test
@@ -105,7 +104,9 @@ class InfoV3Test : OdysejaDsl() {
         val badIcon = infoRespondingClient.executeConsumer { it.addInfo(info(city.id, "Klif", icon = "<b>")) }
 
         Assertions.assertThat(parseProblemDetail(badColor).status).isEqualTo(400)
+        Assertions.assertThat(parseProblemDetail(badColor).detail).contains("magenta")
         Assertions.assertThat(parseProblemDetail(badIcon).status).isEqualTo(400)
+        Assertions.assertThat(parseProblemDetail(badIcon).detail).contains("<b>")
         Assertions.assertThat(infoV3Client.getInfo(city.id).infos).isEmpty()
     }
 

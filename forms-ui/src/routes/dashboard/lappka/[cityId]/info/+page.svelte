@@ -9,7 +9,6 @@
     import type {Info, InfoCategory, InfoResponse} from "./types";
     import InfoCategoryCard from "./InfoCategoryCard.svelte";
     import InfoEditDialog from "./InfoEditDialog.svelte";
-    import CategoryStyleDialog from "./CategoryStyleDialog.svelte";
 
     let cityId = $derived(Number(page.params.cityId));
     const queryClient = getQueryClientContext();
@@ -100,23 +99,6 @@
         onSuccess: () => toast.success('Informacja usunięta'),
     });
 
-    let styleDialogOpen = $state(false);
-    let styledCategory = $state<InfoCategory | null>(null);
-
-    let styleMutation = createPutMutation<InfoCategory, InfoCategory>({
-        path: '/api/info/category',
-        queryKey: ['lappkaInfo'],
-        onSuccess: () => {
-            styleDialogOpen = false;
-            toast.success('Wygląd kategorii zapisany');
-        },
-    });
-
-    function openStyle(category: InfoCategory) {
-        styledCategory = category;
-        styleDialogOpen = true;
-    }
-
     function openCreate(category: InfoCategory) {
         const catInfos = categoryItems[category.id] ?? [];
         const maxSort = catInfos.length > 0 ? Math.max(...catInfos.map(i => i.sortNumber)) : -1;
@@ -185,7 +167,6 @@
                     bind:items={categoryItems[category.id]}
                     deleting={deleteMutation.isPending}
                     oncreate={() => openCreate(category)}
-                    onstyle={() => openStyle(category)}
                     onedit={openEdit}
                     ondelete={(info) => deleteMutation.mutate({infoId: info.id})}
                     onsort={(e) => handleSort(category.id, e)}
@@ -206,11 +187,4 @@
     bind:color={formColor}
     saving={createMutation.isPending || updateMutation.isPending}
     onsave={handleSave}
-/>
-
-<CategoryStyleDialog
-    bind:open={styleDialogOpen}
-    category={styledCategory}
-    saving={styleMutation.isPending}
-    onsave={(category) => styleMutation.mutate(category)}
 />

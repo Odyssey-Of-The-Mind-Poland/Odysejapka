@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="020-style-info-tiles-after-figma" author="odysejapka">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="info"/>
+            <tableExists tableName="change"/>
+            <columnExists tableName="info" columnName="icon"/>
+            <columnExists tableName="info" columnName="color"/>
+        </preConditions>
+        <comment>Runs once: gives info tiles the icon and colour of the Figma redesign, matching names fuzzily. Tiles that already have a style are left alone.</comment>
+        <customChange class="odyseja.odysejapka.info.figma.BackfillInfoStyleChange"/>
+    </changeSet>
+
+</databaseChangeLog>

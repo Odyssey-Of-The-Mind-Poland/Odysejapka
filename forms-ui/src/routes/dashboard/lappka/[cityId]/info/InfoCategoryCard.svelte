@@ -4,8 +4,8 @@
     import IconPlus from "@tabler/icons-svelte/icons/plus";
     import IconTrash from "@tabler/icons-svelte/icons/trash";
     import IconGripVertical from "@tabler/icons-svelte/icons/grip-vertical";
-    import IconPalette from "@tabler/icons-svelte/icons/palette";
     import CategoryIcon from "$lib/components/CategoryIcon.svelte";
+    import {DEFAULT_CATEGORY_ICON} from "$lib/categoryStyle";
     import {categoryColor} from "$lib/categoryStyle";
     import {dndzone} from "svelte-dnd-action";
     import type {Info, InfoCategory} from "./types";
@@ -15,7 +15,6 @@
         items = $bindable([]),
         deleting,
         oncreate,
-        onstyle,
         onedit,
         ondelete,
         onsort,
@@ -25,7 +24,6 @@
         items: Info[];
         deleting: boolean;
         oncreate: () => void;
-        onstyle: () => void;
         onedit: (info: Info) => void;
         ondelete: (info: Info) => void;
         onsort: (e: CustomEvent) => void;
@@ -48,15 +46,11 @@
                         class="flex size-9 shrink-0 items-center justify-center rounded-full"
                         style="background:{accent.background};color:{accent.foreground}"
                 >
-                    <CategoryIcon name={category.icon} class="size-5"/>
+                    <CategoryIcon name={DEFAULT_CATEGORY_ICON} class="size-5"/>
                 </div>
                 <Card.Title class="truncate">{category.name}</Card.Title>
             </div>
             <div class="flex gap-2">
-                <Button variant="ghost" size="sm" onclick={onstyle}>
-                    <IconPalette class="size-4 mr-1"/>
-                    Domyślny wygląd
-                </Button>
                 <Button variant="outline" size="sm" onclick={oncreate}>
                     <IconPlus class="size-4 mr-1"/>
                     Dodaj
@@ -87,7 +81,7 @@
                                 class="flex size-7 shrink-0 items-center justify-center rounded-full"
                                 style="background:{categoryColor(info.color ?? category.color).background};color:{categoryColor(info.color ?? category.color).foreground}"
                         >
-                            <CategoryIcon name={info.icon ?? category.icon} class="size-4"/>
+                            <CategoryIcon name={info.icon} class="size-4"/>
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="font-medium text-sm truncate">{info.infoName}</p>

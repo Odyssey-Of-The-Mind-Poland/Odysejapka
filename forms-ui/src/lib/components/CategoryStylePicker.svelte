@@ -1,12 +1,15 @@
 <script lang="ts">
 	import CategoryIcon from '$lib/components/CategoryIcon.svelte';
-	import { CATEGORY_COLORS, CATEGORY_ICONS, categoryColor } from '$lib/categoryStyle';
+	import InfoTilePreview from '$lib/components/InfoTilePreview.svelte';
+	import { CATEGORY_COLORS, CATEGORY_ICONS } from '$lib/categoryStyle';
 
 	let {
 		icon = $bindable(null),
 		color = $bindable(null),
 		label,
-		inheritLabel
+		inheritLabel,
+		inheritIconLabel = inheritLabel,
+		showPreview = true
 	}: {
 		icon: string | null;
 		color: string | null;
@@ -14,26 +17,17 @@
 		label: string;
 		/** When set, an extra "inherit" choice clears the value, so the tile follows this fallback. */
 		inheritLabel?: string;
+		/** Label of the "no own icon" choice; defaults to [inheritLabel]. */
+		inheritIconLabel?: string;
+		/** Hide the tile preview when the caller already shows the tile next to the picker. */
+		showPreview?: boolean;
 	} = $props();
-
-	let preview = $derived(categoryColor(color));
 </script>
 
 <div class="flex flex-col gap-5 py-2">
-	<div class="flex items-center gap-3">
-		<div
-			class="flex h-20 w-44 items-end rounded-2xl border-2 p-4 text-sm font-medium"
-			style="background:{preview.background};border-color:{preview.foreground}33;color:{preview.foreground}"
-		>
-			<span class="truncate">{label}</span>
-		</div>
-		<div
-			class="flex size-12 items-center justify-center rounded-full"
-			style="background:{preview.background};color:{preview.foreground}"
-		>
-			<CategoryIcon name={icon} class="size-6" />
-		</div>
-	</div>
+	{#if showPreview}
+		<InfoTilePreview class="h-20 w-44" {label} {icon} {color} />
+	{/if}
 
 	<div>
 		<p class="text-sm font-medium mb-2">Kolor</p>
@@ -72,11 +66,11 @@
 					type="button"
 					role="radio"
 					aria-checked={icon === null}
-					title={inheritLabel}
+					title={inheritIconLabel}
 					class="col-span-2 flex h-10 items-center justify-center rounded-md border px-2 text-xs hover:bg-muted {icon === null ? 'border-foreground bg-muted' : 'border-transparent'}"
 					onclick={() => (icon = null)}
 				>
-					{inheritLabel}
+					{inheritIconLabel}
 				</button>
 			{/if}
 			{#each Object.keys(CATEGORY_ICONS) as key (key)}

@@ -1,5 +1,6 @@
 package odyseja.odysejapka.info
 
+import jakarta.validation.Valid
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
@@ -42,20 +43,20 @@ class InfoController(
   @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
   @PostMapping
   @ResponseBody
-  fun addInfo(@RequestBody info: Info): Info {
+  fun addInfo(@Valid @RequestBody info: Info): Info {
     return infoService.addInfo(info)
   }
 
   @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
   @PutMapping
-  fun updateInfo(@RequestBody info: Info): Info {
+  fun updateInfo(@Valid @RequestBody info: Info): Info {
     return infoService.updateInfo(info)
   }
 
   @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
   @PutMapping("/category")
   @ResponseBody
-  fun updateInfoCategory(@RequestBody category: InfoCategory): InfoCategory {
+  fun updateInfoCategory(@Valid @RequestBody category: InfoCategory): InfoCategory {
     return infoService.updateInfoCategory(category)
   }
 
