@@ -24,6 +24,8 @@ class SponsorService(
             ?: throw EntityNotFoundException("Nie znaleziono sponsora o ID $sponsorId")
     }
 
+    // Postgres keeps @Lob columns as large objects, which can only be read inside a transaction.
+    @Transactional(readOnly = true)
     fun getImage(sponsorId: Int): ByteArray {
         val sponsor = getSponsor(sponsorId)
         return sponsor.image
