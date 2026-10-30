@@ -1,7 +1,6 @@
 package odyseja.odysejapka.form
 
 import odyseja.odysejapka.OdysejaDsl
-import odyseja.odysejapka.city.CreateCityRequest
 import odyseja.odysejapka.city.KonkursLevel
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -125,52 +124,6 @@ class FormTest : OdysejaDsl() {
 
         Assertions.assertThat(afterAdd.penaltyEntries).hasSize(1)
         Assertions.assertThat(afterAdd.penaltyEntries[0].name).isEqualTo("Penalty")
-    }
-
-    @Test
-    fun `should set judges count for city`() {
-        val city1 = createCity("City 1")
-        val city2 = createCity("City 2")
-
-        formClient.setFormData(
-            PROBLEM_ID,
-            FormData(
-                dtEntries = emptyList(),
-                styleEntries = emptyList(),
-                penaltyEntries = emptyList(),
-                smallJudgesTeam = listOf(city1.id),
-                bigJudgesTeam = listOf(city2.id)
-            )
-        )
-
-        val city1Judges = formClient.getJudgeCount(PROBLEM_ID, city1.id)
-        val city2Judges = formClient.getJudgeCount(PROBLEM_ID, city2.id)
-
-        Assertions.assertThat(city1Judges.judgeCount).isEqualTo(1)
-        Assertions.assertThat(city2Judges.judgeCount).isEqualTo(2)
-    }
-
-    @Test
-    fun `should return judges count in getFormData`() {
-        val city1 = createCity("City 1", KonkursLevel.REGIONAL)
-        val city2 = createCity("City 2", KonkursLevel.REGIONAL)
-        val city3 = createCity("City 3", KonkursLevel.FINAL)
-
-        seedDefault()
-        val existing = form()
-
-        formClient.setFormData(
-            PROBLEM_ID,
-            existing.copy(
-                smallJudgesTeam = listOf(city1.id, city2.id),
-                bigJudgesTeam = listOf(city3.id)
-            )
-        )
-
-        val retrievedForm = formClient.getFormData(PROBLEM_ID)
-
-        Assertions.assertThat(retrievedForm.smallJudgesTeam).contains(city1.id, city2.id)
-        Assertions.assertThat(retrievedForm.bigJudgesTeam).contains(city3.id)
     }
 
     @Test

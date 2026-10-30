@@ -41,6 +41,7 @@ class ImportCsvTest: OdysejaDsl() {
         val realPerformance = timeTableClient.getPerformances(city.id)[0]
         val mockPerformance = Performance(
             id = realPerformance.id,
+            cityId = city.id,
             city = "finał",
             team = "Zespół Szkół Zawodowych i Ogólnokształcących - Kartuzy",
             problem = 3,

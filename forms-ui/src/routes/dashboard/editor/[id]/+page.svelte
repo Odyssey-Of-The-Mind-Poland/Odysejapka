@@ -6,21 +6,23 @@
     import {Button} from "$lib/components/ui/button";
     import {toast} from "svelte-sonner";
     import * as Separator from "$lib/components/ui/separator/index.js";
-    import {defaultEntry, type FormEntryType, type FormData} from "./types";
+    import {defaultEntry, type FormEntryType, type FormData, type JudgeTeam} from "./types";
     import {recalculateSortIndexes} from "./sortIndexUtils";
     import ScoringCard from "./ScoringCard.svelte";
     import StyleCard from "./StyleCard.svelte";
     import PenaltyCard from "./PenaltyCard.svelte";
-    import JudgeCount from "./JudgeCount.svelte";
     import TranslationTab from "./TranslationTab.svelte";
+    import JudgeTeamsDialog from "./JudgeTeamsDialog.svelte";
 
     let activeTab = $state<'editor' | 'translation'>('editor');
-    let problem = $derived(page.params.id);
-    let formQuery = createOdysejaQuery<FormData>({
+    let problem = $derived(String(page.params.id));
+    let formQuery = $derived(createOdysejaQuery<FormData>({
         queryKey: ['problems'],
         path: `/api/v1/form/${problem}`,
-    });
+    }));
+
     let form = $state<FormData>()
+
     $effect(() => {
         setBreadcrumbs([
             {name: 'Konkursy', href: '/dashboard/competitions'},
@@ -29,6 +31,7 @@
         ]);
         form = formQuery.data;
     })
+    let openJudgeTeamsDialog = $state(false);
 
     function addEntry(category: 'dtEntries' | 'styleEntries' | 'penaltyEntries', type: 'SCORING' | 'SECTION' | 'SCORING_GROUP' | 'STYLE' | 'PENALTY', penaltyType?: 'RANGE' | 'DISCRETE' | 'SINGLE' | 'ZERO_BALSA') {
         const newEntry: FormEntryType = defaultEntry(type, penaltyType)
@@ -44,16 +47,20 @@
         }
     }
 
-    let saveMutation = createPutMutation<FormData>({
+    function judgeTeamsDialogHandler() {
+        openJudgeTeamsDialog = true;
+    }
+
+    let formSaveMutation = $derived(createPutMutation<FormData>({
         path: `/api/v1/form/${problem}`,
         queryKey: ['problems'],
         onSuccess: data => {
             toast.success("Formularz zapisany pomyślnie");
         }
-    })
+    }))
 
-    function save() {
-        saveMutation.mutate(form)
+    function saveForm() {
+        formSaveMutation.mutate(form)
     }
 
 </script>
@@ -66,7 +73,10 @@
     <div class="flex flex-col gap-6 p-0 sm:p-6">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h1 class="text-xl font-bold sm:text-2xl">Edytor Formularza - Problem {problem}</h1>
-            <Button class="w-full sm:w-auto" onclick={save}>Zapisz</Button>
+            <span>
+                <Button class="w-full sm:w-auto" onclick={judgeTeamsDialogHandler}>Zespoły Sędziowskie</Button>
+                <Button class="w-full sm:w-auto" onclick={saveForm}>Zapisz</Button>
+            </span>
         </div>
 
         <div class="flex gap-1 overflow-x-auto rounded-lg bg-muted p-1 w-full sm:w-fit [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -91,10 +101,6 @@
         </div>
 
         {#if activeTab === 'editor'}
-            <Separator.Root/>
-
-            <JudgeCount {form}/>
-
             <Separator.Root/>
 
             <div class="flex flex-col gap-6">
@@ -125,5 +131,6 @@
         {:else}
             <TranslationTab bind:form={form} />
         {/if}
+        <JudgeTeamsDialog bind:open={openJudgeTeamsDialog} problem={problem}/>
     </div>
 {/if}

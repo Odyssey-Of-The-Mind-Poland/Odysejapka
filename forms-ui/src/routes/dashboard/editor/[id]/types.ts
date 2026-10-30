@@ -2,9 +2,19 @@ export type FormData = {
 	dtEntries: FormEntryType[];
 	styleEntries: FormEntryType[];
 	penaltyEntries: FormEntryType[];
-	smallJudgesTeam?: number[] | null;
-	bigJudgesTeam?: number[] | null;
 };
+
+export type JudgeTeam = {
+	problem: number;
+	cityId: number;
+	judgeCount: JudgeCount;
+}
+
+export type JudgeCount = {
+	dtA: number;
+	dtB: number;
+	style: number;
+}
 
 export type FormEntryType = {
 	id: number | null;
@@ -107,4 +117,5 @@ export type SingleData = {
 export type City = {
 	id: number;
 	name: string;
+	level: string;
 };

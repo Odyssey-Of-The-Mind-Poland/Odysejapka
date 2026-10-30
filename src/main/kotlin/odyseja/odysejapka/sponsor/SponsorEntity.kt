@@ -2,6 +2,8 @@ package odyseja.odysejapka.sponsor
 
 import odyseja.odysejapka.city.CityEntity
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
 @Entity(name = "sponsor")
 class SponsorEntity(
@@ -17,6 +19,7 @@ class SponsorEntity(
   @Column
   val columnOrder: Int,
   @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   val city: CityEntity
 ) {
 

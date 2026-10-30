@@ -54,9 +54,10 @@ data class Team(
         return "sobota"
     }
 
-    fun toPerformance(city: String): Performance {
+    fun toPerformance(cityId: Int): Performance {
         return Performance(
             0,
+            cityId,
             city,
             teamName,
             getProblem().toInt(),
