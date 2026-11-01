@@ -38,8 +38,12 @@ class InfoTest: OdysejaDsl() {
         Assertions.assertThat(info).hasSize(1)
         Assertions.assertThat(info.first())
             .usingRecursiveComparison()
-            .ignoringFields("id", "category", "categoryName")
+            .ignoringFields("id", "category", "categoryName", "infoText")
             .isEqualTo(infoToAdd1)
+        // The pasted Google Docs markup is reduced to the elements the app can draw.
+        Assertions.assertThat(info.first()!!.infoText)
+            .contains("<strong>PATRONI HONOROWI</strong>", "<strong>Przemysław Czarnek</strong>")
+            .doesNotContain("style=", "<span", "color")
 
         val infoToAdd2 = createInfo("Ważna informacja", "Zatkała się ubikacja", city.id)
         infoClient.addInfo(infoToAdd2)
@@ -50,6 +54,27 @@ class InfoTest: OdysejaDsl() {
             .usingRecursiveComparison()
             .ignoringFields("id", "category", "categoryName")
             .isEqualTo(infoToAdd2)
+    }
+
+    @Test
+    fun `should sanitize the text when adding and updating an info`() {
+        val city = createCity("Sanityzacja ${java.util.UUID.randomUUID().toString().take(6)}", KonkursLevel.FINAL)
+        val added = infoClient.addInfo(
+            createInfo(
+                "Co, gdzie i kiedy?",
+                """<h1 style="color:red">Dzień 1</h1><p class="accent" style="font-size:20pt">Gdynia</p><table style="width:0"><colgroup><col></colgroup><tbody><tr><td class="accent"><p>06:30</p></td><td><p>Start</p></td></tr></tbody></table><script>alert(1)</script>""",
+                city.id
+            )
+        )
+
+        val expected = """<h2>Dzień 1</h2><p class="accent">Gdynia</p><table><tbody><tr><td class="accent"><p>06:30</p></td><td><p>Start</p></td></tr></tbody></table>"""
+        Assertions.assertThat(added.infoText).isEqualTo(expected)
+        Assertions.assertThat(infoClient.getInfo(city.id).single()!!.infoText).isEqualTo(expected)
+
+        val updated = infoClient.updateInfo(added.copy(infoText = """<p><b>Nowe</b> <span style="color:blue">zasady</span></p>"""))
+
+        Assertions.assertThat(updated.infoText).isEqualTo("<p><strong>Nowe</strong> zasady</p>")
+        Assertions.assertThat(infoClient.getInfo(city.id).single()!!.infoText).isEqualTo("<p><strong>Nowe</strong> zasady</p>")
     }
 
     @Test

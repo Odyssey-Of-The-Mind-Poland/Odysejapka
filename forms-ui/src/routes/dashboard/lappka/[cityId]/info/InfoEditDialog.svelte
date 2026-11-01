@@ -28,7 +28,7 @@
 </script>
 
 <Dialog.Root bind:open>
-    <Dialog.Content class="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+    <Dialog.Content class="sm:max-w-6xl max-h-[90vh] overflow-y-auto">
         <Dialog.Header>
             <Dialog.Title>{editingInfo ? 'Edytuj informację' : 'Nowa informacja'}</Dialog.Title>
             <Dialog.Description>

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException
 import odyseja.odysejapka.change.ChangeService
 import odyseja.odysejapka.city.CityService
 import odyseja.odysejapka.city.KonkursLevel
+import odyseja.odysejapka.info.content.InfoContentSanitizer
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -37,7 +38,7 @@ class InfoService(
             InfoEntity(
                 info.id,
                 info.infoName,
-                info.infoText,
+                InfoContentSanitizer.sanitize(info.infoText),
                 city,
                 infoCategoryRepository.findFirstById(info.category)
                     ?: addInfoCategory(InfoCategoryEntity(0, info.categoryName)),
@@ -72,14 +73,14 @@ class InfoService(
     fun updateInfo(info: Info): Info {
         val infoEntity = getInfoEntityById(info.id)
         infoEntity.infoName = info.infoName
-        infoEntity.infoText = info.infoText
+        infoEntity.infoText = InfoContentSanitizer.sanitize(info.infoText)
         infoEntity.sortNumber = info.sortNumber
         infoEntity.icon = info.icon
         infoEntity.color = info.color
         infoRepository.save(infoEntity)
 
         changeService.updateVersion()
-        return info
+        return info.copy(infoText = infoEntity.infoText)
     }
 
     @Transactional

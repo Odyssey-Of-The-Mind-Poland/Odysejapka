@@ -1,61 +1,95 @@
 <script lang="ts">
     import {onMount, onDestroy} from 'svelte';
-    import {Editor} from '@tiptap/core';
+    import {Editor, Extension} from '@tiptap/core';
     import StarterKit from '@tiptap/starter-kit';
-    import Link from '@tiptap/extension-link';
-    import Underline from '@tiptap/extension-underline';
-    import {TextStyle} from '@tiptap/extension-text-style';
-    import {Color} from '@tiptap/extension-color';
-    import {Highlight} from '@tiptap/extension-highlight';
-    import {TextAlign} from '@tiptap/extension-text-align';
+    import {Table, TableRow, TableHeader, TableCell} from '@tiptap/extension-table';
+    import '$lib/infoContent.css';
 
-    let {value = $bindable(''), placeholder = ''}: { value: string; placeholder?: string } = $props();
+    let {
+        value = $bindable(''),
+        theme = 'light',
+    }: { value: string; theme?: 'light' | 'dark' } = $props();
 
     let element: HTMLDivElement;
     let editor: Editor | undefined;
+    // Bumped on every editor transaction so the toolbar state below is recomputed.
+    let tick = $state(0);
 
-    const textColors = [
-        {label: 'Domyślny', value: ''},
-        {label: 'Czerwony', value: '#dc2626'},
-        {label: 'Pomarańczowy', value: '#ea580c'},
-        {label: 'Zielony', value: '#16a34a'},
-        {label: 'Niebieski', value: '#2563eb'},
-        {label: 'Fioletowy', value: '#9333ea'},
-        {label: 'Szary', value: '#6b7280'},
-    ];
+    function is(name: string, attrs?: Record<string, unknown>): boolean {
+        tick;
+        return editor?.isActive(name, attrs) ?? false;
+    }
 
-    const highlightColors = [
-        {label: 'Brak', value: ''},
-        {label: 'Żółty', value: '#fef08a'},
-        {label: 'Zielony', value: '#bbf7d0'},
-        {label: 'Niebieski', value: '#bfdbfe'},
-        {label: 'Różowy', value: '#fbcfe8'},
-        {label: 'Pomarańczowy', value: '#fed7aa'},
-    ];
+    /**
+     * The "accent" variant of a paragraph or a table cell (`<p class="accent">`, `<td class="accent">`).
+     * It is the only visual option besides the structure; the app and the backend sanitizer know the same class.
+     */
+    const Accent = Extension.create({
+        name: 'accent',
+        addGlobalAttributes() {
+            return [{
+                types: ['paragraph', 'tableCell'],
+                attributes: {
+                    accent: {
+                        default: false,
+                        parseHTML: (el: HTMLElement) => el.classList.contains('accent'),
+                        renderHTML: (attrs: Record<string, unknown>) => (attrs.accent ? {class: 'accent'} : {}),
+                    },
+                },
+            }];
+        },
+    });
 
-    let showColorPicker = $state(false);
-    let showHighlightPicker = $state(false);
+    // Cells are never merged or resized, so their span/width attributes are not part of the content.
+    // The defaults must stay valid (1, not null), otherwise the table normalisation drops the table.
+    const noSpans = {
+        colspan: {default: 1, rendered: false},
+        rowspan: {default: 1, rendered: false},
+        colwidth: {default: null, rendered: false},
+    };
+    // No <colgroup> and no inline width in the stored HTML: the table is laid out by the viewer.
+    const ContentTable = Table.extend({
+        renderHTML() {
+            return ['table', ['tbody', 0]];
+        },
+    });
+    const Cell = TableCell.extend({
+        addAttributes() {
+            return {...this.parent?.(), ...noSpans};
+        },
+    });
+    const HeaderCell = TableHeader.extend({
+        addAttributes() {
+            return {...this.parent?.(), ...noSpans};
+        },
+    });
+
+    // Only what the content may contain: headings 2-3, paragraphs, bold, italic, links, lists, tables.
+    const schema = StarterKit.configure({
+        heading: {levels: [2, 3]},
+        underline: false,
+        strike: false,
+        code: false,
+        codeBlock: false,
+        blockquote: false,
+        horizontalRule: false,
+        link: {openOnClick: false, HTMLAttributes: {rel: null, target: null}},
+    });
 
     onMount(() => {
         editor = new Editor({
             element,
             extensions: [
-                StarterKit,
-                Underline,
-                Link.configure({openOnClick: false}),
-                TextStyle,
-                Color,
-                Highlight.configure({multicolor: true}),
-                TextAlign.configure({types: ['heading', 'paragraph']}),
+                schema,
+                Accent,
+                ContentTable.configure({resizable: false}),
+                TableRow,
+                HeaderCell,
+                Cell,
             ],
             content: value,
-            editorProps: {
-                attributes: {
-                    class: 'prose prose-sm max-w-none focus:outline-none min-h-[120px] px-3 py-2',
-                },
-            },
             onTransaction: () => {
-                editor = editor;
+                tick++;
             },
             onUpdate: ({editor: e}) => {
                 value = e.getHTML();
@@ -67,165 +101,87 @@
         editor?.destroy();
     });
 
-    function toggleBold() { editor?.chain().focus().toggleBold().run(); }
-    function toggleItalic() { editor?.chain().focus().toggleItalic().run(); }
-    function toggleUnderline() { editor?.chain().focus().toggleUnderline().run(); }
-    function toggleStrike() { editor?.chain().focus().toggleStrike().run(); }
-    function toggleBulletList() { editor?.chain().focus().toggleBulletList().run(); }
-    function toggleOrderedList() { editor?.chain().focus().toggleOrderedList().run(); }
-    function toggleHeading(level: 1 | 2 | 3) { editor?.chain().focus().toggleHeading({level}).run(); }
-    function toggleBlockquote() { editor?.chain().focus().toggleBlockquote().run(); }
-    function setHorizontalRule() { editor?.chain().focus().setHorizontalRule().run(); }
+    let inTable = $derived(is('table'));
+    let accentActive = $derived(is('paragraph', {accent: true}) || is('tableCell', {accent: true}));
+
+    function toggleAccent() {
+        if (!editor) return;
+        const chain = editor.chain().focus();
+        if (editor.isActive('tableCell') || editor.isActive('tableHeader')) {
+            chain.setCellAttribute('accent', !editor.isActive('tableCell', {accent: true})).run();
+        } else {
+            chain.updateAttributes('paragraph', {accent: !editor.isActive('paragraph', {accent: true})}).run();
+        }
+    }
+
+    function setBlock(kind: 'paragraph' | 2 | 3) {
+        const chain = editor?.chain().focus();
+        if (kind === 'paragraph') chain?.setParagraph().run();
+        else chain?.setHeading({level: kind}).run();
+    }
 
     function setLink() {
         const url = prompt('URL:');
-        if (url) {
-            editor?.chain().focus().setLink({href: url}).run();
-        } else {
-            editor?.chain().focus().unsetLink().run();
-        }
+        if (url) editor?.chain().focus().setLink({href: url}).run();
+        else editor?.chain().focus().unsetLink().run();
     }
 
-    function setColor(color: string) {
-        if (color) {
-            editor?.chain().focus().setColor(color).run();
-        } else {
-            editor?.chain().focus().unsetColor().run();
-        }
-        showColorPicker = false;
-    }
-
-    function setHighlight(color: string) {
-        if (color) {
-            editor?.chain().focus().setHighlight({color}).run();
-        } else {
-            editor?.chain().focus().unsetHighlight().run();
-        }
-        showHighlightPicker = false;
-    }
-
-    function setAlign(align: string) {
-        editor?.chain().focus().setTextAlign(align).run();
-    }
-
-    function handleClickOutside(e: MouseEvent) {
-        const target = e.target as HTMLElement;
-        if (!target.closest('.color-picker-wrapper')) showColorPicker = false;
-        if (!target.closest('.highlight-picker-wrapper')) showHighlightPicker = false;
+    function insertTable() {
+        editor?.chain().focus().insertTable({rows: 3, cols: 2, withHeaderRow: true}).run();
     }
 </script>
 
-<svelte:document onclick={handleClickOutside}/>
-
 <div class="rounded-md border border-input bg-background overflow-hidden">
     <div class="flex flex-wrap gap-0.5 border-b bg-muted/30 px-1 py-1 items-center">
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive('bold')} onclick={toggleBold} title="Pogrubienie">
-            <b>B</b>
+        <button type="button" class="toolbar-btn" class:active={is('paragraph') && !accentActive}
+                onclick={() => setBlock('paragraph')} title="Akapit">P
         </button>
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive('italic')} onclick={toggleItalic} title="Kursywa">
-            <i>I</i>
+        <button type="button" class="toolbar-btn" class:active={is('heading', {level: 2})}
+                onclick={() => setBlock(2)} title="Nagłówek">H2
         </button>
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive('underline')} onclick={toggleUnderline} title="Podkreślenie">
-            <u>U</u>
+        <button type="button" class="toolbar-btn" class:active={is('heading', {level: 3})}
+                onclick={() => setBlock(3)} title="Podtytuł">H3
         </button>
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive('strike')} onclick={toggleStrike} title="Przekreślenie">
-            <s>S</s>
-        </button>
-
-        <div class="w-px h-5 bg-border mx-0.5"></div>
-
-        <!-- Text color -->
-        <div class="relative color-picker-wrapper">
-            <button
-                type="button"
-                class="toolbar-btn"
-                title="Kolor tekstu"
-                onclick={(e) => { e.stopPropagation(); showHighlightPicker = false; showColorPicker = !showColorPicker; }}
-            >
-                <span style="border-bottom: 2px solid {editor?.getAttributes('textStyle').color || '#000'}">A</span>
-            </button>
-            {#if showColorPicker}
-                <div class="color-dropdown" onclick={(e) => e.stopPropagation()}>
-                    {#each textColors as c}
-                        <button
-                            type="button"
-                            class="color-swatch"
-                            style="background: {c.value || '#000'}"
-                            title={c.label}
-                            onclick={() => setColor(c.value)}
-                        >
-                            {#if !c.value}✕{/if}
-                        </button>
-                    {/each}
-                </div>
-            {/if}
-        </div>
-
-        <!-- Highlight -->
-        <div class="relative highlight-picker-wrapper">
-            <button
-                type="button"
-                class="toolbar-btn"
-                title="Zaznaczenie"
-                onclick={(e) => { e.stopPropagation(); showColorPicker = false; showHighlightPicker = !showHighlightPicker; }}
-            >
-                <span class="highlight-icon">ab</span>
-            </button>
-            {#if showHighlightPicker}
-                <div class="color-dropdown" onclick={(e) => e.stopPropagation()}>
-                    {#each highlightColors as c}
-                        <button
-                            type="button"
-                            class="color-swatch"
-                            style="background: {c.value || '#e5e7eb'}"
-                            title={c.label}
-                            onclick={() => setHighlight(c.value)}
-                        >
-                            {#if !c.value}✕{/if}
-                        </button>
-                    {/each}
-                </div>
-            {/if}
-        </div>
-
-        <div class="w-px h-5 bg-border mx-0.5"></div>
-
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive('heading', {level: 2})} onclick={() => toggleHeading(2)} title="Nagłówek">
-            H
-        </button>
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive('bulletList')} onclick={toggleBulletList} title="Lista">
-            &#8226;
-        </button>
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive('orderedList')} onclick={toggleOrderedList} title="Lista numerowana">
-            1.
-        </button>
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive('blockquote')} onclick={toggleBlockquote} title="Cytat">
-            &ldquo;
+        <button type="button" class="toolbar-btn accent-btn" class:active={accentActive} onclick={toggleAccent}
+                title="Akcent (linia miejsca, godziny w tabeli)">A
         </button>
 
         <div class="w-px h-5 bg-border mx-0.5"></div>
 
-        <!-- Alignment -->
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive({textAlign: 'left'})} onclick={() => setAlign('left')} title="Do lewej">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-        </button>
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive({textAlign: 'center'})} onclick={() => setAlign('center')} title="Wyśrodkuj">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
-        </button>
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive({textAlign: 'right'})} onclick={() => setAlign('right')} title="Do prawej">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+        <button type="button" class="toolbar-btn" class:active={is('bold')}
+                onclick={() => editor?.chain().focus().toggleBold().run()} title="Pogrubienie"><b>B</b></button>
+        <button type="button" class="toolbar-btn" class:active={is('italic')}
+                onclick={() => editor?.chain().focus().toggleItalic().run()} title="Kursywa"><i>I</i></button>
+        <button type="button" class="toolbar-btn" class:active={is('link')} onclick={setLink}
+                title="Link">&#128279;</button>
+
+        <div class="w-px h-5 bg-border mx-0.5"></div>
+
+        <button type="button" class="toolbar-btn" class:active={is('bulletList')}
+                onclick={() => editor?.chain().focus().toggleBulletList().run()} title="Lista">&#8226;</button>
+        <button type="button" class="toolbar-btn" class:active={is('orderedList')}
+                onclick={() => editor?.chain().focus().toggleOrderedList().run()} title="Lista numerowana">1.
         </button>
 
         <div class="w-px h-5 bg-border mx-0.5"></div>
 
-        <button type="button" class="toolbar-btn" class:active={editor?.isActive('link')} onclick={setLink} title="Link">
-            &#128279;
+        <button type="button" class="toolbar-btn" class:active={inTable} onclick={insertTable} disabled={inTable}
+                title="Wstaw tabelę" aria-label="Wstaw tabelę">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                <path d="M3 10h18M10 4v16"/>
+            </svg>
         </button>
-        <button type="button" class="toolbar-btn" onclick={setHorizontalRule} title="Linia pozioma">
-            &mdash;
-        </button>
+        {#if inTable}
+            <button type="button" class="toolbar-text-btn" onclick={() => editor?.chain().focus().addRowAfter().run()}>+ wiersz</button>
+            <button type="button" class="toolbar-text-btn" onclick={() => editor?.chain().focus().deleteRow().run()}>− wiersz</button>
+            <button type="button" class="toolbar-text-btn" onclick={() => editor?.chain().focus().addColumnAfter().run()}>+ kolumna</button>
+            <button type="button" class="toolbar-text-btn" onclick={() => editor?.chain().focus().deleteColumn().run()}>− kolumna</button>
+            <button type="button" class="toolbar-text-btn danger" onclick={() => editor?.chain().focus().deleteTable().run()}>Usuń tabelę</button>
+        {/if}
     </div>
-    <div bind:this={element}></div>
+    <div class="info-content" data-theme={theme} bind:this={element}></div>
 </div>
 
 <style>
@@ -233,8 +189,9 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 28px;
+        min-width: 28px;
         height: 28px;
+        padding: 0 4px;
         border-radius: 4px;
         font-size: 13px;
         color: var(--muted-foreground, #6b7280);
@@ -242,47 +199,44 @@
         border: none;
         background: transparent;
     }
-    .toolbar-btn:hover {
+
+    .toolbar-btn:hover:not(:disabled) {
         background: var(--accent, #f3f4f6);
         color: var(--foreground, #111827);
     }
+
     .toolbar-btn.active {
         background: var(--accent, #e5e7eb);
         color: var(--foreground, #111827);
     }
-    .highlight-icon {
-        background: #fef08a;
-        padding: 0 2px;
-        border-radius: 2px;
-        font-size: 11px;
+
+    .toolbar-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+    }
+
+    .accent-btn {
+        color: #e37900;
         font-weight: 600;
     }
-    .color-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 50;
-        display: flex;
-        gap: 4px;
-        padding: 6px;
-        background: var(--background, #fff);
-        border: 1px solid var(--border, #e5e7eb);
-        border-radius: 6px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .color-swatch {
-        width: 22px;
-        height: 22px;
+
+    .toolbar-text-btn {
+        height: 28px;
+        padding: 0 6px;
         border-radius: 4px;
-        border: 1px solid var(--border, #d1d5db);
+        border: none;
+        background: transparent;
+        color: var(--muted-foreground, #6b7280);
+        font-size: 12px;
         cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        color: #9ca3af;
     }
-    .color-swatch:hover {
-        transform: scale(1.15);
+
+    .toolbar-text-btn:hover {
+        background: var(--accent, #f3f4f6);
+        color: var(--foreground, #111827);
+    }
+
+    .toolbar-text-btn.danger {
+        color: #dc2626;
     }
 </style>

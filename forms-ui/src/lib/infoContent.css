@@ -1,0 +1,162 @@
+@import '@fontsource/ubuntu/300.css';
+@import '@fontsource/ubuntu/400.css';
+@import '@fontsource/ubuntu/500.css';
+
+/*
+ * Look of the Info content, mirroring the mobile app (Figma: Drafts → Info Content, `Dark / Info / 5–18`).
+ * The stored HTML carries no colours or sizes, only the elements allowed by the editor schema
+ * (TiptapEditor.svelte) and the backend InfoContentSanitizer; everything visual comes from here, in a light and a dark variant picked with `data-theme` (independent of the
+ * panel's own theme so the editor can preview both).
+ *
+ * Light values are the app's light theme (text #3C3E40, primary 700 for the accent, grey 300 borders).
+ */
+.info-content {
+    --ic-bg: #f9fafb;
+    --ic-surface: #ffffff;
+    --ic-text: #3c3e40;
+    --ic-heading: #3c3e40;
+    --ic-accent: #e37900;
+    --ic-border: #ededed;
+    --ic-cell: #ffffff;
+
+    background: var(--ic-bg);
+    color: var(--ic-text);
+    font-family: Ubuntu, sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 24px;
+}
+
+.info-content[data-theme='dark'] {
+    --ic-bg: #202224;
+    --ic-surface: #292b2d;
+    --ic-text: #ffffff;
+    --ic-heading: #ffffff;
+    --ic-accent: #fcc573;
+    --ic-border: #3c3e40;
+    --ic-cell: #292b2d;
+}
+
+.info-content > :first-child {
+    margin-top: 0;
+}
+
+.info-content h2 {
+    margin: 20px 0 8px;
+    color: var(--ic-heading);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+}
+
+.info-content h3 {
+    margin: 16px 0 4px;
+    color: var(--ic-heading);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 28px;
+}
+
+.info-content p {
+    margin: 0 0 12px;
+}
+
+.info-content p.accent {
+    color: var(--ic-accent);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 28px;
+}
+
+.info-content strong {
+    font-weight: 500;
+}
+
+.info-content em {
+    font-style: italic;
+}
+
+.info-content a {
+    color: var(--ic-accent);
+    text-decoration: underline;
+}
+
+.info-content ul,
+.info-content ol {
+    margin: 0 0 12px;
+    padding-left: 20px;
+}
+
+.info-content ul {
+    list-style: disc;
+}
+
+.info-content ol {
+    list-style: decimal;
+}
+
+.info-content li p {
+    margin: 0;
+}
+
+/* Table: 12px radius, 1px gaps showing the border colour between the cells. */
+.info-content .tableWrapper {
+    margin: 12px 0;
+    overflow-x: auto;
+}
+
+.info-content table {
+    width: 100%;
+    margin: 16px 0 12px;
+    border-collapse: separate;
+    border-spacing: 1px;
+    border-radius: 12px;
+    background: var(--ic-border);
+    overflow: hidden;
+    table-layout: auto;
+}
+
+/* The editor sets an inline width on the table; the content is always full width. */
+.info-content .tableWrapper table {
+    width: 100% !important;
+    margin: 0;
+}
+
+.info-content th,
+.info-content td {
+    position: relative;
+    padding: 12px;
+    background: var(--ic-cell);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.info-content th {
+    color: var(--ic-heading);
+    font-weight: 500;
+}
+
+.info-content td.accent {
+    color: var(--ic-accent);
+}
+
+.info-content th p,
+.info-content td p {
+    margin: 0;
+}
+
+/* Editor only */
+.info-content .ProseMirror {
+    min-height: 160px;
+    padding: 12px 16px;
+    outline: none;
+}
+
+.info-content .ProseMirror .selectedCell::after {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: color-mix(in srgb, var(--ic-accent) 25%, transparent);
+    content: '';
+    pointer-events: none;
+}

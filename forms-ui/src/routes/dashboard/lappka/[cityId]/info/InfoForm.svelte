@@ -1,6 +1,7 @@
 <script lang="ts">
     import {Input} from "$lib/components/ui/input/index.js";
     import TiptapEditor from "$lib/components/TiptapEditor.svelte";
+    import InfoContentPreview from "$lib/components/InfoContentPreview.svelte";
     import CategoryStylePicker from "$lib/components/CategoryStylePicker.svelte";
     import InfoTilePreview from "$lib/components/InfoTilePreview.svelte";
     import {DEFAULT_CATEGORY_ICON} from "$lib/categoryStyle";
@@ -29,6 +30,9 @@
 
     // The tile style is rarely changed, so the picker stays folded until asked for.
     let styleOpen = $state(false);
+
+    // Which look of the app the editor and the phone preview show; the content itself has no colours.
+    let previewTheme = $state<'light' | 'dark'>('light');
 
     // An unset icon is the one global default.
     let shownIcon = $derived(icon ?? DEFAULT_CATEGORY_ICON);
@@ -71,9 +75,26 @@
     </Collapsible.Root>
 
     <div>
-        <p class="text-sm font-medium mb-1">Treść</p>
-        {#key editorKey}
-            <TiptapEditor bind:value={text} placeholder="Treść informacji..."/>
-        {/key}
+        <div class="mb-1 flex items-center justify-between gap-2">
+            <p class="text-sm font-medium">Treść</p>
+            <div class="inline-flex rounded-lg border p-0.5 text-xs" role="group" aria-label="Wygląd w aplikacji">
+                {#each [['light', 'Jasny'], ['dark', 'Ciemny']] as [mode, label]}
+                    <button
+                            type="button"
+                            class="rounded-md px-2.5 py-1 transition-colors {previewTheme === mode ? 'bg-accent font-medium text-foreground' : 'text-muted-foreground'}"
+                            aria-pressed={previewTheme === mode}
+                            onclick={() => (previewTheme = mode as 'light' | 'dark')}
+                    >{label}</button>
+                {/each}
+            </div>
+        </div>
+        <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_375px]">
+            {#key editorKey}
+                <TiptapEditor bind:value={text} theme={previewTheme}/>
+            {/key}
+            <div class="hidden lg:block">
+                <InfoContentPreview title={name} html={text} theme={previewTheme}/>
+            </div>
+        </div>
     </div>
 </div>
