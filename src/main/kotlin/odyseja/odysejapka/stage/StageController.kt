@@ -1,5 +1,6 @@
 package odyseja.odysejapka.stage
 
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
@@ -18,7 +19,7 @@ class StageController(
 
   @Secured("ROLE_ADMINISTRATOR", "ROLE_LAPPKA")
   @PutMapping
-  fun updateStage(@RequestBody stages: List<Stage>) {
+  fun updateStage(@Valid @RequestBody stages: List<Stage>) {
     return stageService.updateStage(stages)
   }
 

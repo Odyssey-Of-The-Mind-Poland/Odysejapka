@@ -14,7 +14,7 @@ class ProblemService(
     fun getProblemsWithNewLines(): List<ProblemEntity?> {
         // Lappka need \n to split problem names
         return problemRepository.findAll().sortedBy { it.id }.map { problem ->
-            problem?.let { ProblemEntity(it.id, it.name.replace("\\n", "\n")) }
+            problem?.let { ProblemEntity(it.id, it.name.replace("\\n", "\n"), it.icon, it.color) }
         }
     }
 
@@ -22,7 +22,7 @@ class ProblemService(
         return problemRepository.findAll().sortedBy { it.id }.map { problem ->
             problem?.let { ProblemEntity(it.id, it.name
                 .replace("\\n", "")
-                .replace("\n", "")) }
+                .replace("\n", ""), it.icon, it.color) }
         }
     }
 
@@ -46,6 +46,8 @@ class ProblemService(
                 .getOrElse { ProblemEntity(problem.id, problem.name) }
             toEdit.apply{
                 name = problem.name
+                icon = problem.icon
+                color = problem.color
                 validate()
             }
             problemRepository.save(toEdit)

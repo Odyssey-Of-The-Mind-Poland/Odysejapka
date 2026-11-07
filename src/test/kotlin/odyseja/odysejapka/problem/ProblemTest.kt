@@ -56,6 +56,34 @@ class ProblemTest: OdysejaDsl() {
     }
 
     @Test
+    fun `should store the icon and colour of a problem`() {
+        problemClient.updateProblems(problems)
+
+        problemClient.updateProblems(listOf(ProblemEntity(1, "Taka kolej rzeczy", "train-01", "orange")))
+
+        val problem = problemClient.getProblems().single { it?.id == 1 }!!
+        Assertions.assertThat(problem.icon).isEqualTo("train-01")
+        Assertions.assertThat(problem.color).isEqualTo("orange")
+        Assertions.assertThat(problemClient.getProblems().single { it?.id == 2 }!!.color).isNull()
+    }
+
+    @Test
+    fun `should reject an unknown colour or a malformed icon of a problem`() {
+        val badColor = parseProblemDetail(problemRespondingClient.executeConsumer { controller ->
+            controller.updateProblems(listOf(ProblemEntity(1, "Problem", "train-01", "pink")))
+        })
+        val badIcon = parseProblemDetail(problemRespondingClient.executeConsumer { controller ->
+            controller.updateProblems(listOf(ProblemEntity(1, "Problem", "Train 01", "orange")))
+        })
+
+        Assertions.assertThat(badColor.status).isEqualTo(400)
+        Assertions.assertThat(badColor.title).isEqualTo("VALIDATION FAILED")
+        Assertions.assertThat(badColor.detail).contains("pink")
+        Assertions.assertThat(badIcon.status).isEqualTo(400)
+        Assertions.assertThat(badIcon.detail).contains("Train 01")
+    }
+
+    @Test
     fun `should delete problems`() {
         timeTableClient.clearTimetable()
         problemClient.updateProblems(problems)

@@ -27,7 +27,9 @@ class StageService(
                 it!!.id,
                 it.number,
                 it.cityEntity.id,
-                it.name
+                it.name,
+                it.icon,
+                it.color
             )
         }
     }
@@ -38,6 +40,8 @@ class StageService(
             val toEdit: StageEntity = stageRepository.findFirstByNumberAndCityEntity(stage.number, cityService.getCity(stage.city))
                 ?: stageRepository.save(StageEntity(0, stage.number, stage.name, cityService.getCity(stage.city)))
             toEdit.name = stage.name
+            toEdit.icon = stage.icon
+            toEdit.color = stage.color
             stageRepository.save(toEdit)
         }
 

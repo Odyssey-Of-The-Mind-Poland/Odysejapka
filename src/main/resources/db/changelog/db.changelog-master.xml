@@ -20,5 +20,6 @@
     <include file="db/changelog/020-style-info-tiles-after-figma.xml"/>
     <include file="db/changelog/021-normalize-city-level.xml"/>
     <include file="db/changelog/022-sanitize-info-text.xml"/>
+    <include file="db/changelog/023-schedule-tile-style.xml"/>
 
 </databaseChangeLog>

@@ -17,5 +17,9 @@ class StageEntity (
         var name: String,
         @ManyToOne(fetch=FetchType.LAZY)
         @OnDelete(action = OnDeleteAction.CASCADE)
-        var cityEntity: CityEntity
+        var cityEntity: CityEntity,
+        @Column(columnDefinition = "TEXT")
+        var icon: String? = null,
+        @Column
+        var color: String? = null
 )

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.method.annotation.HandlerMethodValidationException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import java.net.URI
@@ -73,6 +74,21 @@ class GlobalExceptionHandler {
     fun handleMethodArgumentNotValid(e: MethodArgumentNotValidException, request: HttpServletRequest): ProblemDetail {
         return createProblemDetail(
             e.bindingResult.fieldErrors.joinToString("; ") { it.defaultMessage ?: "${it.field}: nieprawidłowa wartość" },
+            request,
+            HttpStatus.BAD_REQUEST,
+            "VALIDATION FAILED"
+        )
+    }
+
+    /** Validation of a list body (`@Valid @RequestBody List<...>`) is reported per element by Spring's method validation. */
+    @ExceptionHandler(HandlerMethodValidationException::class)
+    fun handleHandlerMethodValidation(e: HandlerMethodValidationException, request: HttpServletRequest): ProblemDetail {
+        val messages = e.parameterValidationResults
+            .flatMap { it.resolvableErrors }
+            .map { it.defaultMessage ?: "Nieprawidłowa wartość" }
+            .distinct()
+        return createProblemDetail(
+            messages.joinToString("; "),
             request,
             HttpStatus.BAD_REQUEST,
             "VALIDATION FAILED"

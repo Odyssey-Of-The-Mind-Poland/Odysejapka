@@ -8,6 +8,7 @@
     import IconBuildingArch from "@tabler/icons-svelte/icons/building-arch";
     import IconDeviceFloppy from "@tabler/icons-svelte/icons/device-floppy";
     import IconX from "@tabler/icons-svelte/icons/x";
+    import TileStyleButton from "$lib/components/TileStyleButton.svelte";
     import {toast} from "svelte-sonner";
 
     type Stage = {
@@ -15,7 +16,11 @@
         number: number;
         city: number;
         name: string;
+        icon?: string | null;
+        color?: string | null;
     };
+
+    type StageStyle = { icon: string | null; color: string | null };
 
     let cityId = $derived(Number(page.params.cityId));
 
@@ -25,6 +30,7 @@
     }));
 
     let editedNames = $state<Record<number, string>>({});
+    let editedStyles = $state<Record<number, StageStyle>>({});
     let isEditing = $state(false);
 
     let updateMutation = $derived(createPutMutation<void, Stage[]>({
@@ -33,6 +39,7 @@
         onSuccess: () => {
             isEditing = false;
             editedNames = {};
+            editedStyles = {};
             toast.success('Sceny zapisane');
         },
     }));
@@ -40,8 +47,10 @@
     function startEdit() {
         if (!stagesQuery.data) return;
         editedNames = {};
+        editedStyles = {};
         for (const stage of stagesQuery.data) {
             editedNames[stage.id] = stage.name;
+            editedStyles[stage.id] = {icon: stage.icon ?? null, color: stage.color ?? null};
         }
         isEditing = true;
     }
@@ -49,6 +58,7 @@
     function cancelEdit() {
         isEditing = false;
         editedNames = {};
+        editedStyles = {};
     }
 
     function handleSave() {
@@ -56,13 +66,18 @@
         const updated = stagesQuery.data.map(s => ({
             ...s,
             name: editedNames[s.id] ?? s.name,
+            icon: editedStyles[s.id] ? editedStyles[s.id].icon : (s.icon ?? null),
+            color: editedStyles[s.id] ? editedStyles[s.id].color : (s.color ?? null),
         }));
         updateMutation.mutate(updated);
     }
 
     let hasChanges = $derived.by(() => {
         if (!stagesQuery.data || !isEditing) return false;
-        return stagesQuery.data.some(s => editedNames[s.id] !== s.name);
+        return stagesQuery.data.some(s =>
+            editedNames[s.id] !== s.name
+            || (editedStyles[s.id]?.icon ?? null) !== (s.icon ?? null)
+            || (editedStyles[s.id]?.color ?? null) !== (s.color ?? null));
     });
 </script>
 
@@ -112,14 +127,31 @@
                     <Card.Header class="pb-2">
                         <Card.Description>Scena nr {stage.number}</Card.Description>
                     </Card.Header>
-                    <Card.Content>
+                    <Card.Content class="flex flex-col gap-3">
                         {#if isEditing}
                             <Input
                                     bind:value={editedNames[stage.id]}
                                     placeholder="Nazwa sceny..."
                             />
+                            {#if editedStyles[stage.id]}
+                                <TileStyleButton
+                                        bind:icon={editedStyles[stage.id].icon}
+                                        bind:color={editedStyles[stage.id].color}
+                                        label={editedNames[stage.id] || `Scena ${stage.number}`}
+                                        defaultIcon="marker-pin-01"
+                                        defaultColorIndex={stage.number}
+                                />
+                            {/if}
                         {:else}
                             <p class="font-medium">{stage.name || '—'}</p>
+                            <TileStyleButton
+                                    icon={stage.icon ?? null}
+                                    color={stage.color ?? null}
+                                    label={stage.name || `Scena ${stage.number}`}
+                                    defaultIcon="marker-pin-01"
+                                    defaultColorIndex={stage.number}
+                                    disabled
+                            />
                         {/if}
                     </Card.Content>
                 </Card.Root>

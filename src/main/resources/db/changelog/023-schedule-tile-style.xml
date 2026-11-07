@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="023-schedule-tile-style" author="odysejapka">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="stage"/>
+            <tableExists tableName="problem"/>
+            <tableExists tableName="age"/>
+        </preConditions>
+        <comment>Stages, problems and age groups carry an icon name and an accent colour key for their tiles in the schedule, like infos do. On a fresh database Hibernate creates the tables with these columns.</comment>
+        <sql>
+            ALTER TABLE stage ADD COLUMN IF NOT EXISTS icon TEXT;
+            ALTER TABLE stage ADD COLUMN IF NOT EXISTS color VARCHAR(255);
+            ALTER TABLE problem ADD COLUMN IF NOT EXISTS icon TEXT;
+            ALTER TABLE problem ADD COLUMN IF NOT EXISTS color VARCHAR(255);
+            ALTER TABLE age ADD COLUMN IF NOT EXISTS icon TEXT;
+            ALTER TABLE age ADD COLUMN IF NOT EXISTS color VARCHAR(255);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

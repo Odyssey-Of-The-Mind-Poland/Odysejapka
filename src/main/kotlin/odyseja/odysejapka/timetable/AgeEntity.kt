@@ -11,7 +11,11 @@ class AgeEntity (
     @Column
     var id: Int,
     @Column
-    var name: String
+    var name: String,
+    @Column(columnDefinition = "TEXT")
+    var icon: String? = null,
+    @Column
+    var color: String? = null
 ) {
     @PrePersist
     fun validate() {
