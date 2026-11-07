@@ -13,7 +13,8 @@
 		defaultIcon,
 		defaultColorIndex,
 		disabled = false,
-		class: className = ''
+		class: className = '',
+		onSave
 	}: {
 		icon: string | null;
 		color: string | null;
@@ -26,6 +27,7 @@
 		/** Show the tile only, without the picker (outside of edit mode). */
 		disabled?: boolean;
 		class?: string;
+		onSave?: () => void;
 	} = $props();
 
 	let open = $state(false);
@@ -34,23 +36,39 @@
 	let shownColor = $derived(
 		color ?? CATEGORY_COLORS[Math.abs(defaultColorIndex) % CATEGORY_COLORS.length].key
 	);
+
+	function save() {
+		open = false;
+		if (onSave == undefined) return;
+		onSave();
+	}
 </script>
 
 {#if disabled}
-	<InfoTilePreview class={cn('h-10 w-36 shrink-0 rounded-xl border px-2.5 py-1.5 text-xs', className)} {label} icon={shownIcon} color={shownColor} />
+	<InfoTilePreview
+		class={cn('h-10 w-36 shrink-0 rounded-xl border px-2.5 py-1.5 text-xs', className)}
+		{label}
+		icon={shownIcon}
+		color={shownColor}
+	/>
 {:else}
 	<button
 		type="button"
-		class="rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring"
+		class="focus-visible:ring-ring rounded-xl outline-none focus-visible:ring-2"
 		aria-label="Wygląd kafelka: {label}"
 		title="Zmień wygląd kafelka"
 		onclick={() => (open = true)}
 	>
-		<InfoTilePreview class={cn('h-10 w-36 shrink-0 rounded-xl border px-2.5 py-1.5 text-xs', className)} {label} icon={shownIcon} color={shownColor} />
+		<InfoTilePreview
+			class={cn('h-10 w-36 shrink-0 rounded-xl border px-2.5 py-1.5 text-xs', className)}
+			{label}
+			icon={shownIcon}
+			color={shownColor}
+		/>
 	</button>
 
 	<Dialog.Root bind:open>
-		<Dialog.Content class="sm:max-w-xl max-h-[90vh] overflow-y-auto">
+		<Dialog.Content class="max-h-[90vh] overflow-y-auto sm:max-w-xl">
 			<Dialog.Header>
 				<Dialog.Title>Wygląd kafelka</Dialog.Title>
 				<Dialog.Description>{label}</Dialog.Description>
@@ -69,7 +87,7 @@
 			<Dialog.Footer>
 				<Dialog.Close>
 					{#snippet child({ props })}
-						<Button {...props}>Gotowe</Button>
+						<Button {...props} onclick={save}>Gotowe</Button>
 					{/snippet}
 				</Dialog.Close>
 			</Dialog.Footer>
