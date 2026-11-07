@@ -29,11 +29,27 @@
 
 <Dialog.Root bind:open>
     <Dialog.Content class="sm:max-w-6xl max-h-[90vh] overflow-y-auto">
-        <Dialog.Header>
-            <Dialog.Title>{editingInfo ? 'Edytuj informację' : 'Nowa informacja'}</Dialog.Title>
-            <Dialog.Description>
-                {category ? `Kategoria: ${category.name}` : ''}
-            </Dialog.Description>
+        <!-- The save button sits in the header: the editor with its preview is tall, so a footer would be off screen. -->
+        <Dialog.Header class="sticky top-0 z-10 -mx-4 -mt-4 flex flex-row items-start justify-between gap-4 border-b bg-background px-4 pb-4 pt-4 pr-14 sm:-mx-6 sm:-mt-6 sm:px-6 sm:pt-6 sm:pr-14">
+            <div class="flex flex-col gap-1.5 text-left">
+                <Dialog.Title>{editingInfo ? 'Edytuj informację' : 'Nowa informacja'}</Dialog.Title>
+                <Dialog.Description>
+                    {category ? `Kategoria: ${category.name}` : ''}
+                </Dialog.Description>
+            </div>
+            <div class="flex shrink-0 gap-2">
+                <Dialog.Close>
+                    {#snippet child({ props })}
+                        <Button {...props} variant="outline">Anuluj</Button>
+                    {/snippet}
+                </Dialog.Close>
+                <Button
+                        onclick={onsave}
+                        disabled={!name.trim() || saving}
+                >
+                    {editingInfo ? 'Zapisz' : 'Dodaj'}
+                </Button>
+            </div>
         </Dialog.Header>
 
         <div class="py-4">
@@ -47,19 +63,5 @@
                     editorKey={editingInfo?.id ?? 'new'}
             />
         </div>
-
-        <Dialog.Footer>
-            <Dialog.Close>
-                {#snippet child({ props })}
-                    <Button {...props} variant="outline">Anuluj</Button>
-                {/snippet}
-            </Dialog.Close>
-            <Button
-                    onclick={onsave}
-                    disabled={!name.trim() || saving}
-            >
-                {editingInfo ? 'Zapisz' : 'Dodaj'}
-            </Button>
-        </Dialog.Footer>
     </Dialog.Content>
 </Dialog.Root>
