@@ -49,7 +49,7 @@ export const routes = {
 			requiredRole: 'ADMINISTRATOR'
 		},
 		{
-			title: 'Konkursy',
+			title: 'Formularze',
 			url: '/dashboard/competitions',
 			icon: IconTrophy,
 			needsCity: true,
