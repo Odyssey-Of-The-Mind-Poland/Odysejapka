@@ -114,6 +114,20 @@ class SpontanService(
 
     private fun validateFields(fields: List<SpontanFieldEntry>) {
         for (field in fields) {
+            if (field.fieldType == SpontanFieldType.BOOLEAN) {
+                if (field.trueResponse.isBlank() || field.falseResponse.isBlank()) {
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Pole '${field.name}': etykiety TAK/NIE nie mogą być puste"
+                    )
+                }
+                if (field.trueResponse.trim().equals(field.falseResponse.trim(), ignoreCase = true)) {
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Pole '${field.name}': etykiety TAK i NIE muszą się różnić"
+                    )
+                }
+            }
             if (field.fieldType == SpontanFieldType.EXPRESSION) {
                 val expr = field.expression
                     ?: throw ResponseStatusException(

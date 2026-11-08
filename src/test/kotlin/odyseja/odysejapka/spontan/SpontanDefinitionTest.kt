@@ -141,9 +141,72 @@ class SpontanDefinitionTest : OdysejaDsl() {
     }
 
     @Test
+    fun `should define boolean display names`() {
+        val created = spontanClient.create(
+            SpontanDefinition(
+                name = "Tak/nie spontan",
+                type = SpontanType.MANUAL,
+                fields = listOf(
+                    SpontanFieldEntry(
+                        name = "Oui/Non",
+                        fieldType = SpontanFieldType.BOOLEAN,
+                        trueResponse = "Oui",
+                        falseResponse = "Non"
+                    )
+                )
+            )
+        )
+
+        assertThat(created.id).isNotNull()
+        assertThat(created.fields).hasSize(1)
+        assertThat(created.fields[0].fieldType).isEqualTo(SpontanFieldType.BOOLEAN)
+        assertThat(created.fields[0].trueResponse).isEqualTo("Oui")
+        assertThat(created.fields[0].falseResponse).isEqualTo("Non")
+    }
+
+    @Test
+    fun `should default boolean display names to Tak and Nie`() {
+        val created = spontanClient.create(
+            SpontanDefinition(
+                name = "Domyślne etykiety",
+                type = SpontanType.MANUAL,
+                fields = listOf(SpontanFieldEntry(name = "Pole", fieldType = SpontanFieldType.BOOLEAN))
+            )
+        )
+
+        assertThat(created.fields[0].trueResponse).isEqualTo("Tak")
+        assertThat(created.fields[0].falseResponse).isEqualTo("Nie")
+    }
+
+    @Test
+    fun `should reject blank or identical boolean display names`() {
+        val spontanRespondingClient = controllerClientFactory.respondingClient(SpontanController::class.java)
+
+        listOf("" to "Nie", "Tak" to "tak").forEach { (yes, no) ->
+            val response = spontanRespondingClient.executeConsumer { controller ->
+                controller.create(
+                SpontanDefinition(
+                    name = "Złe etykiety",
+                    type = SpontanType.MANUAL,
+                    fields = listOf(
+                        SpontanFieldEntry(
+                            name = "Pole",
+                            fieldType = SpontanFieldType.BOOLEAN,
+                            trueResponse = yes,
+                            falseResponse = no
+                        )
+                    )
+                )
+            )
+            }
+            assertThat(response.statusCode()).isEqualTo(400)
+        }
+    }
+
+    @Test
     fun `should reject invalid expression`() {
         val spontanRespondingClient = controllerClientFactory.respondingClient(SpontanController::class.java)
-        val response = spontanRespondingClient.executeConsumer{ controller ->
+        val response = spontanRespondingClient.executeConsumer { controller ->
             controller.create(
                 SpontanDefinition(
                     name = "Nieprawidłowy",

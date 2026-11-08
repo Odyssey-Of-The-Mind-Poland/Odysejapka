@@ -25,5 +25,7 @@ data class SpontanFieldEntry(
     val multiplier: Double = 1.0,
     val fieldType: SpontanFieldType = SpontanFieldType.MULTIPLIER,
     val expression: String? = null,
-    val trueValue: Double = 0.0
+    val trueValue: Double = 0.0,
+    val trueResponse: String = "Tak",
+    val falseResponse: String = "Nie"
 )
