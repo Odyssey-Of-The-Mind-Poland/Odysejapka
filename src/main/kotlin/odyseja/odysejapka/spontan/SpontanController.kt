@@ -97,8 +97,13 @@ class SpontanController(
         return spontanResultService.setResult(performanceId, request)
     }
 
-    // Spontan user management endpoints
+    @PostMapping("/calculate")
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
+    fun testFormula(@RequestBody request: TestFormulaRequest): TestFormulaResult {
+        return spontanResultService.testFormula(request)
+    }
 
+    // Spontan user management endpoints
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRATOR')")
     @PostMapping("/user/{cityId}")
     fun createSpontanUser(

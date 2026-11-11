@@ -27,9 +27,9 @@ class SpontanResultService(
         val performances = performanceService.getPerformanceEntitiesByCity(cityId)
             .filter {
                 !it.isExcludedFromScoring() &&
-                it.problemEntity.id == groupId.problem &&
-                it.ageEntity.id == groupId.age &&
-                (it.league ?: "") == groupId.league
+                        it.problemEntity.id == groupId.problem &&
+                        it.ageEntity.id == groupId.age &&
+                        (it.league ?: "") == groupId.league
             }
             .map { it.toPerformance() }
 
@@ -108,5 +108,13 @@ class SpontanResultService(
     fun deleteSpontanResults(performanceIds: List<Int>) {
         spontanResultRepository.deleteAllByPerformanceIdIn(performanceIds)
         changeService.updateVersion()
+    }
+
+    fun testFormula(request: TestFormulaRequest): TestFormulaResult {
+        return try {
+            TestFormulaResult(true, scoreCalculator.evaluateExpression(request.formula, request.value))
+        } catch (_: Exception) {
+            TestFormulaResult(false, null)
+        }
     }
 }

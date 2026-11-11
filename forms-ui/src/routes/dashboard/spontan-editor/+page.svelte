@@ -17,7 +17,8 @@
 	import { setBreadcrumbs } from '$lib/breadcrumbs';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
-	import { getTypeDisplayName, isManual, SpontantType } from '$lib/utils/spontan';
+	import { getTypeDisplayName, isManual, isSpontanType, SpontanType } from '$lib/utils/spontan';
+	import ExpressionTester from './ExpressionTester.svelte';
 
 	onMount(() => {
 		setBreadcrumbs([
@@ -40,7 +41,7 @@
 	type SpontanDefinition = {
 		id?: number;
 		name: string;
-		type: SpontantType;
+		type: SpontanType;
 		multiplier?: number;
 		fields: SpontanField[];
 	};
@@ -48,7 +49,7 @@
 	type SpontanDefinitionPayload = {
 		id?: number;
 		name: string;
-		type: SpontantType;
+		type: SpontanType;
 		multiplier?: number;
 		fields: {
 			id?: number;
@@ -64,7 +65,7 @@
 	let isCreating = $state(false);
 
 	let newName = $state('');
-	let newType = $state<SpontantType>(SpontantType.VERBAL);
+	let newType = $state<SpontanType>(SpontanType.VERBAL);
 	let newMultiplier = $state<number>(1.0);
 	let newFields = $state<SpontanField[]>([]);
 
@@ -103,7 +104,7 @@
 		isCreating = false;
 		editingSpontan = null;
 		newName = '';
-		newType = SpontantType.VERBAL;
+		newType = SpontanType.VERBAL;
 		newMultiplier = 1.0;
 		newFields = [];
 	}
@@ -188,7 +189,7 @@
 				type="single"
 				value={newType}
 				onValueChange={(v) => {
-					if (v === 'VERBAL' || v === 'MANUAL' || v === 'VERBAL_MANUAL') newType = v;
+					if (isSpontanType(v)) newType = v;
 				}}
 			>
 				<Select.Trigger class="w-full">
@@ -244,6 +245,8 @@
 										placeholder="np. FLOOR(v/3)*5"
 										class="w-full font-mono sm:w-48"
 									/>
+
+									<ExpressionTester bind:expresion={field.expression} />
 								{:else if field.fieldType === 'BOOLEAN'}
 									<Input
 										type="number"

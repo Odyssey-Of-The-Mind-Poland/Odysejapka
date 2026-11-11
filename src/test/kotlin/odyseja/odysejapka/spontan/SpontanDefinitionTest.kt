@@ -2,7 +2,6 @@ package odyseja.odysejapka.spontan
 
 import odyseja.odysejapka.OdysejaDsl
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
 
