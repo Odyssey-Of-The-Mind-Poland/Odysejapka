@@ -8,6 +8,8 @@
 	import IconSparkles from '@tabler/icons-svelte/icons/sparkles';
 	import { toast } from 'svelte-sonner';
 	import SpontanTeamRow from './SpontanTeamRow.svelte';
+	import { getTypeDisplayName, isManual } from '$lib/utils/spontan';
+	import { de } from 'zod/v4/locales';
 
 	type SpontanFieldDef = {
 		id?: number;
@@ -23,7 +25,7 @@
 	type SpontanDefinition = {
 		id: number;
 		name: string;
-		type: 'VERBAL' | 'MANUAL';
+		type: 'VERBAL' | 'MANUAL' | 'VERBAL_MANUAL';
 		multiplier?: number;
 		fields: SpontanFieldDef[];
 	};
@@ -237,7 +239,7 @@
 		return Array.from({ length: judgeCount }, (_, i) => i + 1);
 	}
 
-	let manualFields = $derived(definition?.type === 'MANUAL' ? definition.fields : []);
+	let manualFields = $derived(isManual(definition?.type) ? definition?.fields : []);
 
 	function saveAll() {
 		if (!formData) return;
@@ -275,7 +277,7 @@
 					{/if}
 					{#if definition}
 						<Badge variant="default" class="text-xs">
-							{definition.type === 'VERBAL' ? 'Słowny' : 'Manualny'}
+							{getTypeDisplayName(definition.type)}
 						</Badge>
 					{/if}
 				</p>
@@ -309,7 +311,7 @@
 							class="bg-muted/40 sticky left-0 z-10 px-4 py-2 text-left align-bottom font-semibold"
 							>Drużyna</th
 						>
-						{#if manualFields.length > 0}
+						{#if manualFields?.length ? manualFields?.length : 0 > 0}
 							{#each manualFields as field}
 								<th rowspan="2" class="border-l px-2 py-2 text-center align-bottom font-semibold">
 									<div>{field.name}</div>

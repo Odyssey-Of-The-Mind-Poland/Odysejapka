@@ -6,11 +6,16 @@ data class SpontanDefinition(
     val type: SpontanType,
     val multiplier: Double? = null,
     val fields: List<SpontanFieldEntry> = emptyList()
-)
+) {
+    fun isManual(): Boolean {
+        return type == SpontanType.MANUAL || type == SpontanType.VERBAL_MANUAL
+    }
+}
 
 enum class SpontanType {
     VERBAL,
-    MANUAL
+    MANUAL,
+    VERBAL_MANUAL
 }
 
 enum class SpontanFieldType {

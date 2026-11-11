@@ -32,7 +32,7 @@ class SpontanService(
 
     @Transactional
     fun createSpontan(definition: SpontanDefinition): SpontanDefinition {
-        if (definition.type == SpontanType.MANUAL) {
+        if (definition.isManual()) {
             validateFields(definition.fields)
         }
         val entity = SpontanDefinitionEntity().apply { applyFrom(definition) }
@@ -43,7 +43,7 @@ class SpontanService(
     fun updateSpontan(id: Long, definition: SpontanDefinition): SpontanDefinition {
         val entity = spontanDefinitionRepository.findById(id).orElse(null)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        if (definition.type == SpontanType.MANUAL) {
+        if (definition.isManual()) {
             validateFields(definition.fields)
         }
         entity.applyFrom(definition)

@@ -17,6 +17,7 @@
 	import { setBreadcrumbs } from '$lib/breadcrumbs';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
+	import { getTypeDisplayName, isManual } from '$lib/utils/spontan';
 
 	onMount(() => {
 		setBreadcrumbs([
@@ -39,7 +40,7 @@
 	type SpontanDefinition = {
 		id?: number;
 		name: string;
-		type: 'VERBAL' | 'MANUAL';
+		type: 'VERBAL' | 'MANUAL' | 'VERBAL_MANUAL';
 		multiplier?: number;
 		fields: SpontanField[];
 	};
@@ -47,7 +48,7 @@
 	type SpontanDefinitionPayload = {
 		id?: number;
 		name: string;
-		type: 'VERBAL' | 'MANUAL';
+		type: 'VERBAL' | 'MANUAL' | 'VERBAL_MANUAL';
 		multiplier?: number;
 		fields: {
 			id?: number;
@@ -63,7 +64,7 @@
 	let isCreating = $state(false);
 
 	let newName = $state('');
-	let newType = $state<'VERBAL' | 'MANUAL'>('VERBAL');
+	let newType = $state<'VERBAL' | 'MANUAL' | 'VERBAL_MANUAL'>('VERBAL');
 	let newMultiplier = $state<number>(1.0);
 	let newFields = $state<SpontanField[]>([]);
 
@@ -133,26 +134,27 @@
 		const trimmed = newName.trim();
 		if (!trimmed) return;
 
-		const fields =
-			newType === 'MANUAL'
-				? newFields
-						.filter((f) => f.name.trim())
-						.map((f) => ({
-							id: f.id,
-							name: f.name,
-							multiplier: f.multiplier,
-							fieldType: f.fieldType,
-							expression: f.fieldType === 'EXPRESSION' ? f.expression : undefined,
-							trueValue: f.fieldType === 'BOOLEAN' ? (f.trueValue ?? 0) : undefined,
-							trueResponse: f.fieldType === 'BOOLEAN' ? f.trueResponse?.trim() || undefined : undefined,
-							falseResponse: f.fieldType === 'BOOLEAN' ? f.falseResponse?.trim() || undefined : undefined
-						}))
-				: [];
+		const fields = isManual(newType)
+			? newFields
+					.filter((f) => f.name.trim())
+					.map((f) => ({
+						id: f.id,
+						name: f.name,
+						multiplier: f.multiplier,
+						fieldType: f.fieldType,
+						expression: f.fieldType === 'EXPRESSION' ? f.expression : undefined,
+						trueValue: f.fieldType === 'BOOLEAN' ? (f.trueValue ?? 0) : undefined,
+						trueResponse:
+							f.fieldType === 'BOOLEAN' ? f.trueResponse?.trim() || undefined : undefined,
+						falseResponse:
+							f.fieldType === 'BOOLEAN' ? f.falseResponse?.trim() || undefined : undefined
+					}))
+			: [];
 
 		const definition: SpontanDefinitionPayload = {
 			name: trimmed,
 			type: newType,
-			multiplier: newType === 'MANUAL' ? newMultiplier : undefined,
+			multiplier: isManual(newType) ? newMultiplier : undefined,
 			fields
 		};
 
@@ -186,20 +188,21 @@
 				type="single"
 				value={newType}
 				onValueChange={(v) => {
-					if (v === 'VERBAL' || v === 'MANUAL') newType = v;
+					if (v === 'VERBAL' || v === 'MANUAL' || v === 'VERBAL_MANUAL') newType = v;
 				}}
 			>
 				<Select.Trigger class="w-full">
-					{newType === 'VERBAL' ? 'Słowny' : 'Manualny'}
+					{getTypeDisplayName(newType)}
 				</Select.Trigger>
 				<Select.Content>
 					<Select.Item value="VERBAL">Słowny</Select.Item>
 					<Select.Item value="MANUAL">Manualny</Select.Item>
+					<Select.Item value="VERBAL_MANUAL">Manualno Słowny</Select.Item>
 				</Select.Content>
 			</Select.Root>
 		</div>
 
-		{#if newType === 'MANUAL'}
+		{#if isManual(newType)}
 			<div>
 				<div class="mb-2 flex items-center justify-between">
 					<label class="text-sm font-medium">Pola</label>
@@ -372,10 +375,10 @@
 						>
 							<Table.Cell class="font-medium">{spontan.name}</Table.Cell>
 							<Table.Cell>
-								{spontan.type === 'VERBAL' ? 'Słowny' : 'Manualny'}
+								{getTypeDisplayName(spontan.type)}
 							</Table.Cell>
 							<Table.Cell>
-								{#if spontan.type === 'MANUAL'}
+								{#if isManual(spontan.type)}
 									{spontan.fields.length} {spontan.fields.length === 1 ? 'pole' : 'pól'}
 								{:else}
 									—

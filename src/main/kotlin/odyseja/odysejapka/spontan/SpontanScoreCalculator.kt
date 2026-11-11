@@ -13,7 +13,7 @@ class SpontanScoreCalculator {
 
         return when (definition.type) {
             SpontanType.VERBAL -> calculateVerbalScore(results.verbalEntries, judgeCount)
-            SpontanType.MANUAL -> calculateManualScore(definition, results, judgeCount)
+            SpontanType.MANUAL, SpontanType.VERBAL_MANUAL -> calculateManualScore(definition, results, judgeCount)
         }
     }
 

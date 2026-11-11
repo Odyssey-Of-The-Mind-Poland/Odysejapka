@@ -21,6 +21,12 @@ class SpontanScoreCalculatorTest {
         fields = fields.map { SpontanFieldEntry(name = it.first, multiplier = it.second) }
     )
 
+    private fun verbalManualDefinition(vararg fields: Pair<String, Double>) = SpontanDefinition(
+        name = "VerbalManual",
+        type = SpontanType.VERBAL_MANUAL,
+        fields = fields.map { SpontanFieldEntry(name = it.first, multiplier = it.second) }
+    )
+
     private fun expressionField(name: String, expression: String) = SpontanFieldEntry(
         name = name,
         fieldType = SpontanFieldType.EXPRESSION,

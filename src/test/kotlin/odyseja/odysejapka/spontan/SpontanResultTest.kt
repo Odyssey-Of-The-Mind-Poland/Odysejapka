@@ -139,4 +139,41 @@ class SpontanResultTest : OdysejaDsl() {
         // Judge 1: 10*5 + 5 = 55 / 3 judges = 18.333
         assertThat(updated.rawSpontan).isCloseTo(18.333, org.assertj.core.data.Offset.offset(0.01))
     }
+
+    @Test
+    fun `should save and return verbal manual spontan results`() {
+        val city = createCity("ResultCity2137")
+        val perfId = createPerformance(city.id, team = "Team M", spontan = "10:00", spontanDay = "sobota")
+
+        val spontan = spontanClient.create(
+            SpontanDefinition(
+                name = "Manual Scoring",
+                type = SpontanType.VERBAL_MANUAL,
+                multiplier = 2.0,
+                fields = listOf(
+                    SpontanFieldEntry(name = "Element1", multiplier = 1.5),
+                    SpontanFieldEntry(name = "expresion", fieldType = SpontanFieldType.EXPRESSION, expression = "v*2")
+
+                )
+            )
+        )
+        spontanClient.assignSpontan(city.id, 1, 1, "", AssignSpontanRequest(spontan.id))
+        spontanClient.setJudgeCount(city.id, 1, 1, "", SetJudgeCountRequest(2))
+
+        val result = spontanClient.setResults(perfId, SpontanResultsRequest(
+            manualJudgeEntries = listOf(
+                ManualJudgeEntry(judge = 1, creativity = 8.0, teamwork = 7.0),
+                ManualJudgeEntry(judge = 2, creativity = 6.0, teamwork = 9.0)
+            ),
+            manualEntries = listOf(
+                ManualScoreEntry(field = "Element1", value = 3.0),
+                ManualScoreEntry(field = "expresion", value = 4.0)
+            )
+        ))
+
+        // Judge score: (8+7 + 6+9) / 2 = 30/2 = 15
+        // Field score: 3*1.5 + 4*2.0 = 4.5 + 8 = 12.5
+        // Total: 15 + 12.5 = 27.5
+        assertThat(result.rawSpontan).isCloseTo(27.5, org.assertj.core.data.Offset.offset(0.01))
+    }
 }

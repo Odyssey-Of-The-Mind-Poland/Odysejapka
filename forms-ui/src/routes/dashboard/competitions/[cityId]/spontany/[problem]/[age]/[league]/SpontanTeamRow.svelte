@@ -41,7 +41,7 @@
 		spontanHour: string;
 		rawSpontan: number | null;
 		judges: number[];
-		type: 'VERBAL' | 'MANUAL';
+		type: 'VERBAL' | 'MANUAL' | 'VERBAL_MANUAL';
 		manualFields?: SpontanFieldDef[];
 		savedSnapshot: string;
 	}>();
@@ -74,7 +74,9 @@
 					}}
 				>
 					<Select.Trigger class="mx-auto h-8 w-auto min-w-20 text-sm">
-						{manualEntries[field.name] ? (field.trueResponse ?? 'Tak') : (field.falseResponse ?? 'Nie')}
+						{manualEntries[field.name]
+							? (field.trueResponse ?? 'Tak')
+							: (field.falseResponse ?? 'Nie')}
 					</Select.Trigger>
 					<Select.Content>
 						<Select.Item value="TAK">{field.trueResponse ?? 'Tak'}</Select.Item>

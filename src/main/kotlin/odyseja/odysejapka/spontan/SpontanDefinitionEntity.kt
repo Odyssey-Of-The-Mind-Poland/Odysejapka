@@ -39,6 +39,6 @@ class SpontanDefinitionEntity {
         name = definition.name
         type = definition.type
         multiplier = definition.multiplier
-        fields = if (definition.type == SpontanType.MANUAL) definition.fields else null
+        fields = if (definition.isManual()) definition.fields else null
     }
 }
