@@ -8,8 +8,7 @@
 	import IconSparkles from '@tabler/icons-svelte/icons/sparkles';
 	import { toast } from 'svelte-sonner';
 	import SpontanTeamRow from './SpontanTeamRow.svelte';
-	import { getTypeDisplayName, isManual } from '$lib/utils/spontan';
-	import { de } from 'zod/v4/locales';
+	import { getTypeDisplayName, isManual, SpontantType } from '$lib/utils/spontan';
 
 	type SpontanFieldDef = {
 		id?: number;
@@ -25,7 +24,7 @@
 	type SpontanDefinition = {
 		id: number;
 		name: string;
-		type: 'VERBAL' | 'MANUAL' | 'VERBAL_MANUAL';
+		type: SpontantType;
 		multiplier?: number;
 		fields: SpontanFieldDef[];
 	};

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import type { SpontantType } from '$lib/utils/spontan';
 
 	type SpontanFieldDef = {
 		name: string;
@@ -41,7 +42,7 @@
 		spontanHour: string;
 		rawSpontan: number | null;
 		judges: number[];
-		type: 'VERBAL' | 'MANUAL' | 'VERBAL_MANUAL';
+		type: SpontantType;
 		manualFields?: SpontanFieldDef[];
 		savedSnapshot: string;
 	}>();

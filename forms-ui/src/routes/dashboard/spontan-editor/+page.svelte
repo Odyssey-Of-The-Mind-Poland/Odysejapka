@@ -17,7 +17,7 @@
 	import { setBreadcrumbs } from '$lib/breadcrumbs';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
-	import { getTypeDisplayName, isManual } from '$lib/utils/spontan';
+	import { getTypeDisplayName, isManual, SpontantType } from '$lib/utils/spontan';
 
 	onMount(() => {
 		setBreadcrumbs([
@@ -40,7 +40,7 @@
 	type SpontanDefinition = {
 		id?: number;
 		name: string;
-		type: 'VERBAL' | 'MANUAL' | 'VERBAL_MANUAL';
+		type: SpontantType;
 		multiplier?: number;
 		fields: SpontanField[];
 	};
@@ -48,7 +48,7 @@
 	type SpontanDefinitionPayload = {
 		id?: number;
 		name: string;
-		type: 'VERBAL' | 'MANUAL' | 'VERBAL_MANUAL';
+		type: SpontantType;
 		multiplier?: number;
 		fields: {
 			id?: number;
@@ -64,7 +64,7 @@
 	let isCreating = $state(false);
 
 	let newName = $state('');
-	let newType = $state<'VERBAL' | 'MANUAL' | 'VERBAL_MANUAL'>('VERBAL');
+	let newType = $state<SpontantType>(SpontantType.VERBAL);
 	let newMultiplier = $state<number>(1.0);
 	let newFields = $state<SpontanField[]>([]);
 
@@ -103,7 +103,7 @@
 		isCreating = false;
 		editingSpontan = null;
 		newName = '';
-		newType = 'VERBAL';
+		newType = SpontantType.VERBAL;
 		newMultiplier = 1.0;
 		newFields = [];
 	}
